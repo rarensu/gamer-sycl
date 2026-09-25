@@ -3,6 +3,8 @@
 
 
 
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "Macro.h"
 
 
@@ -12,10 +14,10 @@ void Aux_Error( const char *File, const int Line, const char *Func, const char *
 // CUDA error check
 #define CUDA_CHECK_ERROR( Call )   CUDA_Check_Error( Call, __FILE__, __LINE__, __FUNCTION__ )
 
-inline void CUDA_Check_Error( cudaError Return, const char *File, const int Line, const char *Func )
+inline void CUDA_Check_Error( dpct::err0 Return, const char *File, const int Line, const char *Func )
 {
-   if ( Return != cudaSuccess )
-      Aux_Error( File, Line, Func, "CUDA ERROR : %s !!\n", cudaGetErrorString(Return) );
+   if ( Return != 0 )
+      Aux_Error( File, Line, Func, "CUDA ERROR : %s !!\n", dpct::get_error_string_dummy(Return) );
 }
 
 
@@ -27,11 +29,11 @@ inline void CUDA_Check_Error( cudaError Return, const char *File, const int Line
 #define CUDA_CHECK_MALLOC( Call )                                                                        \
 {                                                                                                        \
    Call;                                                                                                 \
-   const cudaError_t Return = cudaGetLastError();                                                        \
-   if      ( Return == cudaErrorMemoryAllocation )                                                       \
+   const dpct::err0 Return = 0;                                                                          \
+   if      ( Return == 2 )                                                                               \
       return GAMER_FAILED;                                                                               \
-   else if ( Return != cudaSuccess )                                                                     \
-      Aux_Error( ERROR_INFO, "CUDA ERROR in memory allocation : %s !!\n", cudaGetErrorString(Return) );  \
+   else if ( Return != 0 )                                                                               \
+      Aux_Error( ERROR_INFO, "CUDA ERROR in memory allocation : %s !!\n", dpct::get_error_string_dummy(Return) );  \
 }
 
 
