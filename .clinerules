@@ -31,6 +31,10 @@
 - Apply changes from the matching file under `dpct_out/` back into the original source tree.
 - Use `/home/rlawrence/Projects/gamer-sycl/MIGRATION_TRACKER.md` as the source of truth for what has already been applied.
 - Treat `dpct_out/report.txt` and `dpct_out/analysis.txt` as the source of truth for what still needs manual fixes or review.
+- If the suggested code still contains incomplete migration artifacts, such as legacy CUDA-specific naming, `CU*` symbols in identifiers or comments, or other backend-specific patterns that do not belong in the SYCL target, do not treat the DPCT output as finished.
+- In that case, either correct the code in the main tree or add a nearby `TODO` comment that clearly marks the remaining migration work.
+- Any file with unresolved `TODO` items must remain `IN PROGRESS` in `/home/rlawrence/Projects/gamer-sycl/MIGRATION_TRACKER.md` until the TODOs are resolved.
+- Applying the DPCT suggestions alone is not sufficient to mark a migration as `DONE`; the final code must be clean, consistent, and free of unresolved legacy CUDA-specific migration remnants.
 - When editing build logic, check `src/Makefile_base` and `src/configure.py` first.
 - Use absolute paths when referring to files in guidance or summaries.
 
