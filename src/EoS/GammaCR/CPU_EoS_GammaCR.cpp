@@ -1,22 +1,18 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 #include "CheckError.h"
-#include "CUFLU_Shared_FluUtility.cu"
+#include "CPU_Shared_FluUtility.cpp"
 #endif
 
 #if ( MODEL == HYDRO )
 
 #ifdef COSMIC_RAY
 
-#ifdef __CUDACC__
-__device__ static real EoS_CREint2CRPres_GammaCR( const real E_CR,
-                                                  const double AuxArray_Flt[], const int AuxArray_Int[],
-                                                  const real *const Table[EOS_NTABLE_MAX] );
-#else // #ifdef __CUDACC__
 static real EoS_CREint2CRPres_GammaCR( const real E_CR,
                                        const double AuxArray_Flt[], const int AuxArray_Int[],
                                        const real *const Table[EOS_NTABLE_MAX] );
-#endif // #ifdef __CUDACC__ ... else ...
 
 
 /********************************************************
@@ -62,7 +58,7 @@ static real EoS_CREint2CRPres_GammaCR( const real E_CR,
 //
 // Note        :  1. Invoked by EoS_Init_GammaCR()
 //                2. AuxArray_Flt/Int[] have the size of EOS_NAUX_MAX defined in Macro.h (default = 20)
-//                3. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+//                3. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //                4. Physical constants such as MU_NORM/Const_kB should be set to unity when disabling OPT__UNIT
 //                5. Do not change the order of AuxArray_Flt[]
 //                   --> For example, the dual-energy routines assume AuxArray_Flt[0]=GAMMA
@@ -71,7 +67,7 @@ static real EoS_CREint2CRPres_GammaCR( const real E_CR,
 //
 // Return      :  AuxArray_Flt/Int[]
 //-------------------------------------------------------------------------------------------------------
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 void EoS_SetAuxArray_GammaCR( double AuxArray_Flt[], int AuxArray_Int[] )
 {
 
@@ -87,7 +83,7 @@ void EoS_SetAuxArray_GammaCR( double AuxArray_Flt[], int AuxArray_Int[] )
    AuxArray_Flt[8] = 1.0 / AuxArray_Flt[7];
 
 } // FUNCTION : EoS_SetAuxArray_GammaCR
-#endif // #ifndef __CUDACC__
+#endif // #ifndef SYCL_LANGUAGE_VERSION
 
 
 
@@ -531,22 +527,31 @@ static real EoS_GasEint2GasPres_GammaCR( const real Eint_Gas,
 // III. Set EoS initialization functions
 // =============================================
 
-#ifdef __CUDACC__
-#  define FUNC_SPACE __device__ static
+#ifdef SYCL_LANGUAGE_VERSION
+#  define FUNC_SPACE static
 #else
 #  define FUNC_SPACE            static
 #endif
 
-FUNC_SPACE EoS_DE2P_t      EoS_DensEint2Pres_Ptr   = EoS_DensEint2Pres_GammaCR;
-FUNC_SPACE EoS_DP2E_t      EoS_DensPres2Eint_Ptr   = EoS_DensPres2Eint_GammaCR;
-FUNC_SPACE EoS_DP2C_t      EoS_DensPres2CSqr_Ptr   = EoS_DensPres2CSqr_GammaCR;
-FUNC_SPACE EoS_DE2T_t      EoS_DensEint2Temp_Ptr   = EoS_DensEint2Temp_GammaCR;
-FUNC_SPACE EoS_DT2P_t      EoS_DensTemp2Pres_Ptr   = EoS_DensTemp2Pres_GammaCR;
-FUNC_SPACE EoS_DE2S_t      EoS_DensEint2Entr_Ptr   = EoS_DensEint2Entr_GammaCR;
-FUNC_SPACE EoS_GENE_t      EoS_General_Ptr         = EoS_General_GammaCR;
-FUNC_SPACE EoS_CRE2CRP_t   EoS_CREint2CRPres_Ptr   = EoS_CREint2CRPres_GammaCR;
-FUNC_SPACE EoS_GP2GE_t     EoS_GasPres2GasEint_Ptr = EoS_GasPres2GasEint_GammaCR;
-FUNC_SPACE EoS_GE2GP_t     EoS_GasEint2GasPres_Ptr = EoS_GasEint2GasPres_GammaCR;
+static dpct::global_memory<EoS_DE2P_t, 0>
+    EoS_DensEint2Pres_Ptr(EoS_DensEint2Pres_GammaCR);
+static dpct::global_memory<EoS_DP2E_t, 0>
+    EoS_DensPres2Eint_Ptr(EoS_DensPres2Eint_GammaCR);
+static dpct::global_memory<EoS_DP2C_t, 0>
+    EoS_DensPres2CSqr_Ptr(EoS_DensPres2CSqr_GammaCR);
+static dpct::global_memory<EoS_DE2T_t, 0>
+    EoS_DensEint2Temp_Ptr(EoS_DensEint2Temp_GammaCR);
+static dpct::global_memory<EoS_DT2P_t, 0>
+    EoS_DensTemp2Pres_Ptr(EoS_DensTemp2Pres_GammaCR);
+static dpct::global_memory<EoS_DE2S_t, 0>
+    EoS_DensEint2Entr_Ptr(EoS_DensEint2Entr_GammaCR);
+static dpct::global_memory<EoS_GENE_t, 0> EoS_General_Ptr(EoS_General_GammaCR);
+static dpct::global_memory<EoS_CRE2CRP_t, 0>
+    EoS_CREint2CRPres_Ptr(EoS_CREint2CRPres_GammaCR);
+static dpct::global_memory<EoS_GP2GE_t, 0>
+    EoS_GasPres2GasEint_Ptr(EoS_GasPres2GasEint_GammaCR);
+static dpct::global_memory<EoS_GE2GP_t, 0>
+    EoS_GasEint2GasPres_Ptr(EoS_GasEint2GasPres_GammaCR);
 
 //-----------------------------------------------------------------------------------------
 // Function    :  EoS_SetCPU/GPUFunc_GammaCR
@@ -578,8 +583,8 @@ FUNC_SPACE EoS_GE2GP_t     EoS_GasEint2GasPres_Ptr = EoS_GasEint2GasPres_GammaCR
 //                EoS_General_CPU/GPUPtr, EoS_CREint2CRPres_CPU/GPUPtr,
 //                EoS_GasPres2GasEint_CPU/GPUPtr, EoS_GasEint2GasPres_CPU/GPUPtr
 //-----------------------------------------------------------------------------------------
-#ifdef __CUDACC__
-__host__
+#ifdef SYCL_LANGUAGE_VERSION
+
 void EoS_SetGPUFunc_GammaCR( EoS_DE2P_t    &EoS_DensEint2Pres_GPUPtr,
                              EoS_DP2E_t    &EoS_DensPres2Eint_GPUPtr,
                              EoS_DP2C_t    &EoS_DensPres2CSqr_GPUPtr,
@@ -591,19 +596,59 @@ void EoS_SetGPUFunc_GammaCR( EoS_DE2P_t    &EoS_DensEint2Pres_GPUPtr,
                              EoS_GP2GE_t   &EoS_GasPres2GasEint_GPUPtr,
                              EoS_GE2GP_t   &EoS_GasEint2GasPres_GPUPtr )
 {
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensEint2Pres_GPUPtr,   EoS_DensEint2Pres_Ptr,   sizeof(EoS_DE2P_t   ) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensPres2Eint_GPUPtr,   EoS_DensPres2Eint_Ptr,   sizeof(EoS_DP2E_t   ) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensPres2CSqr_GPUPtr,   EoS_DensPres2CSqr_Ptr,   sizeof(EoS_DP2C_t   ) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensEint2Temp_GPUPtr,   EoS_DensEint2Temp_Ptr,   sizeof(EoS_DE2T_t   ) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensTemp2Pres_GPUPtr,   EoS_DensTemp2Pres_Ptr,   sizeof(EoS_DT2P_t   ) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensEint2Entr_GPUPtr,   EoS_DensEint2Entr_Ptr,   sizeof(EoS_DE2S_t   ) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_General_GPUPtr,         EoS_General_Ptr,         sizeof(EoS_GENE_t   ) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_CREint2CRPres_GPUPtr,   EoS_CREint2CRPres_Ptr,   sizeof(EoS_CRE2CRP_t) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_GasPres2GasEint_GPUPtr, EoS_GasPres2GasEint_Ptr, sizeof(EoS_GP2GE_t  ) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_GasEint2GasPres_GPUPtr, EoS_GasEint2GasPres_Ptr, sizeof(EoS_GE2GP_t  ) )  );
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_DensEint2Pres_GPUPtr, EoS_DensEint2Pres_Ptr.get_ptr(),
+                   sizeof(EoS_DE2P_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_DensPres2Eint_GPUPtr, EoS_DensPres2Eint_Ptr.get_ptr(),
+                   sizeof(EoS_DP2E_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_DensPres2CSqr_GPUPtr, EoS_DensPres2CSqr_Ptr.get_ptr(),
+                   sizeof(EoS_DP2C_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_DensEint2Temp_GPUPtr, EoS_DensEint2Temp_Ptr.get_ptr(),
+                   sizeof(EoS_DE2T_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_DensTemp2Pres_GPUPtr, EoS_DensTemp2Pres_Ptr.get_ptr(),
+                   sizeof(EoS_DT2P_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_DensEint2Entr_GPUPtr, EoS_DensEint2Entr_Ptr.get_ptr(),
+                   sizeof(EoS_DE2S_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(dpct::get_in_order_queue()
+                                         .memcpy(&EoS_General_GPUPtr,
+                                                 EoS_General_Ptr.get_ptr(),
+                                                 sizeof(EoS_GENE_t))
+                                         .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_CREint2CRPres_GPUPtr, EoS_CREint2CRPres_Ptr.get_ptr(),
+                   sizeof(EoS_CRE2CRP_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_GasPres2GasEint_GPUPtr,
+                   EoS_GasPres2GasEint_Ptr.get_ptr(), sizeof(EoS_GP2GE_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_GasEint2GasPres_GPUPtr,
+                   EoS_GasEint2GasPres_Ptr.get_ptr(), sizeof(EoS_GE2GP_t))
+           .wait()));
 }
 
-#else // #ifdef __CUDACC__
+#else // #ifdef SYCL_LANGUAGE_VERSION
 
 void EoS_SetCPUFunc_GammaCR( EoS_DE2P_t    &EoS_DensEint2Pres_CPUPtr,
                              EoS_DP2E_t    &EoS_DensPres2Eint_CPUPtr,
@@ -628,11 +673,11 @@ void EoS_SetCPUFunc_GammaCR( EoS_DE2P_t    &EoS_DensEint2Pres_CPUPtr,
    EoS_GasEint2GasPres_CPUPtr = EoS_GasEint2GasPres_Ptr;
 }
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
 
 
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 
 // local function prototypes
 void EoS_SetAuxArray_GammaCR( double [] , int []);
@@ -652,7 +697,7 @@ void EoS_SetGPUFunc_GammaCR( EoS_DE2P_t &, EoS_DP2E_t &, EoS_DP2C_t &, EoS_DE2T_
 //                2. Set the CPU/GPU EoS routines by invoking EoS_SetCPU/GPUFunc_*()
 //                3. Invoked by EoS_Init()
 //                   --> Enable it by linking to the function pointer "EoS_Init_Ptr"
-//                4. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+//                4. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //
 // Parameter   :  None
 //
@@ -677,7 +722,7 @@ void EoS_Init_GammaCR()
 
 } // FUNCTION : EoS_Init_GammaCR
 
-#endif // #ifndef __CUDACC__
+#endif // #ifndef SYCL_LANGUAGE_VERSION
 
 
 

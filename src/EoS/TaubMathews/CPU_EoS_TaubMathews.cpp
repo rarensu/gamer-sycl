@@ -1,7 +1,9 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 #include "CheckError.h"
-#include "CUFLU_Shared_FluUtility.cu"
+#include "CPU_Shared_FluUtility.cpp"
 #endif
 
 #if ( MODEL == HYDRO  &&  defined SRHD )
@@ -41,7 +43,7 @@
 //
 // Note        :  1. Invoked by EoS_Init_TaubMathews()
 //                2. AuxArray_Flt/Int[] have the size of EOS_NAUX_MAX defined in Macro.h (default = 20)
-//                3. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+//                3. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //                4. Do not change the order of AuxArray_Flt/Int[]
 //                5. Physical constants such as Const_amu/Const_kB should be set to unity when disabling OPT__UNIT
 //
@@ -49,7 +51,7 @@
 //
 // Return      :  AuxArray_Flt/Int[]
 //-------------------------------------------------------------------------------------------------------
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 void EoS_SetAuxArray_TaubMathews( double AuxArray_Flt[], int AuxArray_Int[] )
 {
 
@@ -58,7 +60,7 @@ void EoS_SetAuxArray_TaubMathews( double AuxArray_Flt[], int AuxArray_Int[] )
    AuxArray_Flt[1] = 1.0 / AuxArray_Flt[0];
 
 } // FUNCTION : EoS_SetAuxArray_TaubMathews
-#endif // #ifndef __CUDACC__
+#endif // #ifndef SYCL_LANGUAGE_VERSION
 
 
 
@@ -253,16 +255,20 @@ static real EoS_DensPres2CSqr_TaubMathews( const real Dens, const real Pres, con
 // III. Set EoS initialization functions
 // =============================================
 
-#ifdef __CUDACC__
-#  define FUNC_SPACE __device__ static
+#ifdef SYCL_LANGUAGE_VERSION
+#  define FUNC_SPACE static
 #else
 #  define FUNC_SPACE            static
 #endif
 
-FUNC_SPACE EoS_GUESS_t  EoS_GuessHTilde_Ptr   = EoS_GuessHTilde_TaubMathews;
-FUNC_SPACE EoS_H2TEM_t  EoS_HTilde2Temp_Ptr   = EoS_HTilde2Temp_TaubMathews;
-FUNC_SPACE EoS_TEM2H_t  EoS_Temp2HTilde_Ptr   = EoS_Temp2HTilde_TaubMathews;
-FUNC_SPACE EoS_DP2C_t   EoS_DensPres2CSqr_Ptr = EoS_DensPres2CSqr_TaubMathews;
+static dpct::global_memory<EoS_GUESS_t, 0>
+    EoS_GuessHTilde_Ptr(EoS_GuessHTilde_TaubMathews);
+static dpct::global_memory<EoS_H2TEM_t, 0>
+    EoS_HTilde2Temp_Ptr(EoS_HTilde2Temp_TaubMathews);
+static dpct::global_memory<EoS_TEM2H_t, 0>
+    EoS_Temp2HTilde_Ptr(EoS_Temp2HTilde_TaubMathews);
+static dpct::global_memory<EoS_DP2C_t, 0>
+    EoS_DensPres2CSqr_Ptr(EoS_DensPres2CSqr_TaubMathews);
 
 //-----------------------------------------------------------------------------------------
 // Function    :  EoS_SetCPU/GPUFunc_TaubMathews
@@ -283,20 +289,36 @@ FUNC_SPACE EoS_DP2C_t   EoS_DensPres2CSqr_Ptr = EoS_DensPres2CSqr_TaubMathews;
 //
 // Return      :  EoS_HTilde2Temp_CPU, EoS_Temp2HTilde_CPU/GPUPtr, EoS_DensPres2CSqr_CPU/GPUPtr
 //-----------------------------------------------------------------------------------------
-#ifdef __CUDACC__
-__host__
+#ifdef SYCL_LANGUAGE_VERSION
+
 void EoS_SetGPUFunc_TaubMathews( EoS_GUESS_t &EoS_GuessHTilde_GPUPtr,
                                  EoS_H2TEM_t &EoS_HTilde2Temp_GPUPtr,
                                  EoS_TEM2H_t &EoS_Temp2HTilde_GPUPtr,
                                  EoS_DP2C_t  &EoS_DensPres2CSqr_GPUPtr )
 {
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_GuessHTilde_GPUPtr,   EoS_GuessHTilde_Ptr,   sizeof(EoS_GUESS_t) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_HTilde2Temp_GPUPtr,   EoS_HTilde2Temp_Ptr,   sizeof(EoS_H2TEM_t) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_Temp2HTilde_GPUPtr,   EoS_Temp2HTilde_Ptr,   sizeof(EoS_TEM2H_t) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensPres2CSqr_GPUPtr, EoS_DensPres2CSqr_Ptr, sizeof(EoS_DP2C_t ) )  );
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_GuessHTilde_GPUPtr, EoS_GuessHTilde_Ptr.get_ptr(),
+                   sizeof(EoS_GUESS_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_HTilde2Temp_GPUPtr, EoS_HTilde2Temp_Ptr.get_ptr(),
+                   sizeof(EoS_H2TEM_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_Temp2HTilde_GPUPtr, EoS_Temp2HTilde_Ptr.get_ptr(),
+                   sizeof(EoS_TEM2H_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_DensPres2CSqr_GPUPtr, EoS_DensPres2CSqr_Ptr.get_ptr(),
+                   sizeof(EoS_DP2C_t))
+           .wait()));
 }
 
-#else // #ifdef __CUDACC__
+#else // #ifdef SYCL_LANGUAGE_VERSION
 
 void EoS_SetCPUFunc_TaubMathews( EoS_GUESS_t &EoS_GuessHTilde_CPUPtr,
                                  EoS_H2TEM_t &EoS_HTilde2Temp_CPUPtr,
@@ -309,11 +331,11 @@ void EoS_SetCPUFunc_TaubMathews( EoS_GUESS_t &EoS_GuessHTilde_CPUPtr,
    EoS_DensPres2CSqr_CPUPtr = EoS_DensPres2CSqr_Ptr;
 }
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
 
 
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 
 // local function prototypes
 void EoS_SetAuxArray_TaubMathews( double [] );
@@ -331,7 +353,7 @@ void EoS_SetGPUFunc_TaubMathews(EoS_GUESS_t &, EoS_H2TEM_t &, EoS_TEM2H_t &, EoS
 //                2. Set the CPU/GPU EoS routines by invoking EoS_SetCPU/GPUFunc_*()
 //                3. Invoked by EoS_Init()
 //                   --> Enable it by linking to the function pointer "EoS_Init_Ptr"
-//                4. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+//                4. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //
 // Parameter   :  None
 //
@@ -348,7 +370,7 @@ void EoS_Init_TaubMathews()
 
 } // FUNCTION : EoS_Init_TaubMathews
 
-#endif // #ifndef __CUDACC__
+#endif // #ifndef SYCL_LANGUAGE_VERSION
 
 
 
