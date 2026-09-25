@@ -9,7 +9,7 @@
 #include "Global.h"
 #include "CheckError.h"
 #include "CUFLU_Shared_FluUtility.cu"
-#include "CUDA_ConstMemory.h"
+#include "ConstMemory.h"
 #ifdef DUAL_ENERGY
 #include "CUFLU_Shared_DualEnergy.cu"
 #endif

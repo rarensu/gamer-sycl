@@ -6,7 +6,7 @@
 #ifdef SYCL_LANGUAGE_VERSION
 
 #include "CUDA_CheckError.h"
-#include "CUDA_ConstMemory.h"
+#include "ConstMemory.h"
 #if ( MODEL == HYDRO )
 #include "CPU_Shared_FluUtility.cpp"
 #endif

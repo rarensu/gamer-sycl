@@ -8,7 +8,7 @@
 #if ( MODEL == HYDRO )
 #include "CPU_Shared_FluUtility.cpp"
 #endif
-#include "CUDA_ConstMemory.h"
+#include "ConstMemory.h"
 
 #endif // #ifdef __CUDACC__
 

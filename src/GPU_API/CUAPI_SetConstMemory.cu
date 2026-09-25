@@ -2,7 +2,7 @@
 // --> must define it BEFORE including CUAPI.h since the latter will include "Macro.h" to set SET_GLOBAL()
 #define DEFINE_GLOBAL
 #include "GPUAPI.h"
-#include "CUDA_ConstMemory.h"
+#include "ConstMemory.h"
 #undef DEFINE_GLOBAL
 
 #ifdef GPU

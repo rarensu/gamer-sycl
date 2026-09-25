@@ -10,7 +10,7 @@
 #ifdef SYCL_LANGUAGE_VERSION
 
 #include "CPU_Shared_FluUtility.cpp"
-#include "CUDA_ConstMemory.h"
+#include "ConstMemory.h"
 
 // parallel reduction routine
 #define RED_NTHREAD  DT_FLU_BLOCK_SIZE

@@ -6,7 +6,7 @@
 
 // include c_ExtAcc_AuxArray[]
 #ifdef __CUDACC__
-#include "CUDA_ConstMemory.h"
+#include "ConstMemory.h"
 #endif
 
 
@@ -42,7 +42,7 @@
 //                ExtAcc_Func       : Function pointer to the external acceleration routine (for both CPU and GPU)
 //                c_ExtAcc_AuxArray : Auxiliary array for adding external acceleration (for CPU only)
 //                                    --> When using GPU, this array is stored in the constant memory header
-//                                        CUDA_ConstMemory.h and does not need to be passed as a function argument
+//                                        ConstMemory.h and does not need to be passed as a function argument
 //                TimeNew           : Physical time at the current  step (for the external gravity solver)
 //                TimeOld           : Physical time at the previous step (for the external gravity solver in UNSPLIT_GRAVITY)
 //                MinEint           : Internal energy floor

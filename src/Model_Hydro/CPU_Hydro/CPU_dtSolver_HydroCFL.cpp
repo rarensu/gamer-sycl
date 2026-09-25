@@ -8,7 +8,7 @@
 #ifdef __CUDACC__
 
 #include "CUFLU_Shared_FluUtility.cu"
-#include "CUDA_ConstMemory.h"
+#include "ConstMemory.h"
 
 // parallel reduction routine
 #define RED_NTHREAD  DT_FLU_BLOCK_SIZE

@@ -12,7 +12,7 @@
 
 
 #include "FLU_Shared_FluUtility.cu"
-#include "CUDA_ConstMemory.h"
+#include "ConstMemory.h"
 
 #define to1D1(z,y,x) ( __umul24(z, FLU_NXT*FLU_NXT) + __umul24(y, FLU_NXT) + x )
 #define to1D2(z,y,x) ( __umul24(z-FLU_GHOST_SIZE, PS2*PS2) + __umul24(y-FLU_GHOST_SIZE, PS2) + x-FLU_GHOST_SIZE )

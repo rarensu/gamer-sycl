@@ -8,7 +8,7 @@
 #ifdef __CUDACC__
 
 // include c_ExtAcc_AuxArray[]
-#include "CUDA_ConstMemory.h"
+#include "ConstMemory.h"
 
 
 // parallel reduction routine
@@ -51,7 +51,7 @@
 //                ExtAcc_Func       : Function pointer to the external acceleration routine (for both CPU and GPU)
 //                c_ExtAcc_AuxArray : Auxiliary array for adding external acceleration (for CPU only)
 //                                    --> When using GPU, this array is stored in the constant memory header
-//                                        CUDA_ConstMemory.h and does not need to be passed as a function argument
+//                                        ConstMemory.h and does not need to be passed as a function argument
 //                ExtAcc_Time       : Physical time for adding the external acceleration
 //
 // Return      :  g_dt_Array

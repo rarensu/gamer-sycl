@@ -12,7 +12,7 @@
 #include "Global.h"
 #include "CUDA_CheckError.h"
 #include "CPU_Shared_FluUtility.cpp"
-#include "CUDA_ConstMemory.h"
+#include "ConstMemory.h"
 
 extern real (*d_SrcDlepProf_Data)[SRC_DLEP_PROF_NBINMAX];
 extern real  *d_SrcDlepProf_Radius;

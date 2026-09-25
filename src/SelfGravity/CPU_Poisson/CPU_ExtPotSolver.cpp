@@ -6,7 +6,7 @@
 
 // include c_ExtPot_AuxArray_Flt/Int[]
 #ifdef __CUDACC__
-#  include "CUDA_ConstMemory.h"
+#  include "ConstMemory.h"
 #endif
 
 
@@ -30,7 +30,7 @@
 //                ExtPot_Func               : Function pointer to the external potential routine (for both CPU and GPU)
 //                c_ExtPot_AuxArray_Flt/Int : Auxiliary floating-point/integer arrays for adding external potential (for CPU only)
 //                                            --> When using GPU, this array is stored in the constant memory header
-//                                                CUDA_ConstMemory.h and does not need to be passed as a function argument
+//                                                ConstMemory.h and does not need to be passed as a function argument
 //                Time                      : Target physical time
 //                PotIsInit                 : Whether the input potential has been initialized
 //                                            --> true : **add** external potential to the input data

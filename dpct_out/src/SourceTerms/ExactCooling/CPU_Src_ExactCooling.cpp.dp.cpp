@@ -11,7 +11,7 @@
 #include "Global.h"
 #include "CUDA_CheckError.h"
 #include "FLU_Shared_FluUtility.cu"
-#include "CUDA_ConstMemory.h"
+#include "ConstMemory.h"
 #ifdef DUAL_ENERGY
 #include "FLU_Shared_DualEnergy.cu"
 #endif

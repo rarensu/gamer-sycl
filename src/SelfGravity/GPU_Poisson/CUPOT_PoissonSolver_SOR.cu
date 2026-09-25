@@ -17,7 +17,7 @@
 
 
 // variables reside in constant memory
-#include "CUDA_ConstMemory.h"
+#include "ConstMemory.h"
 
 
 // parallel reduction routine

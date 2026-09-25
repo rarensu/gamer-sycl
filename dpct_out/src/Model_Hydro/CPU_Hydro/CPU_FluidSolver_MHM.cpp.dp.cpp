@@ -33,7 +33,7 @@
 # include "FLU_Shared_RiemannSolver_HLLD.cu"
 #endif
 
-#include "CUDA_ConstMemory.h"
+#include "ConstMemory.h"
 
 #ifdef COSMIC_RAY
 # include "FLU_CosmicRay.cu"
@@ -234,7 +234,7 @@ static void Hydro_RiemannPredict( const real g_ConVar_In[][ CUBE(FLU_NXT) ],
 //                ExtAcc_Func        : Function pointer to the external acceleration routine (for UNSPLIT_GRAVITY only)
 //                c_ExtAcc_AuxArray  : Auxiliary array for adding external acceleration      (for UNSPLIT_GRAVITY and CPU only)
 //                                     --> When using GPU, this array is stored in the constant memory header
-//                                         CUDA_ConstMemory.h and does not need to be passed as a function argument
+//                                         ConstMemory.h and does not need to be passed as a function argument
 //                MinDens/Pres/Eint  : Density, pressure, and internal energy floors
 //                DualEnergySwitch   : Use the dual-energy formalism if E_int/E_kin < DualEnergySwitch
 //                PassiveFloor       : Bitwise flag to specify the passive scalars to be floored
@@ -246,7 +246,7 @@ static void Hydro_RiemannPredict( const real g_ConVar_In[][ CUBE(FLU_NXT) ],
 //                                     --> Should be set to the global variable "PassiveNorm_VarIdx"
 //                                     --> When using GPU, this array is stored in the constant memory and does
 //                                         not need to be passed as a function argument
-//                                         --> Declared in CUDA_ConstMemory.h with the prefix "c_" to
+//                                         --> Declared in ConstMemory.h with the prefix "c_" to
 //                                             highlight that this is a constant variable on GPU
 //                FracPassive        : true --> convert passive scalars to mass fraction during data reconstruction
 //                NFrac              : Number of passive scalars for the option "FracPassive"
@@ -255,7 +255,7 @@ static void Hydro_RiemannPredict( const real g_ConVar_In[][ CUBE(FLU_NXT) ],
 //                                     --> Should be set to the global variable "PassiveIntFrac_VarIdx"
 //                                     --> When using GPU, this array is stored in the constant memory and does
 //                                         not need to be passed as a function argument
-//                                         --> Declared in CUDA_ConstMemory.h with the prefix "c_" to
+//                                         --> Declared in ConstMemory.h with the prefix "c_" to
 //                                             highlight that this is a constant variable on GPU
 //                JeansMinPres       : Apply minimum pressure estimated from the Jeans length
 //                JeansMinPres_Coeff : Coefficient used by JeansMinPres = G*(Jeans_NCell*Jeans_dh)^2/(Gamma*pi);
