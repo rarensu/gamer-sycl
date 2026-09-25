@@ -3,7 +3,7 @@
 
 
 
-#include "CUFLU.h"
+#include "FLU.h"
 
 #if ( MODEL == HYDRO  &&  defined DUAL_ENERGY  &&  !defined SRHD )
 

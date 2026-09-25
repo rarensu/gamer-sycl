@@ -1,4 +1,4 @@
-#include "CUFLU.h"
+#include "FLU.h"
 #include "Macro.h"
 
 #if ( ELBDM_SCHEME == ELBDM_HYBRID )

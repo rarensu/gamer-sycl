@@ -1,4 +1,4 @@
-#include "CUFLU.h"
+#include "FLU.h"
 
 #if (  MODEL == HYDRO  &&  ( FLU_SCHEME == MHM || FLU_SCHEME == MHM_RP )  )
 

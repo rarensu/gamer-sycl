@@ -1,4 +1,4 @@
-#include "CUFLU.h"
+#include "FLU.h"
 
 #if ( MODEL == HYDRO )
 

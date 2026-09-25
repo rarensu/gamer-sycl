@@ -3,7 +3,7 @@
 
 
 
-#include "CUFLU.h"
+#include "FLU.h"
 
 #if (  MODEL == HYDRO  &&  !defined SRHD  &&  \
        ( RSOLVER == EXACT || RSOLVER_RESCUE == EXACT || CHECK_INTERMEDIATE == EXACT )  &&  \

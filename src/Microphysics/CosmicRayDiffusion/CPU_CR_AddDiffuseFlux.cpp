@@ -3,7 +3,7 @@
 
 
 
-#include "CUFLU.h"
+#include "FLU.h"
 
 #ifdef CR_DIFFUSION
 

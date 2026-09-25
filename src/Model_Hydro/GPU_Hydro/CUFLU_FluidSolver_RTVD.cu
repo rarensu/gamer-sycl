@@ -1,5 +1,5 @@
 #include "Macro.h"
-#include "CUFLU.h"
+#include "FLU.h"
 
 #if ( defined GPU  &&  MODEL == HYDRO  &&  FLU_SCHEME == RTVD  &&  !defined SRHD )
 

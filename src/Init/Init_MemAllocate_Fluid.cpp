@@ -1,7 +1,7 @@
 #ifndef GPU
 
 #include "GAMER.h"
-#include "CUFLU.h"
+#include "FLU.h"
 
 
 #if ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP  ||  FLU_SCHEME == CTU )

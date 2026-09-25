@@ -3,7 +3,7 @@
 
 
 #include "GAMER.h"
-#include "CUFLU.h"
+#include "FLU.h"
 
 #ifndef GRAVITY
 static double *ExtAcc_AuxArray = NULL;

@@ -1,5 +1,5 @@
 #include "GAMER.h"
-#include "CUFLU.h"
+#include "FLU.h"
 
 #if ( !defined GPU  &&  MODEL == ELBDM  &&  WAVE_SCHEME == WAVE_FD )
 

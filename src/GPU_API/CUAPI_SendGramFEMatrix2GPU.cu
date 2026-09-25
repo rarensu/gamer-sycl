@@ -1,5 +1,5 @@
 #include "GPUAPI.h"
-#include "CUFLU.h"
+#include "FLU.h"
 
 
 #if ( defined(GPU)  &&  GRAMFE_SCHEME == GRAMFE_MATMUL )

@@ -1,5 +1,5 @@
 #include "GPUAPI.h"
-#include "CUFLU.h"
+#include "FLU.h"
 
 #ifdef GPU
 

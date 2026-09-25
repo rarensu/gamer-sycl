@@ -1,4 +1,4 @@
-#include "CUFLU.h"
+#include "FLU.h"
 #include "GAMER.h"
 
 #if ( GRAMFE_SCHEME == GRAMFE_MATMUL )

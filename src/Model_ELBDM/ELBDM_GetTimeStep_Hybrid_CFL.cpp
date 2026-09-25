@@ -1,5 +1,5 @@
 #include "GAMER.h"
-#include "CUFLU.h"
+#include "FLU.h"
 
 #if ( ELBDM_SCHEME == ELBDM_HYBRID )
 

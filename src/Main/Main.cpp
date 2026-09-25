@@ -2,7 +2,7 @@
 #define DEFINE_GLOBAL
 #include "GAMER.h"
 #undef DEFINE_GLOBAL
-#include "CUFLU.h"
+#include "FLU.h"
 
 #ifdef GRAVITY
 #include "CUPOT.h"

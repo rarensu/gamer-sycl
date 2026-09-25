@@ -9,7 +9,7 @@ datatypes in the HDF5 format
 
 #include "hdf5.h"
 #include "Macro.h"
-#include "CUFLU.h"
+#include "FLU.h"
 #ifdef GRAVITY
 #include "CUPOT.h"
 #endif

@@ -1,4 +1,4 @@
-#include "CUFLU.h"
+#include "FLU.h"
 #ifdef __CUDACC__
 #include "CheckError.h"
 #include "CUFLU_Shared_FluUtility.cu"

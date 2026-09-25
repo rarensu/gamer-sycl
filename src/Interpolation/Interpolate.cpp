@@ -1,5 +1,5 @@
 #include "GAMER.h"
-#include "CUFLU.h"
+#include "FLU.h"
 
 
 static IntSchemeFunc_t Int_SelectScheme( const IntScheme_t IntScheme );
