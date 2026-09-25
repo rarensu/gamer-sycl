@@ -232,35 +232,35 @@ void CUAPI_SetCache()
 // 1. fluid solver
 #  if   ( MODEL == HYDRO )
 #  if   ( FLU_SCHEME == RTVD )
-   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_FluidSolver_RTVD,             cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_FluidSolver_RTVD,             cudaFuncCachePreferShared )  );
 #  elif ( FLU_SCHEME == MHM )
-   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_FluidSolver_MHM,              cudaFuncCachePreferL1     )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_FluidSolver_MHM,              cudaFuncCachePreferL1     )  );
 #  elif ( FLU_SCHEME == MHM_RP )
-   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_FluidSolver_MHM,              cudaFuncCachePreferL1     )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_FluidSolver_MHM,              cudaFuncCachePreferL1     )  );
 #  elif ( FLU_SCHEME == CTU )
    /*
    DPCT1027:76: The call to cudaFuncSetCacheConfig was replaced with 0 because
    SYCL currently does not support configuring shared memory on devices.
    */
-   CUDA_CHECK_ERROR(0);
+   DEVICE_CHECK_ERROR(0);
 #  endif
    /*
    DPCT1027:77: The call to cudaFuncSetCacheConfig was replaced with 0 because
    SYCL currently does not support configuring shared memory on devices.
    */
-   CUDA_CHECK_ERROR(0);
+   DEVICE_CHECK_ERROR(0);
 #  ifdef GRAVITY
-   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_dtSolver_HydroGravity,        cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_dtSolver_HydroGravity,        cudaFuncCachePreferShared )  );
 #  endif
 
 #  elif ( MODEL == ELBDM )
 #  if   ( WAVE_SCHEME == WAVE_FD )
-   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_ELBDMSolver_FD,               cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_ELBDMSolver_FD,               cudaFuncCachePreferShared )  );
 #  elif ( WAVE_SCHEME == WAVE_GRAMFE )
 #   if   ( GRAMFE_SCHEME == GRAMFE_FFT )
-   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_ELBDMSolver_GramFE_FFT,       cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_ELBDMSolver_GramFE_FFT,       cudaFuncCachePreferShared )  );
 #   elif ( GRAMFE_SCHEME == GRAMFE_MATMUL )
-   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_ELBDMSolver_GramFE_MATMUL,    cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_ELBDMSolver_GramFE_MATMUL,    cudaFuncCachePreferShared )  );
 #   else // GRAMFE_SCHEME
 #   error : ERROR : unsupported GRAMFE_SCHEME !!
 #   endif // GRAMFE_SCHEME
@@ -268,7 +268,7 @@ void CUAPI_SetCache()
 #  error : ERROR : unsupported WAVE_SCHEME !!
 #  endif // WAVE_SCHEME
 #  if ( ELBDM_SCHEME == ELBDM_HYBRID )
-   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_ELBDMSolver_HamiltonJacobi,   cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_ELBDMSolver_HamiltonJacobi,   cudaFuncCachePreferShared )  );
 #  endif
 
 #  else
@@ -280,18 +280,18 @@ void CUAPI_SetCache()
 
 // 2. Poisson solver
 #  if   ( POT_SCHEME == SOR )
-   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_PoissonSolver_SOR,            cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_PoissonSolver_SOR,            cudaFuncCachePreferShared )  );
 #  elif ( POT_SCHEME == MG )
-   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_PoissonSolver_MG,             cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_PoissonSolver_MG,             cudaFuncCachePreferShared )  );
 #  endif // POT_SCHEME
 
 
 // 3. gravity solver
 #  if   ( MODEL == HYDRO )
-   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_HydroGravitySolver,           cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_HydroGravitySolver,           cudaFuncCachePreferShared )  );
 
 #  elif ( MODEL == ELBDM )
-   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_ELBDMGravitySolver,           cudaFuncCachePreferL1     )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_ELBDMGravitySolver,           cudaFuncCachePreferL1     )  );
 
 #  else
 #  error : ERROR : unsupported MODEL !!
@@ -305,7 +305,7 @@ void CUAPI_SetCache()
    DPCT1027:78: The call to cudaFuncSetCacheConfig was replaced with 0 because
    SYCL currently does not support configuring shared memory on devices.
    */
-   CUDA_CHECK_ERROR(0);
+   DEVICE_CHECK_ERROR(0);
 
    if ( MPI_Rank == 0 )    Aux_Message( stdout, "%s ... done\n", __FUNCTION__ );
 

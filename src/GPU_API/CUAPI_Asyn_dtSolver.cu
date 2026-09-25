@@ -218,10 +218,10 @@ void CUAPI_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real 
       switch ( TSolver )
       {
          case DT_FLU_SOLVER:
-            CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Flu_Array_T      + UsedPatch[s], h_Flu_Array    + UsedPatch[s],
+            DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Flu_Array_T      + UsedPatch[s], h_Flu_Array    + UsedPatch[s],
                                Flu_MemSize[s],    cudaMemcpyHostToDevice, Stream[s] )  );
 #           ifdef MHD
-            CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Mag_Array_T      + UsedPatch[s], h_Mag_Array    + UsedPatch[s],
+            DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Mag_Array_T      + UsedPatch[s], h_Mag_Array    + UsedPatch[s],
                                Mag_MemSize[s],    cudaMemcpyHostToDevice, Stream[s] )  );
 #           endif
          break;
@@ -229,11 +229,11 @@ void CUAPI_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real 
 #        ifdef GRAVITY
          case DT_GRA_SOLVER:
             if ( UsePot )
-            CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Pot_Array_T      + UsedPatch[s], h_Pot_Array    + UsedPatch[s],
+            DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Pot_Array_T      + UsedPatch[s], h_Pot_Array    + UsedPatch[s],
                                Pot_MemSize[s],    cudaMemcpyHostToDevice, Stream[s] )  );
 
             if ( ExtAcc )
-            CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array + UsedPatch[s],
+            DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array + UsedPatch[s],
                                Corner_MemSize[s], cudaMemcpyHostToDevice, Stream[s] )  );
          break;
 #        endif
@@ -281,7 +281,7 @@ void CUAPI_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real 
 #        error : unsupported MODEL !!
 #     endif // MODEL
 
-      CUDA_CHECK_ERROR( cudaGetLastError() );
+      DEVICE_CHECK_ERROR( cudaGetLastError() );
    } // for (int s=0; s<GPU_NStream; s++)
 
 
@@ -291,7 +291,7 @@ void CUAPI_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real 
    {
       if ( NPatch_per_Stream[s] == 0 )    continue;
 
-      CUDA_CHECK_ERROR(  cudaMemcpyAsync( h_dt_Array + UsedPatch[s], d_dt_Array_T + UsedPatch[s],
+      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( h_dt_Array + UsedPatch[s], d_dt_Array_T + UsedPatch[s],
                          dt_MemSize[s], cudaMemcpyDeviceToHost, Stream[s] )  );
    } // for (int s=0; s<GPU_NStream; s++)
 

@@ -335,16 +335,16 @@ void CUAPI_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_
       {
          if ( SelfGravity )
          {
-            CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Rho_Array_P      + UsedPatch[s], h_Rho_Array    + UsedPatch[s],
+            DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Rho_Array_P      + UsedPatch[s], h_Rho_Array    + UsedPatch[s],
                                                 Rho_MemSize[s],    cudaMemcpyHostToDevice, Stream[s] )  );
 
-            CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Pot_Array_P_In   + UsedPatch[s], h_Pot_Array_In + UsedPatch[s],
+            DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Pot_Array_P_In   + UsedPatch[s], h_Pot_Array_In + UsedPatch[s],
                                                 Pot_MemSize_In[s], cudaMemcpyHostToDevice, Stream[s] )  );
          }
 
          if ( ExtPot )
          {
-            CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array + UsedPatch[s],
+            DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array + UsedPatch[s],
                                                 Corner_MemSize[s], cudaMemcpyHostToDevice, Stream[s] )  );
          }
       } // if ( Poisson )
@@ -354,31 +354,31 @@ void CUAPI_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_
 //       no need to transfer potential if we are also invoking the Poisson solver, for which
 //       potential data will already be in GPU
          if (  ( SelfGravity || ExtPot )  &&  !Poisson  )
-         CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Pot_Array_P_Out  + UsedPatch[s], h_Pot_Array_Out + UsedPatch[s],
+         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Pot_Array_P_Out  + UsedPatch[s], h_Pot_Array_Out + UsedPatch[s],
                                              Pot_MemSize_Out[s], cudaMemcpyHostToDevice, Stream[s] )  );
 
-         CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Flu_Array_G      + UsedPatch[s], h_Flu_Array     + UsedPatch[s],
+         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Flu_Array_G      + UsedPatch[s], h_Flu_Array     + UsedPatch[s],
                                              Flu_MemSize[s],     cudaMemcpyHostToDevice, Stream[s] )  );
 
          if ( ExtAcc )
-         CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array  + UsedPatch[s],
+         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array  + UsedPatch[s],
                                              Corner_MemSize[s],  cudaMemcpyHostToDevice, Stream[s] )  );
 #        ifdef UNSPLIT_GRAVITY
          if ( SelfGravity  ||  ExtPot )
-         CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Pot_Array_USG_G  + UsedPatch[s], h_Pot_Array_USG + UsedPatch[s],
+         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Pot_Array_USG_G  + UsedPatch[s], h_Pot_Array_USG + UsedPatch[s],
                                              Pot_USG_MemSize[s], cudaMemcpyHostToDevice, Stream[s] )  );
 
-         CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Flu_Array_USG_G  + UsedPatch[s], h_Flu_Array_USG + UsedPatch[s],
+         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Flu_Array_USG_G  + UsedPatch[s], h_Flu_Array_USG + UsedPatch[s],
                                              Flu_USG_MemSize[s], cudaMemcpyHostToDevice, Stream[s] )  );
 #        endif
 
 #        ifdef DUAL_ENERGY
-         CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_DE_Array_G      + UsedPatch[s], h_DE_Array      + UsedPatch[s],
+         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_DE_Array_G      + UsedPatch[s], h_DE_Array      + UsedPatch[s],
                                              DE_MemSize[s],      cudaMemcpyHostToDevice, Stream[s] )  );
 #        endif
 
 #        ifdef MHD
-         CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Emag_Array_G    + UsedPatch[s], h_Emag_Array    + UsedPatch[s],
+         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Emag_Array_G    + UsedPatch[s], h_Emag_Array    + UsedPatch[s],
                                              Emag_MemSize[s],    cudaMemcpyHostToDevice, Stream[s] )  );
 #        endif
       } // if ( GraAcc )
@@ -470,7 +470,7 @@ void CUAPI_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_
 #        endif // MODEL
       } // if ( GraAcc )
 
-      CUDA_CHECK_ERROR( cudaGetLastError() );
+      DEVICE_CHECK_ERROR( cudaGetLastError() );
    } // for (int s=0; s<GPU_NStream; s++)
 
 
@@ -481,16 +481,16 @@ void CUAPI_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_
       if ( NPatch_per_Stream[s] == 0 )    continue;
 
       if ( Poisson  &&  ( SelfGravity || ExtPot )  )
-         CUDA_CHECK_ERROR(  cudaMemcpyAsync( h_Pot_Array_Out + UsedPatch[s], d_Pot_Array_P_Out + UsedPatch[s],
+         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( h_Pot_Array_Out + UsedPatch[s], d_Pot_Array_P_Out + UsedPatch[s],
                                              Pot_MemSize_Out[s], cudaMemcpyDeviceToHost, Stream[s] )  );
 
       if ( GraAcc )
       {
-         CUDA_CHECK_ERROR(  cudaMemcpyAsync( h_Flu_Array     + UsedPatch[s], d_Flu_Array_G     + UsedPatch[s],
+         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( h_Flu_Array     + UsedPatch[s], d_Flu_Array_G     + UsedPatch[s],
                                              Flu_MemSize[s],     cudaMemcpyDeviceToHost, Stream[s] )  );
 
 #        ifdef DUAL_ENERGY
-         CUDA_CHECK_ERROR(  cudaMemcpyAsync( h_DE_Array      + UsedPatch[s], d_DE_Array_G      + UsedPatch[s],
+         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( h_DE_Array      + UsedPatch[s], d_DE_Array_G      + UsedPatch[s],
                                              DE_MemSize[s],      cudaMemcpyDeviceToHost, Stream[s] )  );
 #        endif
       }

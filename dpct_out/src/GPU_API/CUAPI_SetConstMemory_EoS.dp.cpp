@@ -26,28 +26,28 @@ void CUAPI_SetConstMemory_EoS()
 {
 
 // copy data to constant memory
-   CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(dpct::get_in_order_queue()
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(dpct::get_in_order_queue()
                                          .memcpy(c_EoS_AuxArray_Flt.get_ptr(),
                                                  EoS_AuxArray_Flt,
                                                  EOS_NAUX_MAX * sizeof(double))
                                          .wait()));
-   CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(dpct::get_in_order_queue()
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(dpct::get_in_order_queue()
                                          .memcpy(c_EoS_AuxArray_Int.get_ptr(),
                                                  EoS_AuxArray_Int,
                                                  EOS_NAUX_MAX * sizeof(int))
                                          .wait()));
-   CUDA_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(
        DPCT_CHECK_ERROR(dpct::get_in_order_queue()
                             .memcpy(c_EoS_Table.get_ptr(), d_EoS_Table,
                                     EOS_NTABLE_MAX * sizeof(real *))
                             .wait()));
 
 // obtain the constant-memory pointers
-   CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&EoS.AuxArrayDevPtr_Flt) =
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&EoS.AuxArrayDevPtr_Flt) =
                                          c_EoS_AuxArray_Flt.get_ptr()));
-   CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&EoS.AuxArrayDevPtr_Int) =
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&EoS.AuxArrayDevPtr_Int) =
                                          c_EoS_AuxArray_Int.get_ptr()));
-   CUDA_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(
        DPCT_CHECK_ERROR(*((void **)&EoS.Table) = c_EoS_Table.get_ptr()));
 
 } // FUNCTION : CUAPI_SetConstMemory_EoS

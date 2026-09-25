@@ -25,7 +25,7 @@ void CUAPI_DiagnoseDevice()
 
 // get the number of devices
    int DeviceCount;
-   CUDA_CHECK_ERROR(  cudaGetDeviceCount( &DeviceCount )  );
+   DEVICE_CHECK_ERROR(  cudaGetDeviceCount( &DeviceCount )  );
 
    if ( DeviceCount == 0 )
       Aux_Error( ERROR_INFO, "no devices supporting CUDA at MPI_Rank %2d (host = %8s) !!\n", MPI_Rank, Host );
@@ -33,12 +33,12 @@ void CUAPI_DiagnoseDevice()
 
 // get the device ID
    int GetDeviceID = 999;
-   CUDA_CHECK_ERROR(  cudaGetDevice( &GetDeviceID )  );
+   DEVICE_CHECK_ERROR(  cudaGetDevice( &GetDeviceID )  );
 
 
 // load the device properties
    cudaDeviceProp DeviceProp;
-   CUDA_CHECK_ERROR(  cudaGetDeviceProperties( &DeviceProp, GetDeviceID )  );
+   DEVICE_CHECK_ERROR(  cudaGetDeviceProperties( &DeviceProp, GetDeviceID )  );
 
 
 // get the number of cores per multiprocessor
@@ -77,8 +77,8 @@ void CUAPI_DiagnoseDevice()
       if ( MPI_Rank == YourTurn )
       {
          int DriverVersion = 0, RuntimeVersion = 0;
-         CUDA_CHECK_ERROR(  cudaDriverGetVersion( &DriverVersion )  );
-         CUDA_CHECK_ERROR(  cudaRuntimeGetVersion( &RuntimeVersion )  );
+         DEVICE_CHECK_ERROR(  cudaDriverGetVersion( &DriverVersion )  );
+         DEVICE_CHECK_ERROR(  cudaRuntimeGetVersion( &RuntimeVersion )  );
 
          FILE *Note = fopen( FileName, "a" );
          if ( MPI_Rank != 0 )   fprintf( Note, "\n\n" );
@@ -89,7 +89,7 @@ void CUAPI_DiagnoseDevice()
          Aux_GetCPUInfo( FileName );
 
          int clockRate; // in unit of kHz
-         CUDA_CHECK_ERROR(  cudaDeviceGetAttribute(&clockRate, cudaDevAttrClockRate, GetDeviceID)  );
+         DEVICE_CHECK_ERROR(  cudaDeviceGetAttribute(&clockRate, cudaDevAttrClockRate, GetDeviceID)  );
 
          fprintf( Note, "\n" );
          fprintf( Note, "GPU Info :\n" );

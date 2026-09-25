@@ -220,84 +220,84 @@ int CUAPI_MemAllocate_Fluid( const int Flu_NPG, const int Pot_NPG, const int Src
 
 
 // allocate the device memory
-   CUDA_CHECK_MALLOC(d_Flu_Array_F_In = (real(*)[5][10648])sycl::malloc_device(
+   DEVICE_CHECK_MALLOC(d_Flu_Array_F_In = (real(*)[5][10648])sycl::malloc_device(
                          Flu_MemSize_F_In, dpct::get_in_order_queue()));
-   CUDA_CHECK_MALLOC(d_Flu_Array_F_Out = (real(*)[5][4096])sycl::malloc_device(
+   DEVICE_CHECK_MALLOC(d_Flu_Array_F_Out = (real(*)[5][4096])sycl::malloc_device(
                          Flu_MemSize_F_Out, dpct::get_in_order_queue()));
 
    if ( amr->WithFlux )
-   CUDA_CHECK_MALLOC(d_Flux_Array = (real(*)[9][5][256])sycl::malloc_device(
+   DEVICE_CHECK_MALLOC(d_Flux_Array = (real(*)[9][5][256])sycl::malloc_device(
                          Flux_MemSize, dpct::get_in_order_queue()));
 
 #  ifdef UNSPLIT_GRAVITY
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Pot_Array_USG_F,      Pot_MemSize_USG_F    )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Pot_Array_USG_F,      Pot_MemSize_USG_F    )  );
 
    if ( OPT__EXT_ACC )
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Corner_Array_F,       Corner_MemSize_F     )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Corner_Array_F,       Corner_MemSize_F     )  );
 #  endif
 
 #  ifdef DUAL_ENERGY
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_DE_Array_F_Out,       DE_MemSize_F_Out     )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_DE_Array_F_Out,       DE_MemSize_F_Out     )  );
 #  endif
 
 #  ifdef MHD
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Mag_Array_F_In,       Mag_MemSize_F_In     )  );
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Mag_Array_F_Out,      Mag_MemSize_F_Out    )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Mag_Array_F_In,       Mag_MemSize_F_In     )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Mag_Array_F_Out,      Mag_MemSize_F_Out    )  );
 
    if ( amr->WithElectric )
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Ele_Array,            Ele_MemSize          )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Ele_Array,            Ele_MemSize          )  );
 
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Mag_Array_T,          Mag_MemSize_T        )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Mag_Array_T,          Mag_MemSize_T        )  );
 #  endif
 
-   CUDA_CHECK_MALLOC(d_dt_Array_T = (real *)sycl::malloc_device(
+   DEVICE_CHECK_MALLOC(d_dt_Array_T = (real *)sycl::malloc_device(
                          dt_MemSize_T, dpct::get_in_order_queue()));
-   CUDA_CHECK_MALLOC(d_Flu_Array_T = (real(*)[5][512])sycl::malloc_device(
+   DEVICE_CHECK_MALLOC(d_Flu_Array_T = (real(*)[5][512])sycl::malloc_device(
                          Flu_MemSize_T, dpct::get_in_order_queue()));
 
 #  if ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP  ||  FLU_SCHEME == CTU )
-   CUDA_CHECK_MALLOC(d_FC_Var = (real(*)[6][5][5832])sycl::malloc_device(
+   DEVICE_CHECK_MALLOC(d_FC_Var = (real(*)[6][5][5832])sycl::malloc_device(
                          FC_Var_MemSize, dpct::get_in_order_queue()));
 
-   CUDA_CHECK_MALLOC(d_FC_Flux = (real(*)[3][5][5832])sycl::malloc_device(
+   DEVICE_CHECK_MALLOC(d_FC_Flux = (real(*)[3][5][5832])sycl::malloc_device(
                          FC_Flux_MemSize, dpct::get_in_order_queue()));
 
-   CUDA_CHECK_MALLOC(d_PriVar = (real(*)[5][10648])sycl::malloc_device(
+   DEVICE_CHECK_MALLOC(d_PriVar = (real(*)[5][10648])sycl::malloc_device(
                          PriVar_MemSize, dpct::get_in_order_queue()));
 
 #  if ( LR_SCHEME == PPM )
-   CUDA_CHECK_MALLOC(d_Slope_PPM = (real(*)[3][5][8000])sycl::malloc_device(
+   DEVICE_CHECK_MALLOC(d_Slope_PPM = (real(*)[3][5][8000])sycl::malloc_device(
                          Slope_PPM_MemSize, dpct::get_in_order_queue()));
 #  endif
 #  ifdef MHD
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_FC_Mag_Half,          FC_Mag_Half_MemSize  )  );
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_EC_Ele,               EC_Ele_MemSize       )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_FC_Mag_Half,          FC_Mag_Half_MemSize  )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_EC_Ele,               EC_Ele_MemSize       )  );
 #  endif
 #  endif // #if ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP  ||  FLU_SCHEME == CTU )
 
    if ( SrcTerms.Any ) {
-   CUDA_CHECK_MALLOC(d_Flu_Array_S_In = (real(*)[5][512])sycl::malloc_device(
+   DEVICE_CHECK_MALLOC(d_Flu_Array_S_In = (real(*)[5][512])sycl::malloc_device(
                          Flu_MemSize_S_In, dpct::get_in_order_queue()));
-   CUDA_CHECK_MALLOC(d_Flu_Array_S_Out = (real(*)[5][512])sycl::malloc_device(
+   DEVICE_CHECK_MALLOC(d_Flu_Array_S_Out = (real(*)[5][512])sycl::malloc_device(
                          Flu_MemSize_S_Out, dpct::get_in_order_queue()));
 #  ifdef MHD
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Mag_Array_S_In,       Mag_MemSize_S_In     )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Mag_Array_S_In,       Mag_MemSize_S_In     )  );
 #  endif
-   CUDA_CHECK_MALLOC(d_Corner_Array_S = (double (*)[3])sycl::malloc_device(
+   DEVICE_CHECK_MALLOC(d_Corner_Array_S = (double (*)[3])sycl::malloc_device(
                          Corner_MemSize_S, dpct::get_in_order_queue()));
    }
 
 
 #  if ( MODEL == ELBDM )
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_IsCompletelyRefined,  Flu_MemSize_IsCompletelyRefined )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_IsCompletelyRefined,  Flu_MemSize_IsCompletelyRefined )  );
 #  endif
 
 #  if ( ELBDM_SCHEME == ELBDM_HYBRID )
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_HasWaveCounterpart,   Flu_MemSize_HasWaveCounterpart  )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_HasWaveCounterpart,   Flu_MemSize_HasWaveCounterpart  )  );
 #  endif
 
 #  if ( GRAMFE_SCHEME == GRAMFE_MATMUL )
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Flu_TimeEvo,          GramFE_TimeEvo_MemSize          )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Flu_TimeEvo,          GramFE_TimeEvo_MemSize          )  );
 #  endif
 
 
@@ -309,73 +309,73 @@ int CUAPI_MemAllocate_Fluid( const int Flu_NPG, const int Pot_NPG, const int Src
 // allocate the host memory by CUDA
    for (int t=0; t<2; t++)
    {
-      CUDA_CHECK_MALLOC(h_Flu_Array_F_In[t] =
+      DEVICE_CHECK_MALLOC(h_Flu_Array_F_In[t] =
                             (real(*)[5][10648])sycl::malloc_host(
                                 Flu_MemSize_F_In, dpct::get_in_order_queue()));
-      CUDA_CHECK_MALLOC(h_Flu_Array_F_Out[t] =
+      DEVICE_CHECK_MALLOC(h_Flu_Array_F_Out[t] =
                             (real(*)[5][4096])sycl::malloc_host(
                                 Flu_MemSize_F_Out, dpct::get_in_order_queue()));
 
       if ( amr->WithFlux )
-      CUDA_CHECK_MALLOC(h_Flux_Array[t] = (real(*)[9][5][256])sycl::malloc_host(
+      DEVICE_CHECK_MALLOC(h_Flux_Array[t] = (real(*)[9][5][256])sycl::malloc_host(
                             Flux_MemSize, dpct::get_in_order_queue()));
 
 #     ifdef UNSPLIT_GRAVITY
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Pot_Array_USG_F    [t],  Pot_MemSize_USG_F    )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Pot_Array_USG_F    [t],  Pot_MemSize_USG_F    )  );
 
       if ( OPT__EXT_ACC )
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Corner_Array_F     [t],  Corner_MemSize_F     )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Corner_Array_F     [t],  Corner_MemSize_F     )  );
 #     endif
 
 #     ifdef DUAL_ENERGY
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_DE_Array_F_Out     [t],  DE_MemSize_F_Out     )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_DE_Array_F_Out     [t],  DE_MemSize_F_Out     )  );
 #     endif
 
 #     ifdef MHD
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Mag_Array_F_In     [t],  Mag_MemSize_F_In     )  );
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Mag_Array_F_Out    [t],  Mag_MemSize_F_Out    )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Mag_Array_F_In     [t],  Mag_MemSize_F_In     )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Mag_Array_F_Out    [t],  Mag_MemSize_F_Out    )  );
 
       if ( amr->WithElectric )
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Ele_Array          [t],  Ele_MemSize          )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Ele_Array          [t],  Ele_MemSize          )  );
 
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Mag_Array_T        [t],  Mag_MemSize_T        )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Mag_Array_T        [t],  Mag_MemSize_T        )  );
 #     endif
 
-      CUDA_CHECK_MALLOC(h_dt_Array_T[t] = (real *)sycl::malloc_host(
+      DEVICE_CHECK_MALLOC(h_dt_Array_T[t] = (real *)sycl::malloc_host(
                             dt_MemSize_T, dpct::get_in_order_queue()));
-      CUDA_CHECK_MALLOC(h_Flu_Array_T[t] = (real(*)[5][512])sycl::malloc_host(
+      DEVICE_CHECK_MALLOC(h_Flu_Array_T[t] = (real(*)[5][512])sycl::malloc_host(
                             Flu_MemSize_T, dpct::get_in_order_queue()));
 
       if ( SrcTerms.Any ) {
-      CUDA_CHECK_MALLOC(h_Flu_Array_S_In[t] =
+      DEVICE_CHECK_MALLOC(h_Flu_Array_S_In[t] =
                             (real(*)[5][512])sycl::malloc_host(
                                 Flu_MemSize_S_In, dpct::get_in_order_queue()));
-      CUDA_CHECK_MALLOC(h_Flu_Array_S_Out[t] =
+      DEVICE_CHECK_MALLOC(h_Flu_Array_S_Out[t] =
                             (real(*)[5][512])sycl::malloc_host(
                                 Flu_MemSize_S_Out, dpct::get_in_order_queue()));
 #     ifdef MHD
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Mag_Array_S_In     [t],  Mag_MemSize_S_In     )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Mag_Array_S_In     [t],  Mag_MemSize_S_In     )  );
 #     endif
-      CUDA_CHECK_MALLOC(h_Corner_Array_S[t] = (double (*)[3])sycl::malloc_host(
+      DEVICE_CHECK_MALLOC(h_Corner_Array_S[t] = (double (*)[3])sycl::malloc_host(
                             Corner_MemSize_S, dpct::get_in_order_queue()));
       }
 
 #     if ( MODEL == ELBDM )
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_IsCompletelyRefined[t],  Flu_MemSize_IsCompletelyRefined  )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_IsCompletelyRefined[t],  Flu_MemSize_IsCompletelyRefined  )  );
 #     endif
 
 #     if ( ELBDM_SCHEME == ELBDM_HYBRID )
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_HasWaveCounterpart [t],  Flu_MemSize_HasWaveCounterpart   )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_HasWaveCounterpart [t],  Flu_MemSize_HasWaveCounterpart   )  );
 #     endif
    } // for (int t=0; t<2; t++)
 
 #  if ( GRAMFE_SCHEME == GRAMFE_MATMUL )
-   CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_GramFE_TimeEvo,  GramFE_TimeEvo_MemSize )  );
+   DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_GramFE_TimeEvo,  GramFE_TimeEvo_MemSize )  );
 #  endif
 
 // create streams
    Stream = new dpct::queue_ptr[GPU_NStream];
-   for (int s = 0; s < GPU_NStream; s++) CUDA_CHECK_ERROR(
+   for (int s = 0; s < GPU_NStream; s++) DEVICE_CHECK_ERROR(
        DPCT_CHECK_ERROR(Stream[s] = dpct::get_current_device().create_queue()));
 
    return GAMER_SUCCESS;

@@ -152,7 +152,7 @@ __host__
 
 void SetGPUExtAcc_BarredPot( ExtAcc_t &GPUExtAcc_Ptr )
 {
-   CUDA_CHECK_ERROR(  cudaMemcpyFromSymbol( &GPUExtAcc_Ptr, ExtAcc_Ptr, sizeof(ExtAcc_t) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &GPUExtAcc_Ptr, ExtAcc_Ptr, sizeof(ExtAcc_t) )  );
 }
 
 #else // #ifdef __CUDACC__

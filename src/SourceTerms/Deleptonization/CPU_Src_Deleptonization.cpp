@@ -252,8 +252,8 @@ void Src_PassData2GPU_Deleptonization()
    const long Size_Radius = sizeof(real)*                   SRC_DLEP_PROF_NBINMAX;
 
 // use synchronous transfer
-   CUDA_CHECK_ERROR(  cudaMemcpy( d_SrcDlepProf_Data,   h_SrcDlepProf_Data,   Size_Data,   cudaMemcpyHostToDevice )  );
-   CUDA_CHECK_ERROR(  cudaMemcpy( d_SrcDlepProf_Radius, h_SrcDlepProf_Radius, Size_Radius, cudaMemcpyHostToDevice )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpy( d_SrcDlepProf_Data,   h_SrcDlepProf_Data,   Size_Data,   cudaMemcpyHostToDevice )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpy( d_SrcDlepProf_Radius, h_SrcDlepProf_Radius, Size_Radius, cudaMemcpyHostToDevice )  );
 
 } // FUNCTION : Src_PassData2GPU_Deleptonization
 #endif // #ifdef __CUDACC__
@@ -287,7 +287,7 @@ FUNC_SPACE SrcFunc_t SrcFunc_Ptr = Src_Deleptonization;
 __host__
 void Src_SetGPUFunc_Deleptonization( SrcFunc_t &SrcFunc_GPUPtr )
 {
-   CUDA_CHECK_ERROR(  cudaMemcpyFromSymbol( &SrcFunc_GPUPtr, SrcFunc_Ptr, sizeof(SrcFunc_t) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &SrcFunc_GPUPtr, SrcFunc_Ptr, sizeof(SrcFunc_t) )  );
 }
 
 #else
@@ -320,12 +320,12 @@ void Src_SetConstMemory_Deleptonization( const double AuxArray_Flt[], const int 
 {
 
 // copy data to constant memory
-   CUDA_CHECK_ERROR(  cudaMemcpyToSymbol( c_Src_Dlep_AuxArray_Flt, AuxArray_Flt, SRC_NAUX_DLEP*sizeof(double) )  );
-   CUDA_CHECK_ERROR(  cudaMemcpyToSymbol( c_Src_Dlep_AuxArray_Int, AuxArray_Int, SRC_NAUX_DLEP*sizeof(int   ) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyToSymbol( c_Src_Dlep_AuxArray_Flt, AuxArray_Flt, SRC_NAUX_DLEP*sizeof(double) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyToSymbol( c_Src_Dlep_AuxArray_Int, AuxArray_Int, SRC_NAUX_DLEP*sizeof(int   ) )  );
 
 // obtain the constant-memory pointers
-   CUDA_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&DevPtr_Flt, c_Src_Dlep_AuxArray_Flt )  );
-   CUDA_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&DevPtr_Int, c_Src_Dlep_AuxArray_Int )  );
+   DEVICE_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&DevPtr_Flt, c_Src_Dlep_AuxArray_Flt )  );
+   DEVICE_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&DevPtr_Int, c_Src_Dlep_AuxArray_Int )  );
 
 } // FUNCTION : Src_SetConstMemory_Deleptonization
 #endif // #ifdef __CUDACC__

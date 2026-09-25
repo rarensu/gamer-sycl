@@ -145,12 +145,12 @@ void CUAPI_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NX
       memory, so you may need to call wait() on event return by memcpy API to
       ensure synchronization behavior.
       */
-      CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
           Stream[s]->memcpy(d_Flu_Array_S_In + UsedPatch[s],
                             h_Flu_Array_In + UsedPatch[s], Flu_MemSize_In[s])));
 
 #     ifdef MHD
-      CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Mag_Array_S_In + UsedPatch[s], h_Mag_Array_In + UsedPatch[s],
+      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Mag_Array_S_In + UsedPatch[s], h_Mag_Array_In + UsedPatch[s],
                          Mag_MemSize_In[s], cudaMemcpyHostToDevice, Stream[s] )  );
 #     endif
 
@@ -160,7 +160,7 @@ void CUAPI_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NX
       memory, so you may need to call wait() on event return by memcpy API to
       ensure synchronization behavior.
       */
-      CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
           Stream[s]->memcpy(d_Corner_Array_S + UsedPatch[s],
                             h_Corner_Array + UsedPatch[s], Corner_MemSize[s])));
    } // for (int s=0; s<GPU_NStream; s++)
@@ -212,7 +212,7 @@ void CUAPI_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NX
       error codes. The cudaGetLastError function call was replaced with 0. You
       need to rewrite this code.
       */
-      CUDA_CHECK_ERROR(0);
+      DEVICE_CHECK_ERROR(0);
    } // for (int s=0; s<GPU_NStream; s++)
 
 
@@ -228,7 +228,7 @@ void CUAPI_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NX
       memory, so you may need to call wait() on event return by memcpy API to
       ensure synchronization behavior.
       */
-      CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(Stream[s]->memcpy(
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(Stream[s]->memcpy(
           h_Flu_Array_Out + UsedPatch[s], d_Flu_Array_S_Out + UsedPatch[s],
           Flu_MemSize_Out[s])));
    } // for (int s=0; s<GPU_NStream; s++)

@@ -290,10 +290,10 @@ void EoS_SetGPUFunc_TaubMathews( EoS_GUESS_t &EoS_GuessHTilde_GPUPtr,
                                  EoS_TEM2H_t &EoS_Temp2HTilde_GPUPtr,
                                  EoS_DP2C_t  &EoS_DensPres2CSqr_GPUPtr )
 {
-   CUDA_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_GuessHTilde_GPUPtr,   EoS_GuessHTilde_Ptr,   sizeof(EoS_GUESS_t) )  );
-   CUDA_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_HTilde2Temp_GPUPtr,   EoS_HTilde2Temp_Ptr,   sizeof(EoS_H2TEM_t) )  );
-   CUDA_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_Temp2HTilde_GPUPtr,   EoS_Temp2HTilde_Ptr,   sizeof(EoS_TEM2H_t) )  );
-   CUDA_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensPres2CSqr_GPUPtr, EoS_DensPres2CSqr_Ptr, sizeof(EoS_DP2C_t ) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_GuessHTilde_GPUPtr,   EoS_GuessHTilde_Ptr,   sizeof(EoS_GUESS_t) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_HTilde2Temp_GPUPtr,   EoS_HTilde2Temp_Ptr,   sizeof(EoS_H2TEM_t) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_Temp2HTilde_GPUPtr,   EoS_Temp2HTilde_Ptr,   sizeof(EoS_TEM2H_t) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensPres2CSqr_GPUPtr, EoS_DensPres2CSqr_Ptr, sizeof(EoS_DP2C_t ) )  );
 }
 
 #else // #ifdef __CUDACC__

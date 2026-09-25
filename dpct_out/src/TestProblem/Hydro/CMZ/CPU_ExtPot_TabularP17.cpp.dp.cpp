@@ -241,7 +241,7 @@ FUNC_SPACE ExtPot_t ExtPot_Ptr = ExtPot_TabularP17;
 __host__
 void SetGPUExtPot_TabularP17( ExtPot_t &GPUExtPot_Ptr )
 {
-   CUDA_CHECK_ERROR(  cudaMemcpyFromSymbol( &GPUExtPot_Ptr, ExtPot_Ptr, sizeof(ExtPot_t) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &GPUExtPot_Ptr, ExtPot_Ptr, sizeof(ExtPot_t) )  );
 }
 
 #else // #ifdef __CUDACC__

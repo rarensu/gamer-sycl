@@ -127,7 +127,7 @@ FUNC_SPACE ExtPot_t ExtPot_Ptr = ExtPot_Plummer;
 __host__
 void SetGPUExtPot_Plummer( ExtPot_t &GPUExtPot_Ptr )
 {
-   CUDA_CHECK_ERROR(  cudaMemcpyFromSymbol( &GPUExtPot_Ptr, ExtPot_Ptr, sizeof(ExtPot_t) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &GPUExtPot_Ptr, ExtPot_Ptr, sizeof(ExtPot_t) )  );
 }
 
 #else // #ifdef __CUDACC__

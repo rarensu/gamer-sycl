@@ -41,8 +41,8 @@ void CUAPI_SetConstMemory()
 // we do not repeat them below
 
 #  if ( NCOMP_PASSIVE > 0 )
-   CUDA_CHECK_ERROR(  cudaMemcpyToSymbol( c_NormIdx, PassiveNorm_VarIdx,    NCOMP_PASSIVE*sizeof(int) )  );
-   CUDA_CHECK_ERROR(  cudaMemcpyToSymbol( c_FracIdx, PassiveIntFrac_VarIdx, NCOMP_PASSIVE*sizeof(int) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyToSymbol( c_NormIdx, PassiveNorm_VarIdx,    NCOMP_PASSIVE*sizeof(int) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyToSymbol( c_FracIdx, PassiveIntFrac_VarIdx, NCOMP_PASSIVE*sizeof(int) )  );
 #  endif
 
 #  ifdef GRAVITY
@@ -51,8 +51,8 @@ void CUAPI_SetConstMemory()
    const real h_Mp[3] = { -3.0/32.0, +30.0/32.0, +5.0/32.0 };
    const real h_Mm[3] = { +5.0/32.0, +30.0/32.0, -3.0/32.0 };
 
-   CUDA_CHECK_ERROR(  cudaMemcpyToSymbol( c_Mp, h_Mp, 3*sizeof(real) )  );
-   CUDA_CHECK_ERROR(  cudaMemcpyToSymbol( c_Mm, h_Mm, 3*sizeof(real) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyToSymbol( c_Mp, h_Mp, 3*sizeof(real) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyToSymbol( c_Mm, h_Mm, 3*sizeof(real) )  );
 #  endif // #ifdef GRAVITY
 
 

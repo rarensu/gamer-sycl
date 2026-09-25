@@ -403,7 +403,7 @@ void CUAPI_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
    cufftdx_shared_memory_size = std::max( (unsigned int)FFT::shared_memory_size, (unsigned int)size_bytes );
 
 // increase max shared memory if needed
-   CUDA_CHECK_ERROR(  cudaFuncSetAttribute( FLU_ELBDMSolver_GramFE_FFT, cudaFuncAttributeMaxDynamicSharedMemorySize,
+   DEVICE_CHECK_ERROR(  cudaFuncSetAttribute( FLU_ELBDMSolver_GramFE_FFT, cudaFuncAttributeMaxDynamicSharedMemorySize,
                                             cufftdx_shared_memory_size )  );
 
 #  elif ( GRAMFE_SCHEME == GRAMFE_MATMUL )
@@ -522,7 +522,7 @@ void CUAPI_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
       memory, so you may need to call wait() on event return by memcpy API to
       ensure synchronization behavior.
       */
-      CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
           Stream[s]->memcpy(d_Flu_Array_F_In + UsedPatch[s],
                             h_Flu_Array_In + UsedPatch[s], Flu_MemSize_In[s])));
 #     if ( ELBDM_SCHEME == ELBDM_HYBRID )
@@ -530,33 +530,33 @@ void CUAPI_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
       real (*smaller_d_Flu_Array_F_In)[FLU_NIN][CUBE(HYB_NXT)] = (real (*)[FLU_NIN][CUBE(HYB_NXT)]) d_Flu_Array_F_In;
       real (*smaller_h_Flu_Array_In  )[FLU_NIN][CUBE(HYB_NXT)] = (real (*)[FLU_NIN][CUBE(HYB_NXT)]) h_Flu_Array_In  ;
 
-      CUDA_CHECK_ERROR(  cudaMemcpyAsync( smaller_d_Flu_Array_F_In + UsedPatch[s], smaller_h_Flu_Array_In + UsedPatch[s],
+      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( smaller_d_Flu_Array_F_In + UsedPatch[s], smaller_h_Flu_Array_In + UsedPatch[s],
                          Flu_MemSize_In[s], cudaMemcpyHostToDevice, Stream[s] )  );
       }
 #     endif
 #     ifdef MHD
-      CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Mag_Array_F_In  + UsedPatch[s], h_Mag_Array_In  + UsedPatch[s],
+      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Mag_Array_F_In  + UsedPatch[s], h_Mag_Array_In  + UsedPatch[s],
                          Mag_MemSize_In[s], cudaMemcpyHostToDevice, Stream[s] )  );
 #     endif
 
 #     ifdef UNSPLIT_GRAVITY
       if ( UsePot )
-      CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Pot_Array_USG_F + UsedPatch[s], h_Pot_Array_USG + UsedPatch[s],
+      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Pot_Array_USG_F + UsedPatch[s], h_Pot_Array_USG + UsedPatch[s],
                          USG_MemSize   [s], cudaMemcpyHostToDevice, Stream[s] )  );
 
       if ( ExtAcc )
-      CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Corner_Array_F  + UsedPatch[s], h_Corner_Array  + UsedPatch[s],
+      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Corner_Array_F  + UsedPatch[s], h_Corner_Array  + UsedPatch[s],
                          Corner_MemSize[s], cudaMemcpyHostToDevice, Stream[s] )  );
 #     endif
 
 
 #     if ( MODEL == ELBDM )
-      CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_IsCompletelyRefined + UsedPatch[s], h_IsCompletelyRefined + UsedPatch[s],
+      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_IsCompletelyRefined + UsedPatch[s], h_IsCompletelyRefined + UsedPatch[s],
                          Flu_MemSize_IsCompletelyRefined[s], cudaMemcpyHostToDevice, Stream[s] )  );
 #     endif
 #     if ( ELBDM_SCHEME == ELBDM_HYBRID )
       if ( !UseWaveFlag )
-      CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_HasWaveCounterpart  + UsedPatch[s], h_HasWaveCounterpart  + UsedPatch[s],
+      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_HasWaveCounterpart  + UsedPatch[s], h_HasWaveCounterpart  + UsedPatch[s],
                          Flu_MemSize_HasWaveCounterpart[s], cudaMemcpyHostToDevice, Stream[s] )  );
 #     endif
    } // for (int s=0; s<GPU_NStream; s++)
@@ -701,10 +701,10 @@ void CUAPI_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 //       create forward and backward cufftx workspaces
          cudaError_t error_code  = cudaSuccess;
          FFT::workspace_type cufftdx_workspace  = cufftdx::make_workspace<FFT>( error_code );
-         CUDA_CHECK_ERROR(error_code);
+         DEVICE_CHECK_ERROR(error_code);
          error_code              = cudaSuccess;
          IFFT::workspace_type cufftdx_iworkspace = cufftdx::make_workspace<IFFT>( error_code );
-         CUDA_CHECK_ERROR(error_code);
+         DEVICE_CHECK_ERROR(error_code);
 
          FLU_ELBDMSolver_GramFE_FFT <<< NPatch_per_Stream[s], FFT::block_dim, cufftdx_shared_memory_size, Stream[s] >>>
             ( d_Flu_Array_F_In  + UsedPatch[s],
@@ -758,7 +758,7 @@ void CUAPI_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
       error codes. The cudaGetLastError function call was replaced with 0. You
       need to rewrite this code.
       */
-      CUDA_CHECK_ERROR(0);
+      DEVICE_CHECK_ERROR(0);
    } // for (int s=0; s<GPU_NStream; s++)
 
 
@@ -777,14 +777,14 @@ void CUAPI_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
       memory, so you may need to call wait() on event return by memcpy API to
       ensure synchronization behavior.
       */
-      CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(Stream[s]->memcpy(
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(Stream[s]->memcpy(
           h_Flu_Array_Out + UsedPatch[s], d_Flu_Array_F_Out + UsedPatch[s],
           Flu_MemSize_Out[s])));
 #     if ( ELBDM_SCHEME == ELBDM_HYBRID  &&  !defined(GAMER_DEBUG) )
       } else {
       real (*smaller_h_Flu_Array_Out  )[FLU_NIN][CUBE(PS2)] = (real (*)[FLU_NIN][CUBE(PS2)]) h_Flu_Array_Out;
       real (*smaller_d_Flu_Array_F_Out)[FLU_NIN][CUBE(PS2)] = (real (*)[FLU_NIN][CUBE(PS2)]) d_Flu_Array_F_Out;
-      CUDA_CHECK_ERROR(  cudaMemcpyAsync( smaller_h_Flu_Array_Out + UsedPatch[s], smaller_d_Flu_Array_F_Out + UsedPatch[s],
+      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( smaller_h_Flu_Array_Out + UsedPatch[s], smaller_d_Flu_Array_F_Out + UsedPatch[s],
                          Flu_MemSize_Out[s], cudaMemcpyDeviceToHost, Stream[s] )  );
       }
 #     endif
@@ -796,21 +796,21 @@ void CUAPI_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
       memory, so you may need to call wait() on event return by memcpy API to
       ensure synchronization behavior.
       */
-      CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
           Stream[s]->memcpy(h_Flux_Array + UsedPatch[s],
                             d_Flux_Array + UsedPatch[s], Flux_MemSize[s])));
 
 #     ifdef MHD
-      CUDA_CHECK_ERROR(  cudaMemcpyAsync( h_Mag_Array_Out + UsedPatch[s], d_Mag_Array_F_Out + UsedPatch[s],
+      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( h_Mag_Array_Out + UsedPatch[s], d_Mag_Array_F_Out + UsedPatch[s],
                          Mag_MemSize_Out[s], cudaMemcpyDeviceToHost, Stream[s] )  );
 
       if ( StoreElectric )
-      CUDA_CHECK_ERROR(  cudaMemcpyAsync( h_Ele_Array     + UsedPatch[s], d_Ele_Array       + UsedPatch[s],
+      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( h_Ele_Array     + UsedPatch[s], d_Ele_Array       + UsedPatch[s],
                          Ele_MemSize[s],    cudaMemcpyDeviceToHost, Stream[s] )  );
 #     endif
 
 #     ifdef DUAL_ENERGY
-      CUDA_CHECK_ERROR(  cudaMemcpyAsync( h_DE_Array_Out  + UsedPatch[s], d_DE_Array_F_Out  + UsedPatch[s],
+      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( h_DE_Array_Out  + UsedPatch[s], d_DE_Array_F_Out  + UsedPatch[s],
                          DE_MemSize_Out[s],  cudaMemcpyDeviceToHost, Stream[s] )  );
 #     endif
    } // for (int s=0; s<GPU_NStream; s++)

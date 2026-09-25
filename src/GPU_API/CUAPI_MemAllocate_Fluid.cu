@@ -218,72 +218,72 @@ int CUAPI_MemAllocate_Fluid( const int Flu_NPG, const int Pot_NPG, const int Src
 
 
 // allocate the device memory
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Flu_Array_F_In,       Flu_MemSize_F_In     )  );
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Flu_Array_F_Out,      Flu_MemSize_F_Out    )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Flu_Array_F_In,       Flu_MemSize_F_In     )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Flu_Array_F_Out,      Flu_MemSize_F_Out    )  );
 
    if ( amr->WithFlux )
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Flux_Array,           Flux_MemSize         )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Flux_Array,           Flux_MemSize         )  );
 
 #  ifdef UNSPLIT_GRAVITY
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Pot_Array_USG_F,      Pot_MemSize_USG_F    )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Pot_Array_USG_F,      Pot_MemSize_USG_F    )  );
 
    if ( OPT__EXT_ACC )
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Corner_Array_F,       Corner_MemSize_F     )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Corner_Array_F,       Corner_MemSize_F     )  );
 #  endif
 
 #  ifdef DUAL_ENERGY
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_DE_Array_F_Out,       DE_MemSize_F_Out     )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_DE_Array_F_Out,       DE_MemSize_F_Out     )  );
 #  endif
 
 #  ifdef MHD
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Mag_Array_F_In,       Mag_MemSize_F_In     )  );
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Mag_Array_F_Out,      Mag_MemSize_F_Out    )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Mag_Array_F_In,       Mag_MemSize_F_In     )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Mag_Array_F_Out,      Mag_MemSize_F_Out    )  );
 
    if ( amr->WithElectric )
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Ele_Array,            Ele_MemSize          )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Ele_Array,            Ele_MemSize          )  );
 
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Mag_Array_T,          Mag_MemSize_T        )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Mag_Array_T,          Mag_MemSize_T        )  );
 #  endif
 
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_dt_Array_T,           dt_MemSize_T         )  );
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Flu_Array_T,          Flu_MemSize_T        )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_dt_Array_T,           dt_MemSize_T         )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Flu_Array_T,          Flu_MemSize_T        )  );
 
 #  if ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP  ||  FLU_SCHEME == CTU )
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_FC_Var,               FC_Var_MemSize       )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_FC_Var,               FC_Var_MemSize       )  );
 
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_FC_Flux,              FC_Flux_MemSize      )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_FC_Flux,              FC_Flux_MemSize      )  );
 
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_PriVar,               PriVar_MemSize       )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_PriVar,               PriVar_MemSize       )  );
 
 #  if ( LR_SCHEME == PPM )
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Slope_PPM,            Slope_PPM_MemSize    )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Slope_PPM,            Slope_PPM_MemSize    )  );
 #  endif
 #  ifdef MHD
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_FC_Mag_Half,          FC_Mag_Half_MemSize  )  );
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_EC_Ele,               EC_Ele_MemSize       )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_FC_Mag_Half,          FC_Mag_Half_MemSize  )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_EC_Ele,               EC_Ele_MemSize       )  );
 #  endif
 #  endif // #if ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP  ||  FLU_SCHEME == CTU )
 
    if ( SrcTerms.Any ) {
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Flu_Array_S_In,       Flu_MemSize_S_In     )  );
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Flu_Array_S_Out,      Flu_MemSize_S_Out    )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Flu_Array_S_In,       Flu_MemSize_S_In     )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Flu_Array_S_Out,      Flu_MemSize_S_Out    )  );
 #  ifdef MHD
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Mag_Array_S_In,       Mag_MemSize_S_In     )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Mag_Array_S_In,       Mag_MemSize_S_In     )  );
 #  endif
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Corner_Array_S,       Corner_MemSize_S     )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Corner_Array_S,       Corner_MemSize_S     )  );
    }
 
 
 #  if ( MODEL == ELBDM )
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_IsCompletelyRefined,  Flu_MemSize_IsCompletelyRefined )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_IsCompletelyRefined,  Flu_MemSize_IsCompletelyRefined )  );
 #  endif
 
 #  if ( ELBDM_SCHEME == ELBDM_HYBRID )
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_HasWaveCounterpart,   Flu_MemSize_HasWaveCounterpart  )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_HasWaveCounterpart,   Flu_MemSize_HasWaveCounterpart  )  );
 #  endif
 
 #  if ( GRAMFE_SCHEME == GRAMFE_MATMUL )
-   CUDA_CHECK_MALLOC(  cudaMalloc( (void**) &d_Flu_TimeEvo,          GramFE_TimeEvo_MemSize          )  );
+   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Flu_TimeEvo,          GramFE_TimeEvo_MemSize          )  );
 #  endif
 
 
@@ -295,61 +295,61 @@ int CUAPI_MemAllocate_Fluid( const int Flu_NPG, const int Pot_NPG, const int Src
 // allocate the host memory by CUDA
    for (int t=0; t<2; t++)
    {
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Flu_Array_F_In     [t],  Flu_MemSize_F_In     )  );
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Flu_Array_F_Out    [t],  Flu_MemSize_F_Out    )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Flu_Array_F_In     [t],  Flu_MemSize_F_In     )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Flu_Array_F_Out    [t],  Flu_MemSize_F_Out    )  );
 
       if ( amr->WithFlux )
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Flux_Array         [t],  Flux_MemSize         )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Flux_Array         [t],  Flux_MemSize         )  );
 
 #     ifdef UNSPLIT_GRAVITY
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Pot_Array_USG_F    [t],  Pot_MemSize_USG_F    )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Pot_Array_USG_F    [t],  Pot_MemSize_USG_F    )  );
 
       if ( OPT__EXT_ACC )
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Corner_Array_F     [t],  Corner_MemSize_F     )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Corner_Array_F     [t],  Corner_MemSize_F     )  );
 #     endif
 
 #     ifdef DUAL_ENERGY
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_DE_Array_F_Out     [t],  DE_MemSize_F_Out     )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_DE_Array_F_Out     [t],  DE_MemSize_F_Out     )  );
 #     endif
 
 #     ifdef MHD
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Mag_Array_F_In     [t],  Mag_MemSize_F_In     )  );
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Mag_Array_F_Out    [t],  Mag_MemSize_F_Out    )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Mag_Array_F_In     [t],  Mag_MemSize_F_In     )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Mag_Array_F_Out    [t],  Mag_MemSize_F_Out    )  );
 
       if ( amr->WithElectric )
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Ele_Array          [t],  Ele_MemSize          )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Ele_Array          [t],  Ele_MemSize          )  );
 
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Mag_Array_T        [t],  Mag_MemSize_T        )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Mag_Array_T        [t],  Mag_MemSize_T        )  );
 #     endif
 
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_dt_Array_T         [t],  dt_MemSize_T         )  );
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Flu_Array_T        [t],  Flu_MemSize_T        )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_dt_Array_T         [t],  dt_MemSize_T         )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Flu_Array_T        [t],  Flu_MemSize_T        )  );
 
       if ( SrcTerms.Any ) {
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Flu_Array_S_In     [t],  Flu_MemSize_S_In     )  );
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Flu_Array_S_Out    [t],  Flu_MemSize_S_Out    )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Flu_Array_S_In     [t],  Flu_MemSize_S_In     )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Flu_Array_S_Out    [t],  Flu_MemSize_S_Out    )  );
 #     ifdef MHD
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Mag_Array_S_In     [t],  Mag_MemSize_S_In     )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Mag_Array_S_In     [t],  Mag_MemSize_S_In     )  );
 #     endif
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Corner_Array_S     [t],  Corner_MemSize_S     )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Corner_Array_S     [t],  Corner_MemSize_S     )  );
       }
 
 #     if ( MODEL == ELBDM )
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_IsCompletelyRefined[t],  Flu_MemSize_IsCompletelyRefined  )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_IsCompletelyRefined[t],  Flu_MemSize_IsCompletelyRefined  )  );
 #     endif
 
 #     if ( ELBDM_SCHEME == ELBDM_HYBRID )
-      CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_HasWaveCounterpart [t],  Flu_MemSize_HasWaveCounterpart   )  );
+      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_HasWaveCounterpart [t],  Flu_MemSize_HasWaveCounterpart   )  );
 #     endif
    } // for (int t=0; t<2; t++)
 
 #  if ( GRAMFE_SCHEME == GRAMFE_MATMUL )
-   CUDA_CHECK_MALLOC(  cudaMallocHost( (void**) &h_GramFE_TimeEvo,  GramFE_TimeEvo_MemSize )  );
+   DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_GramFE_TimeEvo,  GramFE_TimeEvo_MemSize )  );
 #  endif
 
 // create streams
    Stream = new cudaStream_t [GPU_NStream];
-   for (int s=0; s<GPU_NStream; s++)      CUDA_CHECK_ERROR(  cudaStreamCreate( &Stream[s] )  );
+   for (int s=0; s<GPU_NStream; s++)      DEVICE_CHECK_ERROR(  cudaStreamCreate( &Stream[s] )  );
 
 
    return GAMER_SUCCESS;

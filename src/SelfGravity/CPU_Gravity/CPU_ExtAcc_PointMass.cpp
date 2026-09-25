@@ -170,7 +170,7 @@ FUNC_SPACE ExtAcc_t ExtAcc_Ptr = ExtAcc_PointMass;
 __host__
 void SetGPUExtAcc_PointMass( ExtAcc_t &GPUExtAcc_Ptr )
 {
-   CUDA_CHECK_ERROR(  cudaMemcpyFromSymbol( &GPUExtAcc_Ptr, ExtAcc_Ptr, sizeof(ExtAcc_t) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &GPUExtAcc_Ptr, ExtAcc_Ptr, sizeof(ExtAcc_t) )  );
 }
 
 #else // #ifdef __CUDACC__

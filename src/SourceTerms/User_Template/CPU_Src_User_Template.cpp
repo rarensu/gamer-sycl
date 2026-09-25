@@ -226,7 +226,7 @@ FUNC_SPACE SrcFunc_t SrcFunc_Ptr = Src_User_Template;
 __host__
 void Src_SetGPUFunc_User_Template( SrcFunc_t &SrcFunc_GPUPtr )
 {
-   CUDA_CHECK_ERROR(  cudaMemcpyFromSymbol( &SrcFunc_GPUPtr, SrcFunc_Ptr, sizeof(SrcFunc_t) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &SrcFunc_GPUPtr, SrcFunc_Ptr, sizeof(SrcFunc_t) )  );
 }
 
 #else
@@ -259,12 +259,12 @@ void Src_SetConstMemory_User_Template( const double AuxArray_Flt[], const int Au
 {
 
 // copy data to constant memory
-   CUDA_CHECK_ERROR(  cudaMemcpyToSymbol( c_Src_User_AuxArray_Flt, AuxArray_Flt, SRC_NAUX_USER*sizeof(double) )  );
-   CUDA_CHECK_ERROR(  cudaMemcpyToSymbol( c_Src_User_AuxArray_Int, AuxArray_Int, SRC_NAUX_USER*sizeof(int   ) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyToSymbol( c_Src_User_AuxArray_Flt, AuxArray_Flt, SRC_NAUX_USER*sizeof(double) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyToSymbol( c_Src_User_AuxArray_Int, AuxArray_Int, SRC_NAUX_USER*sizeof(int   ) )  );
 
 // obtain the constant-memory pointers
-   CUDA_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&DevPtr_Flt, c_Src_User_AuxArray_Flt) );
-   CUDA_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&DevPtr_Int, c_Src_User_AuxArray_Int) );
+   DEVICE_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&DevPtr_Flt, c_Src_User_AuxArray_Flt) );
+   DEVICE_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&DevPtr_Int, c_Src_User_AuxArray_Int) );
 
 } // FUNCTION : Src_SetConstMemory_User_Template
 #endif // #ifdef __CUDACC__

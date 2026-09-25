@@ -137,15 +137,15 @@ void CUAPI_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NX
    {
       if ( NPatch_per_Stream[s] == 0 )    continue;
 
-      CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Flu_Array_S_In + UsedPatch[s], h_Flu_Array_In + UsedPatch[s],
+      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Flu_Array_S_In + UsedPatch[s], h_Flu_Array_In + UsedPatch[s],
                          Flu_MemSize_In[s], cudaMemcpyHostToDevice, Stream[s] )  );
 
 #     ifdef MHD
-      CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Mag_Array_S_In + UsedPatch[s], h_Mag_Array_In + UsedPatch[s],
+      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Mag_Array_S_In + UsedPatch[s], h_Mag_Array_In + UsedPatch[s],
                          Mag_MemSize_In[s], cudaMemcpyHostToDevice, Stream[s] )  );
 #     endif
 
-      CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Corner_Array_S + UsedPatch[s], h_Corner_Array + UsedPatch[s],
+      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Corner_Array_S + UsedPatch[s], h_Corner_Array + UsedPatch[s],
                          Corner_MemSize[s], cudaMemcpyHostToDevice, Stream[s] )  );
    } // for (int s=0; s<GPU_NStream; s++)
 
@@ -164,7 +164,7 @@ void CUAPI_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NX
                                         SrcTerms, NPatchGroup, dt, dh, TimeNew, TimeOld,
                                         MinDens, MinPres, MinEint, PassiveFloor, EoS );
 
-      CUDA_CHECK_ERROR( cudaGetLastError() );
+      DEVICE_CHECK_ERROR( cudaGetLastError() );
    } // for (int s=0; s<GPU_NStream; s++)
 
 
@@ -174,7 +174,7 @@ void CUAPI_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NX
    {
       if ( NPatch_per_Stream[s] == 0 )    continue;
 
-      CUDA_CHECK_ERROR(  cudaMemcpyAsync( h_Flu_Array_Out + UsedPatch[s], d_Flu_Array_S_Out + UsedPatch[s],
+      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( h_Flu_Array_Out + UsedPatch[s], d_Flu_Array_S_Out + UsedPatch[s],
                          Flu_MemSize_Out[s], cudaMemcpyDeviceToHost, Stream[s] )  );
    } // for (int s=0; s<GPU_NStream; s++)
 

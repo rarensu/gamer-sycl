@@ -27,7 +27,7 @@ void CUAPI_SendExtPotTable2GPU( const real *h_Table )
    const long MemSize = (long)sizeof(real)*EXT_POT_TABLE_NPOINT[0]*EXT_POT_TABLE_NPOINT[1]*EXT_POT_TABLE_NPOINT[2];
 
 // use synchronous transfer
-   CUDA_CHECK_ERROR(  cudaMemcpy( d_ExtPotTable, h_Table, MemSize, cudaMemcpyHostToDevice )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpy( d_ExtPotTable, h_Table, MemSize, cudaMemcpyHostToDevice )  );
 
 } // FUNCTION : CUAPI_SendExtPotTable2GPU
 

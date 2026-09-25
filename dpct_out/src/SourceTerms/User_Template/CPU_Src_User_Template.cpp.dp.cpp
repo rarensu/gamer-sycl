@@ -226,7 +226,7 @@ static dpct::global_memory<SrcFunc_t, 0> SrcFunc_Ptr(Src_User_Template);
 
 void Src_SetGPUFunc_User_Template( SrcFunc_t &SrcFunc_GPUPtr )
 {
-   CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(&SrcFunc_GPUPtr, SrcFunc_Ptr.get_ptr(), sizeof(SrcFunc_t))
            .wait()));
@@ -260,21 +260,21 @@ void Src_SetConstMemory_User_Template( const double AuxArray_Flt[], const int Au
 {
 
 // copy data to constant memory
-   CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(c_Src_User_AuxArray_Flt.get_ptr(), AuxArray_Flt,
                    SRC_NAUX_USER * sizeof(double))
            .wait()));
-   CUDA_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(
        DPCT_CHECK_ERROR(dpct::get_in_order_queue()
                             .memcpy(c_Src_User_AuxArray_Int.get_ptr(),
                                     AuxArray_Int, SRC_NAUX_USER * sizeof(int))
                             .wait()));
 
 // obtain the constant-memory pointers
-   CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&DevPtr_Flt) =
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&DevPtr_Flt) =
                                          c_Src_User_AuxArray_Flt.get_ptr()));
-   CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&DevPtr_Int) =
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&DevPtr_Int) =
                                          c_Src_User_AuxArray_Int.get_ptr()));
 
 } // FUNCTION : Src_SetConstMemory_User_Template

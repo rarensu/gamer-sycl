@@ -11,7 +11,7 @@
 //-------------------------------------------------------------------------------------------------------
 void CUAPI_Synchronize()
 {
-   CUDA_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(
        DPCT_CHECK_ERROR(dpct::get_current_device().queues_wait_and_throw()));
 }
 

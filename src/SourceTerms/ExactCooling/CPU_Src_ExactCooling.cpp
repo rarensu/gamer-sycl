@@ -261,9 +261,9 @@ void Src_PassData2GPU_ExactCooling()
 {
    const long EC_TEF_MemSize = sizeof(double)*SrcTerms.EC_TEF_N;
 
-   CUDA_CHECK_ERROR(  cudaMalloc( (void**) &d_SrcEC_TEF_lambda, EC_TEF_MemSize )  );
-   CUDA_CHECK_ERROR(  cudaMalloc( (void**) &d_SrcEC_TEF_alpha,  EC_TEF_MemSize )  );
-   CUDA_CHECK_ERROR(  cudaMalloc( (void**) &d_SrcEC_TEFc,       EC_TEF_MemSize )  );
+   DEVICE_CHECK_ERROR(  cudaMalloc( (void**) &d_SrcEC_TEF_lambda, EC_TEF_MemSize )  );
+   DEVICE_CHECK_ERROR(  cudaMalloc( (void**) &d_SrcEC_TEF_alpha,  EC_TEF_MemSize )  );
+   DEVICE_CHECK_ERROR(  cudaMalloc( (void**) &d_SrcEC_TEFc,       EC_TEF_MemSize )  );
 
 // store the device pointers in SrcTerms when using GPU
    SrcTerms.EC_TEF_lambda_DevPtr = d_SrcEC_TEF_lambda;
@@ -271,9 +271,9 @@ void Src_PassData2GPU_ExactCooling()
    SrcTerms.EC_TEFc_DevPtr       = d_SrcEC_TEFc;
 
 // use synchronous transfer
-   CUDA_CHECK_ERROR(  cudaMemcpy( d_SrcEC_TEF_lambda, h_SrcEC_TEF_lambda, EC_TEF_MemSize, cudaMemcpyHostToDevice )  );
-   CUDA_CHECK_ERROR(  cudaMemcpy( d_SrcEC_TEF_alpha,  h_SrcEC_TEF_alpha,  EC_TEF_MemSize, cudaMemcpyHostToDevice )  );
-   CUDA_CHECK_ERROR(  cudaMemcpy( d_SrcEC_TEFc,       h_SrcEC_TEFc,       EC_TEF_MemSize, cudaMemcpyHostToDevice )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpy( d_SrcEC_TEF_lambda, h_SrcEC_TEF_lambda, EC_TEF_MemSize, cudaMemcpyHostToDevice )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpy( d_SrcEC_TEF_alpha,  h_SrcEC_TEF_alpha,  EC_TEF_MemSize, cudaMemcpyHostToDevice )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpy( d_SrcEC_TEFc,       h_SrcEC_TEFc,       EC_TEF_MemSize, cudaMemcpyHostToDevice )  );
 
 } // FUNCTION : Src_PassData2GPU_ExactCooling
 #endif // #ifdef __CUDACC__
@@ -306,7 +306,7 @@ FUNC_SPACE SrcFunc_t SrcFunc_Ptr = Src_ExactCooling;
 __host__
 void Src_SetGPUFunc_ExactCooling( SrcFunc_t &SrcFunc_GPUPtr )
 {
-   CUDA_CHECK_ERROR(  cudaMemcpyFromSymbol( &SrcFunc_GPUPtr, SrcFunc_Ptr, sizeof(SrcFunc_t) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &SrcFunc_GPUPtr, SrcFunc_Ptr, sizeof(SrcFunc_t) )  );
 }
 
 #else
@@ -339,12 +339,12 @@ void Src_SetConstMemory_ExactCooling( const double AuxArray_Flt[], const int Aux
 {
 
 // copy data to constant memory
-   CUDA_CHECK_ERROR(  cudaMemcpyToSymbol( c_Src_EC_AuxArray_Flt, AuxArray_Flt, SRC_NAUX_EC*sizeof(double) )  );
-   CUDA_CHECK_ERROR(  cudaMemcpyToSymbol( c_Src_EC_AuxArray_Int, AuxArray_Int, SRC_NAUX_EC*sizeof(int   ) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyToSymbol( c_Src_EC_AuxArray_Flt, AuxArray_Flt, SRC_NAUX_EC*sizeof(double) )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpyToSymbol( c_Src_EC_AuxArray_Int, AuxArray_Int, SRC_NAUX_EC*sizeof(int   ) )  );
 
 // obtain the constant-memory pointers
-   CUDA_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&DevPtr_Flt, c_Src_EC_AuxArray_Flt )  );
-   CUDA_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&DevPtr_Int, c_Src_EC_AuxArray_Int )  );
+   DEVICE_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&DevPtr_Flt, c_Src_EC_AuxArray_Flt )  );
+   DEVICE_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&DevPtr_Int, c_Src_EC_AuxArray_Int )  );
 
 } // FUNCTION : Src_SetConstMemory_ExactCooling
 #endif // #ifdef __CUDACC__
@@ -477,9 +477,9 @@ void Src_End_ExactCooling()
 void CUAPI_MemFree_ExactCooling()
 {
 
-   if ( d_SrcEC_TEF_lambda != NULL ) {  CUDA_CHECK_ERROR(  cudaFree( d_SrcEC_TEF_lambda )  );  d_SrcEC_TEF_lambda = NULL; }
-   if ( d_SrcEC_TEF_alpha  != NULL ) {  CUDA_CHECK_ERROR(  cudaFree( d_SrcEC_TEF_alpha  )  );  d_SrcEC_TEF_alpha  = NULL; }
-   if ( d_SrcEC_TEFc       != NULL ) {  CUDA_CHECK_ERROR(  cudaFree( d_SrcEC_TEFc       )  );  d_SrcEC_TEFc       = NULL; }
+   if ( d_SrcEC_TEF_lambda != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_SrcEC_TEF_lambda )  );  d_SrcEC_TEF_lambda = NULL; }
+   if ( d_SrcEC_TEF_alpha  != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_SrcEC_TEF_alpha  )  );  d_SrcEC_TEF_alpha  = NULL; }
+   if ( d_SrcEC_TEFc       != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_SrcEC_TEFc       )  );  d_SrcEC_TEFc       = NULL; }
 
    SrcTerms.EC_TEF_lambda_DevPtr = NULL;
    SrcTerms.EC_TEF_alpha_DevPtr  = NULL;

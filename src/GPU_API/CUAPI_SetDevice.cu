@@ -44,7 +44,7 @@ void CUAPI_SetDevice( const int Mode )
 
 // verify that there are GPU supporting CUDA
    int DeviceCount;
-   CUDA_CHECK_ERROR(  cudaGetDeviceCount( &DeviceCount )  );
+   DEVICE_CHECK_ERROR(  cudaGetDeviceCount( &DeviceCount )  );
 
    if ( DeviceCount == 0 )
       Aux_Error( ERROR_INFO, "no devices support CUDA at MPI_Rank %2d (host = %8s) !!\n", MPI_Rank, Host );
@@ -63,7 +63,7 @@ void CUAPI_SetDevice( const int Mode )
          SetDeviceID = GetFreeGpuDevID( DeviceCount, MPI_Rank );
 
          if ( SetDeviceID < DeviceCount )
-            CUDA_CHECK_ERROR(  cudaSetDevice( SetDeviceID )  );
+            DEVICE_CHECK_ERROR(  cudaSetDevice( SetDeviceID )  );
 
          else
             Aux_Error( ERROR_INFO, "SetDeviceID (%d) >= DeviceCount (%d) at MPI_Rank %2d (host = %8s) !!\n",
@@ -73,12 +73,12 @@ void CUAPI_SetDevice( const int Mode )
 
 
       case -2:
-         CUDA_CHECK_ERROR(  cudaMalloc( (void**) &d_TempPtr, sizeof(int) )  );  // to set the GPU ID
-         CUDA_CHECK_ERROR(  cudaFree( d_TempPtr )  );
+         DEVICE_CHECK_ERROR(  cudaMalloc( (void**) &d_TempPtr, sizeof(int) )  );  // to set the GPU ID
+         DEVICE_CHECK_ERROR(  cudaFree( d_TempPtr )  );
 
 //       make sure that the "exclusive" compute mode is adopted
-         CUDA_CHECK_ERROR(  cudaGetDevice( &GetDeviceID )  );
-         CUDA_CHECK_ERROR(  cudaDeviceGetAttribute(&computeMode, cudaDevAttrComputeMode, GetDeviceID)  );
+         DEVICE_CHECK_ERROR(  cudaGetDevice( &GetDeviceID )  );
+         DEVICE_CHECK_ERROR(  cudaDeviceGetAttribute(&computeMode, cudaDevAttrComputeMode, GetDeviceID)  );
 
          if ( computeMode != cudaComputeModeExclusive )
          {
@@ -91,7 +91,7 @@ void CUAPI_SetDevice( const int Mode )
 
       case -1:
          SetDeviceID = MPI_Rank % DeviceCount;
-         CUDA_CHECK_ERROR(  cudaSetDevice( SetDeviceID )  );
+         DEVICE_CHECK_ERROR(  cudaSetDevice( SetDeviceID )  );
 
          if ( MPI_NRank > 1  &&  MPI_Rank == 0 )
          {
@@ -105,7 +105,7 @@ void CUAPI_SetDevice( const int Mode )
          SetDeviceID = Mode;
 
          if ( SetDeviceID < DeviceCount )
-            CUDA_CHECK_ERROR(  cudaSetDevice( SetDeviceID )  );
+            DEVICE_CHECK_ERROR(  cudaSetDevice( SetDeviceID )  );
 
          else
             Aux_Error( ERROR_INFO, "SetDeviceID (%d) >= DeviceCount (%d) at MPI_Rank %2d (host = %8s) !!\n",
@@ -123,10 +123,10 @@ void CUAPI_SetDevice( const int Mode )
 // check
 // (0) load the device properties and the versions of CUDA and driver
    int DriverVersion = 0, RuntimeVersion = 0;
-   CUDA_CHECK_ERROR(  cudaGetDevice( &GetDeviceID )  );
-   CUDA_CHECK_ERROR(  cudaGetDeviceProperties( &DeviceProp, GetDeviceID )  );
-   CUDA_CHECK_ERROR(  cudaDriverGetVersion( &DriverVersion )  );
-   CUDA_CHECK_ERROR(  cudaRuntimeGetVersion( &RuntimeVersion )  );
+   DEVICE_CHECK_ERROR(  cudaGetDevice( &GetDeviceID )  );
+   DEVICE_CHECK_ERROR(  cudaGetDeviceProperties( &DeviceProp, GetDeviceID )  );
+   DEVICE_CHECK_ERROR(  cudaDriverGetVersion( &DriverVersion )  );
+   DEVICE_CHECK_ERROR(  cudaRuntimeGetVersion( &RuntimeVersion )  );
 
 
 // (1) verify the device version
@@ -141,8 +141,8 @@ void CUAPI_SetDevice( const int Mode )
                     GetDeviceID, SetDeviceID, MPI_Rank, Host );
 
 //    (3) verify that the adopted ID is accessible
-      CUDA_CHECK_ERROR(  cudaMalloc( (void**) &d_TempPtr, sizeof(int) )  );
-      CUDA_CHECK_ERROR(  cudaFree( d_TempPtr )  );
+      DEVICE_CHECK_ERROR(  cudaMalloc( (void**) &d_TempPtr, sizeof(int) )  );
+      DEVICE_CHECK_ERROR(  cudaFree( d_TempPtr )  );
    }
 
 

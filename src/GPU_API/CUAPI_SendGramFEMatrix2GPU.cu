@@ -25,7 +25,7 @@ void CUAPI_SendGramFEMatrix2GPU( gramfe_matmul_float (*h_GramFE_TimeEvo)[ 2*FLU_
 
    size_t h_FluTimeEvo_MemSize = 2*FLU_NXT*PS2*sizeof(gramfe_matmul_float);
 
-   CUDA_CHECK_ERROR(  cudaMemcpy( d_Flu_TimeEvo, h_GramFE_TimeEvo, h_FluTimeEvo_MemSize, cudaMemcpyHostToDevice )  );
+   DEVICE_CHECK_ERROR(  cudaMemcpy( d_Flu_TimeEvo, h_GramFE_TimeEvo, h_FluTimeEvo_MemSize, cudaMemcpyHostToDevice )  );
 
 } // FUNCTION : CUAPI_SendGramFEMatrix2GPU
 

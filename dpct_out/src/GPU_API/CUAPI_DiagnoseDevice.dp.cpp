@@ -28,7 +28,7 @@ void CUAPI_DiagnoseDevice()
 
 // get the number of devices
    int DeviceCount;
-   CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(DeviceCount = dpct::device_count()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(DeviceCount = dpct::device_count()));
 
    if ( DeviceCount == 0 )
       Aux_Error( ERROR_INFO, "no devices supporting CUDA at MPI_Rank %2d (host = %8s) !!\n", MPI_Rank, Host );
@@ -36,12 +36,12 @@ void CUAPI_DiagnoseDevice()
 
 // get the device ID
    int GetDeviceID = 999;
-   CUDA_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(
        DPCT_CHECK_ERROR(GetDeviceID = dpct::get_current_device_id()));
 
 // load the device properties
    dpct::device_info DeviceProp;
-   CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
        dpct::get_device(GetDeviceID).get_device_info(DeviceProp)));
 
 // get the number of cores per multiprocessor
@@ -144,14 +144,14 @@ void CUAPI_DiagnoseDevice()
          DPCT1043:57: The version-related API is different in SYCL. An initial
          code was generated, but you need to adjust it.
          */
-         CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(
+         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
              DriverVersion =
                  dpct::get_major_version(dpct::get_current_device())));
          /*
          DPCT1043:58: The version-related API is different in SYCL. An initial
          code was generated, but you need to adjust it.
          */
-         CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(
+         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
              RuntimeVersion =
                  dpct::get_major_version(dpct::get_current_device())));
 
@@ -164,7 +164,7 @@ void CUAPI_DiagnoseDevice()
          Aux_GetCPUInfo( FileName );
 
          int clockRate; // in unit of kHz
-         CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(
+         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
              clockRate =
                  dpct::get_device(GetDeviceID).get_max_clock_frequency()));
 

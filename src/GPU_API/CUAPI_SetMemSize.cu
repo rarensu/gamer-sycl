@@ -25,19 +25,19 @@ void CUAPI_SetMemSize( int &GPU_NStream, int &Flu_GPU_NPGroup, int &Pot_GPU_NPGr
 
 // get the device ID
    int GetDeviceID = 999;
-   CUDA_CHECK_ERROR(  cudaGetDevice( &GetDeviceID )  );
+   DEVICE_CHECK_ERROR(  cudaGetDevice( &GetDeviceID )  );
 
 
 // load the device properties
    cudaDeviceProp DeviceProp;
-   CUDA_CHECK_ERROR(  cudaGetDeviceProperties( &DeviceProp, GetDeviceID )  );
+   DEVICE_CHECK_ERROR(  cudaGetDeviceProperties( &DeviceProp, GetDeviceID )  );
 
 
 // (1) GPU_NSTREAM
    if ( GPU_NStream <= 0 )
    {
       int gpuOverlap;
-      CUDA_CHECK_ERROR(  cudaDeviceGetAttribute(&gpuOverlap, cudaDevAttrGpuOverlap, GetDeviceID)  );
+      DEVICE_CHECK_ERROR(  cudaDeviceGetAttribute(&gpuOverlap, cudaDevAttrGpuOverlap, GetDeviceID)  );
 
       if ( gpuOverlap )
       {

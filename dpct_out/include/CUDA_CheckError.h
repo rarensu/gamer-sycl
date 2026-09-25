@@ -1,5 +1,5 @@
-#ifndef __CUDA_CHECK_ERROR_H__
-#define __CUDA_CHECK_ERROR_H__
+#ifndef __DEVICE_CHECK_ERROR_H__
+#define __DEVICE_CHECK_ERROR_H__
 
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
@@ -9,9 +9,9 @@ void Aux_Error( const char *File, const int Line, const char *Func, const char *
 
 
 // CUDA error check
-#define CUDA_CHECK_ERROR( Call )   CUDA_Check_Error( Call, __FILE__, __LINE__, __FUNCTION__ )
+#define DEVICE_CHECK_ERROR( Call )   DEVICE_Check_Error( Call, __FILE__, __LINE__, __FUNCTION__ )
 
-inline void CUDA_Check_Error(dpct::err0 Return, const char *File,
+inline void DEVICE_Check_Error(dpct::err0 Return, const char *File,
                              const int Line, const char *Func)
 {
    /*
@@ -32,9 +32,9 @@ inline void CUDA_Check_Error(dpct::err0 Return, const char *File,
 
 
 
-// in CUDA_CHECK_MALLOC(), we must use "Call; cudaError_t Return = cudaGetLastError();" instead of "cudaError_t Return = Call;"
+// in DEVICE_CHECK_MALLOC(), we must use "Call; cudaError_t Return = cudaGetLastError();" instead of "cudaError_t Return = Call;"
 // since cudaGetLastError() will reset the last error to cudaSuccess
-// --> otherwise CUDA_CHECK_ERROR( cudaGetLastError() ) in, for example, CUAPI_Asyn_FluidSolver(),
+// --> otherwise DEVICE_CHECK_ERROR( cudaGetLastError() ) in, for example, CUAPI_Asyn_FluidSolver(),
 //     will fail since the last error has not been reset!
 /*
 DPCT1010:66: SYCL uses exceptions to report errors and does not use the error
@@ -52,7 +52,7 @@ DPCT1009:69: SYCL reports errors using exceptions and does not use error codes.
 Please replace the "get_error_string_dummy(...)" with a real error-handling
 function.
 */
-#define CUDA_CHECK_MALLOC(Call)                                                \
+#define DEVICE_CHECK_MALLOC(Call)                                                \
    {                                                                           \
       Call;                                                                    \
       const dpct::err0 Return = 0;                                             \
@@ -63,4 +63,4 @@ function.
                    dpct::get_error_string_dummy(Return));                      \
    }
 
-#endif // #ifndef __CUDA_CHECK_ERROR_H__
+#endif // #ifndef __DEVICE_CHECK_ERROR_H__

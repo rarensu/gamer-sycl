@@ -9,7 +9,7 @@
 //-------------------------------------------------------------------------------------------------------
 void CUAPI_Synchronize()
 {
-   CUDA_CHECK_ERROR(  cudaDeviceSynchronize()  );
+   DEVICE_CHECK_ERROR(  cudaDeviceSynchronize()  );
 }
 
 #endif // #ifdef GPU

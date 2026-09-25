@@ -384,37 +384,37 @@ void EoS_SetGPUFunc_Isothermal( EoS_DE2P_t &EoS_DensEint2Pres_GPUPtr,
                                 EoS_DE2S_t &EoS_DensEint2Entr_GPUPtr,
                                 EoS_GENE_t &EoS_General_GPUPtr )
 {
-   CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(&EoS_DensEint2Pres_GPUPtr, EoS_DensEint2Pres_Ptr.get_ptr(),
                    sizeof(EoS_DE2P_t))
            .wait()));
-   CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(&EoS_DensPres2Eint_GPUPtr, EoS_DensPres2Eint_Ptr.get_ptr(),
                    sizeof(EoS_DP2E_t))
            .wait()));
-   CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(&EoS_DensPres2CSqr_GPUPtr, EoS_DensPres2CSqr_Ptr.get_ptr(),
                    sizeof(EoS_DP2C_t))
            .wait()));
-   CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(&EoS_DensEint2Temp_GPUPtr, EoS_DensEint2Temp_Ptr.get_ptr(),
                    sizeof(EoS_DE2T_t))
            .wait()));
-   CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(&EoS_DensTemp2Pres_GPUPtr, EoS_DensTemp2Pres_Ptr.get_ptr(),
                    sizeof(EoS_DT2P_t))
            .wait()));
-   CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(&EoS_DensEint2Entr_GPUPtr, EoS_DensEint2Entr_Ptr.get_ptr(),
                    sizeof(EoS_DE2S_t))
            .wait()));
-   CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(dpct::get_in_order_queue()
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(dpct::get_in_order_queue()
                                          .memcpy(&EoS_General_GPUPtr,
                                                  EoS_General_Ptr.get_ptr(),
                                                  sizeof(EoS_GENE_t))

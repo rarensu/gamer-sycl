@@ -230,11 +230,11 @@ void CUAPI_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real 
             operand memory, so you may need to call wait() on event return by
             memcpy API to ensure synchronization behavior.
             */
-            CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(
+            DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
                 Stream[s]->memcpy(d_Flu_Array_T + UsedPatch[s],
                                   h_Flu_Array + UsedPatch[s], Flu_MemSize[s])));
 #           ifdef MHD
-            CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Mag_Array_T      + UsedPatch[s], h_Mag_Array    + UsedPatch[s],
+            DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Mag_Array_T      + UsedPatch[s], h_Mag_Array    + UsedPatch[s],
                                Mag_MemSize[s],    cudaMemcpyHostToDevice, Stream[s] )  );
 #           endif
          break;
@@ -242,11 +242,11 @@ void CUAPI_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real 
 #        ifdef GRAVITY
          case DT_GRA_SOLVER:
             if ( UsePot )
-            CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Pot_Array_T      + UsedPatch[s], h_Pot_Array    + UsedPatch[s],
+            DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Pot_Array_T      + UsedPatch[s], h_Pot_Array    + UsedPatch[s],
                                Pot_MemSize[s],    cudaMemcpyHostToDevice, Stream[s] )  );
 
             if ( ExtAcc )
-            CUDA_CHECK_ERROR(  cudaMemcpyAsync( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array + UsedPatch[s],
+            DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array + UsedPatch[s],
                                Corner_MemSize[s], cudaMemcpyHostToDevice, Stream[s] )  );
          break;
 #        endif
@@ -331,7 +331,7 @@ void CUAPI_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real 
       error codes. The cudaGetLastError function call was replaced with 0. You
       need to rewrite this code.
       */
-      CUDA_CHECK_ERROR(0);
+      DEVICE_CHECK_ERROR(0);
    } // for (int s=0; s<GPU_NStream; s++)
 
 
@@ -347,7 +347,7 @@ void CUAPI_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real 
       memory, so you may need to call wait() on event return by memcpy API to
       ensure synchronization behavior.
       */
-      CUDA_CHECK_ERROR(DPCT_CHECK_ERROR(
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
           Stream[s]->memcpy(h_dt_Array + UsedPatch[s],
                             d_dt_Array_T + UsedPatch[s], dt_MemSize[s])));
    } // for (int s=0; s<GPU_NStream; s++)
