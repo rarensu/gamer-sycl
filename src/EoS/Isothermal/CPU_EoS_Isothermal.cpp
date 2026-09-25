@@ -1,5 +1,7 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 #include "CheckError.h"
 #include "CUFLU_Shared_FluUtility.cu"
 #endif
@@ -44,7 +46,7 @@
 //
 // Return      :  AuxArray_Flt/Int[]
 //-------------------------------------------------------------------------------------------------------
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 void EoS_SetAuxArray_Isothermal( double AuxArray_Flt[], int AuxArray_Int[] )
 {
 
@@ -325,19 +327,26 @@ static void EoS_General_Isothermal( const int Mode, real Out[], const real In_Fl
 // III. Set EoS initialization functions
 // =============================================
 
-#ifdef __CUDACC__
-#  define FUNC_SPACE __device__ static
+#ifdef SYCL_LANGUAGE_VERSION
+#  define FUNC_SPACE static
 #else
 #  define FUNC_SPACE            static
 #endif
 
-FUNC_SPACE EoS_DE2P_t EoS_DensEint2Pres_Ptr = EoS_DensEint2Pres_Isothermal;
-FUNC_SPACE EoS_DP2E_t EoS_DensPres2Eint_Ptr = EoS_DensPres2Eint_Isothermal;
-FUNC_SPACE EoS_DP2C_t EoS_DensPres2CSqr_Ptr = EoS_DensPres2CSqr_Isothermal;
-FUNC_SPACE EoS_DE2T_t EoS_DensEint2Temp_Ptr = EoS_DensEint2Temp_Isothermal;
-FUNC_SPACE EoS_DT2P_t EoS_DensTemp2Pres_Ptr = EoS_DensTemp2Pres_Isothermal;
-FUNC_SPACE EoS_DE2S_t EoS_DensEint2Entr_Ptr = EoS_DensEint2Entr_Isothermal;
-FUNC_SPACE EoS_GENE_t EoS_General_Ptr       = EoS_General_Isothermal;
+static dpct::global_memory<EoS_DE2P_t, 0>
+    EoS_DensEint2Pres_Ptr(EoS_DensEint2Pres_Isothermal);
+static dpct::global_memory<EoS_DP2E_t, 0>
+    EoS_DensPres2Eint_Ptr(EoS_DensPres2Eint_Isothermal);
+static dpct::global_memory<EoS_DP2C_t, 0>
+    EoS_DensPres2CSqr_Ptr(EoS_DensPres2CSqr_Isothermal);
+static dpct::global_memory<EoS_DE2T_t, 0>
+    EoS_DensEint2Temp_Ptr(EoS_DensEint2Temp_Isothermal);
+static dpct::global_memory<EoS_DT2P_t, 0>
+    EoS_DensTemp2Pres_Ptr(EoS_DensTemp2Pres_Isothermal);
+static dpct::global_memory<EoS_DE2S_t, 0>
+    EoS_DensEint2Entr_Ptr(EoS_DensEint2Entr_Isothermal);
+static dpct::global_memory<EoS_GENE_t, 0>
+    EoS_General_Ptr(EoS_General_Isothermal);
 
 //-----------------------------------------------------------------------------------------
 // Function    :  EoS_SetCPU/GPUFunc_Isothermal
@@ -365,8 +374,8 @@ FUNC_SPACE EoS_GENE_t EoS_General_Ptr       = EoS_General_Isothermal;
 //                EoS_DensTemp2Pres_CPU/GPUPtr, EoS_DensEint2Entr_CPU/GPUPtr,
 //                EoS_General_CPU/GPUPtr
 //-----------------------------------------------------------------------------------------
-#ifdef __CUDACC__
-__host__
+#ifdef SYCL_LANGUAGE_VERSION
+
 void EoS_SetGPUFunc_Isothermal( EoS_DE2P_t &EoS_DensEint2Pres_GPUPtr,
                                 EoS_DP2E_t &EoS_DensPres2Eint_GPUPtr,
                                 EoS_DP2C_t &EoS_DensPres2CSqr_GPUPtr,
@@ -375,13 +384,41 @@ void EoS_SetGPUFunc_Isothermal( EoS_DE2P_t &EoS_DensEint2Pres_GPUPtr,
                                 EoS_DE2S_t &EoS_DensEint2Entr_GPUPtr,
                                 EoS_GENE_t &EoS_General_GPUPtr )
 {
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensEint2Pres_GPUPtr, EoS_DensEint2Pres_Ptr, sizeof(EoS_DE2P_t) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensPres2Eint_GPUPtr, EoS_DensPres2Eint_Ptr, sizeof(EoS_DP2E_t) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensPres2CSqr_GPUPtr, EoS_DensPres2CSqr_Ptr, sizeof(EoS_DP2C_t) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensEint2Temp_GPUPtr, EoS_DensEint2Temp_Ptr, sizeof(EoS_DE2T_t) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensTemp2Pres_GPUPtr, EoS_DensTemp2Pres_Ptr, sizeof(EoS_DT2P_t) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensEint2Entr_GPUPtr, EoS_DensEint2Entr_Ptr, sizeof(EoS_DE2S_t) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_General_GPUPtr,       EoS_General_Ptr,       sizeof(EoS_GENE_t) )  );
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_DensEint2Pres_GPUPtr, EoS_DensEint2Pres_Ptr.get_ptr(),
+                   sizeof(EoS_DE2P_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_DensPres2Eint_GPUPtr, EoS_DensPres2Eint_Ptr.get_ptr(),
+                   sizeof(EoS_DP2E_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_DensPres2CSqr_GPUPtr, EoS_DensPres2CSqr_Ptr.get_ptr(),
+                   sizeof(EoS_DP2C_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_DensEint2Temp_GPUPtr, EoS_DensEint2Temp_Ptr.get_ptr(),
+                   sizeof(EoS_DE2T_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_DensTemp2Pres_GPUPtr, EoS_DensTemp2Pres_Ptr.get_ptr(),
+                   sizeof(EoS_DT2P_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_DensEint2Entr_GPUPtr, EoS_DensEint2Entr_Ptr.get_ptr(),
+                   sizeof(EoS_DE2S_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(dpct::get_in_order_queue()
+                                         .memcpy(&EoS_General_GPUPtr,
+                                                 EoS_General_Ptr.get_ptr(),
+                                                 sizeof(EoS_GENE_t))
+                                         .wait()));
 }
 
 #else // #ifdef __CUDACC__
@@ -407,7 +444,7 @@ void EoS_SetCPUFunc_Isothermal( EoS_DE2P_t &EoS_DensEint2Pres_CPUPtr,
 
 
 
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 
 // local function prototypes
 void EoS_SetAuxArray_Isothermal( double [], int [] );
