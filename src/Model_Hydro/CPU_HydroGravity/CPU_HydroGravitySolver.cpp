@@ -1,4 +1,4 @@
-#include "CUPOT.h"
+#include "POT.h"
 
 #if ( MODEL == HYDRO  &&  defined GRAVITY )
 

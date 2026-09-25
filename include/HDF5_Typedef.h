@@ -11,7 +11,7 @@ datatypes in the HDF5 format
 #include "Macro.h"
 #include "FLU.h"
 #ifdef GRAVITY
-#include "CUPOT.h"
+#include "POT.h"
 #endif
 
 #ifdef FLOAT8

@@ -1,7 +1,7 @@
 #include "GAMER.h"
 #include "FLU.h"
 #ifdef GRAVITY
-#include "CUPOT.h"
+#include "POT.h"
 #endif
 #include <sched.h>
 #include "time.h"

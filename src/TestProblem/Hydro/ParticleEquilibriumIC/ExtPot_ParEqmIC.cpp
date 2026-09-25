@@ -1,5 +1,5 @@
 
-#include "CUPOT.h"
+#include "POT.h"
 #ifdef __CUDACC__
 #include "CheckError.h"
 #endif

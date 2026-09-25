@@ -4,7 +4,7 @@
 #include <mpi.h>
 #endif
 
-#include "CUPOT.h"
+#include "POT.h"
 
 #if ( MODEL == ELBDM  &&  defined GRAVITY  &&  ELBDM_SCHEME == ELBDM_HYBRID )
 

@@ -3,7 +3,7 @@
 #ifdef GRAVITY
 
 
-#include "CUPOT.h"
+#include "POT.h"
 real ExtPot_AuxArray[EXT_POT_NAUX_MAX];
 
 extern real TwoParOrbit_M;

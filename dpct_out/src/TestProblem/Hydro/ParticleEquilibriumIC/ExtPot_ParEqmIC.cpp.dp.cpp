@@ -1,7 +1,7 @@
 
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
-#include "CUPOT.h"
+#include "POT.h"
 #ifdef SYCL_LANGUAGE_VERSION
 #include "CUDA_CheckError.h"
 #endif

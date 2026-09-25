@@ -2,7 +2,7 @@
 
 #if ( MODEL == ELBDM  &&  defined GRAVITY )
 
-#include "CUPOT.h"
+#include "POT.h"
 
 static real GetMaxPot( const int lv );
 

@@ -1,5 +1,5 @@
 #include "GAMER.h"
-#include "CUPOT.h"
+#include "POT.h"
 
 #if ( defined GRAVITY  &&  !defined GPU  &&  POT_SCHEME == SOR )
 

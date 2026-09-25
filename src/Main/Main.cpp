@@ -5,7 +5,7 @@
 #include "FLU.h"
 
 #ifdef GRAVITY
-#include "CUPOT.h"
+#include "POT.h"
 #endif
 
 
