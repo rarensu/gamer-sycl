@@ -28,14 +28,11 @@
 
 
 // experiments show that the following macros give lower performance even in Fermi GPUs
-/*
-// faster integer multiplication in GPU
-// TODO: replace with SYCL variant
-//#if ( defined SYCL_LANGUAGE_VERSION  &&  <SYCL_ARCH_CHECK> )
-//   #define __umul24( a, b )   ( (a)*(b) )
-//   #define  __mul24( a, b )   ( (a)*(b) )
-//#endif
-*/
+// faster integer multiplication in Fermi
+#if (defined SYCL_LANGUAGE_VERSION && DPCT_COMPATIBILITY_TEMP >= 200)
+#  define __umul24( a, b )   ( (a)*(b) )
+#  define  __mul24( a, b )   ( (a)*(b) )
+#endif
 
 
 
