@@ -1,0 +1,101 @@
+------------------APIS report--------------------
+API name                                Frequency
+const char * cudaGetErrorString(cudaError_t error)              51
+cudaDeviceProp                               3
+cudaError                                   31
+cudaError_t                                 20
+cudaError_t cudaDeviceGetAttribute(int * value,enum cudaDeviceAttr attr,int device)               3
+cudaError_t cudaDeviceSynchronize()               1
+cudaError_t cudaDriverGetVersion(int * driverVersion)               2
+cudaError_t cudaFree(void * devPtr)              14
+cudaError_t cudaFreeHost(void * ptr)               8
+cudaError_t cudaFuncSetCacheConfig(void (*)(const float (*)[5][10648], float (*)[5][4096], const float (*)[0][11132], float (*)[0][4352], char (*)[4096], float (*)[9][5][256], float (*)[9][0][272], const double (*)[3], const float (*)[1], float (*)[5][10648], float (*)[3][5][8000], float (*)[6][5][5832], float (*)[3][5][5832], float (*)[0][11132], float (*)[0][0], float, float, _Bool, _Bool, int, float, double, _Bool, int, void (*)(float *, double, double, double, double, const double *), float, float, float, float, long, _Bool, int, _Bool, int, _Bool, float, struct EoS_t) func,enum cudaFuncCache cacheConfig)               1
+cudaError_t cudaFuncSetCacheConfig(void (*)(const float (*)[5][512], float (*)[5][512], const float (*)[0][576], const double (*)[3], struct SrcTerms_t, int, float, float, double, double, float, float, float, long, struct EoS_t) func,enum cudaFuncCache cacheConfig)               1
+cudaError_t cudaFuncSetCacheConfig(void (*)(float *, const float (*)[5][512], const float (*)[0][576], float, float, float, long, struct EoS_t, struct MicroPhy_t) func,enum cudaFuncCache cacheConfig)               1
+cudaError_t cudaGetDevice(int * device)               4
+cudaError_t cudaGetDeviceCount(int * count)               2
+cudaError_t cudaGetDeviceProperties_v2(struct cudaDeviceProp * prop,int device)               3
+cudaError_t cudaGetLastError()              23
+cudaError_t cudaGetSymbolAddress(void ** devPtr,const double &[10] symbol)               1
+cudaError_t cudaGetSymbolAddress(void ** devPtr,const double &[20] symbol)               1
+cudaError_t cudaGetSymbolAddress(void ** devPtr,const double &[5] symbol)               1
+cudaError_t cudaGetSymbolAddress(void ** devPtr,const int &[10] symbol)               1
+cudaError_t cudaGetSymbolAddress(void ** devPtr,const int &[20] symbol)               1
+cudaError_t cudaGetSymbolAddress(void ** devPtr,const int &[5] symbol)               1
+cudaError_t cudaGetSymbolAddress(void ** devPtr,float *const &[20] symbol)               1
+cudaError_t cudaMalloc(void ** devPtr,size_t size)              14
+cudaError_t cudaMallocHost(void ** ptr,size_t size)               8
+cudaError_t cudaMemcpy(void * dst,const void * src,size_t count,enum cudaMemcpyKind kind)               2
+cudaError_t cudaMemcpyAsync(void * dst,const void * src,size_t count,enum cudaMemcpyKind kind,cudaStream_t stream)               8
+cudaError_t cudaMemcpyFromSymbol(void * dst,float (*const &)(float, float, const float *, const double *, const int *, const float *const *) symbol,size_t count,size_t offset,enum cudaMemcpyKind kind)              18
+cudaError_t cudaMemcpyFromSymbol(void * dst,void (*const &)(float *, const float *, const struct SrcTerms_t *, float, float, double, double, double, double, double, float, float, float, long, const struct EoS_t *, const double *, const int *) symbol,size_t count,size_t offset,enum cudaMemcpyKind kind)               2
+cudaError_t cudaMemcpyFromSymbol(void * dst,void (*const &)(int, float *, const float *, const int *, const double *, const int *, const float *const *) symbol,size_t count,size_t offset,enum cudaMemcpyKind kind)               3
+cudaError_t cudaMemcpyToSymbol(const double &[10] symbol,const void * src,size_t count,size_t offset,enum cudaMemcpyKind kind)               1
+cudaError_t cudaMemcpyToSymbol(const double &[20] symbol,const void * src,size_t count,size_t offset,enum cudaMemcpyKind kind)               1
+cudaError_t cudaMemcpyToSymbol(const double &[5] symbol,const void * src,size_t count,size_t offset,enum cudaMemcpyKind kind)               1
+cudaError_t cudaMemcpyToSymbol(const int &[10] symbol,const void * src,size_t count,size_t offset,enum cudaMemcpyKind kind)               1
+cudaError_t cudaMemcpyToSymbol(const int &[20] symbol,const void * src,size_t count,size_t offset,enum cudaMemcpyKind kind)               1
+cudaError_t cudaMemcpyToSymbol(const int &[5] symbol,const void * src,size_t count,size_t offset,enum cudaMemcpyKind kind)               1
+cudaError_t cudaMemcpyToSymbol(float *const &[20] symbol,const void * src,size_t count,size_t offset,enum cudaMemcpyKind kind)               1
+cudaError_t cudaRuntimeGetVersion(int * runtimeVersion)               2
+cudaError_t cudaSetDevice(int device)               2
+cudaError_t cudaStreamCreate(cudaStream_t * pStream)               1
+cudaError_t cudaStreamDestroy(cudaStream_t stream)               1
+cudaStream_t                                 6
+dim3                                         3
+float __shfl_down_sync(unsigned int __mask,float __val,unsigned int __offset,int __width)               1
+float fabsf(float __a)                      50
+float fmaxf(float __a,float __b)              54
+float fminf(float __a,float __b)              16
+float powf(float __a,float __b)               1
+float sqrtf(float __a)                       6
+-------------------------------------------------
+----------Stats report---------------
+
+File name, LOC migrated to SYCL, LOC migrated to helper functions, LOC not needed to migrate, LOC not able to migrate
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu, 7, 13, 187, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu, 16, 2, 298, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu, 24, 2, 170, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu, 56, 2, 696, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu, 3, 3, 35, 0
+/scratch/helpdesk/RL-138/gamer/src/EoS/TaubMathews/CPU_EoS_TaubMathews.cpp, 2, 0, 354, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu, 0, 22, 153, 0
+/scratch/helpdesk/RL-138/gamer/src/TestProblem/ELBDM/DiskHeating/ExtPot_Soliton.cpp, 1, 0, 213, 0
+/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_FluUtility.cpp, 6, 0, 1729, 0
+/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_RiemannSolver_HLLE.cpp, 2, 0, 706, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu, 44, 0, 247, 0
+/scratch/helpdesk/RL-138/gamer/src/EoS/GammaCR/CPU_EoS_GammaCR.cpp, 2, 0, 581, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetMemSize.cu, 2, 3, 306, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Synchronize.cu, 0, 1, 15, 0
+/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_RiemannSolver_HLLC.cpp, 2, 0, 663, 0
+/scratch/helpdesk/RL-138/gamer/src/EoS/Isothermal/CPU_EoS_Isothermal.cpp, 8, 14, 439, 0
+/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_ComputeFlux.cpp, 7, 0, 452, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu, 0, 23, 339, 0
+/scratch/helpdesk/RL-138/gamer/src/SourceTerms/Deleptonization/CPU_Src_Deleptonization.cpp, 14, 6, 383, 0
+/scratch/helpdesk/RL-138/gamer/src/TestProblem/Hydro/CMZ/ExtAcc_LogBar.cpp, 1, 0, 208, 0
+/scratch/helpdesk/RL-138/gamer/src/SourceTerms/User_Template/CPU_Src_User_Template.cpp, 13, 4, 327, 0
+/scratch/helpdesk/RL-138/gamer/include/CUFLU.h, 10, 0, 650, 0
+/scratch/helpdesk/RL-138/gamer/src/TestProblem/Hydro/Bondi/ExtAcc_Bondi.cpp, 1, 0, 252, 0
+/scratch/helpdesk/RL-138/gamer/src/TestProblem/Hydro/ParticleEquilibriumIC/ExtPot_ParEqmIC.cpp, 1, 0, 180, 0
+/scratch/helpdesk/RL-138/gamer/src/EoS/User_Template/CPU_EoS_User_Template.cpp, 8, 14, 583, 0
+/scratch/helpdesk/RL-138/gamer/src/TestProblem/Hydro/Plummer/ExtPot_Plummer.cpp, 1, 0, 181, 0
+/scratch/helpdesk/RL-138/gamer/include/CUDA_CheckError.h, 3, 4, 33, 0
+/scratch/helpdesk/RL-138/gamer/src/TestProblem/Hydro/Jet/ExtAcc_Jet.cpp, 1, 0, 177, 0
+/scratch/helpdesk/RL-138/gamer/src/TestProblem/ELBDM/ExtPot/ExtPot_ELBDM_ExtPot.cpp, 1, 0, 178, 0
+/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp, 8, 0, 2239, 0
+/scratch/helpdesk/RL-138/gamer/src/TestProblem/Hydro/Plummer/ExtAcc_Plummer.cpp, 1, 0, 176, 0
+/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_FluidSolver_CTU.cpp, 40, 0, 564, 0
+/scratch/helpdesk/RL-138/gamer/src/TestProblem/Hydro/CMZ/CPU_ExtPot_TabularP17.cpp, 1, 0, 295, 0
+/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_FullStepUpdate.cpp, 5, 0, 276, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu, 29, 8, 108, 0
+/scratch/helpdesk/RL-138/gamer/src/SourceTerms/CPU_SrcSolver_IterateAllCells.cpp, 14, 0, 122, 0
+/scratch/helpdesk/RL-138/gamer/src/TestProblem/ELBDM/HaloMerger/ExtPot_ELBDM_HaloMerger.cpp, 1, 0, 201, 0
+/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_dtSolver_HydroCFL.cpp, 13, 0, 226, 0
+/scratch/helpdesk/RL-138/gamer/src/EoS/Gamma/CPU_EoS_Gamma.cpp, 8, 14, 467, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_Utility/CUUTI_BlockReduction_Shuffle.cu, 12, 1, 133, 0
+/scratch/helpdesk/RL-138/gamer/include/Macro.h, 4, 1, 1351, 0
+/scratch/helpdesk/RL-138/gamer/src/TestProblem/Hydro/CMZ/ExtPot_LogBar.cpp, 1, 0, 208, 0
+
+Total migration time: 25083.429000 ms
+
+-------------------------------------

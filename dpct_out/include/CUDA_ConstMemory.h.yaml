@@ -1,0 +1,171 @@
+---
+MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/dpct_out/include/CUDA_ConstMemory.h'
+Replacements:
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUDA_ConstMemory.h'
+    Offset:          65
+    Length:          0
+    ReplacementText: "#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUDA_ConstMemory.h'
+    Offset:          131
+    Length:          69
+    ReplacementText: 'inline dpct::constant_memory<double, 1> c_EoS_AuxArray_Flt(EOS_NAUX_MAX);'
+    ConstantFlag:    DeviceConstant
+    ConstantOffset:  143
+    InitStr:         ''
+    NewHostVarName:  c_EoS_AuxArray_Flt_host_ct1
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUDA_ConstMemory.h'
+    Offset:          201
+    Length:          69
+    ReplacementText: 'inline dpct::constant_memory<int, 1> c_EoS_AuxArray_Int(EOS_NAUX_MAX);'
+    ConstantFlag:    DeviceConstant
+    ConstantOffset:  213
+    InitStr:         ''
+    NewHostVarName:  c_EoS_AuxArray_Int_host_ct1
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUDA_ConstMemory.h'
+    Offset:          271
+    Length:          69
+    ReplacementText: 'inline dpct::constant_memory<real *, 1> c_EoS_Table(EOS_NTABLE_MAX);'
+    ConstantFlag:    DeviceConstant
+    ConstantOffset:  283
+    InitStr:         ''
+    NewHostVarName:  c_EoS_Table_host_ct1
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUDA_ConstMemory.h'
+    Offset:          497
+    Length:          48
+    ReplacementText: 'inline dpct::constant_memory<int *, 0> c_NormIdx(NULL);'
+    ConstantFlag:    DeviceConstant
+    ConstantOffset:  509
+    InitStr:         'NULL'
+    NewHostVarName:  c_NormIdx_host_ct1
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUDA_ConstMemory.h'
+    Offset:          546
+    Length:          48
+    ReplacementText: 'inline dpct::constant_memory<int *, 0> c_FracIdx(NULL);'
+    ConstantFlag:    DeviceConstant
+    ConstantOffset:  558
+    InitStr:         'NULL'
+    NewHostVarName:  c_FracIdx_host_ct1
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUDA_ConstMemory.h'
+    Offset:          957
+    Length:          73
+    ReplacementText: 'inline dpct::constant_memory<double, 1> c_Src_Dlep_AuxArray_Flt(SRC_NAUX_DLEP);'
+    ConstantFlag:    DeviceConstant
+    ConstantOffset:  969
+    InitStr:         ''
+    NewHostVarName:  c_Src_Dlep_AuxArray_Flt_host_ct1
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUDA_ConstMemory.h'
+    Offset:          1031
+    Length:          73
+    ReplacementText: 'inline dpct::constant_memory<int, 1> c_Src_Dlep_AuxArray_Int(SRC_NAUX_DLEP);'
+    ConstantFlag:    DeviceConstant
+    ConstantOffset:  1043
+    InitStr:         ''
+    NewHostVarName:  c_Src_Dlep_AuxArray_Int_host_ct1
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUDA_ConstMemory.h'
+    Offset:          1288
+    Length:          73
+    ReplacementText: 'inline dpct::constant_memory<double, 1> c_Src_User_AuxArray_Flt(SRC_NAUX_USER);'
+    ConstantFlag:    DeviceConstant
+    ConstantOffset:  1300
+    InitStr:         ''
+    NewHostVarName:  c_Src_User_AuxArray_Flt_host_ct1
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUDA_ConstMemory.h'
+    Offset:          1362
+    Length:          73
+    ReplacementText: 'inline dpct::constant_memory<int, 1> c_Src_User_AuxArray_Int(SRC_NAUX_USER);'
+    ConstantFlag:    DeviceConstant
+    ConstantOffset:  1374
+    InitStr:         ''
+    NewHostVarName:  c_Src_User_AuxArray_Int_host_ct1
+    BlockLevelFormatFlag: false
+MainSourceFilesDigest:
+  - MainSourceFile:  ''
+    Digest:          ''
+    HasCUDASyntax:   false
+DpctVersion:     2025.2.0
+SDKVersionMajor: '12'
+SDKVersionMinor: '9'
+MainHelperFileName: ''
+USMLevel:        ''
+FeatureMap:      {}
+CompileTargets:  {}
+OptionMap:
+  AnalysisScopePath:
+    Value:           ''
+    ValueVec:
+      - '/scratch/helpdesk/RL-138/gamer'
+    Specified:       false
+  AsyncHandler:
+    Value:           'false'
+    Specified:       false
+  BuildScript:
+    Value:           '0'
+    Specified:       false
+  CodePinEnabled:
+    Value:           'false'
+    Specified:       false
+  CommentsEnabled:
+    Value:           'false'
+    Specified:       false
+  CompilationsDir:
+    Value:           '/scratch/helpdesk/RL-138/gamer/src'
+    Specified:       true
+  CtadEnabled:
+    Value:           'false'
+    Specified:       false
+  EnablepProfiling:
+    Value:           'false'
+    Specified:       false
+  ExperimentalFlag:
+    Value:           '0'
+    Specified:       false
+  ExplicitNamespace:
+    Value:           '20'
+    Specified:       false
+  ExtensionDDFlag:
+    Value:           '0'
+    Specified:       false
+  ExtensionDEFlag:
+    Value:           '4294967295'
+    Specified:       false
+  HelperFuncPreferenceFlag:
+    Value:           '0'
+    Specified:       false
+  NDRangeDim:
+    Value:           '3'
+    Specified:       false
+  NoDRYPattern:
+    Value:           'false'
+    Specified:       false
+  OptimizeMigration:
+    Value:           'false'
+    Specified:       false
+  ProcessAll:
+    Value:           'false'
+    Specified:       false
+  RuleFile:
+    Value:           ''
+    Specified:       false
+  SyclNamedLambda:
+    Value:           'false'
+    Specified:       false
+  UseSYCLCompat:
+    Value:           'false'
+    Specified:       false
+  UsmLevel:
+    Value:           '1'
+    Specified:       false
+...

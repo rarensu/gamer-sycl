@@ -1,0 +1,288 @@
+---
+MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/dpct_out/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+Replacements:
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          77
+    Length:          0
+    ReplacementText: "#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          226
+    Length:          10
+    ReplacementText: SYCL_LANGUAGE_VERSION
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          238
+    Length:          37
+    ReplacementText: '#include "CPU_Shared_FluUtility.cpp"'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          34661
+    Length:          0
+    ReplacementText: "/*\nDPCT1110:3: The total declared local variable size in device function Hydro_DataReconstruction exceeds 128 bytes and may cause high register pressure. Consult with your hardware vendor to find the total register size available and adjust the code, or use smaller sub-group size to avoid high register pressure.\n*/\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          35101
+    Length:          0
+    ReplacementText: "                                     /*\n                                     DPCT1102:88: Zero-length arrays are not permitted in SYCL device code.\n                                     */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          35953
+    Length:          0
+    ReplacementText: "auto item_ct1 = sycl::ext::oneapi::this_work_item::get_nd_item<3>();\n   "
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          43514
+    Length:          10
+    ReplacementText: SYCL_LANGUAGE_VERSION
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          43525
+    Length:          0
+    ReplacementText: "      /*\n      DPCT1118:4: SYCL group functions and algorithms must be encountered in converged control flow. You may need to adjust the code.\n      */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          43531
+    Length:          15
+    ReplacementText: "/*\n      DPCT1065:90: Consider replacing sycl::nd_item::barrier() with sycl::nd_item::barrier(sycl::access::fence_space::local_space) for better performance if there is no access to global memory.\n      */\n      item_ct1.barrier()"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          45223
+    Length:          10
+    ReplacementText: SYCL_LANGUAGE_VERSION
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          45234
+    Length:          0
+    ReplacementText: "      /*\n      DPCT1118:5: SYCL group functions and algorithms must be encountered in converged control flow. You may need to adjust the code.\n      */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          45240
+    Length:          15
+    ReplacementText: "/*\n      DPCT1065:91: Consider replacing sycl::nd_item::barrier() with sycl::nd_item::barrier(sycl::access::fence_space::local_space) for better performance if there is no access to global memory.\n      */\n      item_ct1.barrier()"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          49278
+    Length:          0
+    ReplacementText: "               /*\n               DPCT1064:92: Migrated fabsf call is used in a macro/template definition and may not be valid for all macro/template uses. Adjust the code.\n               */\n               /*\n               DPCT1064:93: Migrated fmaxf call is used in a macro/template definition and may not be valid for all macro/template uses. Adjust the code.\n               */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          50138
+    Length:          0
+    ReplacementText: "                     /*\n                     DPCT1064:94: Migrated fabsf call is used in a macro/template definition and may not be valid for all macro/template uses. Adjust the code.\n                     */\n                     /*\n                     DPCT1064:96: Migrated fminf call is used in a macro/template definition and may not be valid for all macro/template uses. Adjust the code.\n                     */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          50760
+    Length:          0
+    ReplacementText: "                     /*\n                     DPCT1064:97: Migrated fabsf call is used in a macro/template definition and may not be valid for all macro/template uses. Adjust the code.\n                     */\n                     /*\n                     DPCT1064:98: Migrated fminf call is used in a macro/template definition and may not be valid for all macro/template uses. Adjust the code.\n                     */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          51413
+    Length:          0
+    ReplacementText: "                  /*\n                  DPCT1064:99: Migrated fabsf call is used in a macro/template definition and may not be valid for all macro/template uses. Adjust the code.\n                  */\n                  /*\n                  DPCT1064:100: Migrated fminf call is used in a macro/template definition and may not be valid for all macro/template uses. Adjust the code.\n                  */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          65796
+    Length:          10
+    ReplacementText: SYCL_LANGUAGE_VERSION
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          65810
+    Length:          15
+    ReplacementText: "/*\n   DPCT1065:89: Consider replacing sycl::nd_item::barrier() with sycl::nd_item::barrier(sycl::access::fence_space::local_space) for better performance if there is no access to global memory.\n   */\n   item_ct1.barrier()"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          89174
+    Length:          0
+    ReplacementText: "               /*\n               DPCT1064:101: Migrated fabsf call is used in a macro/template definition and may not be valid for all macro/template uses. Adjust the code.\n               */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          89259
+    Length:          0
+    ReplacementText: "               /*\n               DPCT1064:102: Migrated fabsf call is used in a macro/template definition and may not be valid for all macro/template uses. Adjust the code.\n               */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          89818
+    Length:          0
+    ReplacementText: "               /*\n               DPCT1064:103: Migrated fabsf call is used in a macro/template definition and may not be valid for all macro/template uses. Adjust the code.\n               */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          89903
+    Length:          0
+    ReplacementText: "               /*\n               DPCT1064:104: Migrated fabsf call is used in a macro/template definition and may not be valid for all macro/template uses. Adjust the code.\n               */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp'
+    Offset:          89986
+    Length:          0
+    ReplacementText: "               /*\n               DPCT1064:105: Migrated fabsf call is used in a macro/template definition and may not be valid for all macro/template uses. Adjust the code.\n               */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+MainSourceFilesDigest:
+  - MainSourceFile:  ''
+    Digest:          ''
+    HasCUDASyntax:   false
+DpctVersion:     2025.2.0
+SDKVersionMajor: '12'
+SDKVersionMinor: '9'
+MainHelperFileName: ''
+USMLevel:        ''
+FeatureMap:      {}
+CompileTargets:  {}
+OptionMap:
+  AnalysisScopePath:
+    Value:           ''
+    ValueVec:
+      - '/scratch/helpdesk/RL-138/gamer'
+    Specified:       false
+  AsyncHandler:
+    Value:           'false'
+    Specified:       false
+  BuildScript:
+    Value:           '0'
+    Specified:       false
+  CodePinEnabled:
+    Value:           'false'
+    Specified:       false
+  CommentsEnabled:
+    Value:           'false'
+    Specified:       false
+  CompilationsDir:
+    Value:           '/scratch/helpdesk/RL-138/gamer/src'
+    Specified:       true
+  CtadEnabled:
+    Value:           'false'
+    Specified:       false
+  EnablepProfiling:
+    Value:           'false'
+    Specified:       false
+  ExperimentalFlag:
+    Value:           '0'
+    Specified:       false
+  ExplicitNamespace:
+    Value:           '20'
+    Specified:       false
+  ExtensionDDFlag:
+    Value:           '0'
+    Specified:       false
+  ExtensionDEFlag:
+    Value:           '4294967295'
+    Specified:       false
+  HelperFuncPreferenceFlag:
+    Value:           '0'
+    Specified:       false
+  NDRangeDim:
+    Value:           '3'
+    Specified:       false
+  NoDRYPattern:
+    Value:           'false'
+    Specified:       false
+  OptimizeMigration:
+    Value:           'false'
+    Specified:       false
+  ProcessAll:
+    Value:           'false'
+    Specified:       false
+  RuleFile:
+    Value:           ''
+    Specified:       false
+  SyclNamedLambda:
+    Value:           'false'
+    Specified:       false
+  UseSYCLCompat:
+    Value:           'false'
+    Specified:       false
+  UsmLevel:
+    Value:           '1'
+    Specified:       false
+...

@@ -1,0 +1,117 @@
+---
+MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/dpct_out/src/Model_Hydro/CPU_Hydro/CPU_Shared_RiemannSolver_HLLC.cpp'
+Replacements:
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_RiemannSolver_HLLC.cpp'
+    Offset:          77
+    Length:          0
+    ReplacementText: "#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_RiemannSolver_HLLC.cpp'
+    Offset:          152
+    Length:          10
+    ReplacementText: SYCL_LANGUAGE_VERSION
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_RiemannSolver_HLLC.cpp'
+    Offset:          164
+    Length:          37
+    ReplacementText: '#include "CPU_Shared_FluUtility.cpp"'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_RiemannSolver_HLLC.cpp'
+    Offset:          13573
+    Length:          0
+    ReplacementText: "/*\nDPCT1110:7: The total declared local variable size in device function Hydro_RiemannSolver_HLLC exceeds 128 bytes and may cause high register pressure. Consult with your hardware vendor to find the total register size available and adjust the code, or use smaller sub-group size to avoid high register pressure.\n*/\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+MainSourceFilesDigest:
+  - MainSourceFile:  ''
+    Digest:          ''
+    HasCUDASyntax:   false
+DpctVersion:     2025.2.0
+SDKVersionMajor: '12'
+SDKVersionMinor: '9'
+MainHelperFileName: ''
+USMLevel:        ''
+FeatureMap:      {}
+CompileTargets:  {}
+OptionMap:
+  AnalysisScopePath:
+    Value:           ''
+    ValueVec:
+      - '/scratch/helpdesk/RL-138/gamer'
+    Specified:       false
+  AsyncHandler:
+    Value:           'false'
+    Specified:       false
+  BuildScript:
+    Value:           '0'
+    Specified:       false
+  CodePinEnabled:
+    Value:           'false'
+    Specified:       false
+  CommentsEnabled:
+    Value:           'false'
+    Specified:       false
+  CompilationsDir:
+    Value:           '/scratch/helpdesk/RL-138/gamer/src'
+    Specified:       true
+  CtadEnabled:
+    Value:           'false'
+    Specified:       false
+  EnablepProfiling:
+    Value:           'false'
+    Specified:       false
+  ExperimentalFlag:
+    Value:           '0'
+    Specified:       false
+  ExplicitNamespace:
+    Value:           '20'
+    Specified:       false
+  ExtensionDDFlag:
+    Value:           '0'
+    Specified:       false
+  ExtensionDEFlag:
+    Value:           '4294967295'
+    Specified:       false
+  HelperFuncPreferenceFlag:
+    Value:           '0'
+    Specified:       false
+  NDRangeDim:
+    Value:           '3'
+    Specified:       false
+  NoDRYPattern:
+    Value:           'false'
+    Specified:       false
+  OptimizeMigration:
+    Value:           'false'
+    Specified:       false
+  ProcessAll:
+    Value:           'false'
+    Specified:       false
+  RuleFile:
+    Value:           ''
+    Specified:       false
+  SyclNamedLambda:
+    Value:           'false'
+    Specified:       false
+  UseSYCLCompat:
+    Value:           'false'
+    Specified:       false
+  UsmLevel:
+    Value:           '1'
+    Specified:       false
+...

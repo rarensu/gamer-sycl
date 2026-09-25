@@ -1,0 +1,171 @@
+---
+MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/dpct_out/include/Macro.h'
+Replacements:
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/Macro.h'
+    Offset:          0
+    Length:          0
+    ReplacementText: "#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/Macro.h'
+    Offset:          37517
+    Length:          0
+    ReplacementText: "/*\nDPCT1064:16: Migrated fabsf call is used in a macro/template definition and may not be valid for all macro/template uses. Adjust the code.\n*/\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/Macro.h'
+    Offset:          37545
+    Length:          10
+    ReplacementText: 'sycl::fabs(fluid[MOMZ])'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/Macro.h'
+    Offset:          37556
+    Length:          0
+    ReplacementText: "/*\nDPCT1064:106: Migrated sqrtf call is used in a macro/template definition and may not be valid for all macro/template uses. Adjust the code.\n*/\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/Macro.h'
+    Offset:          37584
+    Length:          10
+    ReplacementText: 'sycl::sqrt((float)a)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/Macro.h'
+    Offset:          37868
+    Length:          0
+    ReplacementText: "/*\nDPCT1064:15: Migrated fmaxf call is used in a macro/template definition and may not be valid for all macro/template uses. Adjust the code.\n*/\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/Macro.h'
+    Offset:          37896
+    Length:          13
+    ReplacementText: 'sycl::fmax(FMAX(FABS(cc_L), FMAX(FABS(cc_C), FMAX(FABS(cc_R), FABS(cc_RR)))), FMAX(FABS(cc_L), FMAX(FABS(cc_C), FMAX(FABS(cc_R), FABS(cc_RR)))))'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/Macro.h'
+    Offset:          37910
+    Length:          0
+    ReplacementText: "/*\nDPCT1064:95: Migrated fminf call is used in a macro/template definition and may not be valid for all macro/template uses. Adjust the code.\n*/\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/Macro.h'
+    Offset:          37938
+    Length:          13
+    ReplacementText: 'sycl::fmin(FMIN(C_factor*FABS(dd_C), FMIN(C_factor*FABS(dd_R), (real)6.0*FABS(ddh_C))), FMIN(C_factor*FABS(dd_C), FMIN(C_factor*FABS(dd_R), (real)6.0*FABS(ddh_C))))'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/Macro.h'
+    Offset:          37981
+    Length:          12
+    ReplacementText: 'dpct::pow(a, b)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+MainSourceFilesDigest:
+  - MainSourceFile:  ''
+    Digest:          ''
+    HasCUDASyntax:   false
+DpctVersion:     2025.2.0
+SDKVersionMajor: '12'
+SDKVersionMinor: '9'
+MainHelperFileName: ''
+USMLevel:        ''
+FeatureMap:      {}
+CompileTargets:  {}
+OptionMap:
+  AnalysisScopePath:
+    Value:           ''
+    ValueVec:
+      - '/scratch/helpdesk/RL-138/gamer'
+    Specified:       false
+  AsyncHandler:
+    Value:           'false'
+    Specified:       false
+  BuildScript:
+    Value:           '0'
+    Specified:       false
+  CodePinEnabled:
+    Value:           'false'
+    Specified:       false
+  CommentsEnabled:
+    Value:           'false'
+    Specified:       false
+  CompilationsDir:
+    Value:           '/scratch/helpdesk/RL-138/gamer/src'
+    Specified:       true
+  CtadEnabled:
+    Value:           'false'
+    Specified:       false
+  EnablepProfiling:
+    Value:           'false'
+    Specified:       false
+  ExperimentalFlag:
+    Value:           '0'
+    Specified:       false
+  ExplicitNamespace:
+    Value:           '20'
+    Specified:       false
+  ExtensionDDFlag:
+    Value:           '0'
+    Specified:       false
+  ExtensionDEFlag:
+    Value:           '4294967295'
+    Specified:       false
+  HelperFuncPreferenceFlag:
+    Value:           '0'
+    Specified:       false
+  NDRangeDim:
+    Value:           '3'
+    Specified:       false
+  NoDRYPattern:
+    Value:           'false'
+    Specified:       false
+  OptimizeMigration:
+    Value:           'false'
+    Specified:       false
+  ProcessAll:
+    Value:           'false'
+    Specified:       false
+  RuleFile:
+    Value:           ''
+    Specified:       false
+  SyclNamedLambda:
+    Value:           'false'
+    Specified:       false
+  UseSYCLCompat:
+    Value:           'false'
+    Specified:       false
+  UsmLevel:
+    Value:           '1'
+    Specified:       false
+...
