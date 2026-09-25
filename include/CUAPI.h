@@ -26,7 +26,7 @@
 #  include "Serial.h"
 #endif
 
-#include "CUDA_CheckError.h"
+#include "CheckError.h"
 
 
 

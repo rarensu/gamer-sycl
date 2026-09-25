@@ -1,7 +1,7 @@
 
 #include "CUPOT.h"
 #ifdef __CUDACC__
-#include "CUDA_CheckError.h"
+#include "CheckError.h"
 #endif
 
 #ifdef GRAVITY

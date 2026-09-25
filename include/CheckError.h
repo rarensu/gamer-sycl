@@ -1,5 +1,5 @@
-#ifndef __CUDA_CHECK_ERROR_H__
-#define __CUDA_CHECK_ERROR_H__
+#ifndef __CHECK_ERROR_H__
+#define __CHECK_ERROR_H__
 
 
 
@@ -36,4 +36,4 @@ inline void CUDA_Check_Error( cudaError Return, const char *File, const int Line
 
 
 
-#endif // #ifndef __CUDA_CHECK_ERROR_H__
+#endif // #ifndef __CHECK_ERROR_H__

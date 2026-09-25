@@ -5,7 +5,7 @@
 // external functions and GPU-related set-up
 #ifdef __CUDACC__
 
-#include "CUDA_CheckError.h"
+#include "CheckError.h"
 #include "CUDA_ConstMemory.h"
 #if ( MODEL == HYDRO )
 #include "CUFLU_Shared_FluUtility.cu"
