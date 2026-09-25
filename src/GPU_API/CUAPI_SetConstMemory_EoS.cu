@@ -1,4 +1,4 @@
-#include "CUAPI.h"
+#include "GPUAPI.h"
 #include "CUDA_ConstMemory.h"
 
 #if ( defined GPU  &&  MODEL == HYDRO )

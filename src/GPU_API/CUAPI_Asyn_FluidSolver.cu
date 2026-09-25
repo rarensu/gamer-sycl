@@ -1,4 +1,4 @@
-#include "CUAPI.h"
+#include "GPUAPI.h"
 #include "CUFLU.h"
 
 #ifdef GPU

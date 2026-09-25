@@ -1,5 +1,5 @@
-#ifndef __CUAPI_H__
-#define __CUAPI_H__
+#ifndef __GPUAPI_H__
+#define __GPUAPI_H__
 
 
 
@@ -26,8 +26,8 @@
 #  include "Serial.h"
 #endif
 
-#include "CheckError.h"
+#include "CUDA_CheckError.h"
 
 
 
-#endif // #ifndef __CUAPI_H__
+#endif // #ifndef __GPUAPI_H__

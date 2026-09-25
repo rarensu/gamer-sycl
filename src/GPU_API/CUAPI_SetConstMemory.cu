@@ -1,7 +1,7 @@
 // define DEFINE_GLOBAL to declare all constant variables here
 // --> must define it BEFORE including CUAPI.h since the latter will include "Macro.h" to set SET_GLOBAL()
 #define DEFINE_GLOBAL
-#include "CUAPI.h"
+#include "GPUAPI.h"
 #include "CUDA_ConstMemory.h"
 #undef DEFINE_GLOBAL
 

@@ -1,4 +1,4 @@
-#include "CUAPI.h"
+#include "GPUAPI.h"
 
 void Aux_GetCPUInfo( const char *FileName );
 

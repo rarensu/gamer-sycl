@@ -1,6 +1,6 @@
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
-#include "CUAPI.h"
+#include "GPUAPI.h"
 #include "CUDA_ConstMemory.h"
 
 #if ( defined GPU  &&  MODEL == HYDRO )

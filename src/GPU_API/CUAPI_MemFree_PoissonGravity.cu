@@ -1,4 +1,4 @@
-#include "CUAPI.h"
+#include "GPUAPI.h"
 
 #if ( defined GPU  &&  defined GRAVITY )
 

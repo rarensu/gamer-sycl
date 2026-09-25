@@ -1,7 +1,7 @@
 #define DPCT_COMPAT_RT_VERSION 12090
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
-#include "CUAPI.h"
+#include "GPUAPI.h"
 
 void Aux_GetCPUInfo( const char *FileName );
 
