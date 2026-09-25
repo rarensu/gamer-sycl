@@ -1,21 +1,21 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
 
-
-
 // external functions and GPU-related set-up
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 
 #include "CheckError.h"
 #include "ConstMemory.h"
 #if ( MODEL == HYDRO )
-#include "CUFLU_Shared_FluUtility.cu"
+#include "CPU_Shared_FluUtility.cpp"
 #endif
 
-#endif // #ifdef __CUDACC__
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 
 // local function prototypes
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 
 void Src_SetAuxArray_User_Template( double [], int [] );
 void Src_SetConstMemory_User_Template( const double AuxArray_Flt[], const int AuxArray_Int[],
@@ -64,13 +64,13 @@ void Src_End_User_Template();
 //
 // Note        :  1. Invoked by Src_Init_User_Template()
 //                2. AuxArray_Flt/Int[] have the size of SRC_NAUX_USER defined in Macro.h (default = 10)
-//                3. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+//                3. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //
 // Parameter   :  AuxArray_Flt/Int : Floating-point/Integer arrays to be filled up
 //
 // Return      :  AuxArray_Flt/Int[]
 //-------------------------------------------------------------------------------------------------------
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 void Src_SetAuxArray_User_Template( double AuxArray_Flt[], int AuxArray_Int[] )
 {
 
@@ -83,7 +83,7 @@ void Src_SetAuxArray_User_Template( double AuxArray_Flt[], int AuxArray_Int[] )
    */
 
 } // FUNCTION : Src_SetAuxArray_User_Template
-#endif // #ifndef __CUDACC__
+#endif // #ifndef SYCL_LANGUAGE_VERSION
 
 
 
@@ -168,7 +168,7 @@ static void Src_User_Template( real fluid[], const real B[],
 //
 // Note        :  1. Invoked by Src_WorkBeforeMajorFunc()
 //                   --> By linking to "Src_WorkBeforeMajorFunc_User_Ptr" in Src_Init_User_Template()
-//                2. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+//                2. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //
 // Parameter   :  lv               : Target refinement level
 //                TimeNew          : Target physical time to reach
@@ -183,7 +183,7 @@ static void Src_User_Template( real fluid[], const real B[],
 //
 // Return      :  AuxArray_Flt/Int[]
 //-------------------------------------------------------------------------------------------------------
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 void Src_WorkBeforeMajorFunc_User_Template( const int lv, const double TimeNew, const double TimeOld, const double dt,
                                             double AuxArray_Flt[], int AuxArray_Int[] )
 {
@@ -203,13 +203,13 @@ void Src_WorkBeforeMajorFunc_User_Template( const int lv, const double TimeNew, 
 // IV. Set initialization functions
 // ================================
 
-#ifdef __CUDACC__
-#  define FUNC_SPACE __device__ static
+#ifdef SYCL_LANGUAGE_VERSION
+#  define FUNC_SPACE static
 #else
 #  define FUNC_SPACE            static
 #endif
 
-FUNC_SPACE SrcFunc_t SrcFunc_Ptr = Src_User_Template;
+static dpct::global_memory<SrcFunc_t, 0> SrcFunc_Ptr(Src_User_Template);
 
 //-----------------------------------------------------------------------------------------
 // Function    :  Src_SetCPU/GPUFunc_User_Template
@@ -222,11 +222,14 @@ FUNC_SPACE SrcFunc_t SrcFunc_Ptr = Src_User_Template;
 //
 // Return      :  SrcFunc_CPU/GPUPtr
 //-----------------------------------------------------------------------------------------
-#ifdef __CUDACC__
-__host__
+#ifdef SYCL_LANGUAGE_VERSION
+
 void Src_SetGPUFunc_User_Template( SrcFunc_t &SrcFunc_GPUPtr )
 {
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &SrcFunc_GPUPtr, SrcFunc_Ptr, sizeof(SrcFunc_t) )  );
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&SrcFunc_GPUPtr, SrcFunc_Ptr.get_ptr(), sizeof(SrcFunc_t))
+           .wait()));
 }
 
 #else
@@ -236,16 +239,16 @@ void Src_SetCPUFunc_User_Template( SrcFunc_t &SrcFunc_CPUPtr )
    SrcFunc_CPUPtr = SrcFunc_Ptr;
 }
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
 
 
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 //-------------------------------------------------------------------------------------------------------
 // Function    :  Src_SetConstMemory_User_Template
 // Description :  Set the constant memory variables on GPU
 //
-// Note        :  1. Adopt the suggested approach for CUDA version >= 5.0
+// Note        :  1. Adopt the suggested approach for SYCL
 //                2. Invoked by Src_Init_User_Template() and, if necessary, Src_WorkBeforeMajorFunc_User_Template()
 //                3. SRC_NAUX_USER is defined in Macro.h
 //
@@ -259,19 +262,27 @@ void Src_SetConstMemory_User_Template( const double AuxArray_Flt[], const int Au
 {
 
 // copy data to constant memory
-   DEVICE_CHECK_ERROR(  cudaMemcpyToSymbol( c_Src_User_AuxArray_Flt, AuxArray_Flt, SRC_NAUX_USER*sizeof(double) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyToSymbol( c_Src_User_AuxArray_Int, AuxArray_Int, SRC_NAUX_USER*sizeof(int   ) )  );
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(c_Src_User_AuxArray_Flt.get_ptr(), AuxArray_Flt,
+                   SRC_NAUX_USER * sizeof(double))
+           .wait()));
+   DEVICE_CHECK_ERROR(
+       DPCT_CHECK_ERROR(dpct::get_in_order_queue()
+                            .memcpy(c_Src_User_AuxArray_Int.get_ptr(),
+                                    AuxArray_Int, SRC_NAUX_USER * sizeof(int))
+                            .wait()));
 
 // obtain the constant-memory pointers
-   DEVICE_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&DevPtr_Flt, c_Src_User_AuxArray_Flt) );
-   DEVICE_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&DevPtr_Int, c_Src_User_AuxArray_Int) );
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&DevPtr_Flt) =
+                                         c_Src_User_AuxArray_Flt.get_ptr()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&DevPtr_Int) =
+                                         c_Src_User_AuxArray_Int.get_ptr()));
 
 } // FUNCTION : Src_SetConstMemory_User_Template
-#endif // #ifdef __CUDACC__
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
-
-
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 
 //-----------------------------------------------------------------------------------------
 // Function    :  Src_Init_User_Template
@@ -283,7 +294,7 @@ void Src_SetConstMemory_User_Template( const double AuxArray_Flt[], const int Au
 //                3. Set the function pointers "Src_WorkBeforeMajorFunc_User_Ptr" and "Src_End_User_Ptr"
 //                4. Invoked by Src_Init()
 //                   --> Enable it by linking to the function pointer "Src_Init_User_Ptr"
-//                5. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+//                5. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //
 // Parameter   :  None
 //
@@ -328,7 +339,7 @@ void Src_Init_User_Template()
 //
 // Note        :  1. Invoked by Src_End()
 //                   --> Enable it by linking to the function pointer "Src_End_User_Ptr"
-//                2. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+//                2. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //
 // Parameter   :  None
 //
@@ -340,4 +351,4 @@ void Src_End_User_Template()
 
 } // FUNCTION : Src_End_User_Template
 
-#endif // #ifndef __CUDACC__
+#endif // #ifndef SYCL_LANGUAGE_VERSION
