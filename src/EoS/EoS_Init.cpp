@@ -102,7 +102,7 @@ void EoS_Init()
    EoS.GasEint2GasPres_FuncPtr = EoS_GasEint2GasPres_GPUPtr;
 #  endif
 
-   CUAPI_SetConstMemory_EoS();
+   GPU_SetConstMemory_EoS();
 
 #  else
 

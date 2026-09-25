@@ -5,7 +5,7 @@
     -  0 APIs/Types - Medium manual effort for code fixing.
   +  0 lines of code (  0%) will not be automatically migrated.
     -  0 APIs/Types - High manual effort for code fixing.
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu:
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu:
   + 23 lines of code ( 88%) will be automatically migrated.
     -  4 APIs/Types - No manual effort.
     -  4 APIs/Types - Low manual effort for checking and code fixing.
@@ -47,21 +47,21 @@
     -  0 APIs/Types - Medium manual effort for code fixing.
   +  0 lines of code (  0%) will not be automatically migrated.
     -  0 APIs/Types - High manual effort for code fixing.
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu:
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu:
   + 17 lines of code (100%) will be automatically migrated.
     -  8 APIs/Types - No manual effort.
     -  6 APIs/Types - Low manual effort for checking and code fixing.
     -  3 APIs/Types - Medium manual effort for code fixing.
   +  0 lines of code (  0%) will not be automatically migrated.
     -  0 APIs/Types - High manual effort for code fixing.
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu:
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu:
   +  8 lines of code (100%) will be automatically migrated.
     -  2 APIs/Types - No manual effort.
     -  2 APIs/Types - Low manual effort for checking and code fixing.
     -  4 APIs/Types - Medium manual effort for code fixing.
   +  0 lines of code (  0%) will not be automatically migrated.
     -  0 APIs/Types - High manual effort for code fixing.
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetMemSize.cu:
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetMemSize.cu:
   +  3 lines of code (100%) will be automatically migrated.
     -  3 APIs/Types - No manual effort.
     -  0 APIs/Types - Low manual effort for checking and code fixing.
@@ -117,7 +117,7 @@
     -  0 APIs/Types - Medium manual effort for code fixing.
   +  0 lines of code (  0%) will not be automatically migrated.
     -  0 APIs/Types - High manual effort for code fixing.
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu:
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu:
   + 21 lines of code (100%) will be automatically migrated.
     - 21 APIs/Types - No manual effort.
     -  0 APIs/Types - Low manual effort for checking and code fixing.
@@ -131,7 +131,7 @@
     -  1 APIs/Types - Medium manual effort for code fixing.
   +  0 lines of code (  0%) will not be automatically migrated.
     -  0 APIs/Types - High manual effort for code fixing.
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu:
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu:
   + 41 lines of code (100%) will be automatically migrated.
     - 41 APIs/Types - No manual effort.
     -  0 APIs/Types - Low manual effort for checking and code fixing.
@@ -145,21 +145,21 @@
     -  0 APIs/Types - Medium manual effort for code fixing.
   +  0 lines of code (  0%) will not be automatically migrated.
     -  0 APIs/Types - High manual effort for code fixing.
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu:
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu:
   + 16 lines of code (100%) will be automatically migrated.
     -  3 APIs/Types - No manual effort.
     -  2 APIs/Types - Low manual effort for checking and code fixing.
     - 11 APIs/Types - Medium manual effort for code fixing.
   +  0 lines of code (  0%) will not be automatically migrated.
     -  0 APIs/Types - High manual effort for code fixing.
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Synchronize.cu:
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Synchronize.cu:
   +  1 lines of code (100%) will be automatically migrated.
     -  1 APIs/Types - No manual effort.
     -  0 APIs/Types - Low manual effort for checking and code fixing.
     -  0 APIs/Types - Medium manual effort for code fixing.
   +  0 lines of code (  0%) will not be automatically migrated.
     -  0 APIs/Types - High manual effort for code fixing.
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu:
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu:
   +  9 lines of code (100%) will be automatically migrated.
     -  0 APIs/Types - No manual effort.
     -  3 APIs/Types - Low manual effort for checking and code fixing.
@@ -187,14 +187,14 @@
     -  7 APIs/Types - Medium manual effort for code fixing.
   +  0 lines of code (  0%) will not be automatically migrated.
     -  0 APIs/Types - High manual effort for code fixing.
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu:
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu:
   +  6 lines of code (100%) will be automatically migrated.
     -  6 APIs/Types - No manual effort.
     -  0 APIs/Types - Low manual effort for checking and code fixing.
     -  0 APIs/Types - Medium manual effort for code fixing.
   +  0 lines of code (  0%) will not be automatically migrated.
     -  0 APIs/Types - High manual effort for code fixing.
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu:
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu:
   + 10 lines of code (100%) will be automatically migrated.
     -  3 APIs/Types - No manual effort.
     -  2 APIs/Types - Low manual effort for checking and code fixing.

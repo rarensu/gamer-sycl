@@ -62,10 +62,10 @@ CUFFTDX_PATH := @@@CUFFTDX_PATH@@@
 # common source files
 # -------------------------------------------------------------------------------
 # CUDA source files (compiled with nvcc)
-GPU_FILE    := CUAPI_Asyn_FluidSolver.cu  CUAPI_DiagnoseDevice.cu  CUAPI_MemAllocate_Fluid.cu \
-               CUAPI_MemFree_Fluid.cu  CUAPI_SetMemSize.cu  CUAPI_SetCache.cu  CUAPI_SetDevice.cu \
-               CUAPI_Synchronize.cu  CUAPI_Asyn_dtSolver.cu  CUAPI_SetConstMemory.cu  CUAPI_SetConstMemory_EoS.cu \
-               CUAPI_MemAllocate.cu
+GPU_FILE    := GPU_Asyn_FluidSolver.cpp  GPU_DiagnoseDevice.cpp  GPU_MemAllocate_Fluid.cpp \
+               GPU_MemFree_Fluid.cpp  GPU_SetMemSize.cpp  GPU_SetCache.cpp  GPU_SetDevice.cpp \
+               GPU_Synchronize.cpp  GPU_Asyn_dtSolver.cpp  GPU_SetConstMemory.cpp  GPU_SetConstMemory_EoS.cpp \
+               GPU_MemAllocate.cpp
 
 
 # C/C++ source files (compiled with c++ compiler)
@@ -168,7 +168,7 @@ endif # MHD
 # -------------------------------------------------------------------------------
 else ifeq "$(filter -DMODEL=ELBDM, $(SIMU_OPTION))" "-DMODEL=ELBDM"
 GPU_FILE    += CUFLU_ELBDMSolver_FD.cu  CUFLU_ELBDMSolver_GramFE_FFT.cu  CUFLU_ELBDMSolver_GramFE_MATMUL.cu  CUFLU_ELBDMSolver_HJ.cu \
-               CUAPI_SendGramFEMatrix2GPU.cu
+               GPU_SendGramFEMatrix2GPU.cpp
 
 CPU_FILE    += CPU_ELBDMSolver_FD.cpp  CPU_ELBDMSolver_FFT.cpp  CPU_ELBDMSolver_GramFE_FFT.cpp  CPU_ELBDMSolver_GramFE_MATMUL.cpp \
                CPU_ELBDMSolver_HJ.cpp  ELBDM_Init_ByFunction_AssignData.cpp  ELBDM_GetTimeStep_Fluid.cpp  ELBDM_GetTimeStep_Hybrid_CFL.cpp \
@@ -194,9 +194,9 @@ endif # MODEL
 # self-gravity source files (included only if "GRAVITY" is turned on)
 # ------------------------------------------------------------------------------------
 ifeq "$(filter -DGRAVITY, $(SIMU_OPTION))" "-DGRAVITY"
-GPU_FILE    += CUAPI_MemAllocate_PoissonGravity.cu  CUAPI_MemFree_PoissonGravity.cu \
-               CUAPI_Asyn_PoissonGravitySolver.cu  CUAPI_SetConstMemory_ExtAccPot.cu \
-               CUAPI_SendExtPotTable2GPU.cu
+GPU_FILE    += GPU_MemAllocate_PoissonGravity.cpp  GPU_MemFree_PoissonGravity.cpp \
+               GPU_Asyn_PoissonGravitySolver.cpp  GPU_SetConstMemory_ExtAccPot.cpp \
+               GPU_SendExtPotTable2GPU.cpp
 
 GPU_FILE    += CUPOT_PoissonSolver_SOR.cu \
                CUPOT_PoissonSolver_MG.cu  CUPOT_ExtAcc_PointMass.cu  CUPOT_ExtPot_PointMass.cu \
@@ -306,7 +306,7 @@ endif # SUPPORT_LIBYT
 
 # local source terms source files
 # ------------------------------------------------------------------------------------
-GPU_FILE    += CUAPI_Asyn_SrcSolver.cu  CUSRC_SrcSolver_IterateAllCells.cu  CUSRC_Src_Deleptonization.cu \
+GPU_FILE    += GPU_Asyn_SrcSolver.cpp  CUSRC_SrcSolver_IterateAllCells.cu  CUSRC_Src_Deleptonization.cu \
                CUSRC_Src_User_Template.cu  CUSRC_Src_ExactCooling.cu
 
 CPU_FILE    += CPU_SrcSolver.cpp  CPU_SrcSolver_IterateAllCells.cpp  CPU_Src_Deleptonization.cpp \
@@ -602,7 +602,7 @@ $(OBJ_PATH)/$(PREFIX_GPU)CUSRC_%.o : CUSRC_%.cu
 	@echo "Compiling $<"
 	$(ECHO)$(NVCC) $(NVCCFLAG_COM) -o $@ -dc $<
 
-$(OBJ_PATH)/$(PREFIX_GPU)CUAPI_%.o : CUAPI_%.cu
+$(OBJ_PATH)/$(PREFIX_GPU)GPU_%.o : GPU_%.cpp
 	@echo "Compiling $<"
 	$(ECHO)$(NVCC) $(NVCCFLAG_COM) -o $@ -dc $<
 

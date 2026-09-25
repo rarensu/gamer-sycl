@@ -152,9 +152,9 @@ SIMU_OPTION += -DSUPPORT_HDF5
 # common source files
 # -------------------------------------------------------------------------------
 # Cuda source files (compiled with nvcc)
-CUDA_FILE   := CUAPI_Asyn_FluidSolver.cu  CUAPI_DiagnoseDevice.cu  CUAPI_MemAllocate_Fluid.cu \
-               CUAPI_MemFree_Fluid.cu  CUAPI_Set_Default_GPU_Parameter.cu  CUAPI_SetDevice.cu \
-               CUAPI_Synchronize.cu
+CUDA_FILE   := GPU_Asyn_FluidSolver.cu  GPU_DiagnoseDevice.cu  GPU_MemAllocate_Fluid.cu \
+               GPU_MemFree_Fluid.cu  GPU_Set_Default_GPU_Parameter.cu  GPU_SetDevice.cu \
+               GPU_Synchronize.cu
 
 
 # C/C++ source files (compiled with c++ compiler)
@@ -272,8 +272,8 @@ endif # MODEL
 # self-gravity source files (included only if "GRAVITY" is turned on)
 # ------------------------------------------------------------------------------------
 ifeq "$(findstring GRAVITY, $(SIMU_OPTION))" "GRAVITY"
-CUDA_FILE   += CUAPI_MemAllocate_PoissonGravity.cu  CUAPI_MemFree_PoissonGravity.cu \
-               CUAPI_Asyn_PoissonGravitySolver.cu
+CUDA_FILE   += GPU_MemAllocate_PoissonGravity.cu  GPU_MemFree_PoissonGravity.cu \
+               GPU_Asyn_PoissonGravitySolver.cu
 
 CUDA_FILE   += CUPOT_PoissonSolver_SOR_10to14cube.cu  CUPOT_PoissonSolver_SOR_16to18cube.cu \
                CUPOT_PoissonSolver_MG.cu
@@ -675,7 +675,7 @@ NVCCFLAG_POT += -Xptxas -dlcm=ca
 # implicit rules (do NOT modify the order of the following rules)
 # -------------------------------------------------------------------------------
 ifeq "$(findstring GPU, $(SIMU_OPTION))" "GPU"
-$(OBJ_PATH)/CUAPI_%.o : CUAPI_%.cu
+$(OBJ_PATH)/GPU_%.o : GPU_%.cu
 	$(NVCC) $(NVCCFLAG_COM) -o $@ -c $<
 
 $(OBJ_PATH)/CUFLU_%.o : CUFLU_%.cu

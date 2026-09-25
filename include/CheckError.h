@@ -24,7 +24,7 @@ inline void DEVICE_Check_Error( dpct::err0 Return, const char *File, const int L
 
 // in DEVICE_CHECK_MALLOC(), we must use "Call; cudaError_t Return = cudaGetLastError();" instead of "cudaError_t Return = Call;"
 // since cudaGetLastError() will reset the last error to cudaSuccess
-// --> otherwise DEVICE_CHECK_ERROR( cudaGetLastError() ) in, for example, CUAPI_Asyn_FluidSolver(),
+// --> otherwise DEVICE_CHECK_ERROR( cudaGetLastError() ) in, for example, GPU_Asyn_FluidSolver(),
 //     will fail since the last error has not been reset!
 #define DEVICE_CHECK_MALLOC( Call )                                                                        \
 {                                                                                                        \

@@ -70,9 +70,9 @@ void Init_GAMER( int *argc, char ***argv )
 // initialize GPU
 // --> must be called before Init_ExtAccPot() and EoS_Init()
 #  ifdef GPU
-   CUAPI_SetDevice( OPT__GPUID_SELECT );
+   GPU_SetDevice( OPT__GPUID_SELECT );
 
-   CUAPI_SetCache();
+   GPU_SetCache();
 #  endif // #ifdef GPU
 
 
@@ -104,7 +104,7 @@ void Init_GAMER( int *argc, char ***argv )
 
 
 // initialize all fields and particle attributes
-// --> Init_Field() must be called before CUAPI_SetConstMemory()
+// --> Init_Field() must be called before GPU_SetConstMemory()
    Init_Field();
 #  ifdef PARTICLE
    Par_Init_Attribute();
@@ -153,7 +153,7 @@ void Init_GAMER( int *argc, char ***argv )
 // set GPU constant memory
 // --> must be called after Init_Field() and Init_ExtAccPot()
 #  ifdef GPU
-   CUAPI_SetConstMemory();
+   GPU_SetConstMemory();
 #  endif
 
 
@@ -173,7 +173,7 @@ void Init_GAMER( int *argc, char ***argv )
 
 // allocate memory for several CPU/GPU global arrays
 #  ifdef GPU
-   CUAPI_MemAllocate();
+   GPU_MemAllocate();
 #  endif
 
    Init_MemAllocate();

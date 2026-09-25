@@ -1054,7 +1054,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          0
     Length:          0
     ReplacementText: "#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
@@ -1063,7 +1063,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          2241
     Length:          10
     ReplacementText: 'SYCL_EXTERNAL '
@@ -1072,7 +1072,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          2406
     Length:          0
     ReplacementText: "   /*\n   DPCT1102:21: Zero-length arrays are not permitted in SYCL device code.\n   */\n"
@@ -1081,7 +1081,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          2479
     Length:          0
     ReplacementText: "         /*\n         DPCT1102:22: Zero-length arrays are not permitted in SYCL device code.\n         */\n"
@@ -1090,7 +1090,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          3123
     Length:          0
     ReplacementText: "         /*\n         DPCT1102:23: Zero-length arrays are not permitted in SYCL device code.\n         */\n"
@@ -1099,7 +1099,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          3196
     Length:          0
     ReplacementText: "         /*\n         DPCT1102:24: Zero-length arrays are not permitted in SYCL device code.\n         */\n"
@@ -1108,7 +1108,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          3787
     Length:          0
     ReplacementText: ', int * const c_NormIdx, int * const c_FracIdx'
@@ -1117,7 +1117,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          7743
     Length:          0
     ReplacementText: "/*\nDPCT1102:25: Zero-length arrays are not permitted in SYCL device code.\n*/\n"
@@ -1126,7 +1126,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          7822
     Length:          0
     ReplacementText: "/*\nDPCT1102:26: Zero-length arrays are not permitted in SYCL device code.\n*/\n"
@@ -1135,7 +1135,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          8511
     Length:          0
     ReplacementText: "/*\nDPCT1102:27: Zero-length arrays are not permitted in SYCL device code.\n*/\n"
@@ -1144,7 +1144,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          8586
     Length:          0
     ReplacementText: "/*\nDPCT1102:28: Zero-length arrays are not permitted in SYCL device code.\n*/\n"
@@ -1153,7 +1153,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          9261
     Length:          12
     ReplacementText: 'dpct::queue_ptr'
@@ -1162,7 +1162,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          19644
     Length:          4
     ReplacementText: 'dpct::dim3'
@@ -1171,7 +1171,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          25334
     Length:          0
     ReplacementText: "/*\n      DPCT1124:29: cudaMemcpyAsync is migrated to asynchronous memcpy API. While the origin API might be synchronous, it depends on the type of operand memory, so you may need to call wait() on event return by memcpy API to ensure synchronization behavior.\n      */\n      "
@@ -1180,7 +1180,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          25353
     Length:          15
     ReplacementText: 'DPCT_CHECK_ERROR(Stream[s]->memcpy'
@@ -1189,7 +1189,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          25478
     Length:          24
     ReplacementText: ''
@@ -1198,7 +1198,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          25502
     Length:          11
     ReplacementText: ''
@@ -1207,7 +1207,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          25515
     Length:          0
     ReplacementText: ')'
@@ -1216,7 +1216,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          29274
     Length:          0
     ReplacementText: "         /*\n         DPCT1049:0: The work-group size passed to the SYCL kernel may exceed the limit. To get the device limit, query info::device::max_work_group_size. Adjust the work-group size if needed.\n         */\n"
@@ -1225,7 +1225,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          29283
     Length:          1098
     ReplacementText: "{\n           extern dpct::constant_memory<int *, 0> c_NormIdx;\n           extern dpct::constant_memory<int *, 0> c_FracIdx;\n\n           c_NormIdx.init(*Stream[s]);\n           c_FracIdx.init(*Stream[s]);\n\n           Stream[s]->submit(\n             [&](sycl::handler &cgh) {\n               auto c_NormIdx_ptr_ct1 = c_NormIdx.get_ptr();\n               auto c_FracIdx_ptr_ct1 = c_FracIdx.get_ptr();\n\n               const float (*)[5][10648] d_Flu_Array_F_In_UsedPatch_s_ct0 = d_Flu_Array_F_In  + UsedPatch[s];\n               auto d_Flu_Array_F_Out_UsedPatch_s_ct1 = d_Flu_Array_F_Out + UsedPatch[s];\n               const float (*)[0][11132] d_Mag_Array_F_In_UsedPatch_s_ct2 = d_Mag_Array_F_In  + UsedPatch[s];\n               auto d_Mag_Array_F_Out_UsedPatch_s_ct3 = d_Mag_Array_F_Out + UsedPatch[s];\n               auto d_DE_Array_F_Out_UsedPatch_s_ct4 = d_DE_Array_F_Out  + UsedPatch[s];\n               auto d_Flux_Array_UsedPatch_s_ct5 = d_Flux_Array      + UsedPatch[s];\n               auto d_Ele_Array_UsedPatch_s_ct6 = d_Ele_Array       + UsedPatch[s];\n               const double (*)[3] d_Corner_Array_F_UsedPatch_s_ct7 = d_Corner_Array_F  + UsedPatch[s];\n               const float (*)[1] d_Pot_Array_USG_F_UsedPatch_s_ct8 = d_Pot_Array_USG_F + UsedPatch[s];\n               auto d_PriVar_UsedPatch_s_ct9 = d_PriVar          + UsedPatch[s];\n               auto d_Slope_PPM_UsedPatch_s_ct10 = d_Slope_PPM       + UsedPatch[s];\n               auto d_FC_Var_UsedPatch_s_ct11 = d_FC_Var          + UsedPatch[s];\n               auto d_FC_Flux_UsedPatch_s_ct12 = d_FC_Flux         + UsedPatch[s];\n               auto d_FC_Mag_Half_UsedPatch_s_ct13 = d_FC_Mag_Half     + UsedPatch[s];\n               auto d_EC_Ele_UsedPatch_s_ct14 = d_EC_Ele          + UsedPatch[s];\n               auto GPUExtAcc_Ptr_ct24 = GPUExtAcc_Ptr;\n\n               cgh.parallel_for(\n                 sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * BlockDim_FluidSolver, BlockDim_FluidSolver), \n                 [=](sycl::nd_item<3> item_ct1) {\n                   FLU_FluidSolver_CTU(d_Flu_Array_F_In_UsedPatch_s_ct0, d_Flu_Array_F_Out_UsedPatch_s_ct1, d_Mag_Array_F_In_UsedPatch_s_ct2, d_Mag_Array_F_Out_UsedPatch_s_ct3, d_DE_Array_F_Out_UsedPatch_s_ct4, d_Flux_Array_UsedPatch_s_ct5, d_Ele_Array_UsedPatch_s_ct6, d_Corner_Array_F_UsedPatch_s_ct7, d_Pot_Array_USG_F_UsedPatch_s_ct8, d_PriVar_UsedPatch_s_ct9, d_Slope_PPM_UsedPatch_s_ct10, d_FC_Var_UsedPatch_s_ct11, d_FC_Flux_UsedPatch_s_ct12, d_FC_Mag_Half_UsedPatch_s_ct13, d_EC_Ele_UsedPatch_s_ct14, dt, dh, StoreFlux, StoreElectric, LR_Limiter, MinMod_Coeff, Time, UsePot, ExtAcc, GPUExtAcc_Ptr_ct24, MinDens, MinPres, MinEint, DualEnergySwitch, PassiveFloor, NormPassive, NNorm, FracPassive, NFrac, JeansMinPres, JeansMinPres_Coeff, EoS, *c_NormIdx_ptr_ct1, *c_FracIdx_ptr_ct1);\n                 });\n             });\n         }"
@@ -1234,7 +1234,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: true
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          30381
     Length:          1
     ReplacementText: ''
@@ -1243,7 +1243,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          33495
     Length:          0
     ReplacementText: "      /*\n      DPCT1010:30: SYCL uses exceptions to report errors and does not use the error codes. The cudaGetLastError function call was replaced with 0. You need to rewrite this code.\n      */\n"
@@ -1252,7 +1252,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          33519
     Length:          18
     ReplacementText: '0'
@@ -1261,7 +1261,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          33922
     Length:          0
     ReplacementText: "/*\n      DPCT1124:31: cudaMemcpyAsync is migrated to asynchronous memcpy API. While the origin API might be synchronous, it depends on the type of operand memory, so you may need to call wait() on event return by memcpy API to ensure synchronization behavior.\n      */\n      "
@@ -1270,7 +1270,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          33941
     Length:          15
     ReplacementText: 'DPCT_CHECK_ERROR(Stream[s]->memcpy'
@@ -1279,7 +1279,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          34067
     Length:          24
     ReplacementText: ''
@@ -1288,7 +1288,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          34091
     Length:          11
     ReplacementText: ''
@@ -1297,7 +1297,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          34104
     Length:          0
     ReplacementText: ')'
@@ -1306,7 +1306,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          34674
     Length:          0
     ReplacementText: "/*\n      DPCT1124:32: cudaMemcpyAsync is migrated to asynchronous memcpy API. While the origin API might be synchronous, it depends on the type of operand memory, so you may need to call wait() on event return by memcpy API to ensure synchronization behavior.\n      */\n      "
@@ -1315,7 +1315,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          34693
     Length:          15
     ReplacementText: 'DPCT_CHECK_ERROR(Stream[s]->memcpy'
@@ -1324,7 +1324,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          34816
     Length:          27
     ReplacementText: ''
@@ -1333,7 +1333,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          34843
     Length:          11
     ReplacementText: ''
@@ -1342,7 +1342,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          34856
     Length:          0
     ReplacementText: ')'
@@ -1351,7 +1351,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          0
     Length:          0
     ReplacementText: "#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
@@ -1360,7 +1360,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          53
     Length:          10
     ReplacementText: 'SYCL_EXTERNAL '
@@ -1369,7 +1369,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          246
     Length:          0
     ReplacementText: "   /*\n   DPCT1102:33: Zero-length arrays are not permitted in SYCL device code.\n   */\n"
@@ -1378,7 +1378,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          848
     Length:          0
     ReplacementText: "/*\nDPCT1102:34: Zero-length arrays are not permitted in SYCL device code.\n*/\n"
@@ -1387,7 +1387,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          981
     Length:          12
     ReplacementText: 'dpct::queue_ptr'
@@ -1396,7 +1396,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          4393
     Length:          4
     ReplacementText: 'dpct::dim3'
@@ -1405,7 +1405,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          6023
     Length:          0
     ReplacementText: "/*\n      DPCT1124:35: cudaMemcpyAsync is migrated to asynchronous memcpy API. While the origin API might be synchronous, it depends on the type of operand memory, so you may need to call wait() on event return by memcpy API to ensure synchronization behavior.\n      */\n      "
@@ -1414,7 +1414,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          6042
     Length:          15
     ReplacementText: 'DPCT_CHECK_ERROR(Stream[s]->memcpy'
@@ -1423,7 +1423,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          6165
     Length:          24
     ReplacementText: ''
@@ -1432,7 +1432,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          6189
     Length:          11
     ReplacementText: ''
@@ -1441,7 +1441,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          6202
     Length:          0
     ReplacementText: ')'
@@ -1450,7 +1450,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          6433
     Length:          0
     ReplacementText: "/*\n      DPCT1124:36: cudaMemcpyAsync is migrated to asynchronous memcpy API. While the origin API might be synchronous, it depends on the type of operand memory, so you may need to call wait() on event return by memcpy API to ensure synchronization behavior.\n      */\n      "
@@ -1459,7 +1459,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          6452
     Length:          15
     ReplacementText: 'DPCT_CHECK_ERROR(Stream[s]->memcpy'
@@ -1468,7 +1468,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          6575
     Length:          24
     ReplacementText: ''
@@ -1477,7 +1477,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          6599
     Length:          11
     ReplacementText: ''
@@ -1486,7 +1486,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          6612
     Length:          0
     ReplacementText: ')'
@@ -1495,7 +1495,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          6873
     Length:          0
     ReplacementText: "      /*\n      DPCT1049:1: The work-group size passed to the SYCL kernel may exceed the limit. To get the device limit, query info::device::max_work_group_size. Adjust the work-group size if needed.\n      */\n"
@@ -1504,7 +1504,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          6879
     Length:          566
     ReplacementText: "{\n        dpct::has_capability_or_fail(Stream[s]->get_device(), {sycl::aspect::fp64});\n\n        Stream[s]->submit(\n          [&](sycl::handler &cgh) {\n            const float (*)[5][512] d_Flu_Array_S_In_UsedPatch_s_ct0 = d_Flu_Array_S_In  + UsedPatch[s];\n            auto d_Flu_Array_S_Out_UsedPatch_s_ct1 = d_Flu_Array_S_Out + UsedPatch[s];\n            const float (*)[0][576] d_Mag_Array_S_In_UsedPatch_s_ct2 = d_Mag_Array_S_In  + UsedPatch[s];\n            const double (*)[3] d_Corner_Array_S_UsedPatch_s_ct3 = d_Corner_Array_S  + UsedPatch[s];\n\n            cgh.parallel_for(\n              sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * BlockDim_SrcSolver, BlockDim_SrcSolver), \n              [=](sycl::nd_item<3> item_ct1) {\n                CUSRC_SrcSolver_IterateAllCells(d_Flu_Array_S_In_UsedPatch_s_ct0, d_Flu_Array_S_Out_UsedPatch_s_ct1, d_Mag_Array_S_In_UsedPatch_s_ct2, d_Corner_Array_S_UsedPatch_s_ct3, SrcTerms, NPatchGroup, dt, dh, TimeNew, TimeOld, MinDens, MinPres, MinEint, PassiveFloor, EoS);\n              });\n          });\n      }"
@@ -1513,7 +1513,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: true
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          7445
     Length:          1
     ReplacementText: ''
@@ -1522,7 +1522,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          7448
     Length:          0
     ReplacementText: "      /*\n      DPCT1010:37: SYCL uses exceptions to report errors and does not use the error codes. The cudaGetLastError function call was replaced with 0. You need to rewrite this code.\n      */\n"
@@ -1531,7 +1531,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          7472
     Length:          18
     ReplacementText: '0'
@@ -1540,7 +1540,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          7767
     Length:          0
     ReplacementText: "/*\n      DPCT1124:38: cudaMemcpyAsync is migrated to asynchronous memcpy API. While the origin API might be synchronous, it depends on the type of operand memory, so you may need to call wait() on event return by memcpy API to ensure synchronization behavior.\n      */\n      "
@@ -1549,7 +1549,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          7786
     Length:          15
     ReplacementText: 'DPCT_CHECK_ERROR(Stream[s]->memcpy'
@@ -1558,7 +1558,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          7912
     Length:          24
     ReplacementText: ''
@@ -1567,7 +1567,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          7936
     Length:          11
     ReplacementText: ''
@@ -1576,7 +1576,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          7949
     Length:          0
     ReplacementText: ')'
@@ -1585,7 +1585,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          0
     Length:          0
     ReplacementText: "#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
@@ -1594,7 +1594,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          119
     Length:          10
     ReplacementText: 'SYCL_EXTERNAL '
@@ -1603,7 +1603,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          229
     Length:          0
     ReplacementText: "                              /*\n                              DPCT1102:39: Zero-length arrays are not permitted in SYCL device code.\n                              */\n"
@@ -1612,7 +1612,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          496
     Length:          0
     ReplacementText: ",\n                              real *shared"
@@ -1621,7 +1621,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          1353
     Length:          0
     ReplacementText: "/*\nDPCT1102:40: Zero-length arrays are not permitted in SYCL device code.\n*/\n"
@@ -1630,7 +1630,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          1450
     Length:          12
     ReplacementText: 'dpct::queue_ptr'
@@ -1639,7 +1639,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          5662
     Length:          4
     ReplacementText: 'dpct::dim3'
@@ -1648,7 +1648,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          8207
     Length:          0
     ReplacementText: "/*\n            DPCT1124:41: cudaMemcpyAsync is migrated to asynchronous memcpy API. While the origin API might be synchronous, it depends on the type of operand memory, so you may need to call wait() on event return by memcpy API to ensure synchronization behavior.\n            */\n            "
@@ -1657,7 +1657,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          8226
     Length:          15
     ReplacementText: 'DPCT_CHECK_ERROR(Stream[s]->memcpy'
@@ -1666,7 +1666,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          8354
     Length:          27
     ReplacementText: ''
@@ -1675,7 +1675,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          8381
     Length:          11
     ReplacementText: ''
@@ -1684,7 +1684,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          8394
     Length:          0
     ReplacementText: ')'
@@ -1693,7 +1693,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          9673
     Length:          0
     ReplacementText: "            /*\n            DPCT1049:2: The work-group size passed to the SYCL kernel may exceed the limit. To get the device limit, query info::device::max_work_group_size. Adjust the work-group size if needed.\n            */\n"
@@ -1702,7 +1702,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          9685
     Length:          378
     ReplacementText: "Stream[s]->submit(\n              [&](sycl::handler &cgh) {\n                /*\n                DPCT1101:121: 'MaxNWarp' expression was replaced with a value. Modify the code to use the original expression, provided in comments, if it is correct.\n                */\n                sycl::local_accessor<real, 1> shared_acc_ct1(sycl::range<1>(32/*MaxNWarp*/), cgh);\n\n                auto d_dt_Array_T_UsedPatch_s_ct0 = d_dt_Array_T  + UsedPatch[s];\n                const float (*)[5][512] d_Flu_Array_T_UsedPatch_s_ct1 = d_Flu_Array_T + UsedPatch[s];\n                const float (*)[0][576] d_Mag_Array_T_UsedPatch_s_ct2 = d_Mag_Array_T + UsedPatch[s];\n\n                cgh.parallel_for(\n                  sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * BlockDim_dtSolver, BlockDim_dtSolver), \n                  [=](sycl::nd_item<3> item_ct1) [[sycl::reqd_sub_group_size(32)]] {\n                    FLU_dtSolver_HydroCFL(d_dt_Array_T_UsedPatch_s_ct0, d_Flu_Array_T_UsedPatch_s_ct1, d_Mag_Array_T_UsedPatch_s_ct2, dh, Safety, MinPres, PassiveFloor, EoS, MicroPhy, shared_acc_ct1.get_multi_ptr<sycl::access::decorated::no>().get());\n                  });\n              });"
@@ -1711,7 +1711,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: true
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          10063
     Length:          1
     ReplacementText: ''
@@ -1720,7 +1720,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          10834
     Length:          0
     ReplacementText: "      /*\n      DPCT1010:42: SYCL uses exceptions to report errors and does not use the error codes. The cudaGetLastError function call was replaced with 0. You need to rewrite this code.\n      */\n"
@@ -1729,7 +1729,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          10858
     Length:          18
     ReplacementText: '0'
@@ -1738,7 +1738,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          11153
     Length:          0
     ReplacementText: "/*\n      DPCT1124:43: cudaMemcpyAsync is migrated to asynchronous memcpy API. While the origin API might be synchronous, it depends on the type of operand memory, so you may need to call wait() on event return by memcpy API to ensure synchronization behavior.\n      */\n      "
@@ -1747,7 +1747,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          11172
     Length:          15
     ReplacementText: 'DPCT_CHECK_ERROR(Stream[s]->memcpy'
@@ -1756,7 +1756,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          11283
     Length:          24
     ReplacementText: ''
@@ -1765,7 +1765,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          11307
     Length:          11
     ReplacementText: ''
@@ -1774,7 +1774,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          11320
     Length:          0
     ReplacementText: ')'
@@ -1783,7 +1783,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          0
     Length:          0
     ReplacementText: "#define DPCT_COMPAT_RT_VERSION 12090\n#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
@@ -1792,7 +1792,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          684
     Length:          34
     ReplacementText: 'DPCT_CHECK_ERROR(DeviceCount = dpct::device_count())'
@@ -1801,7 +1801,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          933
     Length:          29
     ReplacementText: 'DPCT_CHECK_ERROR(GetDeviceID = dpct::get_current_device_id())'
@@ -1810,7 +1810,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1002
     Length:          14
     ReplacementText: 'dpct::device_info'
@@ -1819,7 +1819,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1051
     Length:          51
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_device(GetDeviceID).get_device_info(DeviceProp))'
@@ -1828,7 +1828,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1174
     Length:          0
     ReplacementText: "   /*\n   DPCT1005:44: The SYCL device version is different from CUDA Compute Compatibility. You may need to rewrite this code.\n   */\n"
@@ -1837,7 +1837,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1198
     Length:          5
     ReplacementText: 'get_major_version()'
@@ -1846,7 +1846,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1225
     Length:          5
     ReplacementText: 'get_minor_version()'
@@ -1855,7 +1855,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1257
     Length:          0
     ReplacementText: "   /*\n   DPCT1005:45: The SYCL device version is different from CUDA Compute Compatibility. You may need to rewrite this code.\n   */\n"
@@ -1864,7 +1864,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1281
     Length:          5
     ReplacementText: 'get_major_version()'
@@ -1873,7 +1873,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1308
     Length:          5
     ReplacementText: 'get_minor_version()'
@@ -1882,7 +1882,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1340
     Length:          0
     ReplacementText: "   /*\n   DPCT1005:46: The SYCL device version is different from CUDA Compute Compatibility. You may need to rewrite this code.\n   */\n"
@@ -1891,7 +1891,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1364
     Length:          5
     ReplacementText: 'get_major_version()'
@@ -1900,7 +1900,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1423
     Length:          0
     ReplacementText: "   /*\n   DPCT1005:47: The SYCL device version is different from CUDA Compute Compatibility. You may need to rewrite this code.\n   */\n"
@@ -1909,7 +1909,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1447
     Length:          5
     ReplacementText: 'get_major_version()'
@@ -1918,7 +1918,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1506
     Length:          0
     ReplacementText: "   /*\n   DPCT1005:48: The SYCL device version is different from CUDA Compute Compatibility. You may need to rewrite this code.\n   */\n"
@@ -1927,7 +1927,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1530
     Length:          5
     ReplacementText: 'get_major_version()'
@@ -1936,7 +1936,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1589
     Length:          0
     ReplacementText: "   /*\n   DPCT1005:49: The SYCL device version is different from CUDA Compute Compatibility. You may need to rewrite this code.\n   */\n"
@@ -1945,7 +1945,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1613
     Length:          5
     ReplacementText: 'get_major_version()'
@@ -1954,7 +1954,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1672
     Length:          0
     ReplacementText: "   /*\n   DPCT1005:50: The SYCL device version is different from CUDA Compute Compatibility. You may need to rewrite this code.\n   */\n"
@@ -1963,7 +1963,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1696
     Length:          5
     ReplacementText: 'get_major_version()'
@@ -1972,7 +1972,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1723
     Length:          5
     ReplacementText: 'get_minor_version()'
@@ -1981,7 +1981,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1755
     Length:          0
     ReplacementText: "   /*\n   DPCT1005:51: The SYCL device version is different from CUDA Compute Compatibility. You may need to rewrite this code.\n   */\n"
@@ -1990,7 +1990,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1779
     Length:          5
     ReplacementText: 'get_major_version()'
@@ -1999,7 +1999,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1806
     Length:          5
     ReplacementText: 'get_minor_version()'
@@ -2008,7 +2008,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1838
     Length:          0
     ReplacementText: "   /*\n   DPCT1005:52: The SYCL device version is different from CUDA Compute Compatibility. You may need to rewrite this code.\n   */\n"
@@ -2017,7 +2017,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1862
     Length:          5
     ReplacementText: 'get_major_version()'
@@ -2026,7 +2026,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1889
     Length:          5
     ReplacementText: 'get_minor_version()'
@@ -2035,7 +2035,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1921
     Length:          0
     ReplacementText: "   /*\n   DPCT1005:53: The SYCL device version is different from CUDA Compute Compatibility. You may need to rewrite this code.\n   */\n"
@@ -2044,7 +2044,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1945
     Length:          5
     ReplacementText: 'get_major_version()'
@@ -2053,7 +2053,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          2004
     Length:          0
     ReplacementText: "   /*\n   DPCT1005:54: The SYCL device version is different from CUDA Compute Compatibility. You may need to rewrite this code.\n   */\n"
@@ -2062,7 +2062,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          2028
     Length:          5
     ReplacementText: 'get_major_version()'
@@ -2071,7 +2071,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          2055
     Length:          5
     ReplacementText: 'get_minor_version()'
@@ -2080,7 +2080,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          2087
     Length:          0
     ReplacementText: "   /*\n   DPCT1005:55: The SYCL device version is different from CUDA Compute Compatibility. You may need to rewrite this code.\n   */\n"
@@ -2089,7 +2089,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          2111
     Length:          5
     ReplacementText: 'get_major_version()'
@@ -2098,7 +2098,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          2138
     Length:          5
     ReplacementText: 'get_minor_version()'
@@ -2107,7 +2107,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          2297
     Length:          0
     ReplacementText: "               /*\n               DPCT1005:56: The SYCL device version is different from CUDA Compute Compatibility. You may need to rewrite this code.\n               */\n"
@@ -2116,7 +2116,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          2323
     Length:          5
     ReplacementText: 'get_major_version()'
@@ -2125,7 +2125,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          2341
     Length:          5
     ReplacementText: 'get_minor_version()'
@@ -2134,7 +2134,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          2888
     Length:          0
     ReplacementText: "         /*\n         DPCT1043:57: The version-related API is different in SYCL. An initial code was generated, but you need to adjust it.\n         */\n"
@@ -2143,7 +2143,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          2916
     Length:          38
     ReplacementText: 'DPCT_CHECK_ERROR(DriverVersion = dpct::get_major_version(dpct::get_current_device()))'
@@ -2152,7 +2152,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          2959
     Length:          0
     ReplacementText: "         /*\n         DPCT1043:58: The version-related API is different in SYCL. An initial code was generated, but you need to adjust it.\n         */\n"
@@ -2161,7 +2161,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          2987
     Length:          40
     ReplacementText: 'DPCT_CHECK_ERROR(RuntimeVersion = dpct::get_major_version(dpct::get_current_device()))'
@@ -2170,7 +2170,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          3409
     Length:          69
     ReplacementText: 'DPCT_CHECK_ERROR(clockRate = dpct::get_device(GetDeviceID).get_max_clock_frequency())'
@@ -2179,7 +2179,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          3836
     Length:          4
     ReplacementText: 'get_name()'
@@ -2188,7 +2188,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          4086
     Length:          0
     ReplacementText: "         /*\n         DPCT1005:59: The SYCL device version is different from CUDA Compute Compatibility. You may need to rewrite this code.\n         */\n"
@@ -2197,7 +2197,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          4176
     Length:          5
     ReplacementText: 'get_major_version()'
@@ -2206,7 +2206,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          4185
     Length:          0
     ReplacementText: "         /*\n         DPCT1005:60: The SYCL device version is different from CUDA Compute Compatibility. You may need to rewrite this code.\n         */\n"
@@ -2215,7 +2215,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          4275
     Length:          5
     ReplacementText: 'get_minor_version()'
@@ -2224,7 +2224,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          4478
     Length:          14
     ReplacementText: 'get_global_mem_size()'
@@ -2233,7 +2233,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          4506
     Length:          0
     ReplacementText: "         /*\n         DPCT1051:61: SYCL does not support a device property functionally compatible with totalConstMem. It was migrated to get_global_mem_size. You may need to adjust the value of get_global_mem_size for the specific device.\n         */\n"
@@ -2242,7 +2242,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          4591
     Length:          24
     ReplacementText: 'DeviceProp.get_global_mem_size()'
@@ -2251,7 +2251,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          4624
     Length:          0
     ReplacementText: "         /*\n         DPCT1019:62: local_mem_size in SYCL is not a complete equivalent of sharedMemPerBlock in CUDA. You may need to adjust the code.\n         */\n"
@@ -2260,7 +2260,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          4720
     Length:          17
     ReplacementText: 'get_local_mem_size()'
@@ -2269,7 +2269,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          4746
     Length:          0
     ReplacementText: "         /*\n         DPCT1051:63: SYCL does not support a device property functionally compatible with regsPerBlock. It was migrated to get_max_register_size_per_work_group. You may need to adjust the value of get_max_register_size_per_work_group for the specific device.\n         */\n"
@@ -2278,7 +2278,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          4836
     Length:          12
     ReplacementText: 'get_max_register_size_per_work_group()'
@@ -2287,7 +2287,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          4942
     Length:          8
     ReplacementText: 'get_max_sub_group_size()'
@@ -2296,7 +2296,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          5044
     Length:          19
     ReplacementText: 'get_max_compute_units()'
@@ -2305,7 +2305,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          5250
     Length:          19
     ReplacementText: 'get_max_compute_units()'
@@ -2314,7 +2314,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          5374
     Length:          18
     ReplacementText: 'get_max_work_group_size()'
@@ -2323,7 +2323,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          5486
     Length:          13
     ReplacementText: 'get_max_work_item_sizes<int *>()'
@@ -2332,7 +2332,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          5506
     Length:          0
     ReplacementText: "         /*\n         DPCT1022:64: There is no exact match between the maxGridSize and the max_nd_range size. Verify the correctness of the code.\n         */\n"
@@ -2341,7 +2341,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          5596
     Length:          11
     ReplacementText: 'get_max_nd_range_size<int *>()'
@@ -2350,7 +2350,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          5884
     Length:          14
     ReplacementText: DPCT_COMPAT_RT_VERSION
@@ -2359,7 +2359,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          5909
     Length:          0
     ReplacementText: "         /*\n         DPCT1051:65: SYCL does not support a device property functionally compatible with concurrentKernels. It was migrated to true. You may need to adjust the value of true for the specific device.\n         */\n"
@@ -2368,7 +2368,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          5988
     Length:          28
     ReplacementText: 'true'
@@ -2377,7 +2377,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          6064
     Length:          14
     ReplacementText: DPCT_COMPAT_RT_VERSION
@@ -2386,7 +2386,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          6168
     Length:          21
     ReplacementText: 'dpct::get_current_device().get_info<sycl::info::device::error_correction_support>()'
@@ -2395,7 +2395,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate.cu'
     Offset:          0
     Length:          0
     ReplacementText: "#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
@@ -2404,7 +2404,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          0
     Length:          0
     ReplacementText: "#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
@@ -2413,7 +2413,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          147
     Length:          12
     ReplacementText: 'dpct::queue_ptr'
@@ -2422,7 +2422,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          8199
     Length:          68
     ReplacementText: 'd_Flu_Array_F_In = (real (*)[5][10648])sycl::malloc_device(Flu_MemSize_F_In, dpct::get_in_order_queue())'
@@ -2431,7 +2431,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          8295
     Length:          68
     ReplacementText: 'd_Flu_Array_F_Out = (real (*)[5][4096])sycl::malloc_device(Flu_MemSize_F_Out, dpct::get_in_order_queue())'
@@ -2440,7 +2440,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          8416
     Length:          68
     ReplacementText: 'd_Flux_Array = (real (*)[9][5][256])sycl::malloc_device(Flux_MemSize, dpct::get_in_order_queue())'
@@ -2449,7 +2449,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          9328
     Length:          68
     ReplacementText: 'd_dt_Array_T = (real *)sycl::malloc_device(dt_MemSize_T, dpct::get_in_order_queue())'
@@ -2458,7 +2458,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          9424
     Length:          68
     ReplacementText: 'd_Flu_Array_T = (real (*)[5][512])sycl::malloc_device(Flu_MemSize_T, dpct::get_in_order_queue())'
@@ -2467,7 +2467,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          9598
     Length:          68
     ReplacementText: 'd_FC_Var = (real (*)[6][5][5832])sycl::malloc_device(FC_Var_MemSize, dpct::get_in_order_queue())'
@@ -2476,7 +2476,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          9695
     Length:          68
     ReplacementText: 'd_FC_Flux = (real (*)[3][5][5832])sycl::malloc_device(FC_Flux_MemSize, dpct::get_in_order_queue())'
@@ -2485,7 +2485,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          9792
     Length:          68
     ReplacementText: 'd_PriVar = (real (*)[5][10648])sycl::malloc_device(PriVar_MemSize, dpct::get_in_order_queue())'
@@ -2494,7 +2494,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          9916
     Length:          68
     ReplacementText: 'd_Slope_PPM = (real (*)[3][5][8000])sycl::malloc_device(Slope_PPM_MemSize, dpct::get_in_order_queue())'
@@ -2503,7 +2503,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          10348
     Length:          68
     ReplacementText: 'd_Flu_Array_S_In = (real (*)[5][512])sycl::malloc_device(Flu_MemSize_S_In, dpct::get_in_order_queue())'
@@ -2512,7 +2512,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          10444
     Length:          68
     ReplacementText: 'd_Flu_Array_S_Out = (real (*)[5][512])sycl::malloc_device(Flu_MemSize_S_Out, dpct::get_in_order_queue())'
@@ -2521,7 +2521,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          10658
     Length:          68
     ReplacementText: 'd_Corner_Array_S = (double (*)[3])sycl::malloc_device(Corner_MemSize_S, dpct::get_in_order_queue())'
@@ -2530,7 +2530,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          11416
     Length:          75
     ReplacementText: 'h_Flu_Array_F_In     [t] = (real (*)[5][10648])sycl::malloc_host(Flu_MemSize_F_In, dpct::get_in_order_queue())'
@@ -2539,7 +2539,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          11522
     Length:          75
     ReplacementText: 'h_Flu_Array_F_Out    [t] = (real (*)[5][4096])sycl::malloc_host(Flu_MemSize_F_Out, dpct::get_in_order_queue())'
@@ -2548,7 +2548,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          11656
     Length:          75
     ReplacementText: 'h_Flux_Array         [t] = (real (*)[9][5][256])sycl::malloc_host(Flux_MemSize, dpct::get_in_order_queue())'
@@ -2557,7 +2557,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          12672
     Length:          75
     ReplacementText: 'h_dt_Array_T         [t] = (real *)sycl::malloc_host(dt_MemSize_T, dpct::get_in_order_queue())'
@@ -2566,7 +2566,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          12778
     Length:          75
     ReplacementText: 'h_Flu_Array_T        [t] = (real (*)[5][512])sycl::malloc_host(Flu_MemSize_T, dpct::get_in_order_queue())'
@@ -2575,7 +2575,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          12913
     Length:          75
     ReplacementText: 'h_Flu_Array_S_In     [t] = (real (*)[5][512])sycl::malloc_host(Flu_MemSize_S_In, dpct::get_in_order_queue())'
@@ -2584,7 +2584,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          13019
     Length:          75
     ReplacementText: 'h_Flu_Array_S_Out    [t] = (real (*)[5][512])sycl::malloc_host(Flu_MemSize_S_Out, dpct::get_in_order_queue())'
@@ -2593,7 +2593,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          13259
     Length:          75
     ReplacementText: 'h_Corner_Array_S     [t] = (double (*)[3])sycl::malloc_host(Corner_MemSize_S, dpct::get_in_order_queue())'
@@ -2602,7 +2602,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          13894
     Length:          12
     ReplacementText: 'dpct::queue_ptr'
@@ -2611,7 +2611,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          13983
     Length:          30
     ReplacementText: 'DPCT_CHECK_ERROR(Stream[s] = dpct::get_current_device().create_queue())'
@@ -2620,7 +2620,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          0
     Length:          0
     ReplacementText: "#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
@@ -2629,7 +2629,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          1965
     Length:          12
     ReplacementText: 'dpct::queue_ptr'
@@ -2638,7 +2638,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          2569
     Length:          33
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_Flu_Array_F_In, dpct::get_in_order_queue()))'
@@ -2647,7 +2647,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          2702
     Length:          33
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_Flu_Array_F_Out, dpct::get_in_order_queue()))'
@@ -2656,7 +2656,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          2835
     Length:          33
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_Flux_Array, dpct::get_in_order_queue()))'
@@ -2665,7 +2665,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          4118
     Length:          33
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_dt_Array_T, dpct::get_in_order_queue()))'
@@ -2674,7 +2674,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          4251
     Length:          33
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_Flu_Array_T, dpct::get_in_order_queue()))'
@@ -2683,7 +2683,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          4384
     Length:          33
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_Flu_Array_S_In, dpct::get_in_order_queue()))'
@@ -2692,7 +2692,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          4517
     Length:          33
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_Flu_Array_S_Out, dpct::get_in_order_queue()))'
@@ -2701,7 +2701,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          4650
     Length:          33
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_Corner_Array_S, dpct::get_in_order_queue()))'
@@ -2710,7 +2710,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          4860
     Length:          33
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_PriVar, dpct::get_in_order_queue()))'
@@ -2719,7 +2719,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          4993
     Length:          33
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_Slope_PPM, dpct::get_in_order_queue()))'
@@ -2728,7 +2728,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          5126
     Length:          33
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_FC_Var, dpct::get_in_order_queue()))'
@@ -2737,7 +2737,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          5259
     Length:          33
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_FC_Flux, dpct::get_in_order_queue()))'
@@ -2746,7 +2746,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          6444
     Length:          40
     ReplacementText: 'DPCT_CHECK_ERROR(sycl::free(h_Flu_Array_F_In     [t], dpct::get_in_order_queue())'
@@ -2755,7 +2755,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          6484
     Length:          0
     ReplacementText: ')'
@@ -2764,7 +2764,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          6593
     Length:          40
     ReplacementText: 'DPCT_CHECK_ERROR(sycl::free(h_Flu_Array_F_Out    [t], dpct::get_in_order_queue())'
@@ -2773,7 +2773,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          6633
     Length:          0
     ReplacementText: ')'
@@ -2782,7 +2782,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          6742
     Length:          40
     ReplacementText: 'DPCT_CHECK_ERROR(sycl::free(h_Flux_Array         [t], dpct::get_in_order_queue())'
@@ -2791,7 +2791,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          6782
     Length:          0
     ReplacementText: ')'
@@ -2800,7 +2800,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          8187
     Length:          40
     ReplacementText: 'DPCT_CHECK_ERROR(sycl::free(h_dt_Array_T         [t], dpct::get_in_order_queue())'
@@ -2809,7 +2809,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          8227
     Length:          0
     ReplacementText: ')'
@@ -2818,7 +2818,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          8336
     Length:          40
     ReplacementText: 'DPCT_CHECK_ERROR(sycl::free(h_Flu_Array_T        [t], dpct::get_in_order_queue())'
@@ -2827,7 +2827,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          8376
     Length:          0
     ReplacementText: ')'
@@ -2836,7 +2836,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          8485
     Length:          40
     ReplacementText: 'DPCT_CHECK_ERROR(sycl::free(h_Flu_Array_S_In     [t], dpct::get_in_order_queue())'
@@ -2845,7 +2845,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          8525
     Length:          0
     ReplacementText: ')'
@@ -2854,7 +2854,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          8634
     Length:          40
     ReplacementText: 'DPCT_CHECK_ERROR(sycl::free(h_Flu_Array_S_Out    [t], dpct::get_in_order_queue())'
@@ -2863,7 +2863,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          8674
     Length:          0
     ReplacementText: ')'
@@ -2872,7 +2872,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          8783
     Length:          40
     ReplacementText: 'DPCT_CHECK_ERROR(sycl::free(h_Corner_Array_S     [t], dpct::get_in_order_queue())'
@@ -2881,7 +2881,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          8823
     Length:          0
     ReplacementText: ')'
@@ -2890,7 +2890,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          9575
     Length:          30
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_current_device().destroy_queue(Stream[s]))'
@@ -2899,7 +2899,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu'
     Offset:          0
     Length:          0
     ReplacementText: "#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
@@ -2908,7 +2908,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu'
     Offset:          2331
     Length:          10
     ReplacementText: 'SYCL_EXTERNAL '
@@ -2917,7 +2917,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu'
     Offset:          2496
     Length:          0
     ReplacementText: "   /*\n   DPCT1102:70: Zero-length arrays are not permitted in SYCL device code.\n   */\n"
@@ -2926,7 +2926,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu'
     Offset:          2569
     Length:          0
     ReplacementText: "         /*\n         DPCT1102:71: Zero-length arrays are not permitted in SYCL device code.\n         */\n"
@@ -2935,7 +2935,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu'
     Offset:          3213
     Length:          0
     ReplacementText: "         /*\n         DPCT1102:72: Zero-length arrays are not permitted in SYCL device code.\n         */\n"
@@ -2944,7 +2944,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu'
     Offset:          3286
     Length:          0
     ReplacementText: "         /*\n         DPCT1102:73: Zero-length arrays are not permitted in SYCL device code.\n         */\n"
@@ -2953,7 +2953,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu'
     Offset:          3877
     Length:          0
     ReplacementText: ', int * const c_NormIdx, int * const c_FracIdx'
@@ -2962,7 +2962,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu'
     Offset:          3901
     Length:          11
     ReplacementText: 'SYCL_EXTERNAL '
@@ -2971,7 +2971,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu'
     Offset:          4011
     Length:          0
     ReplacementText: "                                         /*\n                                         DPCT1102:74: Zero-length arrays are not permitted in SYCL device code.\n                                         */\n"
@@ -2980,7 +2980,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu'
     Offset:          4311
     Length:          0
     ReplacementText: ",\n                                         real *shared"
@@ -2989,7 +2989,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu'
     Offset:          10148
     Length:          10
     ReplacementText: 'SYCL_EXTERNAL '
@@ -2998,7 +2998,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu'
     Offset:          10341
     Length:          0
     ReplacementText: "   /*\n   DPCT1102:75: Zero-length arrays are not permitted in SYCL device code.\n   */\n"
@@ -3007,7 +3007,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu'
     Offset:          11610
     Length:          0
     ReplacementText: "   /*\n   DPCT1027:76: The call to cudaFuncSetCacheConfig was replaced with 0 because SYCL currently does not support configuring shared memory on devices.\n   */\n"
@@ -3016,7 +3016,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu'
     Offset:          11632
     Length:          87
     ReplacementText: '0'
@@ -3025,7 +3025,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu'
     Offset:          11733
     Length:          0
     ReplacementText: "   /*\n   DPCT1027:77: The call to cudaFuncSetCacheConfig was replaced with 0 because SYCL currently does not support configuring shared memory on devices.\n   */\n"
@@ -3034,7 +3034,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu'
     Offset:          11755
     Length:          87
     ReplacementText: '0'
@@ -3043,7 +3043,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu'
     Offset:          13712
     Length:          0
     ReplacementText: "   /*\n   DPCT1027:78: The call to cudaFuncSetCacheConfig was replaced with 0 because SYCL currently does not support configuring shared memory on devices.\n   */\n"
@@ -3052,7 +3052,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu'
     Offset:          13734
     Length:          87
     ReplacementText: '0'
@@ -3061,7 +3061,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory.cu'
     Offset:          192
     Length:          0
     ReplacementText: "#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
@@ -3070,7 +3070,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          0
     Length:          0
     ReplacementText: "#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
@@ -3079,7 +3079,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          841
     Length:          18
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
@@ -3088,7 +3088,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          861
     Length:          18
     ReplacementText: 'c_EoS_AuxArray_Flt.get_ptr()'
@@ -3097,7 +3097,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          930
     Length:          0
     ReplacementText: '.wait())'
@@ -3106,7 +3106,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          957
     Length:          18
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
@@ -3115,7 +3115,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          977
     Length:          18
     ReplacementText: 'c_EoS_AuxArray_Int.get_ptr()'
@@ -3124,7 +3124,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          1046
     Length:          0
     ReplacementText: '.wait())'
@@ -3133,7 +3133,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          1073
     Length:          18
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
@@ -3142,7 +3142,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          1093
     Length:          11
     ReplacementText: 'c_EoS_Table.get_ptr()'
@@ -3151,7 +3151,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          1162
     Length:          0
     ReplacementText: '.wait())'
@@ -3160,7 +3160,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          1229
     Length:          76
     ReplacementText: 'DPCT_CHECK_ERROR(*((void **)&EoS.AuxArrayDevPtr_Flt) = c_EoS_AuxArray_Flt.get_ptr()'
@@ -3169,7 +3169,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          1305
     Length:          0
     ReplacementText: ')'
@@ -3178,7 +3178,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          1333
     Length:          76
     ReplacementText: 'DPCT_CHECK_ERROR(*((void **)&EoS.AuxArrayDevPtr_Int) = c_EoS_AuxArray_Int.get_ptr()'
@@ -3187,7 +3187,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          1409
     Length:          0
     ReplacementText: ')'
@@ -3196,7 +3196,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          1437
     Length:          76
     ReplacementText: 'DPCT_CHECK_ERROR(*((void **)&EoS.Table) = c_EoS_Table.get_ptr()'
@@ -3205,7 +3205,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          1513
     Length:          0
     ReplacementText: ')'
@@ -3214,7 +3214,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          0
     Length:          0
     ReplacementText: "#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
@@ -3223,7 +3223,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          1465
     Length:          34
     ReplacementText: 'DPCT_CHECK_ERROR(DeviceCount = dpct::device_count())'
@@ -3232,7 +3232,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          1753
     Length:          14
     ReplacementText: 'dpct::device_info'
@@ -3241,7 +3241,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          2274
     Length:          46
     ReplacementText: 'DPCT_CHECK_ERROR(d_TempPtr = (void **)sycl::malloc_device(sizeof(int), dpct::get_in_order_queue()))'
@@ -3250,7 +3250,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          2375
     Length:          21
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_TempPtr, dpct::get_in_order_queue()))'
@@ -3259,7 +3259,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          2494
     Length:          29
     ReplacementText: 'DPCT_CHECK_ERROR(GetDeviceID = dpct::get_current_device_id())'
@@ -3268,7 +3268,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          2528
     Length:          0
     ReplacementText: "         /*\n         DPCT1035:79: All SYCL devices can be used by the host to submit tasks. You may need to adjust this code.\n         */\n"
@@ -3277,7 +3277,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          2556
     Length:          73
     ReplacementText: 'DPCT_CHECK_ERROR(computeMode = 1)'
@@ -3286,7 +3286,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          2635
     Length:          0
     ReplacementText: "         /*\n         DPCT1035:80: All SYCL devices can be used by the host to submit tasks. You may need to adjust this code.\n         */\n"
@@ -3295,7 +3295,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          2664
     Length:          24
     ReplacementText: '0'
@@ -3304,7 +3304,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          3029
     Length:          0
     ReplacementText: "         /*\n         DPCT1093:81: The \"SetDeviceID\" device may be not the one intended for use. Adjust the selected device if needed.\n         */\n"
@@ -3313,7 +3313,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          3057
     Length:          13
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::select_device'
@@ -3322,7 +3322,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          3085
     Length:          0
     ReplacementText: ')'
@@ -3331,7 +3331,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          3463
     Length:          0
     ReplacementText: "            /*\n            DPCT1093:82: The \"SetDeviceID\" device may be not the one intended for use. Adjust the selected device if needed.\n            */\n"
@@ -3340,7 +3340,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          3494
     Length:          13
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::select_device'
@@ -3349,7 +3349,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          3522
     Length:          0
     ReplacementText: ')'
@@ -3358,7 +3358,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          4175
     Length:          29
     ReplacementText: 'DPCT_CHECK_ERROR(GetDeviceID = dpct::get_current_device_id())'
@@ -3367,7 +3367,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          4231
     Length:          51
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_device(GetDeviceID).get_device_info(DeviceProp))'
@@ -3376,7 +3376,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          4287
     Length:          0
     ReplacementText: "   /*\n   DPCT1043:83: The version-related API is different in SYCL. An initial code was generated, but you need to adjust it.\n   */\n"
@@ -3385,7 +3385,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          4309
     Length:          38
     ReplacementText: 'DPCT_CHECK_ERROR(DriverVersion = dpct::get_major_version(dpct::get_current_device()))'
@@ -3394,7 +3394,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          4352
     Length:          0
     ReplacementText: "   /*\n   DPCT1043:84: The version-related API is different in SYCL. An initial code was generated, but you need to adjust it.\n   */\n"
@@ -3403,7 +3403,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          4374
     Length:          40
     ReplacementText: 'DPCT_CHECK_ERROR(RuntimeVersion = dpct::get_major_version(dpct::get_current_device()))'
@@ -3412,7 +3412,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          4454
     Length:          0
     ReplacementText: "   /*\n   DPCT1005:85: The SYCL device version is different from CUDA Compute Compatibility. You may need to rewrite this code.\n   */\n"
@@ -3421,7 +3421,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          4473
     Length:          5
     ReplacementText: 'get_major_version()'
@@ -3430,7 +3430,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          4962
     Length:          46
     ReplacementText: 'DPCT_CHECK_ERROR(d_TempPtr = (void **)sycl::malloc_device(sizeof(int), dpct::get_in_order_queue()))'
@@ -3439,7 +3439,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          5038
     Length:          21
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_TempPtr, dpct::get_in_order_queue()))'
@@ -3448,7 +3448,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          5398
     Length:          0
     ReplacementText: "   /*\n   DPCT1005:86: The SYCL device version is different from CUDA Compute Compatibility. You may need to rewrite this code.\n   */\n"
@@ -3457,7 +3457,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          5417
     Length:          5
     ReplacementText: 'get_major_version()'
@@ -3466,7 +3466,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          5442
     Length:          5
     ReplacementText: 'get_minor_version()'
@@ -3475,7 +3475,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          5707
     Length:          0
     ReplacementText: "                 /*\n                 DPCT1005:87: The SYCL device version is different from CUDA Compute Compatibility. You may need to rewrite this code.\n                 */\n"
@@ -3484,7 +3484,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          5735
     Length:          5
     ReplacementText: 'get_major_version()'
@@ -3493,7 +3493,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          5753
     Length:          5
     ReplacementText: 'get_minor_version()'
@@ -3502,7 +3502,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          5771
     Length:          4
     ReplacementText: 'get_name()'
@@ -3511,7 +3511,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          6967
     Length:          8
     ReplacementText: 'get_max_sub_group_size()'
@@ -3520,7 +3520,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          7107
     Length:          8
     ReplacementText: 'get_max_sub_group_size()'
@@ -3529,7 +3529,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetMemSize.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetMemSize.cu'
     Offset:          0
     Length:          0
     ReplacementText: "#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
@@ -3538,7 +3538,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetMemSize.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetMemSize.cu'
     Offset:          1263
     Length:          29
     ReplacementText: 'DPCT_CHECK_ERROR(GetDeviceID = dpct::get_current_device_id())'
@@ -3547,7 +3547,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetMemSize.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetMemSize.cu'
     Offset:          1332
     Length:          14
     ReplacementText: 'dpct::device_info'
@@ -3556,7 +3556,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetMemSize.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetMemSize.cu'
     Offset:          1381
     Length:          51
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_device(GetDeviceID).get_device_info(DeviceProp))'
@@ -3565,7 +3565,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetMemSize.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetMemSize.cu'
     Offset:          4434
     Length:          19
     ReplacementText: 'get_max_compute_units()'
@@ -3574,7 +3574,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetMemSize.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetMemSize.cu'
     Offset:          9796
     Length:          19
     ReplacementText: 'get_max_compute_units()'
@@ -3583,7 +3583,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Synchronize.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Synchronize.cu'
     Offset:          0
     Length:          0
     ReplacementText: "#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
@@ -3592,7 +3592,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Synchronize.cu'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Synchronize.cu'
     Offset:          513
     Length:          23
     ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_current_device().queues_wait_and_throw())'
@@ -4877,43 +4877,43 @@ MainSourceFilesDigest:
   - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/EoS/User_Template/CPU_EoS_User_Template.cpp'
     Digest:          1af6f927b8d91933b6eab29f2394aae7
     HasCUDASyntax:   true
-  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu'
+  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Digest:          f1cdf2395b2dce38536042194f948286
     HasCUDASyntax:   true
-  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu'
+  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Digest:          7a40c469e28f663dee4f4e8ed5472b6a
     HasCUDASyntax:   true
-  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu'
+  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Digest:          ff1fdf4ff562c92544d8328a384add72
     HasCUDASyntax:   true
-  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu'
+  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Digest:          221af48d898809c5cfba2d4be453ca11
     HasCUDASyntax:   true
-  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate.cu'
+  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate.cu'
     Digest:          84291408c27bb6eae3caa13c0c78e7ea
     HasCUDASyntax:   true
-  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu'
+  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Digest:          7045d9295208f437284761298cdfb829
     HasCUDASyntax:   true
-  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu'
+  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Digest:          159e0f644932be4f485d91d5566f450c
     HasCUDASyntax:   true
-  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu'
+  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu'
     Digest:          80d4690baa2086cbb645c162a82f4cbc
     HasCUDASyntax:   true
-  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory.cu'
+  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory.cu'
     Digest:          3390e5693f017c2914221c7f6d24287e
     HasCUDASyntax:   true
-  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu'
+  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Digest:          3e623c5d017d8094330378882a465db0
     HasCUDASyntax:   true
-  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu'
+  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Digest:          7fe08f8051b93c9814ac0666271146d1
     HasCUDASyntax:   true
-  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetMemSize.cu'
+  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetMemSize.cu'
     Digest:          dd4e43d6f708cc0908349e626b8059f3
     HasCUDASyntax:   true
-  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Synchronize.cu'
+  - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Synchronize.cu'
     Digest:          8a6af7aeedba11efac15e72d3971bc4b
     HasCUDASyntax:   true
   - MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/src/GPU_Utility/CUUTI_BlockReduction_Shuffle.cu'

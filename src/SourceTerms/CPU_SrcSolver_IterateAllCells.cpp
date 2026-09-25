@@ -19,7 +19,7 @@
 // Function    :  CPU/GPU_SrcSolver_IterateAllCells
 // Description :  Iterate over all cells to add each source term
 //
-// Note        :  1. Invoked by CPU_SrcSolver() and CUAPI_Asyn_SrcSolver()
+// Note        :  1. Invoked by CPU_SrcSolver() and GPU_Asyn_SrcSolver()
 //                2. No ghost zones
 //                   --> Should support ghost zones in the future
 //

@@ -1,0 +1,206 @@
+#include "GPUAPI.h"
+#include "FLU.h"
+#ifdef GRAVITY
+#include "POT.h"
+#endif
+#ifdef LAOHU
+extern "C" { int GetFreeGpuDevID( int, int ); }
+#endif
+
+#ifdef GPU
+
+
+
+
+//-------------------------------------------------------------------------------------------------------
+// Function    :  GPU_SetDevice
+// Description :  Set the active device
+//
+// Parameter   :  Mode :    -3 --> set by the gpudevmgr library on the NAOC Laohu cluster
+//                          -2 --> set automatically by CUDA (must work with the "compute-exclusive mode")
+//                          -1 --> set by MPI ranks : SetDeviceID = MPI_Rank % DeviceCount
+//                       >=  0 --> set to "Mode"
+//-------------------------------------------------------------------------------------------------------
+void GPU_SetDevice( const int Mode )
+{
+
+   if ( MPI_Rank == 0 )    Aux_Message( stdout, "%s ...\n", __FUNCTION__ );
+
+
+// check
+#  ifdef LAOHU
+   if ( Mode < -3 )     Aux_Error( ERROR_INFO, "incorrect parameter %s = %d !!\n", "Mode", Mode );
+   if ( Mode != -3  &&  MPI_Rank == 0 )
+      Aux_Message( stderr, "WARNING : \"OPT__GPUID_SELECT != -3\" on the Laohu cluster !?\n" );
+#  else
+   if ( Mode < -2 )     Aux_Error( ERROR_INFO, "incorrect parameter %s = %d !!\n", "Mode", Mode );
+#  endif
+
+
+// get the hostname of each MPI process
+   char Host[1024];
+   gethostname( Host, 1024 );
+
+
+// verify that there are GPU supporting CUDA
+   int DeviceCount;
+   DEVICE_CHECK_ERROR(  cudaGetDeviceCount( &DeviceCount )  );
+
+   if ( DeviceCount == 0 )
+      Aux_Error( ERROR_INFO, "no devices support CUDA at MPI_Rank %2d (host = %8s) !!\n", MPI_Rank, Host );
+
+
+// set the device ID
+   void **d_TempPtr = NULL;
+   int SetDeviceID, GetDeviceID = 999;
+   int computeMode;
+   cudaDeviceProp DeviceProp;
+
+   switch ( Mode )
+   {
+#     ifdef LAOHU
+      case -3:
+         SetDeviceID = GetFreeGpuDevID( DeviceCount, MPI_Rank );
+
+         if ( SetDeviceID < DeviceCount )
+            DEVICE_CHECK_ERROR(  cudaSetDevice( SetDeviceID )  );
+
+         else
+            Aux_Error( ERROR_INFO, "SetDeviceID (%d) >= DeviceCount (%d) at MPI_Rank %2d (host = %8s) !!\n",
+                       SetDeviceID, DeviceCount, MPI_Rank, Host );
+         break;
+#     endif
+
+
+      case -2:
+         DEVICE_CHECK_ERROR(  cudaMalloc( (void**) &d_TempPtr, sizeof(int) )  );  // to set the GPU ID
+         DEVICE_CHECK_ERROR(  cudaFree( d_TempPtr )  );
+
+//       make sure that the "exclusive" compute mode is adopted
+         DEVICE_CHECK_ERROR(  cudaGetDevice( &GetDeviceID )  );
+         DEVICE_CHECK_ERROR(  cudaDeviceGetAttribute(&computeMode, cudaDevAttrComputeMode, GetDeviceID)  );
+
+         if ( computeMode != cudaComputeModeExclusive )
+         {
+            Aux_Message( stderr, "WARNING : \"exclusive\" compute mode is NOT enabled for \"%s\" at Rank %2d",
+                         "OPT__GPUID_SELECT == -2", MPI_Rank );
+            Aux_Message( stderr, " (host=%8s) !!\n", Host );
+         }
+         break;
+
+
+      case -1:
+         SetDeviceID = MPI_Rank % DeviceCount;
+         DEVICE_CHECK_ERROR(  cudaSetDevice( SetDeviceID )  );
+
+         if ( MPI_NRank > 1  &&  MPI_Rank == 0 )
+         {
+            Aux_Message( stderr, "WARNING : please make sure that different MPI ranks will use different GPUs " );
+            Aux_Message( stderr, "for \"%s\" !!\n", "OPT__GPUID_SELECT == -1" );
+         }
+         break;
+
+
+      default:
+         SetDeviceID = Mode;
+
+         if ( SetDeviceID < DeviceCount )
+            DEVICE_CHECK_ERROR(  cudaSetDevice( SetDeviceID )  );
+
+         else
+            Aux_Error( ERROR_INFO, "SetDeviceID (%d) >= DeviceCount (%d) at MPI_Rank %2d (host = %8s) !!\n",
+                       SetDeviceID, DeviceCount, MPI_Rank, Host );
+
+         if ( MPI_NRank > 1  &&  MPI_Rank == 0 )
+         {
+            Aux_Message( stderr, "WARNING : please make sure that different MPI ranks will use different GPUs " );
+            Aux_Message( stderr, "for \"%s\" !!\n", "OPT__GPUID_SELECT == -1" );
+         }
+         break;
+   } // switch ( Mode )
+
+
+// check
+// (0) load the device properties and the versions of CUDA and driver
+   int DriverVersion = 0, RuntimeVersion = 0;
+   DEVICE_CHECK_ERROR(  cudaGetDevice( &GetDeviceID )  );
+   DEVICE_CHECK_ERROR(  cudaGetDeviceProperties( &DeviceProp, GetDeviceID )  );
+   DEVICE_CHECK_ERROR(  cudaDriverGetVersion( &DriverVersion )  );
+   DEVICE_CHECK_ERROR(  cudaRuntimeGetVersion( &RuntimeVersion )  );
+
+
+// (1) verify the device version
+   if ( DeviceProp.major < 1 )
+      Aux_Error( ERROR_INFO, "\ndevice major version < 1 at MPI_Rank %2d (host = %8s) !!\n", MPI_Rank, Host );
+
+   if ( Mode >= -1 )
+   {
+//    (2) verify that the device ID is properly set
+      if ( GetDeviceID != SetDeviceID )
+         Aux_Error( ERROR_INFO, "GetDeviceID (%d) != SetDeviceID (%d) at MPI_Rank %2d (host = %8s) !!\n",
+                    GetDeviceID, SetDeviceID, MPI_Rank, Host );
+
+//    (3) verify that the adopted ID is accessible
+      DEVICE_CHECK_ERROR(  cudaMalloc( (void**) &d_TempPtr, sizeof(int) )  );
+      DEVICE_CHECK_ERROR(  cudaFree( d_TempPtr )  );
+   }
+
+
+// (4) verify the capability of double precision
+#  ifdef FLOAT8
+   if ( DeviceProp.major < 2  &&  DeviceProp.minor < 3 )
+      Aux_Error( ERROR_INFO, "GPU \"%s\" at MPI_Rank %2d (host = %8s) does not support FLOAT8 !!\n",
+                 DeviceProp.name, MPI_Rank, Host );
+#  endif
+
+
+// (5) verify the GPU compute capability
+   if ( DeviceProp.major * 100 + DeviceProp.minor * 10 != GPU_COMPUTE_CAPABILITY )
+      Aux_Error( ERROR_INFO, "The compute capability %d.%d of the GPU \"%s\" does not match the GPU_COMPUTE_CAPABILITY %d !!\n"
+                             "        --> Please set it properly in your machine config file.\n",
+                 DeviceProp.major, DeviceProp.minor, DeviceProp.name, GPU_COMPUTE_CAPABILITY );
+
+
+// (6) some options are not supported
+// (6-1) fluid solver
+#  if ( MODEL == HYDRO )
+#  if (  defined FLOAT8  &&  CHECK_INTERMEDIATE == EXACT  && \
+         ( FLU_SCHEME == MHM || FLU_SCHEME == MHM_RP || FLU_SCHEME == CTU )  )
+      if ( RuntimeVersion < 3020 )
+         Aux_Error( ERROR_INFO, "CHECK_INTERMEDIATE == EXACT + FLOAT8 is not supported in CUDA < 3.2 !!" );
+#  endif
+#  endif // #if ( MODEL == HYDRO )
+
+// (6-2) SOR Poisson solver
+#  if ( POT_SCHEME == SOR )
+#     ifdef SOR_USE_SHUFFLE
+      if ( DeviceProp.warpSize != 32 )
+         Aux_Error( ERROR_INFO, "warp size (%d) != 32 !!\n", DeviceProp.warpSize );
+
+      if ( DeviceProp.maxThreadsPerBlock > 1024 )
+         Aux_Error( ERROR_INFO, "maximum number of threads per block (%d) > 1024 !!\n", DeviceProp.maxThreadsPerBlock );
+#     endif
+
+#     ifdef SOR_USE_PADDING
+      if ( DeviceProp.warpSize != 32 )
+         Aux_Error( ERROR_INFO, "warp size (%d) != 32 !!\n", DeviceProp.warpSize );
+
+      if ( POT_GHOST_SIZE != 5 )
+         Aux_Error( ERROR_INFO, "POT_GHOST_SIZE (%d) != 5 !!\n", POT_GHOST_SIZE );
+#     endif
+#  endif // if ( POT_SCHEME == SOR )
+
+
+// (7) warp size
+   if ( DeviceProp.warpSize != WARP_SIZE )
+      Aux_Error( ERROR_INFO, "inconsistent warp size (warpSize %d, WARP_SIZE %d) !!\n",
+                 DeviceProp.warpSize, WARP_SIZE );
+
+
+   if ( MPI_Rank == 0 )    Aux_Message( stdout, "%s ... done\n", __FUNCTION__ );
+
+} // FUNCTION : GPU_SetDevice
+
+
+
+#endif // #ifdef GPU

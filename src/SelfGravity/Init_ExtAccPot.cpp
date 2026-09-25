@@ -21,7 +21,7 @@ void Init_ExtPot_Tabular();
 //                2. Enabled by the runtime options "OPT__EXT_ACC" and "OPT__EXT_POT"
 //                3. Function pointers Init_ExtAcc_Ptr and Init_ExtPot_Ptr must be set in advance by a
 //                   test problem initializer
-//                4. Must invoke either CUAPI_SetConstMemory() or CUAPI_SetConstMemory_ExtAccPot() afterward
+//                4. Must invoke either GPU_SetConstMemory() or GPU_SetConstMemory_ExtAccPot() afterward
 //                   to set the GPU constant memory
 //
 // Parameter   :  None

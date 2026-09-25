@@ -649,7 +649,7 @@ void   ELBDM_GramFE_ComputeTimeEvolutionMatrix( gramfe_matmul_float (*output)[ 2
 
 // GPU API
 #ifdef GPU
-void CUAPI_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
+void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
                              real h_Flu_Array_Out[][FLU_NOUT][ CUBE(PS2) ],
                              real h_Mag_Array_In[][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
                              real h_Mag_Array_Out[][NCOMP_MAG][ PS2P1*SQR(PS2) ],
@@ -672,13 +672,13 @@ void CUAPI_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
                              const bool FracPassive, const int NFrac,
                              const bool JeansMinPres, const real JeansMinPres_Coeff,
                              const int GPU_NStream, const bool UseWaveFlag );
-void CUAPI_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_Flu_Array[][FLU_NIN_T][ CUBE(PS1) ],
+void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_Flu_Array[][FLU_NIN_T][ CUBE(PS1) ],
                           const real h_Mag_Array[][NCOMP_MAG][ PS1P1*SQR(PS1) ], const real h_Pot_Array[][ CUBE(GRA_NXT) ],
                           const double h_Corner_Array[][3], const int NPatchGroup, const real dh, const real Safety,
                           const MicroPhy_t MicroPhy, const real MinPres, const long PassiveFloor,
                           const bool P5_Gradient, const bool UsePot,
                           const OptExtAcc_t ExtAcc, const double TargetTime, const int GPU_NStream );
-void CUAPI_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)           ],
+void GPU_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)           ],
                                  real h_Flu_Array_Out[][FLU_NOUT_S][ CUBE(PS1)               ],
                            const real h_Mag_Array_In [][NCOMP_MAG ][ SRC_NXT_P1*SQR(SRC_NXT) ],
                            const double h_Corner_Array[][3],
@@ -686,17 +686,17 @@ void CUAPI_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NX
                            const double TimeNew, const double TimeOld,
                            const real MinDens, const real MinPres, const real MinEint, const long PassiveFloor,
                            const int GPU_NStream );
-void CUAPI_DiagnoseDevice();
-void CUAPI_MemAllocate();
-void CUAPI_MemFree_Fluid( const int GPU_NStream );
-void CUAPI_SetCache();
-void CUAPI_SetDevice( const int Mode );
-void CUAPI_SetConstMemory();
-void CUAPI_SetConstMemory_EoS();
-void CUAPI_Synchronize();
+void GPU_DiagnoseDevice();
+void GPU_MemAllocate();
+void GPU_MemFree_Fluid( const int GPU_NStream );
+void GPU_SetCache();
+void GPU_SetDevice( const int Mode );
+void GPU_SetConstMemory();
+void GPU_SetConstMemory_EoS();
+void GPU_Synchronize();
 #ifdef GRAVITY
-void CUAPI_SetConstMemory_ExtAccPot();
-void CUAPI_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NXT][RHO_NXT],
+void GPU_SetConstMemory_ExtAccPot();
+void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NXT][RHO_NXT],
                                       const real h_Pot_Array_In [][POT_NXT][POT_NXT][POT_NXT],
                                             real h_Pot_Array_Out[][GRA_NXT][GRA_NXT][GRA_NXT],
                                             real h_Flu_Array    [][GRA_NIN][PS1][PS1][PS1],
@@ -714,11 +714,11 @@ void CUAPI_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_
                                       const bool SelfGravity, const OptExtPot_t ExtPot, const OptExtAcc_t ExtAcc,
                                       const double TimeNew, const double TimeOld, const real MinEint,
                                       const int GPU_NStream, const bool UseWaveFlag );
-void CUAPI_SendExtPotTable2GPU( const real *h_Table );
-void CUAPI_MemFree_PoissonGravity();
+void GPU_SendExtPotTable2GPU( const real *h_Table );
+void GPU_MemFree_PoissonGravity();
 #endif // #ifdef GRAVITY
 #if ( GRAMFE_SCHEME == GRAMFE_MATMUL )
-void CUAPI_SendGramFEMatrix2GPU( gramfe_matmul_float (*h_GramFE_TimeEvo)[ 2*FLU_NXT ] );
+void GPU_SendGramFEMatrix2GPU( gramfe_matmul_float (*h_GramFE_TimeEvo)[ 2*FLU_NXT ] );
 #endif
 #endif // #ifdef GPU
 
