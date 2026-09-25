@@ -3,16 +3,18 @@
 
 
 
-#include "CUFLU.h"
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
+#include "FLU.h"
 
 #if ( MODEL == HYDRO )
 
 
 
 // external functions
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 
-#include "CUFLU_Shared_FluUtility.cu"
+#include "CPU_Shared_FluUtility.cpp"
 
 #else // #ifdef __CUDACC__
 

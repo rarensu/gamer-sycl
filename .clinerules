@@ -1,0 +1,50 @@
+# GAMER SYCL migration notes
+
+## Project identity
+- This repository is **GAMER**, a GPU-accelerated adaptive mesh refinement code for astrophysical simulations.
+- The codebase started as **CUDA**-accelerated code and is being migrated to **SYCL**.
+
+## Current migration status
+- `dpct` has already been run and its output lives in `dpct_out/`.
+- `dpct_out/` is a **duplicate tree of the repository** containing the automatic migration output / suggestions.
+- The actual source tree outside `dpct_out/` is the one that must be edited.
+- The migration completion state must be tracked in `/home/rlawrence/Projects/gamer-sycl/MIGRATION_TRACKER.md`.
+
+## Key files to inspect first
+- `/home/rlawrence/Projects/gamer-sycl/dpct_out/report.txt` — overall API migration summary and remaining manual-work areas.
+- `/home/rlawrence/Projects/gamer-sycl/dpct_out/analysis.txt` — per-file migration analysis and effort estimates.
+- `/home/rlawrence/Projects/gamer-sycl/dpct_out/MainSourceFiles.yaml` — DPCT replacement details for main source files.
+- `/home/rlawrence/Projects/gamer-sycl/MIGRATION_TRACKER.md` — manual tracker for what has been applied back into the original codebase.
+- `/home/rlawrence/Projects/gamer-sycl/README.md` — project overview and documentation entry point.
+- `/home/rlawrence/Projects/gamer-sycl/src/Makefile_base` — main build/source list; especially relevant for CUDA-to-SYCL build updates.
+- `/home/rlawrence/Projects/gamer-sycl/src/configure.py` — build configuration generator.
+
+## Important source areas
+- `/home/rlawrence/Projects/gamer-sycl/include/` — shared headers, including `CUDA_CheckError.h`, `CUDA_ConstMemory.h`, `CUFLU.h`, `Global.h`, and `Macro.h`.
+- `/home/rlawrence/Projects/gamer-sycl/src/GPU_API/` — GPU API wrappers and device/memory setup code.
+- `/home/rlawrence/Projects/gamer-sycl/src/Model_Hydro/` — hydro solver implementation and shared routines.
+- `/home/rlawrence/Projects/gamer-sycl/src/SourceTerms/` — source-term solvers and templates.
+- `/home/rlawrence/Projects/gamer-sycl/src/SelfGravity/` — gravity/Poisson-related GPU and CPU code.
+
+## Working rules for future sessions
+- Prefer the DPCT outputs as the migration map before editing code.
+- Apply changes from the matching file under `dpct_out/` back into the original source tree.
+- Use `/home/rlawrence/Projects/gamer-sycl/MIGRATION_TRACKER.md` as the source of truth for what has already been applied.
+- Treat `dpct_out/report.txt` and `dpct_out/analysis.txt` as the source of truth for what still needs manual fixes or review.
+- When editing build logic, check `src/Makefile_base` and `src/configure.py` first.
+- Use absolute paths when referring to files in guidance or summaries.
+
+## Header naming for the SYCL-target migration
+
+- The target implementation is **SYCL-only**.
+- Prefer **short, neutral filenames** that do not hardcode CUDA-specific naming, while still fitting GAMER’s existing acronym-heavy style.
+- Rename legacy CUDA-prefixed headers to neutral names when the header is becoming part of the SYCL implementation:
+  - `CUDA_CheckError.h` → `CheckError.h`
+  - `CUDA_ConstMemory.h` → `ConstMemory.h`
+  - `CUAPI.h` → `GPUAPI.h`
+  - `CUFLU.h` → `FLU.h`
+  - `CUPOT.h` → `POT.h`
+- Avoid overly generic names that are likely to collide with unrelated headers, especially `API.h`.
+- Use `CUDA_x` / `SYCL_x` split filenames only if the code truly needs separate implementations during migration or future maintenance; otherwise keep one neutral filename for the SYCL code path.
+- Prefer keeping backend-specific details behind preprocessor guards inside the file when that produces a cleaner and more maintainable SYCL-oriented header.
+
