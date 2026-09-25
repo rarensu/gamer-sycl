@@ -1,6 +1,6 @@
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
-#include "CUFLU.h"
+#include "FLU.h"
 
 #if (  MODEL == HYDRO  &&  ( FLU_SCHEME == MHM || FLU_SCHEME == MHM_RP )  )
 
@@ -9,36 +9,36 @@
 // external functions
 #ifdef __CUDACC__
 
-#include "CUFLU_Shared_FluUtility.cu"
-#include "CUFLU_Shared_DataReconstruction.cu"
-#include "CUFLU_Shared_ComputeFlux.cu"
-#include "CUFLU_Shared_FullStepUpdate.cu"
+#include "FLU_Shared_FluUtility.cu"
+#include "FLU_Shared_DataReconstruction.cu"
+#include "FLU_Shared_ComputeFlux.cu"
+#include "FLU_Shared_FullStepUpdate.cu"
 #ifdef MHD
-#include "CUFLU_Shared_ConstrainedTransport.cu"
+#include "FLU_Shared_ConstrainedTransport.cu"
 #endif
 
 #if ( RSOLVER == EXACT  ||  RSOLVER_RESCUE == EXACT )
-# include "CUFLU_Shared_RiemannSolver_Exact.cu"
+# include "FLU_Shared_RiemannSolver_Exact.cu"
 #endif
 #if ( RSOLVER == ROE    ||  RSOLVER_RESCUE == ROE   )
-# include "CUFLU_Shared_RiemannSolver_Roe.cu"
+# include "FLU_Shared_RiemannSolver_Roe.cu"
 #endif
 #if ( RSOLVER == HLLE   ||  RSOLVER_RESCUE == HLLE  )
-# include "CUFLU_Shared_RiemannSolver_HLLE.cu"
+# include "FLU_Shared_RiemannSolver_HLLE.cu"
 #endif
 #if ( RSOLVER == HLLC   ||  RSOLVER_RESCUE == HLLC  )
-# include "CUFLU_Shared_RiemannSolver_HLLC.cu"
+# include "FLU_Shared_RiemannSolver_HLLC.cu"
 #endif
 #if ( RSOLVER == HLLD   ||  RSOLVER_RESCUE == HLLD  )
-# include "CUFLU_Shared_RiemannSolver_HLLD.cu"
+# include "FLU_Shared_RiemannSolver_HLLD.cu"
 #endif
 
 #include "CUDA_ConstMemory.h"
 
 #ifdef COSMIC_RAY
-# include "CUFLU_CosmicRay.cu"
+# include "FLU_CosmicRay.cu"
 #ifdef CR_DIFFUSION
-# include "../../Microphysics/CosmicRayDiffusion/CUFLU_CR_AddDiffuseFlux.cu"
+# include "../../Microphysics/CosmicRayDiffusion/FLU_CR_AddDiffuseFlux.cu"
 #endif
 #endif // #ifdef COSMIC_RAY
 
@@ -183,7 +183,7 @@ static void Hydro_RiemannPredict( const real g_ConVar_In[][ CUBE(FLU_NXT) ],
 
 
 //-------------------------------------------------------------------------------------------------------
-// Function    :  CPU/CUFLU_FluidSolver_MHM
+// Function    :  CPU/FLU_FluidSolver_MHM
 // Description :  CPU/GPU fluid solver based on the MUSCL-Hancock scheme
 //
 // Note        :  1. The three-dimensional evolution is achieved by using the unsplit method
@@ -194,7 +194,7 @@ static void Hydro_RiemannPredict( const real g_ConVar_In[][ CUBE(FLU_NXT) ],
 //                   MHM    : "Riemann Solvers and Numerical Methods for Fluid Dynamics
 //                             - A Practical Introduction ~ by Eleuterio F. Toro"
 //                   MHM_RP : Stone & Gardiner, NewA, 14, 139 (2009)
-//                4. See include/CUFLU.h for the values and description of different symbolic constants
+//                4. See include/FLU.h for the values and description of different symbolic constants
 //                   such as N_FC_VAR, N_FC_FLUX, N_SLOPE_PPM, N_FL_FLUX, N_HF_VAR
 //                5. Arrays with a prefix "g_" are stored in the global memory of GPU
 //                6. If an unphysical result occurs in the full-step update, we redo data reconstruction by
@@ -264,7 +264,7 @@ static void Hydro_RiemannPredict( const real g_ConVar_In[][ CUBE(FLU_NXT) ],
 //-------------------------------------------------------------------------------------------------------
 #ifdef __CUDACC__
 __global__
-void CUFLU_FluidSolver_MHM(
+void FLU_FluidSolver_MHM(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
          real   g_Flu_Array_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
    const real   g_Mag_Array_In [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],

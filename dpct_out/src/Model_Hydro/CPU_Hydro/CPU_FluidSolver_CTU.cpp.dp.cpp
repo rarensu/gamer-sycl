@@ -1,6 +1,6 @@
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
-#include "CUFLU.h"
+#include "FLU.h"
 
 #if ( MODEL == HYDRO  &&  FLU_SCHEME == CTU  &&  !defined SRHD )
 
@@ -14,7 +14,7 @@
 #include "CPU_Shared_ComputeFlux.cpp"
 #include "CPU_Shared_FullStepUpdate.cpp"
 #ifdef MHD
-#include "CUFLU_Shared_ConstrainedTransport.cu"
+#include "FLU_Shared_ConstrainedTransport.cu"
 #endif
 
 #include "CUDA_ConstMemory.h"
@@ -88,12 +88,12 @@ void Hydro_TGradientCorrection(
     const long PassiveFloor);
 
 //-------------------------------------------------------------------------------------------------------
-// Function    :  CPU/CUFLU_FluidSolver_CTU
+// Function    :  CPU/FLU_FluidSolver_CTU
 // Description :  CPU/GPU fluid solver based on the Corner-Transport-Upwind (CTU) scheme
 //
 // Note        :  1. Ref: (a) Stone et al., ApJS, 178, 137 (2008)
 //                        (b) Gardiner & Stone, J. Comput. Phys., 227, 4123 (2008)
-//                2. See include/CUFLU.h for the values and description of different symbolic constants
+//                2. See include/FLU.h for the values and description of different symbolic constants
 //                   such as N_FC_VAR, N_FC_FLUX, N_SLOPE_PPM, N_FL_FLUX, N_HF_VAR
 //                3. Arrays with a prefix "g_" are stored in the global memory of GPU
 //
@@ -156,7 +156,7 @@ void Hydro_TGradientCorrection(
 //-------------------------------------------------------------------------------------------------------
 #ifdef SYCL_LANGUAGE_VERSION
 SYCL_EXTERNAL
-void CUFLU_FluidSolver_CTU(
+void FLU_FluidSolver_CTU(
     const real g_Flu_Array_In[][NCOMP_TOTAL][CUBE(FLU_NXT)],
     real g_Flu_Array_Out[][NCOMP_TOTAL][CUBE(PS2)],
     /*

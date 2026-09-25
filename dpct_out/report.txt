@@ -74,7 +74,7 @@ File name, LOC migrated to SYCL, LOC migrated to helper functions, LOC not neede
 /scratch/helpdesk/RL-138/gamer/src/SourceTerms/Deleptonization/CPU_Src_Deleptonization.cpp, 14, 6, 383, 0
 /scratch/helpdesk/RL-138/gamer/src/TestProblem/Hydro/CMZ/ExtAcc_LogBar.cpp, 1, 0, 208, 0
 /scratch/helpdesk/RL-138/gamer/src/SourceTerms/User_Template/CPU_Src_User_Template.cpp, 13, 4, 327, 0
-/scratch/helpdesk/RL-138/gamer/include/CUFLU.h, 10, 0, 650, 0
+/scratch/helpdesk/RL-138/gamer/include/FLU.h, 10, 0, 650, 0
 /scratch/helpdesk/RL-138/gamer/src/TestProblem/Hydro/Bondi/ExtAcc_Bondi.cpp, 1, 0, 252, 0
 /scratch/helpdesk/RL-138/gamer/src/TestProblem/Hydro/ParticleEquilibriumIC/ExtPot_ParEqmIC.cpp, 1, 0, 180, 0
 /scratch/helpdesk/RL-138/gamer/src/EoS/User_Template/CPU_EoS_User_Template.cpp, 8, 14, 583, 0

@@ -1,9 +1,9 @@
-#ifndef __CUFLU_FLUUTILITY__
-#define __CUFLU_FLUUTILITY__
+#ifndef __FLU_FLUUTILITY__
+#define __FLU_FLUUTILITY__
 
 
 
-#include "CUFLU.h"
+#include "FLU.h"
 
 #if ( MODEL == HYDRO )
 
@@ -1731,4 +1731,4 @@ real MHD_GetCellCenteredBEnergy( const real Bx_FC[], const real By_FC[], const r
 
 
 
-#endif // #ifndef __CUFLU_FLUUTILITY__
+#endif // #ifndef __FLU_FLUUTILITY__

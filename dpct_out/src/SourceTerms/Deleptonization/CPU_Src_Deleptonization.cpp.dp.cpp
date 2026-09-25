@@ -1,6 +1,6 @@
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
-#include "CUFLU.h"
+#include "FLU.h"
 
 #if ( MODEL == HYDRO )
 

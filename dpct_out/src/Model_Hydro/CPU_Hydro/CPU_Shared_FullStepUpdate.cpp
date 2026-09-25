@@ -1,9 +1,9 @@
-#ifndef __CUFLU_FULLSTEPUPDATE__
-#define __CUFLU_FULLSTEPUPDATE__
+#ifndef __FLU_FULLSTEPUPDATE__
+#define __FLU_FULLSTEPUPDATE__
 
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
-#include "CUFLU.h"
+#include "FLU.h"
 
 #if (  MODEL == HYDRO  &&  ( FLU_SCHEME == MHM || FLU_SCHEME == MHM_RP || FLU_SCHEME == CTU )  )
 
@@ -13,11 +13,11 @@
 #ifdef SYCL_LANGUAGE_VERSION
 
 #if ( NCOMP_PASSIVE > 0 )
-# include "CUFLU_Shared_FluUtility.cu"
+# include "FLU_Shared_FluUtility.cu"
 #endif
 
 #ifdef DUAL_ENERGY
-# include "CUFLU_Shared_DualEnergy.cu"
+# include "FLU_Shared_DualEnergy.cu"
 #endif
 
 #endif // #ifdef __CUDACC__
@@ -288,4 +288,4 @@ void Hydro_FullStepUpdate( const real g_Input[][ CUBE(FLU_NXT) ], real g_Output[
 
 
 
-#endif // #ifndef __CUFLU_FULLSTEPUPDATE__
+#endif // #ifndef __FLU_FULLSTEPUPDATE__

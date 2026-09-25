@@ -1,7 +1,7 @@
 ---
-MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/dpct_out/include/CUFLU.h'
+MainSourceFile:  '/scratch/helpdesk/RL-138/gamer/dpct_out/include/FLU.h'
 Replacements:
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUFLU.h'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/FLU.h'
     Offset:          371
     Length:          10
     ReplacementText: SYCL_LANGUAGE_VERSION
@@ -10,7 +10,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUFLU.h'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/FLU.h'
     Offset:          382
     Length:          0
     ReplacementText: "#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
@@ -19,7 +19,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUFLU.h'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/FLU.h'
     Offset:          730
     Length:          10
     ReplacementText: SYCL_LANGUAGE_VERSION
@@ -28,7 +28,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUFLU.h'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/FLU.h'
     Offset:          864
     Length:          10
     ReplacementText: SYCL_LANGUAGE_VERSION
@@ -37,7 +37,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUFLU.h'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/FLU.h'
     Offset:          880
     Length:          13
     ReplacementText: DPCT_COMPATIBILITY_TEMP
@@ -46,7 +46,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUFLU.h'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/FLU.h'
     Offset:          21170
     Length:          10
     ReplacementText: SYCL_LANGUAGE_VERSION
@@ -55,7 +55,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUFLU.h'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/FLU.h'
     Offset:          21754
     Length:          10
     ReplacementText: SYCL_LANGUAGE_VERSION
@@ -64,7 +64,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUFLU.h'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/FLU.h'
     Offset:          21794
     Length:          15
     ReplacementText: __dpct_inline__
@@ -73,7 +73,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUFLU.h'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/FLU.h'
     Offset:          21810
     Length:          10
     ReplacementText: ''
@@ -82,7 +82,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUFLU.h'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/FLU.h'
     Offset:          21853
     Length:          12
     ReplacementText: __dpct_noinline__
@@ -91,7 +91,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUFLU.h'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/FLU.h'
     Offset:          21866
     Length:          10
     ReplacementText: ''
@@ -100,7 +100,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUFLU.h'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/FLU.h'
     Offset:          21922
     Length:          10
     ReplacementText: ''
@@ -109,7 +109,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUFLU.h'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/FLU.h'
     Offset:          22056
     Length:          10
     ReplacementText: SYCL_LANGUAGE_VERSION
@@ -118,7 +118,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUFLU.h'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/FLU.h'
     Offset:          22118
     Length:          11
     ReplacementText: 'sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(2)'
@@ -127,7 +127,7 @@ Replacements:
     InitStr:         ''
     NewHostVarName:  ''
     BlockLevelFormatFlag: false
-  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/CUFLU.h'
+  - FilePath:        '/scratch/helpdesk/RL-138/gamer/include/FLU.h'
     Offset:          22153
     Length:          10
     ReplacementText: 'sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_range(2)'

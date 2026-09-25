@@ -1,6 +1,6 @@
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
-#include "CUFLU.h"
+#include "FLU.h"
 
 #ifdef EXACT_COOLING
 
@@ -10,10 +10,10 @@
 
 #include "Global.h"
 #include "CUDA_CheckError.h"
-#include "CUFLU_Shared_FluUtility.cu"
+#include "FLU_Shared_FluUtility.cu"
 #include "CUDA_ConstMemory.h"
 #ifdef DUAL_ENERGY
-#include "CUFLU_Shared_DualEnergy.cu"
+#include "FLU_Shared_DualEnergy.cu"
 #endif
 
 extern double *d_SrcEC_TEF_lambda;

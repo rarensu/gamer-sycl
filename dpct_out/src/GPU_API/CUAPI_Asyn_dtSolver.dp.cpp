@@ -1,7 +1,7 @@
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
 #include "CUAPI.h"
-#include "CUFLU.h"
+#include "FLU.h"
 #ifdef GRAVITY
 #include "CUPOT.h"
 #endif
@@ -12,7 +12,7 @@
 
 #if   ( MODEL == HYDRO )
 SYCL_EXTERNAL
-void CUFLU_dtSolver_HydroCFL(
+void FLU_dtSolver_HydroCFL(
     real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_T][CUBE(PS1)],
     /*
     DPCT1102:39: Zero-length arrays are not permitted in SYCL device code.
@@ -294,7 +294,7 @@ void CUAPI_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real 
                                   BlockDim_dtSolver),
                 [=](sycl::nd_item<3> item_ct1)
                     [[sycl::reqd_sub_group_size(32)]] {
-                       CUFLU_dtSolver_HydroCFL(
+                       FLU_dtSolver_HydroCFL(
                            d_dt_Array_T_UsedPatch_s_ct0,
                            d_Flu_Array_T_UsedPatch_s_ct1,
                            d_Mag_Array_T_UsedPatch_s_ct2, dh, Safety, MinPres,

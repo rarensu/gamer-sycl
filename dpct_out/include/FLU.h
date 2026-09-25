@@ -1,5 +1,5 @@
-#ifndef __CUFLU_H__
-#define __CUFLU_H__
+#ifndef __FLU_H__
+#define __FLU_H__
 
 
 
@@ -564,7 +564,7 @@
       &&  GPU_COMPUTE_CAPABILITY != 1000 && GPU_COMPUTE_CAPABILITY != 1030 \
       &&  ( ( __CUDACC_VER_MAJOR__ < 13 && GPU_COMPUTE_CAPABILITY != 1010 ) || ( __CUDACC_VER_MAJOR__ >= 13 && GPU_COMPUTE_CAPABILITY != 1100 ) ) \
       &&  GPU_COMPUTE_CAPABILITY != 1200 && GPU_COMPUTE_CAPABILITY != 1210 )
-#     error : ERROR : GPU_COMPUTE_CAPABILITY unsupported by cuFFTdx (please visit cuFFTdx website to check whether your GPU is supported and update CUFLU.h accordingly if it is) !!
+#     error : ERROR : GPU_COMPUTE_CAPABILITY unsupported by cuFFTdx (please visit cuFFTdx website to check whether your GPU is supported and update FLU.h accordingly if it is) !!
 #  endif
 
 
@@ -594,7 +594,7 @@ using complex_type = typename FFT::value_type;
 #  endif // # if ( defined(__CUDACC__)  &&  WAVE_SCHEME == WAVE_GRAMFE  &&  GRAMFE_SCHEME == GRAMFE_FFT )
 
 #else
-#  error : ERROR : Unsupported model in CUFLU.h
+#  error : ERROR : Unsupported model in FLU.h
 #endif // MODEL
 
 
@@ -665,4 +665,4 @@ using complex_type = typename FFT::value_type;
 
 
 
-#endif // #ifndef __CUFLU_H__
+#endif // #ifndef __FLU_H__

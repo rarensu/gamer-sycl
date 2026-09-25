@@ -1,7 +1,7 @@
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
 #include "CUAPI.h"
-#include "CUFLU.h"
+#include "FLU.h"
 #ifdef GRAVITY
 #include "CUPOT.h"
 #endif

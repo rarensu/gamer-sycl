@@ -1,7 +1,7 @@
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
 #include "Macro.h"
-#include "CUFLU.h"
+#include "FLU.h"
 
 #if ( defined GPU  &&  MODEL == HYDRO  &&  FLU_SCHEME == RTVD  &&  !defined SRHD )
 
@@ -11,13 +11,13 @@
 #endif
 
 
-#include "CUFLU_Shared_FluUtility.cu"
+#include "FLU_Shared_FluUtility.cu"
 #include "CUDA_ConstMemory.h"
 
 #define to1D1(z,y,x) ( __umul24(z, FLU_NXT*FLU_NXT) + __umul24(y, FLU_NXT) + x )
 #define to1D2(z,y,x) ( __umul24(z-FLU_GHOST_SIZE, PS2*PS2) + __umul24(y-FLU_GHOST_SIZE, PS2) + x-FLU_GHOST_SIZE )
 
-static __device__ void CUFLU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
+static __device__ void FLU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
                                       real g_Fluid_Out[][5][ CUBE(PS2) ],
                                       real g_Flux[][9][5][ SQR(PS2) ],
                                       const real dt, const real _dh, const bool StoreFlux,
@@ -31,7 +31,7 @@ static __device__ void CUFLU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
 
 
 //-------------------------------------------------------------------------------------------------------
-// Function    :  CUFLU_FluidSolver_RTVD
+// Function    :  FLU_FluidSolver_RTVD
 // Description :  GPU fluid solver based on the relaxing TVD (RTVD) scheme
 //
 // Note        :  a. Prefix "g" for pointers pointing to the "Global" memory space
@@ -54,7 +54,7 @@ static __device__ void CUFLU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
 //                PassiveFloor : Bitwise flag to specify the passive scalars to be floored
 //                EoS          : EoS object
 //-------------------------------------------------------------------------------------------------------
-__global__ void CUFLU_FluidSolver_RTVD(
+__global__ void FLU_FluidSolver_RTVD(
    real g_Fluid_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
    real g_Fluid_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
    real g_Flux     [][9][NCOMP_TOTAL][ SQR(PS2) ],
@@ -72,34 +72,34 @@ __global__ void CUFLU_FluidSolver_RTVD(
 
    if ( XYZ )
    {
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, StoreFlux,              0,              0,
+      FLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, StoreFlux,              0,              0,
                      s_cu, s_cw, s_flux, s_RLflux, false, 0, MinDens, MinPres, MinEint, PassiveFloor, &EoS );
 
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, StoreFlux, FLU_GHOST_SIZE,              0,
+      FLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, StoreFlux, FLU_GHOST_SIZE,              0,
                      s_cu, s_cw, s_flux, s_RLflux, false, 3, MinDens, MinPres, MinEint, PassiveFloor, &EoS );
 
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, StoreFlux, FLU_GHOST_SIZE, FLU_GHOST_SIZE,
+      FLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, StoreFlux, FLU_GHOST_SIZE, FLU_GHOST_SIZE,
                      s_cu, s_cw, s_flux, s_RLflux,  true, 6, MinDens, MinPres, MinEint, PassiveFloor, &EoS );
    }
 
    else
    {
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, StoreFlux,              0,              0,
+      FLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, StoreFlux,              0,              0,
                      s_cu, s_cw, s_flux, s_RLflux, false, 6, MinDens, MinPres, MinEint, PassiveFloor, &EoS );
 
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, StoreFlux,              0, FLU_GHOST_SIZE,
+      FLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, StoreFlux,              0, FLU_GHOST_SIZE,
                      s_cu, s_cw, s_flux, s_RLflux, false, 3, MinDens, MinPres, MinEint, PassiveFloor, &EoS );
 
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, StoreFlux, FLU_GHOST_SIZE, FLU_GHOST_SIZE,
+      FLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, StoreFlux, FLU_GHOST_SIZE, FLU_GHOST_SIZE,
                      s_cu, s_cw, s_flux, s_RLflux,  true, 0, MinDens, MinPres, MinEint, PassiveFloor, &EoS );
    }
 
-} // FUNCTION : CUFLU_FluidSolver_RTVD
+} // FUNCTION : FLU_FluidSolver_RTVD
 
 
 
 //-------------------------------------------------------------------------------------------------------
-// Function    :  CUFLU_Advance
+// Function    :  FLU_Advance
 // Description :  GPU device function, which performs a one-dimensional sweep based on the TVD scheme
 //
 // Note        :  a. Prefix "g" for pointers pointing to the "Global" memory space
@@ -128,7 +128,7 @@ __global__ void CUFLU_FluidSolver_RTVD(
 //                PassiveFloor : Bitwise flag to specify the passive scalars to be floored
 //                EoS          : EoS object
 //-------------------------------------------------------------------------------------------------------
-__device__ void CUFLU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
+__device__ void FLU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
                                real g_Fluid_Out[][5][ CUBE(PS2) ],
                                real g_Flux[][9][5][ SQR(PS2) ],
                                const real dt, const real _dh, const bool StoreFlux,
@@ -416,7 +416,7 @@ __device__ void CUFLU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
    }
    while ( Column0 < NColumn );
 
-} // FUNCTION : CUFLU_Advance
+} // FUNCTION : FLU_Advance
 
 
 

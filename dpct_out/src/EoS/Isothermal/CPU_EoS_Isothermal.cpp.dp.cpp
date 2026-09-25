@@ -1,6 +1,6 @@
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
-#include "CUFLU.h"
+#include "FLU.h"
 #ifdef SYCL_LANGUAGE_VERSION
 #include "CUDA_CheckError.h"
 #include "CPU_Shared_FluUtility.cpp"

@@ -1,6 +1,6 @@
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
-#include "CUFLU.h"
+#include "FLU.h"
 
 // external functions and GPU-related set-up
 #ifdef SYCL_LANGUAGE_VERSION

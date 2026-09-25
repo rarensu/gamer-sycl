@@ -1,9 +1,9 @@
-#ifndef __CUFLU_COMPUTEFLUX__
-#define __CUFLU_COMPUTEFLUX__
+#ifndef __FLU_COMPUTEFLUX__
+#define __FLU_COMPUTEFLUX__
 
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
-#include "CUFLU.h"
+#include "FLU.h"
 
 #if ( MODEL == HYDRO  &&  (FLU_SCHEME == MHM || FLU_SCHEME == MHM_RP || FLU_SCHEME == CTU) )
 
@@ -13,10 +13,10 @@
 #ifdef SYCL_LANGUAGE_VERSION
 
 #if ( RSOLVER == EXACT  ||  RSOLVER_RESCUE == EXACT )
-# include "CUFLU_Shared_RiemannSolver_Exact.cu"
+# include "FLU_Shared_RiemannSolver_Exact.cu"
 #endif
 #if ( RSOLVER == ROE    ||  RSOLVER_RESCUE == ROE   )
-# include "CUFLU_Shared_RiemannSolver_Roe.cu"
+# include "FLU_Shared_RiemannSolver_Roe.cu"
 #endif
 #if ( RSOLVER == HLLE   ||  RSOLVER_RESCUE == HLLE  )
 #include "CPU_Shared_RiemannSolver_HLLE.cpp"
@@ -25,7 +25,7 @@
 #include "CPU_Shared_RiemannSolver_HLLC.cpp"
 #endif
 #if ( RSOLVER == HLLD   ||  RSOLVER_RESCUE == HLLD  )
-# include "CUFLU_Shared_RiemannSolver_HLLD.cu"
+# include "FLU_Shared_RiemannSolver_HLLD.cu"
 #endif
 
 #else // #ifdef __CUDACC__
@@ -470,4 +470,4 @@ void Hydro_StoreIntFlux( const real g_FC_Flux[][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC
 
 
 
-#endif // #ifndef __CUFLU_COMPUTEFLUX__
+#endif // #ifndef __FLU_COMPUTEFLUX__

@@ -1,7 +1,7 @@
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
 #include "CUAPI.h"
-#include "CUFLU.h"
+#include "FLU.h"
 #ifdef GRAVITY
 #include "CUPOT.h"
 #endif
@@ -13,7 +13,7 @@
 // fluid solver prototypes in different models
 #if   ( MODEL == HYDRO )
 #if   ( FLU_SCHEME == RTVD )
-__global__ void CUFLU_FluidSolver_RTVD(
+__global__ void FLU_FluidSolver_RTVD(
    real g_Fluid_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
    real g_Fluid_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
    real g_Flux     [][9][NCOMP_TOTAL][ SQR(PS2) ],
@@ -24,7 +24,7 @@ __global__ void CUFLU_FluidSolver_RTVD(
    const EoS_t EoS );
 #elif ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP )
 __global__
-void CUFLU_FluidSolver_MHM(
+void FLU_FluidSolver_MHM(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
          real   g_Flu_Array_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
    const real   g_Mag_Array_In [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
@@ -53,7 +53,7 @@ void CUFLU_FluidSolver_MHM(
    const EoS_t EoS, const MicroPhy_t MicroPhy );
 #elif ( FLU_SCHEME == CTU )
 SYCL_EXTERNAL
-void CUFLU_FluidSolver_CTU(
+void FLU_FluidSolver_CTU(
     const real g_Flu_Array_In[][NCOMP_TOTAL][CUBE(FLU_NXT)],
     real g_Flu_Array_Out[][NCOMP_TOTAL][CUBE(PS2)],
     /*
@@ -90,7 +90,7 @@ void CUFLU_FluidSolver_CTU(
     const int NFrac, const bool JeansMinPres, const real JeansMinPres_Coeff,
     const EoS_t EoS, int *const c_NormIdx, int *const c_FracIdx);
 #endif // FLU_SCHEME
-SYCL_EXTERNAL void CUFLU_dtSolver_HydroCFL(
+SYCL_EXTERNAL void FLU_dtSolver_HydroCFL(
     real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_T][CUBE(PS1)],
     /*
     DPCT1102:74: Zero-length arrays are not permitted in SYCL device code.
@@ -109,14 +109,14 @@ void CUPOT_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ C
 
 #elif ( MODEL == ELBDM )
 # if   ( WAVE_SCHEME == WAVE_FD )
-__global__ void CUFLU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+__global__ void FLU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                       real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
                                       real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                       const real dt, const real _dh, const real Eta, const bool StoreFlux,
                                       const real Taylor3_Coeff, const bool XYZ, const real MinDens );
 # elif ( WAVE_SCHEME == WAVE_GRAMFE )
 #  if   ( GRAMFE_SCHEME == GRAMFE_FFT )
-__global__ void CUFLU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+__global__ void FLU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                               real g_Fluid_Out[][FLU_NOUT ][ CUBE(PS2) ],
                                               real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                               const real dt, const real _dh, const real Eta, const bool StoreFlux,
@@ -124,7 +124,7 @@ __global__ void CUFLU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE
                                               typename FFT::workspace_type  Workspace,
                                               typename IFFT::workspace_type WorkspaceInv );
 #  elif ( GRAMFE_SCHEME == GRAMFE_MATMUL )
-__global__ void CUFLU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+__global__ void FLU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                                  real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
                                                  real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                                  gramfe_matmul_float g_TimeEvo[][ FLU_NXT*2 ],
@@ -138,7 +138,7 @@ __global__ void CUFLU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ C
 # endif // WAVE_SCHEME
 
 #if ( ELBDM_SCHEME == ELBDM_HYBRID )
-__global__ void CUFLU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
+__global__ void FLU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
                                                   #ifdef GAMER_DEBUG
                                                   real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
                                                   #else
@@ -232,11 +232,11 @@ void CUAPI_SetCache()
 // 1. fluid solver
 #  if   ( MODEL == HYDRO )
 #  if   ( FLU_SCHEME == RTVD )
-   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( CUFLU_FluidSolver_RTVD,             cudaFuncCachePreferShared )  );
+   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_FluidSolver_RTVD,             cudaFuncCachePreferShared )  );
 #  elif ( FLU_SCHEME == MHM )
-   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( CUFLU_FluidSolver_MHM,              cudaFuncCachePreferL1     )  );
+   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_FluidSolver_MHM,              cudaFuncCachePreferL1     )  );
 #  elif ( FLU_SCHEME == MHM_RP )
-   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( CUFLU_FluidSolver_MHM,              cudaFuncCachePreferL1     )  );
+   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_FluidSolver_MHM,              cudaFuncCachePreferL1     )  );
 #  elif ( FLU_SCHEME == CTU )
    /*
    DPCT1027:76: The call to cudaFuncSetCacheConfig was replaced with 0 because
@@ -255,12 +255,12 @@ void CUAPI_SetCache()
 
 #  elif ( MODEL == ELBDM )
 #  if   ( WAVE_SCHEME == WAVE_FD )
-   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( CUFLU_ELBDMSolver_FD,               cudaFuncCachePreferShared )  );
+   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_ELBDMSolver_FD,               cudaFuncCachePreferShared )  );
 #  elif ( WAVE_SCHEME == WAVE_GRAMFE )
 #   if   ( GRAMFE_SCHEME == GRAMFE_FFT )
-   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( CUFLU_ELBDMSolver_GramFE_FFT,       cudaFuncCachePreferShared )  );
+   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_ELBDMSolver_GramFE_FFT,       cudaFuncCachePreferShared )  );
 #   elif ( GRAMFE_SCHEME == GRAMFE_MATMUL )
-   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( CUFLU_ELBDMSolver_GramFE_MATMUL,    cudaFuncCachePreferShared )  );
+   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_ELBDMSolver_GramFE_MATMUL,    cudaFuncCachePreferShared )  );
 #   else // GRAMFE_SCHEME
 #   error : ERROR : unsupported GRAMFE_SCHEME !!
 #   endif // GRAMFE_SCHEME
@@ -268,7 +268,7 @@ void CUAPI_SetCache()
 #  error : ERROR : unsupported WAVE_SCHEME !!
 #  endif // WAVE_SCHEME
 #  if ( ELBDM_SCHEME == ELBDM_HYBRID )
-   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( CUFLU_ELBDMSolver_HamiltonJacobi,   cudaFuncCachePreferShared )  );
+   CUDA_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_ELBDMSolver_HamiltonJacobi,   cudaFuncCachePreferShared )  );
 #  endif
 
 #  else

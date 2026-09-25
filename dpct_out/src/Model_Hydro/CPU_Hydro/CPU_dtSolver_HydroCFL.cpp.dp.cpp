@@ -1,6 +1,6 @@
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
-#include "CUFLU.h"
+#include "FLU.h"
 
 #if ( MODEL == HYDRO )
 
@@ -28,7 +28,7 @@
 
 
 //-----------------------------------------------------------------------------------------
-// Function    :  CPU/CUFLU_dtSolver_HydroCFL
+// Function    :  CPU/FLU_dtSolver_HydroCFL
 // Description :  Estimate the evolution time-step (dt) from the CFL condition of the hydro/MHD solver
 //
 // Note        :  1. This function should be applied to both physical and comoving coordinates and always
@@ -56,7 +56,7 @@
 //-----------------------------------------------------------------------------------------
 #ifdef SYCL_LANGUAGE_VERSION
 SYCL_EXTERNAL
-void CUFLU_dtSolver_HydroCFL(
+void FLU_dtSolver_HydroCFL(
     real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_T][CUBE(PS1)],
     /*
     DPCT1102:119: Zero-length arrays are not permitted in SYCL device code.
@@ -238,7 +238,7 @@ void CPU_dtSolver_HydroCFL  ( real g_dt_Array[], const real g_Flu_Array[][FLU_NI
 
    } // for (int p=0; p<8*NPG; p++)
 
-} // FUNCTION : CPU/CUFLU_dtSolver_HydroCFL
+} // FUNCTION : CPU/FLU_dtSolver_HydroCFL
 
 
 

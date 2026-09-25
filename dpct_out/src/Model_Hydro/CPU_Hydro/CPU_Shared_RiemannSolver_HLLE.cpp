@@ -1,9 +1,9 @@
-#ifndef __CUFLU_RIEMANNSOLVER_HLLE__
-#define __CUFLU_RIEMANNSOLVER_HLLE__
+#ifndef __FLU_RIEMANNSOLVER_HLLE__
+#define __FLU_RIEMANNSOLVER_HLLE__
 
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
-#include "CUFLU.h"
+#include "FLU.h"
 
 #if ( MODEL == HYDRO )
 
@@ -40,7 +40,7 @@ void Hydro_Con2Flux( const int XYZ, real Flux[], const real In[], const real Min
 //                             ~ by Eleuterio F. Toro
 //                         (b) Stone et al., ApJS, 178, 137 (2008)
 //                         (c) Einfeldt et al., J. Comput. Phys., 92, 273 (1991)
-//                3. Wave-speed estimator is set by HLLE_WAVESPEED in CUFLU.h
+//                3. Wave-speed estimator is set by HLLE_WAVESPEED in FLU.h
 //                4. Support general EoS
 //                5. Shared by MHM, MHM_RP, and CTU schemes
 //
@@ -710,4 +710,4 @@ void Hydro_RiemannSolver_HLLE( const int XYZ, real Flux_Out[], const real L_In[]
 
 
 
-#endif // #ifndef __CUFLU_RIEMANNSOLVER_HLLE__
+#endif // #ifndef __FLU_RIEMANNSOLVER_HLLE__

@@ -1,9 +1,9 @@
-#ifndef __CUFLU_DATARECONSTRUCTION__
-#define __CUFLU_DATARECONSTRUCTION__
+#ifndef __FLU_DATARECONSTRUCTION__
+#define __FLU_DATARECONSTRUCTION__
 
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
-#include "CUFLU.h"
+#include "FLU.h"
 
 #if (  MODEL == HYDRO  &&  ( FLU_SCHEME == MHM || FLU_SCHEME == MHM_RP || FLU_SCHEME == CTU )  )
 
@@ -15,7 +15,7 @@
 #include "CPU_Shared_FluUtility.cpp"
 
 #if ( FLU_SCHEME == MHM  &&  defined MHD )
-#include "CUFLU_Shared_ConstrainedTransport.cu"
+#include "FLU_Shared_ConstrainedTransport.cu"
 #endif
 
 #else
@@ -52,7 +52,7 @@ void MHD_UpdateMagnetic_Half(       real fc[][NCOMP_LR],
 #endif // #ifdef __CUDACC__ ... else ...
 
 
-// internal functions (GPU_DEVICE is defined in CUFLU.h)
+// internal functions (GPU_DEVICE is defined in FLU.h)
 GPU_DEVICE
 static void Hydro_LimitSlope( const real L[], const real C[], const real R[], const LR_Limiter_t LR_Limiter,
                               const real MinMod_Coeff, const int XYZ,
@@ -128,13 +128,13 @@ static void Hydro_Char2Pri( real InOut[], const real Dens, const real Pres, cons
 //                4. PLM and PPM data reconstruction functions share the same function name
 //                5. Face-centered variables will be advanced by half time-step for the MHM and CTU schemes
 //                6. Data reconstruction can be applied to characteristic variables by
-//                   defining "CHAR_RECONSTRUCTION" in the header CUFLU.h
+//                   defining "CHAR_RECONSTRUCTION" in the header FLU.h
 //                7. This function is shared by MHM, MHM_RP, and CTU schemes
 //                8. g_FC_B[] has the size of SQR(FLU_NXT)*FLU_NXT_P1 but is accessed with the strides
 //                   NIn/NIn+1 along the transverse/longitudinal directions
 //                9. Support applying data reconstruction to internal energy and using that instead of pressure
 //                   for converting primitive variables to conserved variables
-//                   --> Controlled by the option "LR_EINT" in CUFLU.h; see the description thereof for details
+//                   --> Controlled by the option "LR_EINT" in FLU.h; see the description thereof for details
 //                10. (PPM) Reference:
 //                   a. The Athena++ Adaptive Mesh Refinement Framework: Design and Magnetohydrodynamic Solvers
 //                      Stone J. M., Tomida K., White C. J., Felker K. G., 2020, ApJS, 249, 4.
@@ -2351,4 +2351,4 @@ void Hydro_ConFC2PriCC_MHM(       real g_PriVar[][ CUBE(FLU_NXT) ],
 
 
 
-#endif // #ifndef __CUFLU_DATARECONSTRUCTION__
+#endif // #ifndef __FLU_DATARECONSTRUCTION__
