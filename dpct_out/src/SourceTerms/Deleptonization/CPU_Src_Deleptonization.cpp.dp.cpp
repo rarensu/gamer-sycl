@@ -10,7 +10,7 @@
 #ifdef SYCL_LANGUAGE_VERSION
 
 #include "Global.h"
-#include "CUDA_CheckError.h"
+#include "CheckError.h"
 #include "CPU_Shared_FluUtility.cpp"
 #include "ConstMemory.h"
 

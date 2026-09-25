@@ -446,7 +446,7 @@ void Load_Parameter_Before_2000( FILE *File, const int FormatVersion, bool &Data
    fread( &max_patch,                  sizeof(int),                     1,             File );
 
 
-// b. load the symbolic constants defined in "Macro.h, CUPOT.h, and CUFLU.h"
+// b. load the symbolic constants defined in "Macro.h, POT.h, and FLU.h"
 // =================================================================================================
    bool enforce_positive, char_reconstruction, hll_no_ref_state, hll_include_all_waves, waf_dissipate;
    bool use_psolver_10to14;
@@ -682,7 +682,7 @@ void Load_Parameter_After_2000( FILE *File, const int FormatVersion, bool &LoadP
    fread( &support_hdf5,               sizeof(bool),                    1,             File );
 
 
-// b. load the symbolic constants defined in "Macro.h, CUPOT.h, and CUFLU.h"
+// b. load the symbolic constants defined in "Macro.h, POT.h, and FLU.h"
 // =================================================================================================
    bool   enforce_positive, char_reconstruction, hll_no_ref_state, hll_include_all_waves, waf_dissipate;
    bool   use_psolver_10to14;

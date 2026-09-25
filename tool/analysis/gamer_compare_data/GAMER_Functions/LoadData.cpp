@@ -414,7 +414,7 @@ void Load_Parameter_After_2000( FILE *File, const int FormatVersion, const long 
    if ( FormatVersion < 2210 )   mhd           = false;
 
 
-// b. load the symbolic constants defined in "Macro.h, CUPOT.h, and CUFLU.h"
+// b. load the symbolic constants defined in "Macro.h, POT.h, and FLU.h"
 // =================================================================================================
    bool   enforce_positive, char_reconstruction, hll_no_ref_state, hll_include_all_waves, waf_dissipate;
    bool   use_psolver_10to14;

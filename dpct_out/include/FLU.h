@@ -622,7 +622,7 @@ using complex_type = typename FFT::value_type;
 #ifdef SYCL_LANGUAGE_VERSION
 #if ( GPU_ARCH == FERMI   ||  GPU_ARCH == KEPLER  ||  GPU_ARCH == MAXWELL       ||  GPU_ARCH == PASCAL  ||  GPU_ARCH == VOLTA  ||  \
       GPU_ARCH == TURING  ||  GPU_ARCH == AMPERE  ||  GPU_ARCH == ADA_LOVELACE  ||  GPU_ARCH == HOPPER  ||  GPU_ARCH == BLACKWELL )
-// CUPOT.h will define WARP_SIZE as well
+// POT.h will define WARP_SIZE as well
 #  ifndef WARP_SIZE
 #  define WARP_SIZE 32
 #  endif

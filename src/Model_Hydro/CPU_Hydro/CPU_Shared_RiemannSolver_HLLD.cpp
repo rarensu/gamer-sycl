@@ -44,7 +44,7 @@ void Hydro_Con2Pri( const real In[], real Out[], const real MinPres, const long 
 //                         (c) Batten et al., SIAM J. Sci. Comput., 18, 1553 (1997)
 //                         (d) Miyoshi & Kusano, JCP, 208, 315 (2005)
 //                         (e) Davis, SIAM J. Sci. Statist. Comput. 9, 445 (1988)
-//                3. Wave-speed estimator is set by HLLD_WAVESPEED in CUFLU.h
+//                3. Wave-speed estimator is set by HLLD_WAVESPEED in FLU.h
 //                4. Support general EoS
 //                5. This function is shared by MHM, MHM_RP, and CTU schemes
 //

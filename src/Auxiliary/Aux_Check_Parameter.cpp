@@ -852,7 +852,7 @@ void Aux_Check_Parameter()
 #  endif // COSMIC_RAY
 
 #  if ( defined LR_EINT  &&  FLU_SCHEME == CTU )
-#     error : ERROR : CTU does NOT support LR_EINT in CUFLU.h !!
+#     error : ERROR : CTU does NOT support LR_EINT in FLU.h !!
 #  endif
 
 #  if ( EOS != EOS_GAMMA  &&  EOS != EOS_ISOTHERMAL  &&  EOS != EOS_NUCLEAR  &&  EOS != EOS_TABULAR  &&  EOS != EOS_COSMIC_RAY  &&  EOS != EOS_TAUBMATHEWS  &&  EOS != EOS_USER )

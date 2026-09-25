@@ -422,7 +422,7 @@ void Output_DumpData_Total( const char *FileName )
       fwrite( &eos,                       sizeof(int),                     1,             File );
 
 
-//    c. output the symbolic constants defined in "Macro.h, CUPOT.h, and CUFLU.h"
+//    c. output the symbolic constants defined in "Macro.h, POT.h, and FLU.h"
 //    =================================================================================================
       if ( ftell(File) > HeaderOffset_Constant )
          Aux_Error( ERROR_INFO, "Current file position (%ld) > correct offset (%ld) !!\n",

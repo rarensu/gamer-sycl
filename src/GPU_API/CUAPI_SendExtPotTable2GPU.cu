@@ -1,5 +1,5 @@
 #include "GPUAPI.h"
-#include "CUPOT.h"
+#include "POT.h"
 
 #if ( defined GPU  &&  defined GRAVITY )
 

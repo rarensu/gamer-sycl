@@ -1,5 +1,5 @@
 #include "Macro.h"
-#include "CUPOT.h"
+#include "POT.h"
 
 #if ( defined GRAVITY  &&  defined GPU  &&  POT_SCHEME == SOR )
 
@@ -12,7 +12,7 @@
 
 
 /************************************************************
-  Many optimization options for SOR are defined in CUPOT.h
+  Many optimization options for SOR are defined in POT.h
 ************************************************************/
 
 

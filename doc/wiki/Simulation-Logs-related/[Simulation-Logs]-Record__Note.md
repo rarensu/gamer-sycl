@@ -56,7 +56,7 @@ RANDOM_NUMBER                   RNG_GNU_EXT
 ***********************************************************************************
 
 
-Other Options (in CUFLU.h and CUPOT.h)
+Other Options (in FLU.h and POT.h)
 ***********************************************************************************
 CHECK_NEGATIVE_IN_FLUID         OFF
 CHAR_RECONSTRUCTION             OFF

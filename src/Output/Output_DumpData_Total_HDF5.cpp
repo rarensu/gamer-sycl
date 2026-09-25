@@ -183,7 +183,7 @@ Procedure for outputting new variables:
 //                2400 : 2019/06/08 --> output magnetic field for MHD
 //                2401 : 2019/06/30 --> output OPT__FLAG_CURRENT and FlagTable_Current
 //                2402 : 2019/07/17 --> replace USG_GhostSize by USG_GhostSizeF and USG_GhostSizeG
-//                2403 : 2019/09/20 --> add BIT_REP_FLUX and BIT_REP_ELECTRIC defined in CUFLU.h
+//                2403 : 2019/09/20 --> add BIT_REP_FLUX and BIT_REP_ELECTRIC defined in FLU.h
 //                2404 : 2019/10/16 --> add DT__MAX
 //                2405 : 2019/12/29 --> output GRACKLE_THREE_BODY_RATE, GRACKLE_CIE_COOLING, GRACKLE_H2_OPA_APPROX
 //                2406 : 2020/02/26 --> output EOS

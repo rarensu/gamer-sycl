@@ -94,7 +94,7 @@ void Hydro_TGradientCorrection(       real g_FC_Var   [][NCOMP_TOTAL_PLUS_MAG][ 
 //
 // Note        :  1. Ref: (a) Stone et al., ApJS, 178, 137 (2008)
 //                        (b) Gardiner & Stone, J. Comput. Phys., 227, 4123 (2008)
-//                2. See include/CUFLU.h for the values and description of different symbolic constants
+//                2. See include/FLU.h for the values and description of different symbolic constants
 //                   such as N_FC_VAR, N_FC_FLUX, N_SLOPE_PPM, N_FL_FLUX, N_HF_VAR
 //                3. Arrays with a prefix "g_" are stored in the global memory of GPU
 //

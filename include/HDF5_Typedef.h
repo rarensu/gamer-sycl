@@ -213,7 +213,7 @@ struct Makefile_t
 // Structure   :  SymConst_t
 // Description :  Data structure for outputting the symbolic constants
 //
-// Note        :  1. Symbolic constants are defined in "Macro.h, CUFLU.h, CUPOT.h, Particle.h"
+// Note        :  1. Symbolic constants are defined in "Macro.h, FLU.h, POT.h, Particle.h"
 //-------------------------------------------------------------------------------------------------------
 struct SymConst_t
 {

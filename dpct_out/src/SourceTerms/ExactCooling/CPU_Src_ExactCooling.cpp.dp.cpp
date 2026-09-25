@@ -9,7 +9,7 @@
 #ifdef __CUDACC__
 
 #include "Global.h"
-#include "CUDA_CheckError.h"
+#include "CheckError.h"
 #include "FLU_Shared_FluUtility.cu"
 #include "ConstMemory.h"
 #ifdef DUAL_ENERGY

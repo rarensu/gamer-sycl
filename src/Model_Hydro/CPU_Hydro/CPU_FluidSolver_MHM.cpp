@@ -191,7 +191,7 @@ static void Hydro_RiemannPredict( const real g_ConVar_In[][ CUBE(FLU_NXT) ],
 //                   MHM    : "Riemann Solvers and Numerical Methods for Fluid Dynamics
 //                             - A Practical Introduction ~ by Eleuterio F. Toro"
 //                   MHM_RP : Stone & Gardiner, NewA, 14, 139 (2009)
-//                4. See include/CUFLU.h for the values and description of different symbolic constants
+//                4. See include/FLU.h for the values and description of different symbolic constants
 //                   such as N_FC_VAR, N_FC_FLUX, N_SLOPE_PPM, N_FL_FLUX, N_HF_VAR
 //                5. Arrays with a prefix "g_" are stored in the global memory of GPU
 //                6. If an unphysical result occurs in the full-step update, we redo data reconstruction by

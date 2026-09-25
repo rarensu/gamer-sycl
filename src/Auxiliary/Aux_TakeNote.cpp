@@ -507,8 +507,8 @@ void Aux_TakeNote()
       fprintf( Note, "\n\n" );
 
 
-//    record the simulation options in Macro.h, CUFLU.h and CUPOT.h
-      fprintf( Note, "Other Options (in Macro.h, CUFLU.h and CUPOT.h)\n" );
+//    record the simulation options in Macro.h, FLU.h and POT.h
+      fprintf( Note, "Other Options (in Macro.h, FLU.h and POT.h)\n" );
       fprintf( Note, "***********************************************************************************\n" );
 
 #     ifdef BIT_REP_FLUX

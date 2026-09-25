@@ -2,7 +2,7 @@
 #include <dpct/dpct.hpp>
 #include "POT.h"
 #ifdef SYCL_LANGUAGE_VERSION
-#include "CUDA_CheckError.h"
+#include "CheckError.h"
 #endif
 
 #ifdef GRAVITY

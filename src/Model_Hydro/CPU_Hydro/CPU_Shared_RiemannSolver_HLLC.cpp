@@ -42,7 +42,7 @@ void Hydro_Con2Flux( const int XYZ, real Flux[], const real In[], const real Min
 //                             ~ by Eleuterio F. Toro (1999)
 //                         b. Batten, P., Clarke, N., Lambert, C., & Causon, D. M. 1997, SIAM J. Sci. Comput., 18, 1553
 //                         c. Coleman, M. S. B. 2020, ApJS, 248, 7
-//                3. Wave-speed estimator is set by HLLC_WAVESPEED in CUFLU.h
+//                3. Wave-speed estimator is set by HLLC_WAVESPEED in FLU.h
 //                4. Support general EoS
 //                5. Shared by the MHM, MHM_RP, and CTU schemes
 //

@@ -966,8 +966,8 @@ IV. Notice
 3. Function prototypes are declared in the file "include/Prototype.h".
 
 4. All symbolic constants (except for those defined in the Makefile) are
-   defined in the files "include/Macro.h", "include/CUPOT.h", and
-   "include/CUFLU.h". They should not be modified.
+   defined in the files "include/Macro.h", "include/POT.h", and
+   "include/FLU.h". They should not be modified.
 
 5. A simple structure "Timer_t" is defined in the file "include/Timer.h",
    which is used to measure the elapsed times of different parts in GAMER.

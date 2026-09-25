@@ -3,7 +3,7 @@
 #else
 #include "GAMER.h"
 #endif
-#include "CUPOT.h"
+#include "POT.h"
 
 #ifdef GRAVITY
 

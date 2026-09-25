@@ -909,7 +909,7 @@ void Load_Parameter_After_1200( FILE *File, const int FormatVersion, int &NLv_Re
    fseek( File, NBuf_Makefile, SEEK_CUR );
 
 
-// b. load the symbolic constants defined in "Macro.h, CUPOT.h, and CUFLU.h"
+// b. load the symbolic constants defined in "Macro.h, POT.h, and FLU.h"
 // =================================================================================================
    bool enforce_positive, char_reconstruction, hll_no_ref_state, hll_include_all_waves, waf_dissipate_useless;
    bool use_psolver_10to14;
@@ -1202,7 +1202,7 @@ void Load_Parameter_After_1200( FILE *File, const int FormatVersion, int &NLv_Re
 
 
 
-//    d-2. check the symbolic constants defined in "Macro.h, CUPOT.h, and CUFLU.h"
+//    d-2. check the symbolic constants defined in "Macro.h, POT.h, and FLU.h"
 //    ========================================================================
       CompareVar( "NCOMP_FLUID",             ncomp_fluid,            NCOMP_FLUID,                  Fatal );
       CompareVar( "PATCH_SIZE",              patch_size,             PATCH_SIZE,                   Fatal );
