@@ -3,7 +3,7 @@
 #include "FLU.h"
 #ifdef SYCL_LANGUAGE_VERSION
 #include "CheckError.h"
-#include "CUFLU_Shared_FluUtility.cu"
+#include "CPU_Shared_FluUtility.cpp"
 #endif
 
 #if ( MODEL == HYDRO )
