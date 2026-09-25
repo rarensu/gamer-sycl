@@ -24,3 +24,4 @@ This file tracks which **original GAMER source files** have had the correspondin
 | Status | Original file | DPCT suggestion file | Notes |
 | --- | --- | --- | --- |
 | DONE | `/home/rlawrence/Projects/gamer-sycl/src/Model_Hydro/CPU_Hydro/CPU_Shared_RiemannSolver_HLLC.cpp` | `/home/rlawrence/Projects/gamer-sycl/dpct_out/src/Model_Hydro/CPU_Hydro/CPU_Shared_RiemannSolver_HLLC.cpp` | Applied DPCT header/include migration and SYCL include guard switch; include now uses planned `FLU.h` name. |
+| IN PROGRESS | `/home/rlawrence/Projects/gamer-sycl/include/FLU.h` | `/home/rlawrence/Projects/gamer-sycl/dpct_out/include/CUFLU.h` | Applied the DPCT fluid-header migration, but the cuFFTDx-dependent GramFE FFT block still needs SYCL-side replacement. |
