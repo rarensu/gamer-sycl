@@ -1,7 +1,9 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 #include "CheckError.h"
-#include "CUFLU_Shared_FluUtility.cu"
+#include "CPU_Shared_FluUtility.cpp"
 #endif
 
 #if ( MODEL == HYDRO )
@@ -41,14 +43,14 @@
 //
 // Note        :  1. Invoked by EoS_Init_User_Template()
 //                2. AuxArray_Flt/Int[] have the size of EOS_NAUX_MAX defined in Macro.h (default = 20)
-//                3. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+//                3. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //                4. Physical constants such as Const_amu/Const_kB should be set to unity when disabling OPT__UNIT
 //
 // Parameter   :  AuxArray_Flt/Int : Floating-point/Integer arrays to be filled up
 //
 // Return      :  AuxArray_Flt/Int[]
 //-------------------------------------------------------------------------------------------------------
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 void EoS_SetAuxArray_User_Template( double AuxArray_Flt[], int AuxArray_Int[] )
 {
 
@@ -61,7 +63,7 @@ void EoS_SetAuxArray_User_Template( double AuxArray_Flt[], int AuxArray_Int[] )
    */
 
 } // FUNCTION : EoS_SetAuxArray_User_Template
-#endif // #ifndef __CUDACC__
+#endif // #ifndef SYCL_LANGUAGE_VERSION
 
 
 
@@ -474,19 +476,26 @@ static void EoS_General_User_Template( const int Mode, real Out[], const real In
 // III. Set EoS initialization functions
 // =============================================
 
-#ifdef __CUDACC__
-#  define FUNC_SPACE __device__ static
+#ifdef SYCL_LANGUAGE_VERSION
+#  define FUNC_SPACE static
 #else
 #  define FUNC_SPACE            static
 #endif
 
-FUNC_SPACE EoS_DE2P_t EoS_DensEint2Pres_Ptr = EoS_DensEint2Pres_User_Template;
-FUNC_SPACE EoS_DP2E_t EoS_DensPres2Eint_Ptr = EoS_DensPres2Eint_User_Template;
-FUNC_SPACE EoS_DP2C_t EoS_DensPres2CSqr_Ptr = EoS_DensPres2CSqr_User_Template;
-FUNC_SPACE EoS_DE2T_t EoS_DensEint2Temp_Ptr = EoS_DensEint2Temp_User_Template;
-FUNC_SPACE EoS_DT2P_t EoS_DensTemp2Pres_Ptr = EoS_DensTemp2Pres_User_Template;
-FUNC_SPACE EoS_DE2S_t EoS_DensEint2Entr_Ptr = EoS_DensEint2Entr_User_Template;
-FUNC_SPACE EoS_GENE_t EoS_General_Ptr       = EoS_General_User_Template;
+static dpct::global_memory<EoS_DE2P_t, 0>
+    EoS_DensEint2Pres_Ptr(EoS_DensEint2Pres_User_Template);
+static dpct::global_memory<EoS_DP2E_t, 0>
+    EoS_DensPres2Eint_Ptr(EoS_DensPres2Eint_User_Template);
+static dpct::global_memory<EoS_DP2C_t, 0>
+    EoS_DensPres2CSqr_Ptr(EoS_DensPres2CSqr_User_Template);
+static dpct::global_memory<EoS_DE2T_t, 0>
+    EoS_DensEint2Temp_Ptr(EoS_DensEint2Temp_User_Template);
+static dpct::global_memory<EoS_DT2P_t, 0>
+    EoS_DensTemp2Pres_Ptr(EoS_DensTemp2Pres_User_Template);
+static dpct::global_memory<EoS_DE2S_t, 0>
+    EoS_DensEint2Entr_Ptr(EoS_DensEint2Entr_User_Template);
+static dpct::global_memory<EoS_GENE_t, 0>
+    EoS_General_Ptr(EoS_General_User_Template);
 
 //-----------------------------------------------------------------------------------------
 // Function    :  EoS_SetCPU/GPUFunc_User_Template
@@ -514,8 +523,8 @@ FUNC_SPACE EoS_GENE_t EoS_General_Ptr       = EoS_General_User_Template;
 //                EoS_DensTemp2Pres_CPU/GPUPtr, EoS_DensEint2Entr_CPU/GPUPtr,
 //                EoS_General_CPU/GPUPtr
 //-----------------------------------------------------------------------------------------
-#ifdef __CUDACC__
-__host__
+#ifdef SYCL_LANGUAGE_VERSION
+
 void EoS_SetGPUFunc_User_Template( EoS_DE2P_t &EoS_DensEint2Pres_GPUPtr,
                                    EoS_DP2E_t &EoS_DensPres2Eint_GPUPtr,
                                    EoS_DP2C_t &EoS_DensPres2CSqr_GPUPtr,
@@ -524,16 +533,44 @@ void EoS_SetGPUFunc_User_Template( EoS_DE2P_t &EoS_DensEint2Pres_GPUPtr,
                                    EoS_DE2S_t &EoS_DensEint2Entr_GPUPtr,
                                    EoS_GENE_t &EoS_General_GPUPtr )
 {
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensEint2Pres_GPUPtr, EoS_DensEint2Pres_Ptr, sizeof(EoS_DE2P_t) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensPres2Eint_GPUPtr, EoS_DensPres2Eint_Ptr, sizeof(EoS_DP2E_t) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensPres2CSqr_GPUPtr, EoS_DensPres2CSqr_Ptr, sizeof(EoS_DP2C_t) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensEint2Temp_GPUPtr, EoS_DensEint2Temp_Ptr, sizeof(EoS_DE2T_t) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensTemp2Pres_GPUPtr, EoS_DensTemp2Pres_Ptr, sizeof(EoS_DT2P_t) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_DensEint2Entr_GPUPtr, EoS_DensEint2Entr_Ptr, sizeof(EoS_DE2S_t) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &EoS_General_GPUPtr,       EoS_General_Ptr,       sizeof(EoS_GENE_t) )  );
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_DensEint2Pres_GPUPtr, EoS_DensEint2Pres_Ptr.get_ptr(),
+                   sizeof(EoS_DE2P_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_DensPres2Eint_GPUPtr, EoS_DensPres2Eint_Ptr.get_ptr(),
+                   sizeof(EoS_DP2E_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_DensPres2CSqr_GPUPtr, EoS_DensPres2CSqr_Ptr.get_ptr(),
+                   sizeof(EoS_DP2C_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_DensEint2Temp_GPUPtr, EoS_DensEint2Temp_Ptr.get_ptr(),
+                   sizeof(EoS_DE2T_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_DensTemp2Pres_GPUPtr, EoS_DensTemp2Pres_Ptr.get_ptr(),
+                   sizeof(EoS_DT2P_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&EoS_DensEint2Entr_GPUPtr, EoS_DensEint2Entr_Ptr.get_ptr(),
+                   sizeof(EoS_DE2S_t))
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(dpct::get_in_order_queue()
+                                         .memcpy(&EoS_General_GPUPtr,
+                                                 EoS_General_Ptr.get_ptr(),
+                                                 sizeof(EoS_GENE_t))
+                                         .wait()));
 }
 
-#else // #ifdef __CUDACC__
+#else // #ifdef SYCL_LANGUAGE_VERSION
 
 void EoS_SetCPUFunc_User_Template( EoS_DE2P_t &EoS_DensEint2Pres_CPUPtr,
                                    EoS_DP2E_t &EoS_DensPres2Eint_CPUPtr,
@@ -552,11 +589,9 @@ void EoS_SetCPUFunc_User_Template( EoS_DE2P_t &EoS_DensEint2Pres_CPUPtr,
    EoS_General_CPUPtr       = EoS_General_Ptr;
 }
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
-
-
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 
 // local function prototypes
 void EoS_SetAuxArray_User_Template( double [], int [] );
@@ -570,11 +605,11 @@ void EoS_SetGPUFunc_User_Template( EoS_DE2P_t &, EoS_DP2E_t &, EoS_DP2C_t &, EoS
 // Description :  Initialize EoS
 //
 // Note        :  1. Set auxiliary arrays by invoking EoS_SetAuxArray_*()
-//                   --> It will be copied to GPU automatically in CUAPI_SetConstMemory()
+//                   --> It will be copied to GPU automatically in GPUAPI_SetConstMemory()
 //                2. Set the CPU/GPU EoS routines by invoking EoS_SetCPU/GPUFunc_*()
 //                3. Invoked by EoS_Init()
 //                   --> Enable it by linking to the function pointer "EoS_Init_Ptr"
-//                4. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+//                4. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //
 // Parameter   :  None
 //
@@ -597,7 +632,7 @@ void EoS_Init_User_Template()
 
 } // FUNCTION : EoS_Init_User_Template
 
-#endif // #ifndef __CUDACC__
+#endif // #ifndef SYCL_LANGUAGE_VERSION
 
 
 
