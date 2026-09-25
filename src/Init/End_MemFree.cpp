@@ -42,14 +42,14 @@ void End_MemFree()
 
 // 3. arrays for GPU (or CPU) solvers
 #  ifdef GPU
-   CUAPI_MemFree_Fluid( GPU_NSTREAM );
+   GPU_MemFree_Fluid( GPU_NSTREAM );
 #  else
    End_MemFree_Fluid();
 #  endif
 
 #  ifdef GRAVITY
 #     ifdef GPU
-      CUAPI_MemFree_PoissonGravity();
+      GPU_MemFree_PoissonGravity();
 #     else
       End_MemFree_PoissonGravity();
 #     endif

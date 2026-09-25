@@ -19,7 +19,7 @@
 // Note        :  1. External potential is specified by the input function ExtPot_Func()
 //                2. Set PotIsInit to false if the input potential g_Pot_Array[] has not been initialized
 //                   --> Useful when self-gravity is disabled
-//                3. Invoked by Gra_AdvanceDt(), CPU_PoissonGravitySolver(), and CUAPI_Asyn_PoissonGravitySolver()
+//                3. Invoked by Gra_AdvanceDt(), CPU_PoissonGravitySolver(), and GPU_Asyn_PoissonGravitySolver()
 //
 // Parameter   :  g_Pot_Array               : Array storing the input and output potential data of each target patch
 //                g_Corner_Array            : Array storing the physical corner coordinates of each patch

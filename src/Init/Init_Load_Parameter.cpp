@@ -249,7 +249,7 @@ void Init_Load_Parameter()
    ReadPara->Add( "SRC_EC_DTCOEF",              &SrcTerms.EC_dtCoef,             -1.0,             NoMin_double,  NoMax_double   );
 #  endif
    ReadPara->Add( "SRC_USER",                   &SrcTerms.User,                   false,           Useless_bool,  Useless_bool   );
-// do not check SRC_GPU_NPGROUP since it may be reset by either Init_ResetParameter() or CUAPI_SetMemSize()
+// do not check SRC_GPU_NPGROUP since it may be reset by either Init_ResetParameter() or GPU_SetMemSize()
    ReadPara->Add( "SRC_GPU_NPGROUP",            &SRC_GPU_NPGROUP,                -1,               NoMin_int,     NoMax_int      );
 
 
@@ -277,7 +277,7 @@ void Init_Load_Parameter()
    ReadPara->Add( "GRACKLE_TEMP_FLOOR_SCALAR",  &GRACKLE_TEMP_FLOOR_SCALAR,       0.0,             0.0,           NoMax_double   );
    ReadPara->Add( "GRACKLE_HYDROGEN_MFRAC",     &GRACKLE_HYDROGEN_MFRAC,          0.76,            0.0,           1.0            );
    ReadPara->Add( "OPT__UNFREEZE_GRACKLE",      &OPT__UNFREEZE_GRACKLE,           false,           Useless_bool,  Useless_bool   );
-// do not check CHE_GPU_NPGROUP since it may be reset by either Init_ResetParameter() or CUAPI_SetMemSize()
+// do not check CHE_GPU_NPGROUP since it may be reset by either Init_ResetParameter() or GPU_SetMemSize()
    ReadPara->Add( "CHE_GPU_NPGROUP",            &CHE_GPU_NPGROUP,                -1,               NoMin_int,     NoMax_int      );
 #  endif
 
@@ -371,7 +371,7 @@ void Init_Load_Parameter()
 
 
 // fluid solvers in all models
-// do not check FLU_GPU_NPGROUP and GPU_NSTREAM since they may be reset by either Init_ResetParameter() or CUAPI_SetMemSize()
+// do not check FLU_GPU_NPGROUP and GPU_NSTREAM since they may be reset by either Init_ResetParameter() or GPU_SetMemSize()
    ReadPara->Add( "FLU_GPU_NPGROUP",            &FLU_GPU_NPGROUP,                -1,               NoMin_int,     NoMax_int      );
    ReadPara->Add( "GPU_NSTREAM",                &GPU_NSTREAM,                    -1,               NoMin_int,     NoMax_int      );
 #  if ( MODEL == ELBDM  &&  ELBDM_SCHEME != ELBDM_HYBRID  &&  WAVE_SCHEME == WAVE_GRAMFE )
@@ -422,7 +422,7 @@ void Init_Load_Parameter()
    ReadPara->Add( "MG_NPRE_SMOOTH",             &MG_NPRE_SMOOTH,                 -1,               NoMin_int,     NoMax_int      );
    ReadPara->Add( "MG_NPOST_SMOOTH",            &MG_NPOST_SMOOTH,                -1,               NoMin_int,     NoMax_int      );
    ReadPara->Add( "MG_TOLERATED_ERROR",         &MG_TOLERATED_ERROR,             -1.0,             NoMin_double,  NoMax_double   );
-// do not check POT_GPU_NPGROUP since it may be reset by either Init_ResetParameter() or CUAPI_SetMemSize()
+// do not check POT_GPU_NPGROUP since it may be reset by either Init_ResetParameter() or GPU_SetMemSize()
    ReadPara->Add( "POT_GPU_NPGROUP",            &POT_GPU_NPGROUP,                -1,               NoMin_int,     NoMax_int      );
    ReadPara->Add( "OPT__GRA_P5_GRADIENT",       &OPT__GRA_P5_GRADIENT,            false,           Useless_bool,  Useless_bool   );
    ReadPara->Add( "OPT__SELF_GRAVITY",          &OPT__SELF_GRAVITY,               true,            Useless_bool,  Useless_bool   );

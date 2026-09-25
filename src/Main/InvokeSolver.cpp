@@ -242,7 +242,7 @@ void InvokeSolver( const Solver_t TSolver, const int lv, const double TimeNew, c
 
 //-------------------------------------------------------------------------------------------------------------
 #     ifdef GPU
-      CUAPI_Synchronize();
+      GPU_Synchronize();
 #     endif
 //-------------------------------------------------------------------------------------------------------------
 
@@ -264,7 +264,7 @@ void InvokeSolver( const Solver_t TSolver, const int lv, const double TimeNew, c
 
 //-------------------------------------------------------------------------------------------------------------
 #  ifdef GPU
-   CUAPI_Synchronize();
+   GPU_Synchronize();
 #  endif
 //-------------------------------------------------------------------------------------------------------------
 
@@ -583,7 +583,7 @@ void Solver( const Solver_t TSolver, const int lv, const double TimeNew, const d
       case FLUID_SOLVER :
 
 #        ifdef GPU
-         CUAPI_Asyn_FluidSolver( h_Flu_Array_F_In[ArrayID], h_Flu_Array_F_Out[ArrayID],
+         GPU_Asyn_FluidSolver( h_Flu_Array_F_In[ArrayID], h_Flu_Array_F_Out[ArrayID],
                                  h_Mag_Array_F_In[ArrayID], h_Mag_Array_F_Out[ArrayID],
                                  h_DE_Array_F_Out[ArrayID], h_Flux_Array[ArrayID], h_Ele_Array[ArrayID],
                                  h_Corner_Array_F[ArrayID], h_Pot_Array_USG_F[ArrayID],
@@ -622,7 +622,7 @@ void Solver( const Solver_t TSolver, const int lv, const double TimeNew, const d
       case POISSON_SOLVER :
 
 #        ifdef GPU
-         CUAPI_Asyn_PoissonGravitySolver( h_Rho_Array_P[ArrayID], h_Pot_Array_P_In[ArrayID],
+         GPU_Asyn_PoissonGravitySolver( h_Rho_Array_P[ArrayID], h_Pot_Array_P_In[ArrayID],
                                           h_Pot_Array_P_Out[ArrayID], NULL, h_Corner_Array_PGT[ArrayID],
                                           NULL, NULL, NULL, NULL,
                                           NPG, dt, dh, SOR_MIN_ITER, SOR_MAX_ITER,
@@ -649,7 +649,7 @@ void Solver( const Solver_t TSolver, const int lv, const double TimeNew, const d
       case GRAVITY_SOLVER :
 
 #        ifdef GPU
-         CUAPI_Asyn_PoissonGravitySolver( NULL, NULL,
+         GPU_Asyn_PoissonGravitySolver( NULL, NULL,
                                           h_Pot_Array_P_Out[ArrayID], h_Flu_Array_G[ArrayID], h_Corner_Array_PGT[ArrayID],
                                           h_Pot_Array_USG_G[ArrayID], h_Flu_Array_USG_G[ArrayID], h_DE_Array_G[ArrayID],
                                           h_Emag_Array_G[ArrayID],
@@ -678,7 +678,7 @@ void Solver( const Solver_t TSolver, const int lv, const double TimeNew, const d
       case POISSON_AND_GRAVITY_SOLVER :
 
 #        ifdef GPU
-         CUAPI_Asyn_PoissonGravitySolver( h_Rho_Array_P[ArrayID], h_Pot_Array_P_In[ArrayID],
+         GPU_Asyn_PoissonGravitySolver( h_Rho_Array_P[ArrayID], h_Pot_Array_P_In[ArrayID],
                                           h_Pot_Array_P_Out[ArrayID], h_Flu_Array_G[ArrayID], h_Corner_Array_PGT[ArrayID],
                                           h_Pot_Array_USG_G[ArrayID], h_Flu_Array_USG_G[ArrayID], h_DE_Array_G[ArrayID],
                                           h_Emag_Array_G[ArrayID],
@@ -716,7 +716,7 @@ void Solver( const Solver_t TSolver, const int lv, const double TimeNew, const d
 #     if   ( MODEL == HYDRO )
       case DT_FLU_SOLVER :
 #        ifdef GPU
-         CUAPI_Asyn_dtSolver( TSolver, h_dt_Array_T[ArrayID], h_Flu_Array_T[ArrayID],
+         GPU_Asyn_dtSolver( TSolver, h_dt_Array_T[ArrayID], h_Flu_Array_T[ArrayID],
                               h_Mag_Array_T[ArrayID], NULL, NULL,
                               NPG, dh, (Step==0)?DT__FLUID_INIT:DT__FLUID,
                               MicroPhy, MIN_PRES, PassiveFloorMask, NULL_BOOL,
@@ -734,7 +734,7 @@ void Solver( const Solver_t TSolver, const int lv, const double TimeNew, const d
 #     ifdef GRAVITY
       case DT_GRA_SOLVER :
 #        ifdef GPU
-         CUAPI_Asyn_dtSolver( TSolver, h_dt_Array_T[ArrayID], NULL,
+         GPU_Asyn_dtSolver( TSolver, h_dt_Array_T[ArrayID], NULL,
                               NULL, h_Pot_Array_T[ArrayID], h_Corner_Array_PGT[ArrayID],
                               NPG, dh, DT__GRAVITY,
                               MicroPhy, NULL_REAL, PassiveFloorMask, OPT__GRA_P5_GRADIENT,
@@ -763,7 +763,7 @@ void Solver( const Solver_t TSolver, const int lv, const double TimeNew, const d
 
       case SRC_SOLVER :
 #        ifdef GPU
-         CUAPI_Asyn_SrcSolver( h_Flu_Array_S_In [ArrayID],
+         GPU_Asyn_SrcSolver( h_Flu_Array_S_In [ArrayID],
                                h_Flu_Array_S_Out[ArrayID],
                                h_Mag_Array_S_In [ArrayID],
                                h_Corner_Array_S [ArrayID],

@@ -22,7 +22,7 @@ void Init_MemAllocate()
 
 
 // b. allocate memory for all CPU solvers
-//    --> memory of GPU solvers is allocated by CUAPI_MemAllocate()
+//    --> memory of GPU solvers is allocated by GPU_MemAllocate()
 #  ifndef GPU
 #  ifndef GRAVITY
    const int POT_GPU_NPGROUP = NULL_INT;

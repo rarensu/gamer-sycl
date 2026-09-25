@@ -659,7 +659,7 @@ int main( int argc, char *argv[] )
       Aux_TakeNote();
 
 #     ifdef GPU
-      CUAPI_DiagnoseDevice();
+      GPU_DiagnoseDevice();
 #     endif
    }
 

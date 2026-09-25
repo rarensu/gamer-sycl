@@ -36,7 +36,7 @@ void Poi_UserWorkBeforePoisson_Template( const double Time, const int lv )
    SetExtPotAuxArray_PointMass( ExtPot_AuxArray, Time );
 
 #  ifdef GPU
-   CUAPI_SetConstMemory_ExtAccPot();
+   GPU_SetConstMemory_ExtAccPot();
 #  endif
    */
 
