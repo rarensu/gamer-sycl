@@ -1,3 +1,5 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "GPUAPI.h"
 #include "POT.h"
 
@@ -91,7 +93,7 @@ static real (*d_Emag_Array_G)[ CUBE(PS1) ] = NULL;
 extern real  *d_ExtPotTable;
 extern void **d_ExtPotGenePtr;
 
-extern cudaStream_t *Stream;
+extern dpct::queue_ptr *Stream;
 
 
 
@@ -335,17 +337,14 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
       {
          if ( SelfGravity )
          {
-            DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Rho_Array_P      + UsedPatch[s], h_Rho_Array    + UsedPatch[s],
-                                                Rho_MemSize[s],    cudaMemcpyHostToDevice, Stream[s] )  );
+            DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Rho_Array_P      + UsedPatch[s], h_Rho_Array    + UsedPatch[s], Rho_MemSize[s] )  ));
 
-            DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Pot_Array_P_In   + UsedPatch[s], h_Pot_Array_In + UsedPatch[s],
-                                                Pot_MemSize_In[s], cudaMemcpyHostToDevice, Stream[s] )  );
+            DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Pot_Array_P_In   + UsedPatch[s], h_Pot_Array_In + UsedPatch[s], Pot_MemSize_In[s] )  ));
          }
 
          if ( ExtPot )
          {
-            DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array + UsedPatch[s],
-                                                Corner_MemSize[s], cudaMemcpyHostToDevice, Stream[s] )  );
+            DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array + UsedPatch[s], Corner_MemSize[s] )  ));
          }
       } // if ( Poisson )
 
@@ -354,32 +353,25 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
 //       no need to transfer potential if we are also invoking the Poisson solver, for which
 //       potential data will already be in GPU
          if (  ( SelfGravity || ExtPot )  &&  !Poisson  )
-         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Pot_Array_P_Out  + UsedPatch[s], h_Pot_Array_Out + UsedPatch[s],
-                                             Pot_MemSize_Out[s], cudaMemcpyHostToDevice, Stream[s] )  );
+         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Pot_Array_P_Out  + UsedPatch[s], h_Pot_Array_Out + UsedPatch[s], Pot_MemSize_Out[s] )  ));
 
-         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Flu_Array_G      + UsedPatch[s], h_Flu_Array     + UsedPatch[s],
-                                             Flu_MemSize[s],     cudaMemcpyHostToDevice, Stream[s] )  );
+         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Flu_Array_G      + UsedPatch[s], h_Flu_Array     + UsedPatch[s], Flu_MemSize[s] )  ));
 
          if ( ExtAcc )
-         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array  + UsedPatch[s],
-                                             Corner_MemSize[s],  cudaMemcpyHostToDevice, Stream[s] )  );
+         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array  + UsedPatch[s], Corner_MemSize[s] )  ));
 #        ifdef UNSPLIT_GRAVITY
          if ( SelfGravity  ||  ExtPot )
-         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Pot_Array_USG_G  + UsedPatch[s], h_Pot_Array_USG + UsedPatch[s],
-                                             Pot_USG_MemSize[s], cudaMemcpyHostToDevice, Stream[s] )  );
+         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Pot_Array_USG_G  + UsedPatch[s], h_Pot_Array_USG + UsedPatch[s], Pot_USG_MemSize[s] )  ));
 
-         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Flu_Array_USG_G  + UsedPatch[s], h_Flu_Array_USG + UsedPatch[s],
-                                             Flu_USG_MemSize[s], cudaMemcpyHostToDevice, Stream[s] )  );
+         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Flu_Array_USG_G  + UsedPatch[s], h_Flu_Array_USG + UsedPatch[s], Flu_USG_MemSize[s] )  ));
 #        endif
 
 #        ifdef DUAL_ENERGY
-         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_DE_Array_G      + UsedPatch[s], h_DE_Array      + UsedPatch[s],
-                                             DE_MemSize[s],      cudaMemcpyHostToDevice, Stream[s] )  );
+         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_DE_Array_G      + UsedPatch[s], h_DE_Array      + UsedPatch[s], DE_MemSize[s] )  ));
 #        endif
 
 #        ifdef MHD
-         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Emag_Array_G    + UsedPatch[s], h_Emag_Array    + UsedPatch[s],
-                                             Emag_MemSize[s],    cudaMemcpyHostToDevice, Stream[s] )  );
+         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Emag_Array_G    + UsedPatch[s], h_Emag_Array    + UsedPatch[s], Emag_MemSize[s] )  ));
 #        endif
       } // if ( GraAcc )
    } // for (int s=0; s<GPU_NStream; s++)
@@ -399,20 +391,36 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
          {
 #           if ( POT_SCHEME == SOR )
 
-            CUPOT_PoissonSolver_SOR <<< NPatch_per_Stream[s], Poi_Block_Dim, 0, Stream[s] >>>
-                                    ( d_Rho_Array_P     + UsedPatch[s],
-                                      d_Pot_Array_P_In  + UsedPatch[s],
-                                      d_Pot_Array_P_Out + UsedPatch[s],
-                                      SOR_Min_Iter, SOR_Max_Iter, SOR_Omega_6, Poi_Const, IntScheme );
+            Stream[s]->submit([&](sycl::handler &cgh) {
+               cgh.parallel_for(
+                   sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) *
+                                         Poi_Block_Dim,
+                                     Poi_Block_Dim),
+                   [=](sycl::nd_item<3> item_ct1) {
+                      CUPOT_PoissonSolver_SOR(
+                          d_Rho_Array_P     + UsedPatch[s],
+                          d_Pot_Array_P_In  + UsedPatch[s],
+                          d_Pot_Array_P_Out + UsedPatch[s],
+                          SOR_Min_Iter, SOR_Max_Iter, SOR_Omega_6, Poi_Const, IntScheme );
+                   });
+            });
 
 #           elif ( POT_SCHEME == MG  )
 
-            CUPOT_PoissonSolver_MG  <<< NPatch_per_Stream[s], Poi_Block_Dim, 0, Stream[s] >>>
-                                    ( d_Rho_Array_P     + UsedPatch[s],
-                                      d_Pot_Array_P_In  + UsedPatch[s],
-                                      d_Pot_Array_P_Out + UsedPatch[s],
-                                      dh, MG_Max_Iter, MG_NPre_Smooth, MG_NPost_Smooth, MG_Tolerated_Error,
-                                      Poi_Coeff, IntScheme );
+            Stream[s]->submit([&](sycl::handler &cgh) {
+               cgh.parallel_for(
+                   sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) *
+                                         Poi_Block_Dim,
+                                     Poi_Block_Dim),
+                   [=](sycl::nd_item<3> item_ct1) {
+                      CUPOT_PoissonSolver_MG(
+                          d_Rho_Array_P     + UsedPatch[s],
+                          d_Pot_Array_P_In  + UsedPatch[s],
+                          d_Pot_Array_P_Out + UsedPatch[s],
+                          dh, MG_Max_Iter, MG_NPre_Smooth, MG_NPost_Smooth, MG_Tolerated_Error,
+                          Poi_Coeff, IntScheme );
+                   });
+            });
 
 #           else
 
@@ -424,11 +432,19 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
 //       b1-2. external potential
          if ( ExtPot )
          {
-            CUPOT_ExtPotSolver <<< NPatch_per_Stream[s], ExtPot_Block_Dim, 0, Stream[s] >>>
-                               ( d_Pot_Array_P_Out  + UsedPatch[s],
-                                 d_Corner_Array_PGT + UsedPatch[s],
-                                 d_ExtPotTable, d_ExtPotGenePtr,
-                                 dh, GPUExtPot_Ptr, TimeNew, SelfGravity );
+            Stream[s]->submit([&](sycl::handler &cgh) {
+               cgh.parallel_for(
+                   sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) *
+                                         ExtPot_Block_Dim,
+                                     ExtPot_Block_Dim),
+                   [=](sycl::nd_item<3> item_ct1) {
+                      CUPOT_ExtPotSolver(
+                          d_Pot_Array_P_Out  + UsedPatch[s],
+                          d_Corner_Array_PGT + UsedPatch[s],
+                          d_ExtPotTable, d_ExtPotGenePtr,
+                          dh, GPUExtPot_Ptr, TimeNew, SelfGravity );
+                   });
+            });
          }
       } // if ( Poisson )
 
@@ -437,32 +453,56 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
       if ( GraAcc )
       {
 #        if   ( MODEL == HYDRO )
-         CUPOT_HydroGravitySolver <<< NPatch_per_Stream[s], Gra_Block_Dim, 0, Stream[s] >>>
-                                  ( d_Flu_Array_G      + UsedPatch[s],
-                                    d_Pot_Array_P_Out  + UsedPatch[s],
-                                    d_Corner_Array_PGT + UsedPatch[s],
-                                    d_Pot_Array_USG_G  + UsedPatch[s],
-                                    d_Flu_Array_USG_G  + UsedPatch[s],
-                                    d_DE_Array_G       + UsedPatch[s],
-                                    d_Emag_Array_G     + UsedPatch[s],
-                                    dt, dh, P5_Gradient,
-                                    (SelfGravity || ExtPot), ExtAcc, GPUExtAcc_Ptr,
-                                    TimeNew, TimeOld, MinEint );
+         Stream[s]->submit([&](sycl::handler &cgh) {
+            cgh.parallel_for(
+                sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) *
+                                      Gra_Block_Dim,
+                                  Gra_Block_Dim),
+                [=](sycl::nd_item<3> item_ct1) {
+                   CUPOT_HydroGravitySolver(
+                       d_Flu_Array_G      + UsedPatch[s],
+                       d_Pot_Array_P_Out  + UsedPatch[s],
+                       d_Corner_Array_PGT + UsedPatch[s],
+                       d_Pot_Array_USG_G  + UsedPatch[s],
+                       d_Flu_Array_USG_G  + UsedPatch[s],
+                       d_DE_Array_G       + UsedPatch[s],
+                       d_Emag_Array_G     + UsedPatch[s],
+                       dt, dh, P5_Gradient,
+                       (SelfGravity || ExtPot), ExtAcc, GPUExtAcc_Ptr,
+                       TimeNew, TimeOld, MinEint );
+                });
+         });
 
 #        elif ( MODEL == ELBDM )
 #        if ( ELBDM_SCHEME == ELBDM_HYBRID )
          if ( UseWaveFlag )
 #        endif
-         CUPOT_ELBDMGravitySolver <<< NPatch_per_Stream[s], Gra_Block_Dim, 0, Stream[s] >>>
-                                  ( d_Flu_Array_G      + UsedPatch[s],
-                                    d_Pot_Array_P_Out  + UsedPatch[s],
-                                    ELBDM_EtaDt, dh, ELBDM_Lambda );
+         Stream[s]->submit([&](sycl::handler &cgh) {
+            cgh.parallel_for(
+                sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) *
+                                      Gra_Block_Dim,
+                                  Gra_Block_Dim),
+                [=](sycl::nd_item<3> item_ct1) {
+                   CUPOT_ELBDMGravitySolver(
+                       d_Flu_Array_G      + UsedPatch[s],
+                       d_Pot_Array_P_Out  + UsedPatch[s],
+                       ELBDM_EtaDt, dh, ELBDM_Lambda );
+                });
+         });
 #        if ( ELBDM_SCHEME == ELBDM_HYBRID )
          else
-         CUPOT_ELBDMGravitySolver_HamiltonJacobi <<< NPatch_per_Stream[s], Gra_Block_Dim, 0, Stream[s] >>>
-                                  ( d_Flu_Array_G      + UsedPatch[s],
-                                    d_Pot_Array_P_Out  + UsedPatch[s],
-                                    ELBDM_EtaDt, dh, ELBDM_Lambda );
+         Stream[s]->submit([&](sycl::handler &cgh) {
+            cgh.parallel_for(
+                sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) *
+                                      Gra_Block_Dim,
+                                  Gra_Block_Dim),
+                [=](sycl::nd_item<3> item_ct1) {
+                   CUPOT_ELBDMGravitySolver_HamiltonJacobi(
+                       d_Flu_Array_G      + UsedPatch[s],
+                       d_Pot_Array_P_Out  + UsedPatch[s],
+                       ELBDM_EtaDt, dh, ELBDM_Lambda );
+                });
+         });
 #        endif
 
 #        else
@@ -470,7 +510,7 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
 #        endif // MODEL
       } // if ( GraAcc )
 
-      DEVICE_CHECK_ERROR( cudaGetLastError() );
+      DEVICE_CHECK_ERROR( 0 );
    } // for (int s=0; s<GPU_NStream; s++)
 
 
@@ -481,17 +521,14 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
       if ( NPatch_per_Stream[s] == 0 )    continue;
 
       if ( Poisson  &&  ( SelfGravity || ExtPot )  )
-         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( h_Pot_Array_Out + UsedPatch[s], d_Pot_Array_P_Out + UsedPatch[s],
-                                             Pot_MemSize_Out[s], cudaMemcpyDeviceToHost, Stream[s] )  );
+         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( h_Pot_Array_Out + UsedPatch[s], d_Pot_Array_P_Out + UsedPatch[s], Pot_MemSize_Out[s] )  ));
 
       if ( GraAcc )
       {
-         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( h_Flu_Array     + UsedPatch[s], d_Flu_Array_G     + UsedPatch[s],
-                                             Flu_MemSize[s],     cudaMemcpyDeviceToHost, Stream[s] )  );
+         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( h_Flu_Array     + UsedPatch[s], d_Flu_Array_G     + UsedPatch[s], Flu_MemSize[s] )  ));
 
 #        ifdef DUAL_ENERGY
-         DEVICE_CHECK_ERROR(  cudaMemcpyAsync( h_DE_Array      + UsedPatch[s], d_DE_Array_G      + UsedPatch[s],
-                                             DE_MemSize[s],      cudaMemcpyDeviceToHost, Stream[s] )  );
+         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( h_DE_Array      + UsedPatch[s], d_DE_Array_G      + UsedPatch[s], DE_MemSize[s] )  ));
 #        endif
       }
    } // for (int s=0; s<GPU_NStream; s++)
