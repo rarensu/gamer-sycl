@@ -181,7 +181,7 @@ void SetGPUExtPot_BarredPot( ExtPot_t & );
 // Description :  Initialize external acceleration
 //
 // Note        :  1. Set an auxiliary array by invoking SetExtPotAuxArray_*()
-//                   --> It will be copied to GPU automatically in CUAPI_SetConstMemory()
+//                   --> It will be copied to GPU automatically in GPU_SetConstMemory()
 //                2. Set the CPU/GPU external acceleration major routines by invoking SetCPU/GPUExtPot_*()
 //                3. Invoked by Init_ExtAccPot()
 //                   --> Enable it by linking to the function pointer "Init_ExtPot_Ptr"

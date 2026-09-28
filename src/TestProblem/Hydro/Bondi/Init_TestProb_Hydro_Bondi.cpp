@@ -126,7 +126,7 @@ void Poi_UserWorkBeforePoisson_Bondi( const double Time, const int lv )
    SetExtAccAuxArray_Bondi( ExtAcc_AuxArray, Time );
 
 #  ifdef GPU
-   CUAPI_SetConstMemory_ExtAccPot();
+   GPU_SetConstMemory_ExtAccPot();
 #  endif
 
 } // FUNCTION : Poi_UserWorkBeforePoisson_Bondi

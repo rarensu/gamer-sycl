@@ -128,9 +128,9 @@ void Init_TestProb()
 #  ifndef GRAVITY
    int POT_GPU_NPGROUP = NULL_INT;
 #  endif
-   CUAPI_SetDevice( OPT__GPUID_SELECT );
+   GPU_SetDevice( OPT__GPUID_SELECT );
 
-   CUAPI_Set_Default_GPU_Parameter( GPU_NSTREAM, FLU_GPU_NPGROUP, POT_GPU_NPGROUP );
+   GPU_Set_Default_GPU_Parameter( GPU_NSTREAM, FLU_GPU_NPGROUP, POT_GPU_NPGROUP );
 #  endif
 
 
@@ -162,7 +162,7 @@ void Init_TestProb()
    Aux_TakeNote();
 
 #  ifdef GPU
-   CUAPI_DiagnoseDevice();
+   GPU_DiagnoseDevice();
 #  endif
 
 

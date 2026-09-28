@@ -154,7 +154,7 @@ void SetGPUExtPot_ParEqmIC( ExtPot_t & );
 // Description :  Initialize external potential
 //
 // Note        :  1. Set auxiliary arrays by invoking SetExtPotAuxArray_*()
-//                   --> They will be copied to GPU automatically in CUAPI_SetConstMemory()
+//                   --> They will be copied to GPU automatically in GPU_SetConstMemory()
 //                2. Set the CPU/GPU external potential major routines by invoking SetCPU/GPUExtPot_*()
 //                3. Invoked by Init_ExtAccPot()
 //                   --> Enable it by linking to the function pointer "Init_ExtPot_Ptr"

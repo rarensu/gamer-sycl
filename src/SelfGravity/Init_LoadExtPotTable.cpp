@@ -14,7 +14,7 @@
 //                2. Enabled by the runtime option "OPT__EXT_POT=EXT_POT_TABLE"
 //                3. Floating-point type is set by FLOAT8 for now
 //                   --> EXT_POT_TABLE_FLOAT8 is NOT supported yet
-//                4. The loaded table will be sent to GPU by invoking CUAPI_SendExtPotTable2GPU()
+//                4. The loaded table will be sent to GPU by invoking GPU_SendExtPotTable2GPU()
 //
 // Parameter   :  None
 //
@@ -99,7 +99,7 @@ void Init_LoadExtPotTable()
 
 // transfer table to GPU
 #  ifdef GPU
-   CUAPI_SendExtPotTable2GPU( h_ExtPotTable );
+   GPU_SendExtPotTable2GPU( h_ExtPotTable );
 #  endif
 
 

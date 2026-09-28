@@ -176,7 +176,7 @@ struct Timer_t
 #if ( defined TIMING_SOLVER  &&  defined TIMING )
 
 #  ifdef GPU
-#     define GPU_SYNC()  CUAPI_Synchronize()
+#     define GPU_SYNC()  GPU_Synchronize()
 #  else
 #     define GPU_SYNC()
 #  endif

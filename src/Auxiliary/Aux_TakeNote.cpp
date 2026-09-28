@@ -2076,7 +2076,7 @@ void Aux_TakeNote()
    } // if ( MPI_Rank == 0 )
 
 
-// record the hostname and PID of each MPI process (the function "CUAPI_DiagnoseDevice" will also record them)
+// record the hostname and PID of each MPI process (the function "GPU_DiagnoseDevice" will also record them)
 #  ifndef GPU
    const int PID = getpid();
    char Host[1024];

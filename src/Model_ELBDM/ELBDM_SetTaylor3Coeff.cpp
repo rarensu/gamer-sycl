@@ -12,7 +12,7 @@
 // Note        :  1. The optimization aims at minimizing the amplitude error for the smallest wavelength (k = kmax in 1D)
 //                2. If the routine fails to find an optimized coefficient (which may be due to too large dt), it is
 //                   set to 1.0/6.0 by default
-//                3. Invoked by "CPU_FluidSolver" and "CUAPI_Asyn_FluidSolver"
+//                3. Invoked by "CPU_FluidSolver" and "GPU_Asyn_FluidSolver"
 //
 // Parameter   :  dt    : Time interval to advance solution
 //                dh    : Grid size

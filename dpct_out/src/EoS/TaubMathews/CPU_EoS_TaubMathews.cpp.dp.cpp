@@ -329,7 +329,7 @@ void EoS_SetGPUFunc_TaubMathews(EoS_GUESS_t &, EoS_H2TEM_t &, EoS_TEM2H_t &, EoS
 // Description :  Initialize EoS
 //
 // Note        :  1. Set auxiliary arrays by invoking EoS_SetAuxArray_*()
-//                   --> It will be copied to GPU automatically in CUAPI_SetConstMemory()
+//                   --> It will be copied to GPU automatically in GPU_SetConstMemory()
 //                2. Set the CPU/GPU EoS routines by invoking EoS_SetCPU/GPUFunc_*()
 //                3. Invoked by EoS_Init()
 //                   --> Enable it by linking to the function pointer "EoS_Init_Ptr"

@@ -35,7 +35,7 @@ void Src_SetCPUFunc_ExactCooling( SrcFunc_t & );
 void Src_SetGPUFunc_ExactCooling( SrcFunc_t & );
 #endif
 #ifdef GPU
-void CUAPI_MemFree_ExactCooling();
+void GPU_MemFree_ExactCooling();
 #endif
 void Src_WorkBeforeMajorFunc_ExactCooling( const int lv, const double TimeNew, const double TimeOld, const double dt,
                                            double AuxArray_Flt[], int AuxArray_Int[] );
@@ -453,7 +453,7 @@ void Src_End_ExactCooling()
    delete [] h_SrcEC_TEFc;           h_SrcEC_TEFc       = NULL;
 
 #  ifdef GPU
-   CUAPI_MemFree_ExactCooling();
+   GPU_MemFree_ExactCooling();
 #  else
    SrcTerms.EC_TEF_lambda_DevPtr = NULL;
    SrcTerms.EC_TEF_alpha_DevPtr  = NULL;
@@ -467,7 +467,7 @@ void Src_End_ExactCooling()
 
 #ifdef __CUDACC__
 //-------------------------------------------------------------------------------------------------------
-// Function    :  CUAPI_MemFree_ExactCooling
+// Function    :  GPU_MemFree_ExactCooling
 // Description :  Free the GPU memory of the ExactCooling arrays
 //
 // Note        :  1. Invoked by Src_End_ExactCooling()
@@ -476,7 +476,7 @@ void Src_End_ExactCooling()
 //
 // Return      :  None
 //-------------------------------------------------------------------------------------------------------
-void CUAPI_MemFree_ExactCooling()
+void GPU_MemFree_ExactCooling()
 {
 
    if ( d_SrcEC_TEF_lambda != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_SrcEC_TEF_lambda )  );  d_SrcEC_TEF_lambda = NULL; }
@@ -487,7 +487,7 @@ void CUAPI_MemFree_ExactCooling()
    SrcTerms.EC_TEF_alpha_DevPtr  = NULL;
    SrcTerms.EC_TEFc_DevPtr       = NULL;
 
-} // FUNCTION : CUAPI_MemFree_ExactCooling
+} // FUNCTION : GPU_MemFree_ExactCooling
 #endif // #ifdef __CUDACC__
 
 

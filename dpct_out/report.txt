@@ -53,24 +53,24 @@ float sqrtf(float __a)                       6
 ----------Stats report---------------
 
 File name, LOC migrated to SYCL, LOC migrated to helper functions, LOC not needed to migrate, LOC not able to migrate
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetDevice.cu, 7, 13, 187, 0
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_dtSolver.cu, 16, 2, 298, 0
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_SrcSolver.cu, 24, 2, 170, 0
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Asyn_FluidSolver.cu, 56, 2, 696, 0
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetConstMemory_EoS.cu, 3, 3, 35, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu, 7, 13, 187, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu, 16, 2, 298, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu, 24, 2, 170, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu, 56, 2, 696, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu, 3, 3, 35, 0
 /scratch/helpdesk/RL-138/gamer/src/EoS/TaubMathews/CPU_EoS_TaubMathews.cpp, 2, 0, 354, 0
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemFree_Fluid.cu, 0, 22, 153, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu, 0, 22, 153, 0
 /scratch/helpdesk/RL-138/gamer/src/TestProblem/ELBDM/DiskHeating/ExtPot_Soliton.cpp, 1, 0, 213, 0
 /scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_FluUtility.cpp, 6, 0, 1729, 0
 /scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_RiemannSolver_HLLE.cpp, 2, 0, 706, 0
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetCache.cu, 44, 0, 247, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetCache.cu, 44, 0, 247, 0
 /scratch/helpdesk/RL-138/gamer/src/EoS/GammaCR/CPU_EoS_GammaCR.cpp, 2, 0, 581, 0
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_SetMemSize.cu, 2, 3, 306, 0
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_Synchronize.cu, 0, 1, 15, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetMemSize.cu, 2, 3, 306, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Synchronize.cu, 0, 1, 15, 0
 /scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_RiemannSolver_HLLC.cpp, 2, 0, 663, 0
 /scratch/helpdesk/RL-138/gamer/src/EoS/Isothermal/CPU_EoS_Isothermal.cpp, 8, 14, 439, 0
 /scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_ComputeFlux.cpp, 7, 0, 452, 0
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_MemAllocate_Fluid.cu, 0, 23, 339, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu, 0, 23, 339, 0
 /scratch/helpdesk/RL-138/gamer/src/SourceTerms/Deleptonization/CPU_Src_Deleptonization.cpp, 14, 6, 383, 0
 /scratch/helpdesk/RL-138/gamer/src/TestProblem/Hydro/CMZ/ExtAcc_LogBar.cpp, 1, 0, 208, 0
 /scratch/helpdesk/RL-138/gamer/src/SourceTerms/User_Template/CPU_Src_User_Template.cpp, 13, 4, 327, 0
@@ -87,7 +87,7 @@ File name, LOC migrated to SYCL, LOC migrated to helper functions, LOC not neede
 /scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_FluidSolver_CTU.cpp, 40, 0, 564, 0
 /scratch/helpdesk/RL-138/gamer/src/TestProblem/Hydro/CMZ/CPU_ExtPot_TabularP17.cpp, 1, 0, 295, 0
 /scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_Shared_FullStepUpdate.cpp, 5, 0, 276, 0
-/scratch/helpdesk/RL-138/gamer/src/GPU_API/CUAPI_DiagnoseDevice.cu, 29, 8, 108, 0
+/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu, 29, 8, 108, 0
 /scratch/helpdesk/RL-138/gamer/src/SourceTerms/CPU_SrcSolver_IterateAllCells.cpp, 14, 0, 122, 0
 /scratch/helpdesk/RL-138/gamer/src/TestProblem/ELBDM/HaloMerger/ExtPot_ELBDM_HaloMerger.cpp, 1, 0, 201, 0
 /scratch/helpdesk/RL-138/gamer/src/Model_Hydro/CPU_Hydro/CPU_dtSolver_HydroCFL.cpp, 13, 0, 226, 0
