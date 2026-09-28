@@ -7,7 +7,7 @@
 // Function    :  GPU_Synchronize
 // Description :  Block until the device has completed all preceding requested tasks
 //
-// Note        :  1. Replace the deprecated cudaThreadSynchronize() with cudaDeviceSynchronize()
+// Note        :  1. Wait for all queues associated with the current device to complete.
 //-------------------------------------------------------------------------------------------------------
 void GPU_Synchronize()
 {
