@@ -42,6 +42,7 @@
 
 - The target implementation is **SYCL-only**.
 - Prefer **short, neutral filenames** that do not hardcode CUDA-specific naming, while still fitting GAMER’s existing acronym-heavy style.
+- We don't use the `.dp.cpp` suffix that DPCT recommends (just `.cpp` please)
 - Rename legacy CUDA-prefixed headers to neutral names when the header is becoming part of the SYCL implementation:
   - `CUDA_CheckError.h` → `CheckError.h`
   - `CUDA_ConstMemory.h` → `ConstMemory.h`
