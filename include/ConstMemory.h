@@ -15,8 +15,8 @@ inline dpct::constant_memory<real *, 1> c_EoS_Table(EOS_NTABLE_MAX);
 #endif
 
 #if ( NCOMP_PASSIVE > 0 )
-SET_GLOBAL( __constant__ int  c_NormIdx[NCOMP_PASSIVE] );
-SET_GLOBAL( __constant__ int  c_FracIdx[NCOMP_PASSIVE] );
+inline dpct::constant_memory<int, 1> c_NormIdx(NCOMP_PASSIVE);
+inline dpct::constant_memory<int, 1> c_FracIdx(NCOMP_PASSIVE);
 #else
 inline dpct::constant_memory<int *, 0> c_NormIdx(NULL);
 inline dpct::constant_memory<int *, 0> c_FracIdx(NULL);
