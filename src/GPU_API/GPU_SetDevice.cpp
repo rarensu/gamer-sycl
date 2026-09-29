@@ -1,3 +1,5 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "GPUAPI.h"
 #include "FLU.h"
 #ifdef GRAVITY
@@ -44,7 +46,7 @@ void GPU_SetDevice( const int Mode )
 
 // verify that there are GPU supporting CUDA
    int DeviceCount;
-   DEVICE_CHECK_ERROR(  cudaGetDeviceCount( &DeviceCount )  );
+   DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( DeviceCount = dpct::device_count() ) );
 
    if ( DeviceCount == 0 )
       Aux_Error( ERROR_INFO, "no devices support CUDA at MPI_Rank %2d (host = %8s) !!\n", MPI_Rank, Host );
@@ -54,7 +56,7 @@ void GPU_SetDevice( const int Mode )
    void **d_TempPtr = NULL;
    int SetDeviceID, GetDeviceID = 999;
    int computeMode;
-   cudaDeviceProp DeviceProp;
+   dpct::device_info DeviceProp;
 
    switch ( Mode )
    {
@@ -63,7 +65,7 @@ void GPU_SetDevice( const int Mode )
          SetDeviceID = GetFreeGpuDevID( DeviceCount, MPI_Rank );
 
          if ( SetDeviceID < DeviceCount )
-            DEVICE_CHECK_ERROR(  cudaSetDevice( SetDeviceID )  );
+            DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( dpct::select_device( SetDeviceID ) ) );
 
          else
             Aux_Error( ERROR_INFO, "SetDeviceID (%d) >= DeviceCount (%d) at MPI_Rank %2d (host = %8s) !!\n",
@@ -73,14 +75,15 @@ void GPU_SetDevice( const int Mode )
 
 
       case -2:
-         DEVICE_CHECK_ERROR(  cudaMalloc( (void**) &d_TempPtr, sizeof(int) )  );  // to set the GPU ID
-         DEVICE_CHECK_ERROR(  cudaFree( d_TempPtr )  );
+         DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( d_TempPtr = (void**) sycl::malloc_device( sizeof(int), dpct::get_in_order_queue() ) ) );  // to set the GPU ID
+         DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( dpct::dpct_free( d_TempPtr, dpct::get_in_order_queue() ) ) );
 
-//       make sure that the "exclusive" compute mode is adopted
-         DEVICE_CHECK_ERROR(  cudaGetDevice( &GetDeviceID )  );
-         DEVICE_CHECK_ERROR(  cudaDeviceGetAttribute(&computeMode, cudaDevAttrComputeMode, GetDeviceID)  );
+         DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( GetDeviceID = dpct::get_current_device_id() ) );
+         // All SYCL devices are assumed to be running in shared (accessible by all) mode.
+         // TODO: Replace this constant with an attribute check.
+         computeMode = 0; 
 
-         if ( computeMode != cudaComputeModeExclusive )
+         if ( computeMode != 0 )
          {
             Aux_Message( stderr, "WARNING : \"exclusive\" compute mode is NOT enabled for \"%s\" at Rank %2d",
                          "OPT__GPUID_SELECT == -2", MPI_Rank );
@@ -91,7 +94,7 @@ void GPU_SetDevice( const int Mode )
 
       case -1:
          SetDeviceID = MPI_Rank % DeviceCount;
-         DEVICE_CHECK_ERROR(  cudaSetDevice( SetDeviceID )  );
+         DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( dpct::select_device( SetDeviceID ) ) );
 
          if ( MPI_NRank > 1  &&  MPI_Rank == 0 )
          {
@@ -105,7 +108,7 @@ void GPU_SetDevice( const int Mode )
          SetDeviceID = Mode;
 
          if ( SetDeviceID < DeviceCount )
-            DEVICE_CHECK_ERROR(  cudaSetDevice( SetDeviceID )  );
+            DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( dpct::select_device( SetDeviceID ) ) );
 
          else
             Aux_Error( ERROR_INFO, "SetDeviceID (%d) >= DeviceCount (%d) at MPI_Rank %2d (host = %8s) !!\n",
@@ -123,14 +126,14 @@ void GPU_SetDevice( const int Mode )
 // check
 // (0) load the device properties and the versions of CUDA and driver
    int DriverVersion = 0, RuntimeVersion = 0;
-   DEVICE_CHECK_ERROR(  cudaGetDevice( &GetDeviceID )  );
-   DEVICE_CHECK_ERROR(  cudaGetDeviceProperties( &DeviceProp, GetDeviceID )  );
-   DEVICE_CHECK_ERROR(  cudaDriverGetVersion( &DriverVersion )  );
-   DEVICE_CHECK_ERROR(  cudaRuntimeGetVersion( &RuntimeVersion )  );
+   DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( GetDeviceID = dpct::get_current_device_id() ) );
+   DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( dpct::get_device( GetDeviceID ).get_device_info( DeviceProp ) ) );
+   DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( DriverVersion = dpct::get_major_version( dpct::get_current_device() ) ) );
+   DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( RuntimeVersion = dpct::get_major_version( dpct::get_current_device() ) ) );
 
 
 // (1) verify the device version
-   if ( DeviceProp.major < 1 )
+   if ( DeviceProp.get_major_version() < 1 )
       Aux_Error( ERROR_INFO, "\ndevice major version < 1 at MPI_Rank %2d (host = %8s) !!\n", MPI_Rank, Host );
 
    if ( Mode >= -1 )
@@ -141,24 +144,26 @@ void GPU_SetDevice( const int Mode )
                     GetDeviceID, SetDeviceID, MPI_Rank, Host );
 
 //    (3) verify that the adopted ID is accessible
-      DEVICE_CHECK_ERROR(  cudaMalloc( (void**) &d_TempPtr, sizeof(int) )  );
-      DEVICE_CHECK_ERROR(  cudaFree( d_TempPtr )  );
+      DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( d_TempPtr = (void**) sycl::malloc_device( sizeof(int), dpct::get_in_order_queue() ) ) );
+      DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( dpct::dpct_free( d_TempPtr, dpct::get_in_order_queue() ) ) );
    }
 
 
 // (4) verify the capability of double precision
 #  ifdef FLOAT8
-   if ( DeviceProp.major < 2  &&  DeviceProp.minor < 3 )
+   if ( DeviceProp.get_major_version() < 2  &&  DeviceProp.get_minor_version() < 3 )
       Aux_Error( ERROR_INFO, "GPU \"%s\" at MPI_Rank %2d (host = %8s) does not support FLOAT8 !!\n",
-                 DeviceProp.name, MPI_Rank, Host );
+                 DeviceProp.get_name(), MPI_Rank, Host );
 #  endif
 
 
 // (5) verify the GPU compute capability
-   if ( DeviceProp.major * 100 + DeviceProp.minor * 10 != GPU_COMPUTE_CAPABILITY )
-      Aux_Error( ERROR_INFO, "The compute capability %d.%d of the GPU \"%s\" does not match the GPU_COMPUTE_CAPABILITY %d !!\n"
-                             "        --> Please set it properly in your machine config file.\n",
-                 DeviceProp.major, DeviceProp.minor, DeviceProp.name, GPU_COMPUTE_CAPABILITY );
+// TODO: Replace this warning with an attribute check that is relevant for SYCL devices.
+   if ( DeviceProp.get_major_version() * 100 + DeviceProp.get_minor_version() * 10 != GPU_COMPUTE_CAPABILITY ) {
+      // This is a warning since compute capability is not enforced with SYCL.
+      Aux_Message( stderr, "WARNING: The compute capability %d.%d of the SYCL device \"%s\" does not match the GPU_COMPUTE_CAPABILITY %d (continuing anyways; not enforced with SYCL) !!\n",
+                 DeviceProp.get_major_version(), DeviceProp.get_minor_version(), DeviceProp.get_name(), GPU_COMPUTE_CAPABILITY );
+   }
 
 
 // (6) some options are not supported
@@ -174,16 +179,16 @@ void GPU_SetDevice( const int Mode )
 // (6-2) SOR Poisson solver
 #  if ( POT_SCHEME == SOR )
 #     ifdef SOR_USE_SHUFFLE
-      if ( DeviceProp.warpSize != 32 )
-         Aux_Error( ERROR_INFO, "warp size (%d) != 32 !!\n", DeviceProp.warpSize );
+      if ( DeviceProp.get_max_sub_group_size() != 32 )
+         Aux_Error( ERROR_INFO, "warp size (%d) != 32 !!\n", DeviceProp.get_max_sub_group_size() );
 
-      if ( DeviceProp.maxThreadsPerBlock > 1024 )
-         Aux_Error( ERROR_INFO, "maximum number of threads per block (%d) > 1024 !!\n", DeviceProp.maxThreadsPerBlock );
+      if ( DeviceProp.get_max_work_group_size() > 1024 )
+         Aux_Error( ERROR_INFO, "maximum number of threads per block (%d) > 1024 !!\n", DeviceProp.get_max_work_group_size() );
 #     endif
 
 #     ifdef SOR_USE_PADDING
-      if ( DeviceProp.warpSize != 32 )
-         Aux_Error( ERROR_INFO, "warp size (%d) != 32 !!\n", DeviceProp.warpSize );
+      if ( DeviceProp.get_max_sub_group_size() != 32 )
+         Aux_Error( ERROR_INFO, "warp size (%d) != 32 !!\n", DeviceProp.get_max_sub_group_size() );
 
       if ( POT_GHOST_SIZE != 5 )
          Aux_Error( ERROR_INFO, "POT_GHOST_SIZE (%d) != 5 !!\n", POT_GHOST_SIZE );
@@ -192,9 +197,9 @@ void GPU_SetDevice( const int Mode )
 
 
 // (7) warp size
-   if ( DeviceProp.warpSize != WARP_SIZE )
+   if ( DeviceProp.get_max_sub_group_size() != WARP_SIZE )
       Aux_Error( ERROR_INFO, "inconsistent warp size (warpSize %d, WARP_SIZE %d) !!\n",
-                 DeviceProp.warpSize, WARP_SIZE );
+                 DeviceProp.get_max_sub_group_size(), WARP_SIZE );
 
 
    if ( MPI_Rank == 0 )    Aux_Message( stdout, "%s ... done\n", __FUNCTION__ );

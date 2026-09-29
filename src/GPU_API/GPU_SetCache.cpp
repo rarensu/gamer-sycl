@@ -213,31 +213,33 @@ void GPU_SetCache()
 
    if ( MPI_Rank == 0 )    Aux_Message( stdout, "%s ...\n", __FUNCTION__ );
 
+// SYCL currently does not support configuring shared memory cache preference on devices.
+// TODO: Replacing these with calls to set configurable cache preference once SYCL supports it.
 
 // 1. fluid solver
 #  if   ( MODEL == HYDRO )
 #  if   ( FLU_SCHEME == RTVD )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUFLU_FluidSolver_RTVD,             cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR( 0 );
 #  elif ( FLU_SCHEME == MHM )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUFLU_FluidSolver_MHM,              cudaFuncCachePreferL1     )  );
+   DEVICE_CHECK_ERROR( 0 );
 #  elif ( FLU_SCHEME == MHM_RP )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUFLU_FluidSolver_MHM,              cudaFuncCachePreferL1     )  );
+   DEVICE_CHECK_ERROR( 0 );
 #  elif ( FLU_SCHEME == CTU )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUFLU_FluidSolver_CTU,              cudaFuncCachePreferL1     )  );
+   DEVICE_CHECK_ERROR( 0 );
 #  endif
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUFLU_dtSolver_HydroCFL,            cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR( 0 );
 #  ifdef GRAVITY
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_dtSolver_HydroGravity,        cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR( 0 );
 #  endif
 
 #  elif ( MODEL == ELBDM )
 #  if   ( WAVE_SCHEME == WAVE_FD )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUFLU_ELBDMSolver_FD,               cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR( 0 );
 #  elif ( WAVE_SCHEME == WAVE_GRAMFE )
 #   if   ( GRAMFE_SCHEME == GRAMFE_FFT )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUFLU_ELBDMSolver_GramFE_FFT,       cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR( 0 );
 #   elif ( GRAMFE_SCHEME == GRAMFE_MATMUL )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUFLU_ELBDMSolver_GramFE_MATMUL,    cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR( 0 );
 #   else // GRAMFE_SCHEME
 #   error : ERROR : unsupported GRAMFE_SCHEME !!
 #   endif // GRAMFE_SCHEME
@@ -245,7 +247,7 @@ void GPU_SetCache()
 #  error : ERROR : unsupported WAVE_SCHEME !!
 #  endif // WAVE_SCHEME
 #  if ( ELBDM_SCHEME == ELBDM_HYBRID )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUFLU_ELBDMSolver_HamiltonJacobi,   cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR( 0 );
 #  endif
 
 #  else
@@ -257,18 +259,18 @@ void GPU_SetCache()
 
 // 2. Poisson solver
 #  if   ( POT_SCHEME == SOR )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_PoissonSolver_SOR,            cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR( 0 );
 #  elif ( POT_SCHEME == MG )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_PoissonSolver_MG,             cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR( 0 );
 #  endif // POT_SCHEME
 
 
 // 3. gravity solver
 #  if   ( MODEL == HYDRO )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_HydroGravitySolver,           cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR( 0 );
 
 #  elif ( MODEL == ELBDM )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_ELBDMGravitySolver,           cudaFuncCachePreferL1     )  );
+   DEVICE_CHECK_ERROR( 0 );
 
 #  else
 #  error : ERROR : unsupported MODEL !!
@@ -278,7 +280,7 @@ void GPU_SetCache()
 
 
 // 4. source-term solver
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUSRC_SrcSolver_IterateAllCells,   cudaFuncCachePreferL1      )  );
+   DEVICE_CHECK_ERROR( 0 );
 
 
    if ( MPI_Rank == 0 )    Aux_Message( stdout, "%s ... done\n", __FUNCTION__ );
