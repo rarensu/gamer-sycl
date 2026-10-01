@@ -1,0 +1,52 @@
+# all the CUFLU
+src/Microphysics/CosmicRayDiffusion/CUFLU_CR_AddDiffuseFlux.cu -> CPU_CR_AddDiffuseFlux.cpp
+src/Microphysics/CosmicRayDiffusion/CUFLU_CR_ComputeDiffusivity.cu -> CPU_CR_ComputeDiffusivity.cpp
+src/Model_ELBDM/GPU_ELBDM/CUFLU_ELBDMSolver_GramFE_FFT.cu -> ../CPU_ELBDM/CPU_ELBDMSolver_GramFE_FFT.cpp
+src/Model_ELBDM/GPU_ELBDM/CUFLU_ELBDMSolver_GramFE_MATMUL.cu -> ../CPU_ELBDM/CPU_ELBDMSolver_GramFE_MATMUL.cpp
+src/Model_ELBDM/GPU_ELBDM/CUFLU_ELBDMSolver_HJ.cu -> ../CPU_ELBDM/CPU_ELBDMSolver_HJ.cpp
+src/Model_Hydro/GPU_Hydro/CUFLU_CosmicRay.cu -> ../CPU_Hydro/CPU_CosmicRay.cpp
+src/Model_Hydro/GPU_Hydro/CUFLU_dtSolver_HydroCFL.cu -> ../CPU_Hydro/CPU_dtSolver_HydroCFL.cpp
+src/Model_Hydro/GPU_Hydro/CUFLU_FluidSolver_CTU.cu -> ../CPU_Hydro/CPU_FluidSolver_CTU.cpp
+src/Model_Hydro/GPU_Hydro/CUFLU_FluidSolver_MHM.cu -> ../CPU_Hydro/CPU_FluidSolver_MHM.cpp
+src/Model_Hydro/GPU_Hydro/CUFLU_Shared_ComputeFlux.cu -> ../CPU_Hydro/CPU_Shared_ComputeFlux.cpp
+src/Model_Hydro/GPU_Hydro/CUFLU_Shared_ConstrainedTransport.cu -> ../CPU_Hydro/CPU_Shared_ConstrainedTransport.cpp
+src/Model_Hydro/GPU_Hydro/CUFLU_Shared_DataReconstruction.cu -> ../CPU_Hydro/CPU_Shared_DataReconstruction.cpp
+src/Model_Hydro/GPU_Hydro/CUFLU_Shared_DualEnergy.cu -> ../CPU_Hydro/CPU_Shared_DualEnergy.cpp
+src/Model_Hydro/GPU_Hydro/CUFLU_Shared_FluUtility.cu -> ../CPU_Hydro/CPU_Shared_FluUtility.cpp
+src/Model_Hydro/GPU_Hydro/CUFLU_Shared_FullStepUpdate.cu -> ../CPU_Hydro/CPU_Shared_FullStepUpdate.cpp
+src/Model_Hydro/GPU_Hydro/CUFLU_Shared_RiemannSolver_Exact.cu -> ../CPU_Hydro/CPU_Shared_RiemannSolver_Exact.cpp
+src/Model_Hydro/GPU_Hydro/CUFLU_Shared_RiemannSolver_HLLC.cu -> ../CPU_Hydro/CPU_Shared_RiemannSolver_HLLC.cpp
+src/Model_Hydro/GPU_Hydro/CUFLU_Shared_RiemannSolver_HLLD.cu -> ../CPU_Hydro/CPU_Shared_RiemannSolver_HLLD.cpp
+src/Model_Hydro/GPU_Hydro/CUFLU_Shared_RiemannSolver_HLLE.cu -> ../CPU_Hydro/CPU_Shared_RiemannSolver_HLLE.cpp
+src/Model_Hydro/GPU_Hydro/CUFLU_Shared_RiemannSolver_Roe.cu -> ../CPU_Hydro/CPU_Shared_RiemannSolver_Roe.cpp
+src/Model_ELBDM/GPU_ELBDM/CUFLU_ELBDMSolver_FD.cu
+src/Model_Hydro/GPU_Hydro/CUFLU_FluidSolver_RTVD.cu
+
+# all the CUPOT
+src/Model_ELBDM/GPU_ELBDMGravity/CUPOT_ELBDMGravitySolver.cu -> ../CPU_ELBDMGravity/CPU_ELBDMGravitySolver.cpp
+src/Model_ELBDM/GPU_ELBDMGravity/CUPOT_ELBDMGravitySolver_HJ.cu -> ../CPU_ELBDMGravity/CPU_ELBDMGravitySolver_HJ.cpp
+src/Model_Hydro/GPU_HydroGravity/CUPOT_dtSolver_HydroGravity.cu -> ../CPU_HydroGravity/CPU_dtSolver_HydroGravity.cpp
+src/Model_Hydro/GPU_HydroGravity/CUPOT_HydroGravitySolver.cu -> ../CPU_HydroGravity/CPU_HydroGravitySolver.cpp
+src/SelfGravity/GPU_Gravity/CUPOT_ExtAcc_PointMass.cu -> ../CPU_Gravity/CPU_ExtAcc_PointMass.cpp
+src/SelfGravity/GPU_Poisson/CUPOT_ExtPot_PointMass.cu -> ../CPU_Poisson/CPU_ExtPot_PointMass.cpp
+src/SelfGravity/GPU_Poisson/CUPOT_ExtPotSolver.cu -> ../CPU_Poisson/CPU_ExtPotSolver.cpp
+src/SelfGravity/GPU_Poisson/CUPOT_ExtPot_Tabular.cu -> ../CPU_Poisson/CPU_ExtPot_Tabular.cpp
+src/SelfGravity/GPU_Poisson/CUPOT_PoissonSolver_MG.cu
+src/SelfGravity/GPU_Poisson/CUPOT_PoissonSolver_SOR.cu
+test_problem_deprecated/Model_ParticleOnly/TwoParOrbit/CUPOT_ExternalAcc.1.1.0.cu
+test_problem_deprecated/Model_ParticleOnly/TwoParOrbit/CUPOT_ExternalPot.1.0.0.cu
+
+# but not these! found in the same directory, not FLU/POT eligible
+src/Model_ELBDM/CPU_ELBDM/CPU_ELBDMSolver_FD.cpp
+src/Model_ELBDM/CPU_ELBDM/CPU_ELBDMSolver_FFT.cpp  
+
+src/Model_Hydro/CPU_Hydro/CPU_FluidSolver_RTVD.cpp
+
+src/SelfGravity/GPU_Poisson/../CPU_Poisson/:
+CPU_PoissonGravitySolver.cpp  CPU_PoissonSolver_MG.cpp
+CPU_ExtPotSolver_BaseLevel.cpp  CPU_ExtPot_Tabular.cpp  CPU_PoissonSolver_FFT.cpp     CPU_PoissonSolver_SOR.cpp
+
+test_problem_deprecated/Model_ParticleOnly/TwoParOrbit/:
+Copy_ExtAcc.sh              End_TestProb.cpp                Init_ExternalPot.cpp    Par_Init_ByFunction.cpp
+Copy_ExtPot.sh              Flu_BoundaryCondition_User.cpp  Init_TestProb.cpp                  
+Flu_ResetByUser.cpp         Init_ExternalAcc.cpp
