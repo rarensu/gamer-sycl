@@ -1,3 +1,5 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "GPUAPI.h"
 #include "FLU.h"
 #ifdef GRAVITY
@@ -9,18 +11,34 @@
 
 
 #if   ( MODEL == HYDRO )
+#ifdef SYCL_LANGUAGE_VERSION
+void GPU_dtSolver_HydroCFL( real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_T][ CUBE(PS1) ],
+                            const real g_Mag_Array[][NCOMP_MAG][ PS1P1*SQR(PS1) ],
+                            const real dh, const real Safety, const real MinPres,
+                            const long PassiveFloor, const EoS_t EoS, const MicroPhy_t MicroPhy,
+                            real *shared );
+#else
 __global__
 void GPU_dtSolver_HydroCFL( real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_T][ CUBE(PS1) ],
-                              const real g_Mag_Array[][NCOMP_MAG][ PS1P1*SQR(PS1) ],
-                              const real dh, const real Safety, const real MinPres,
-                              const long PassiveFloor, const EoS_t EoS, const MicroPhy_t MicroPhy );
+                            const real g_Mag_Array[][NCOMP_MAG][ PS1P1*SQR(PS1) ],
+                            const real dh, const real Safety, const real MinPres,
+                            const long PassiveFloor, const EoS_t EoS, const MicroPhy_t MicroPhy );
+#endif
 #ifdef GRAVITY
+#ifdef SYCL_LANGUAGE_VERSION
+void GPU_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ CUBE(GRA_NXT) ],
+                                  const double g_Corner_Array[][3],
+                                  const real dh, const real Safety, const bool P5_Gradient,
+                                  const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,
+                                  const double ExtAcc_Time );
+#else
 __global__
 void GPU_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ CUBE(GRA_NXT) ],
                                   const double g_Corner_Array[][3],
                                   const real dh, const real Safety, const bool P5_Gradient,
                                   const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,
                                   const double ExtAcc_Time );
+#endif
 #endif
 
 #elif ( MODEL == ELBDM )
@@ -44,7 +62,7 @@ static real (*d_Mag_Array_T)[NCOMP_MAG][ PS1P1*SQR(PS1) ] = NULL;
 #endif
 #endif // HYDRO
 
-extern cudaStream_t *Stream;
+extern dpct::queue_ptr *Stream;
 
 
 
@@ -132,7 +150,7 @@ void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_
    const int NPatch = NPatchGroup*8;
 
 #  if ( MODEL == HYDRO )
-   dim3 BlockDim_dtSolver( 1, 1, 1 );
+   dpct::dim3 BlockDim_dtSolver( 1, 1, 1 );
 
    switch ( TSolver )
    {
@@ -218,23 +236,19 @@ void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_
       switch ( TSolver )
       {
          case DT_FLU_SOLVER:
-            DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Flu_Array_T      + UsedPatch[s], h_Flu_Array    + UsedPatch[s],
-                               Flu_MemSize[s],    cudaMemcpyHostToDevice, Stream[s] )  );
+            DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Flu_Array_T      + UsedPatch[s], h_Flu_Array    + UsedPatch[s], Flu_MemSize[s] )  ));
 #           ifdef MHD
-            DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Mag_Array_T      + UsedPatch[s], h_Mag_Array    + UsedPatch[s],
-                               Mag_MemSize[s],    cudaMemcpyHostToDevice, Stream[s] )  );
+            DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Mag_Array_T      + UsedPatch[s], h_Mag_Array    + UsedPatch[s], Mag_MemSize[s] )  ));
 #           endif
          break;
 
 #        ifdef GRAVITY
          case DT_GRA_SOLVER:
             if ( UsePot )
-            DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Pot_Array_T      + UsedPatch[s], h_Pot_Array    + UsedPatch[s],
-                               Pot_MemSize[s],    cudaMemcpyHostToDevice, Stream[s] )  );
+            DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Pot_Array_T      + UsedPatch[s], h_Pot_Array    + UsedPatch[s], Pot_MemSize[s] )  ));
 
             if ( ExtAcc )
-            DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array + UsedPatch[s],
-                               Corner_MemSize[s], cudaMemcpyHostToDevice, Stream[s] )  );
+            DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array + UsedPatch[s], Corner_MemSize[s] )  ));
          break;
 #        endif
 
@@ -254,20 +268,45 @@ void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_
       switch ( TSolver )
       {
          case DT_FLU_SOLVER:
-            GPU_dtSolver_HydroCFL <<< NPatch_per_Stream[s], BlockDim_dtSolver, 0, Stream[s] >>>
-                                    ( d_dt_Array_T  + UsedPatch[s],
-                                      d_Flu_Array_T + UsedPatch[s],
-                                      d_Mag_Array_T + UsedPatch[s],
-                                      dh, Safety, MinPres, PassiveFloor, EoS, MicroPhy );
+            Stream[s]->submit([&](sycl::handler &cgh) {
+               sycl::local_accessor<real, 1> shared_acc_ct1(sycl::range<1>(32 /*MaxNWarp*/), cgh);
+
+               auto d_dt_Array_T_UsedPatch_s_ct0 = d_dt_Array_T  + UsedPatch[s];
+               auto d_Flu_Array_T_UsedPatch_s_ct1 = d_Flu_Array_T + UsedPatch[s];
+               auto d_Mag_Array_T_UsedPatch_s_ct2 = d_Mag_Array_T + UsedPatch[s];
+
+               cgh.parallel_for(
+                   sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * BlockDim_dtSolver,
+                                     BlockDim_dtSolver),
+                   [=](sycl::nd_item<3> item_ct1) [[sycl::reqd_sub_group_size(32)]] {
+                      GPU_dtSolver_HydroCFL(
+                          d_dt_Array_T_UsedPatch_s_ct0,
+                          d_Flu_Array_T_UsedPatch_s_ct1,
+                          d_Mag_Array_T_UsedPatch_s_ct2, dh, Safety, MinPres,
+                          PassiveFloor, EoS, MicroPhy,
+                          shared_acc_ct1.get_multi_ptr<sycl::access::decorated::no>().get());
+                   });
+            });
          break;
 
 #        ifdef GRAVITY
          case DT_GRA_SOLVER:
-            GPU_dtSolver_HydroGravity <<< NPatch_per_Stream[s], BlockDim_dtSolver, 0, Stream[s] >>>
-                                        ( d_dt_Array_T       + UsedPatch[s],
-                                          d_Pot_Array_T      + UsedPatch[s],
-                                          d_Corner_Array_PGT + UsedPatch[s],
-                                          dh, Safety, P5_Gradient, UsePot, ExtAcc, GPUExtAcc_Ptr, TargetTime );
+            Stream[s]->submit([&](sycl::handler &cgh) {
+               auto d_dt_Array_T_UsedPatch_s_ct0 = d_dt_Array_T + UsedPatch[s];
+               auto d_Pot_Array_T_UsedPatch_s_ct1 = d_Pot_Array_T + UsedPatch[s];
+               auto d_Corner_Array_PGT_UsedPatch_s_ct2 = d_Corner_Array_PGT + UsedPatch[s];
+
+               cgh.parallel_for(
+                   sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * BlockDim_dtSolver,
+                                     BlockDim_dtSolver),
+                   [=](sycl::nd_item<3> item_ct1) {
+                      GPU_dtSolver_HydroGravity(
+                          d_dt_Array_T_UsedPatch_s_ct0,
+                          d_Pot_Array_T_UsedPatch_s_ct1,
+                          d_Corner_Array_PGT_UsedPatch_s_ct2,
+                          dh, Safety, P5_Gradient, UsePot, ExtAcc, GPUExtAcc_Ptr, TargetTime );
+                   });
+            });
          break;
 #        endif
 
@@ -281,7 +320,6 @@ void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_
 #        error : unsupported MODEL !!
 #     endif // MODEL
 
-      DEVICE_CHECK_ERROR( cudaGetLastError() );
    } // for (int s=0; s<GPU_NStream; s++)
 
 
@@ -291,8 +329,7 @@ void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_
    {
       if ( NPatch_per_Stream[s] == 0 )    continue;
 
-      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( h_dt_Array + UsedPatch[s], d_dt_Array_T + UsedPatch[s],
-                         dt_MemSize[s], cudaMemcpyDeviceToHost, Stream[s] )  );
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( h_dt_Array + UsedPatch[s], d_dt_Array_T + UsedPatch[s], dt_MemSize[s] )  ));
    } // for (int s=0; s<GPU_NStream; s++)
 
 

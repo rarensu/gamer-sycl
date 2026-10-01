@@ -510,7 +510,6 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
 #        endif // MODEL
       } // if ( GraAcc )
 
-      DEVICE_CHECK_ERROR( 0 );
    } // for (int s=0; s<GPU_NStream; s++)
 
 

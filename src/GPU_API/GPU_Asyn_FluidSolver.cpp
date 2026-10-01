@@ -1,3 +1,5 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "GPUAPI.h"
 #include "FLU.h"
 
@@ -5,6 +7,17 @@
 
 #if   ( MODEL == HYDRO )
 #if   ( FLU_SCHEME == RTVD )
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL void GPU_FluidSolver_RTVD(
+   real g_Fluid_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
+   real g_Fluid_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
+   real g_Flux     [][9][NCOMP_TOTAL][ SQR(PS2) ],
+   const double g_Corner[][3],
+   const real g_Pot_USG[][ CUBE(USG_NXT_F) ],
+   const real dt, const real _dh, const bool StoreFlux,
+   const bool XYZ, const real MinDens, const real MinPres, const real MinEint, const long PassiveFloor,
+   const EoS_t EoS );
+#else
 __global__ void GPU_FluidSolver_RTVD(
    real g_Fluid_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
    real g_Fluid_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
@@ -14,7 +27,38 @@ __global__ void GPU_FluidSolver_RTVD(
    const real dt, const real _dh, const bool StoreFlux,
    const bool XYZ, const real MinDens, const real MinPres, const real MinEint, const long PassiveFloor,
    const EoS_t EoS );
+#endif
 #elif ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP )
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
+void GPU_FluidSolver_MHM(
+   const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
+         real   g_Flu_Array_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
+   const real   g_Mag_Array_In [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
+         real   g_Mag_Array_Out[][NCOMP_MAG][ PS2P1*SQR(PS2) ],
+         char   g_DE_Array_Out [][ CUBE(PS2) ],
+         real   g_Flux_Array   [][9][NCOMP_TOTAL][ SQR(PS2) ],
+         real   g_Ele_Array    [][9][NCOMP_ELE][ PS2P1*PS2 ],
+   const double g_Corner_Array [][3],
+   const real   g_Pot_Array_USG[][ CUBE(USG_NXT_F) ],
+         real   g_PriVar       []   [NCOMP_LR            ][ CUBE(FLU_NXT) ],
+         real   g_Slope_PPM    [][3][NCOMP_LR            ][ CUBE(N_SLOPE_PPM) ],
+         real   g_FC_Var       [][6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR) ],
+         real   g_FC_Flux      [][3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX) ],
+         real   g_FC_Mag_Half  [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
+         real   g_EC_Ele       [][NCOMP_MAG][ CUBE(N_EC_ELE) ],
+   const real dt, const real dh,
+   const bool StoreFlux, const bool StoreElectric,
+   const LR_Limiter_t LR_Limiter, const real MinMod_Coeff, const int MinMod_MaxIter, const double Time,
+   const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,
+   const real MinDens, const real MinPres, const real MinEint,
+   const real DualEnergySwitch,
+   const long PassiveFloor,
+   const bool NormPassive, const int NNorm,
+   const bool FracPassive, const int NFrac,
+   const bool JeansMinPres, const real JeansMinPres_Coeff,
+   const EoS_t EoS, const MicroPhy_t MicroPhy, int *const c_NormIdx, int *const c_FracIdx );
+#else
 __global__
 void GPU_FluidSolver_MHM(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
@@ -43,7 +87,38 @@ void GPU_FluidSolver_MHM(
    const bool FracPassive, const int NFrac,
    const bool JeansMinPres, const real JeansMinPres_Coeff,
    const EoS_t EoS, const MicroPhy_t MicroPhy );
+#endif
 #elif ( FLU_SCHEME == CTU )
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
+void GPU_FluidSolver_CTU(
+   const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
+         real   g_Flu_Array_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
+   const real   g_Mag_Array_In [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
+         real   g_Mag_Array_Out[][NCOMP_MAG][ PS2P1*SQR(PS2) ],
+         char   g_DE_Array_Out [][ CUBE(PS2) ],
+         real   g_Flux_Array   [][9][NCOMP_TOTAL][ SQR(PS2) ],
+         real   g_Ele_Array    [][9][NCOMP_ELE][ PS2P1*PS2 ],
+   const double g_Corner_Array [][3],
+   const real   g_Pot_Array_USG[][ CUBE(USG_NXT_F) ],
+         real   g_PriVar       []   [NCOMP_LR            ][ CUBE(FLU_NXT) ],
+         real   g_Slope_PPM    [][3][NCOMP_LR            ][ CUBE(N_SLOPE_PPM) ],
+         real   g_FC_Var       [][6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR) ],
+         real   g_FC_Flux      [][3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX) ],
+         real   g_FC_Mag_Half  [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
+         real   g_EC_Ele       [][NCOMP_MAG][ CUBE(N_EC_ELE) ],
+   const real dt, const real dh,
+   const bool StoreFlux, const bool StoreElectric,
+   const LR_Limiter_t LR_Limiter, const real MinMod_Coeff, const double Time,
+   const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,
+   const real MinDens, const real MinPres, const real MinEint,
+   const real DualEnergySwitch,
+   const long PassiveFloor,
+   const bool NormPassive, const int NNorm,
+   const bool FracPassive, const int NFrac,
+   const bool JeansMinPres, const real JeansMinPres_Coeff,
+   const EoS_t EoS, int *const c_NormIdx, int *const c_FracIdx );
+#else
 __global__
 void GPU_FluidSolver_CTU(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
@@ -72,19 +147,38 @@ void GPU_FluidSolver_CTU(
    const bool FracPassive, const int NFrac,
    const bool JeansMinPres, const real JeansMinPres_Coeff,
    const EoS_t EoS );
+#endif
 #endif // FLU_SCHEME
 
 #elif ( MODEL == ELBDM )
 
 #if   ( WAVE_SCHEME == WAVE_FD )
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL void GPU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+                                      real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
+                                      real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
+                                      const real dt, const real _dh, const real Eta, const bool StoreFlux,
+                                      const real Taylor3_Coeff, const bool XYZ, const real MinDens );
+#else
 __global__ void GPU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                       real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
                                       real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                       const real dt, const real _dh, const real Eta, const bool StoreFlux,
                                       const real Taylor3_Coeff, const bool XYZ, const real MinDens );
+#endif
 real ELBDM_SetTaylor3Coeff( const real dt, const real dh, const real Eta );
 #elif ( WAVE_SCHEME == WAVE_GRAMFE )
 #if   ( GRAMFE_SCHEME == GRAMFE_FFT )
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
+void GPU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+                                   real g_Fluid_Out[][FLU_NOUT ][ CUBE(PS2) ],
+                                   real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
+                                   const real dt, const real _dh, const real Eta, const bool StoreFlux,
+                                   const bool XYZ, const real MinDens,
+                                   typename FFT::workspace_type workspace,
+                                   typename IFFT::workspace_type workspace_inverse );
+#else
 __launch_bounds__(FFT::max_threads_per_block)
 __global__
 void GPU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
@@ -94,8 +188,18 @@ void GPU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                    const bool XYZ, const real MinDens,
                                    typename FFT::workspace_type workspace,
                                    typename IFFT::workspace_type workspace_inverse );
+#endif
 #elif ( GRAMFE_SCHEME == GRAMFE_MATMUL )
 void ELBDM_GramFE_ComputeTimeEvolutionMatrix( gramfe_matmul_float (*output)[ 2*FLU_NXT ], const real dt, const real dh, const real Eta );
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
+void GPU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+                                      real g_Fluid_Out[][FLU_NOUT ][ CUBE(PS2) ],
+                                      real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
+                                      gramfe_matmul_float g_Evolve[][ FLU_NXT*2 ],
+                                      const real dt, const real _dh, const real Eta, const bool StoreFlux,
+                                      const bool XYZ, const real MinDens );
+#else
 __global__
 void GPU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                       real g_Fluid_Out[][FLU_NOUT ][ CUBE(PS2) ],
@@ -103,6 +207,7 @@ void GPU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) 
                                       gramfe_matmul_float g_Evolve[][ FLU_NXT*2 ],
                                       const real dt, const real _dh, const real Eta, const bool StoreFlux,
                                       const bool XYZ, const real MinDens );
+#endif
 #else
 #  error : ERROR : unsupported GRAMFE_SCHEME !!
 #endif // GRAMFE_SCHEME
@@ -111,6 +216,19 @@ void GPU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) 
 #endif // WAVE_SCHEME
 
 #if ( ELBDM_SCHEME == ELBDM_HYBRID )
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL void GPU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
+#                                                 ifdef GAMER_DEBUG
+                                                  real g_Fluid_Out[][FLU_NOUT ][ CUBE(PS2) ],
+#                                                 else
+                                                  real g_Fluid_Out[][FLU_NIN ][ CUBE(PS2) ],
+#                                                 endif
+                                                  real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
+                                                  const bool h_IsCompletelyRefined[],
+                                                  const bool h_HasWaveCounterpart[][ CUBE(HYB_NXT) ],
+                                                  const real dt, const real _dh, const real Eta, const bool StoreFlux,
+                                                  const bool XYZ, const real MinDens );
+#else
 __global__ void GPU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
 #                                                 ifdef GAMER_DEBUG
                                                   real g_Fluid_Out[][FLU_NOUT ][ CUBE(PS2) ],
@@ -122,6 +240,7 @@ __global__ void GPU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CU
                                                   const bool h_HasWaveCounterpart[][ CUBE(HYB_NXT) ],
                                                   const real dt, const real _dh, const real Eta, const bool StoreFlux,
                                                   const bool XYZ, const real MinDens );
+#endif
 #endif
 
 #else
@@ -186,7 +305,7 @@ extern real (*d_Pot_Array_USG_F)[ CUBE(USG_NXT_F) ];
 static real (*d_Pot_Array_USG_F)[ CUBE(USG_NXT_F) ] = NULL;
 #endif
 
-extern cudaStream_t *Stream;
+extern dpct::queue_ptr *Stream;
 
 
 
@@ -345,10 +464,10 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 
 // thread block size
 #  if (  !( MODEL == ELBDM  &&  WAVE_SCHEME == WAVE_GRAMFE  &&  GRAMFE_SCHEME == GRAMFE_FFT )  )
-   const dim3 BlockDim_FluidSolver    ( FLU_BLOCK_SIZE_X, FLU_BLOCK_SIZE_Y,    1 ); // for the fluid solvers
+   const dpct::dim3 BlockDim_FluidSolver    ( FLU_BLOCK_SIZE_X, FLU_BLOCK_SIZE_Y,    1 ); // for the fluid solvers
 #  endif
 #  if ( ELBDM_SCHEME == ELBDM_HYBRID )
-   const dim3 BlockDim_FluidSolver_HJ ( FLU_BLOCK_SIZE_X, FLU_HJ_BLOCK_SIZE_Y, 1 ); // for the HJ solver
+   const dpct::dim3 BlockDim_FluidSolver_HJ ( FLU_BLOCK_SIZE_X, FLU_HJ_BLOCK_SIZE_Y, 1 ); // for the HJ solver
 #  endif
 
 
@@ -382,8 +501,10 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
    cufftdx_shared_memory_size = std::max( (unsigned int)FFT::shared_memory_size, (unsigned int)size_bytes );
 
 // increase max shared memory if needed
+#  ifndef SYCL_LANGUAGE_VERSION
    DEVICE_CHECK_ERROR(  cudaFuncSetAttribute( GPU_ELBDMSolver_GramFE_FFT, cudaFuncAttributeMaxDynamicSharedMemorySize,
                                             cufftdx_shared_memory_size )  );
+#  endif
 
 #  elif ( GRAMFE_SCHEME == GRAMFE_MATMUL )
 // time evolution matrix is copied to GPU in InvokeSolver()
@@ -495,41 +616,41 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 #     if ( ELBDM_SCHEME == ELBDM_HYBRID )
       if ( UseWaveFlag ) {
 #     endif
-      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Flu_Array_F_In  + UsedPatch[s], h_Flu_Array_In  + UsedPatch[s],
-                         Flu_MemSize_In[s], cudaMemcpyHostToDevice, Stream[s] )  );
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Flu_Array_F_In + UsedPatch[s], h_Flu_Array_In + UsedPatch[s],
+                         Flu_MemSize_In[s] )  ));
 #     if ( ELBDM_SCHEME == ELBDM_HYBRID )
       } else {
       real (*smaller_d_Flu_Array_F_In)[FLU_NIN][CUBE(HYB_NXT)] = (real (*)[FLU_NIN][CUBE(HYB_NXT)]) d_Flu_Array_F_In;
       real (*smaller_h_Flu_Array_In  )[FLU_NIN][CUBE(HYB_NXT)] = (real (*)[FLU_NIN][CUBE(HYB_NXT)]) h_Flu_Array_In  ;
 
-      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( smaller_d_Flu_Array_F_In + UsedPatch[s], smaller_h_Flu_Array_In + UsedPatch[s],
-                         Flu_MemSize_In[s], cudaMemcpyHostToDevice, Stream[s] )  );
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( smaller_d_Flu_Array_F_In + UsedPatch[s], smaller_h_Flu_Array_In + UsedPatch[s],
+                         Flu_MemSize_In[s] )  ));
       }
 #     endif
 #     ifdef MHD
-      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Mag_Array_F_In  + UsedPatch[s], h_Mag_Array_In  + UsedPatch[s],
-                         Mag_MemSize_In[s], cudaMemcpyHostToDevice, Stream[s] )  );
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Mag_Array_F_In  + UsedPatch[s], h_Mag_Array_In  + UsedPatch[s],
+                         Mag_MemSize_In[s] )  ));
 #     endif
 
 #     ifdef UNSPLIT_GRAVITY
       if ( UsePot )
-      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Pot_Array_USG_F + UsedPatch[s], h_Pot_Array_USG + UsedPatch[s],
-                         USG_MemSize   [s], cudaMemcpyHostToDevice, Stream[s] )  );
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Pot_Array_USG_F + UsedPatch[s], h_Pot_Array_USG + UsedPatch[s],
+                         USG_MemSize   [s] )  ));
 
       if ( ExtAcc )
-      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Corner_Array_F  + UsedPatch[s], h_Corner_Array  + UsedPatch[s],
-                         Corner_MemSize[s], cudaMemcpyHostToDevice, Stream[s] )  );
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Corner_Array_F  + UsedPatch[s], h_Corner_Array  + UsedPatch[s],
+                         Corner_MemSize[s] )  ));
 #     endif
 
 
 #     if ( MODEL == ELBDM )
-      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_IsCompletelyRefined + UsedPatch[s], h_IsCompletelyRefined + UsedPatch[s],
-                         Flu_MemSize_IsCompletelyRefined[s], cudaMemcpyHostToDevice, Stream[s] )  );
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_IsCompletelyRefined + UsedPatch[s], h_IsCompletelyRefined + UsedPatch[s],
+                         Flu_MemSize_IsCompletelyRefined[s] )  ));
 #     endif
 #     if ( ELBDM_SCHEME == ELBDM_HYBRID )
       if ( !UseWaveFlag )
-      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_HasWaveCounterpart  + UsedPatch[s], h_HasWaveCounterpart  + UsedPatch[s],
-                         Flu_MemSize_HasWaveCounterpart[s], cudaMemcpyHostToDevice, Stream[s] )  );
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_HasWaveCounterpart  + UsedPatch[s], h_HasWaveCounterpart  + UsedPatch[s],
+                         Flu_MemSize_HasWaveCounterpart[s] )  ));
 #     endif
    } // for (int s=0; s<GPU_NStream; s++)
 
@@ -544,59 +665,142 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 
 #        if   ( FLU_SCHEME == RTVD )
 
-         GPU_FluidSolver_RTVD <<< NPatch_per_Stream[s], BlockDim_FluidSolver, 0, Stream[s] >>>
-            ( d_Flu_Array_F_In  + UsedPatch[s],
-              d_Flu_Array_F_Out + UsedPatch[s],
-              d_Flux_Array      + UsedPatch[s],
-              d_Corner_Array_F  + UsedPatch[s],
-              d_Pot_Array_USG_F + UsedPatch[s],
-              dt, 1.0/dh, StoreFlux, XYZ, MinDens, MinPres, MinEint, PassiveFloor, EoS );
+         Stream[s]->submit([&](sycl::handler &cgh) {
+            auto d_Flu_Array_F_In_ptr = d_Flu_Array_F_In + UsedPatch[s];
+            auto d_Flu_Array_F_Out_ptr = d_Flu_Array_F_Out + UsedPatch[s];
+            auto d_Flux_Array_ptr = d_Flux_Array + UsedPatch[s];
+            auto d_Corner_Array_F_ptr = d_Corner_Array_F + UsedPatch[s];
+            auto d_Pot_Array_USG_F_ptr = d_Pot_Array_USG_F + UsedPatch[s];
+
+            cgh.parallel_for(
+                sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * BlockDim_FluidSolver,
+                                  BlockDim_FluidSolver),
+                [=](sycl::nd_item<3> item_ct1) {
+                   GPU_FluidSolver_RTVD(
+                       d_Flu_Array_F_In_ptr,
+                       d_Flu_Array_F_Out_ptr,
+                       d_Flux_Array_ptr,
+                       d_Corner_Array_F_ptr,
+                       d_Pot_Array_USG_F_ptr,
+                       dt, 1.0/dh, StoreFlux, XYZ, MinDens, MinPres, MinEint, PassiveFloor, EoS );
+                });
+         });
 
 #        elif ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP )
 
-         GPU_FluidSolver_MHM <<< NPatch_per_Stream[s], BlockDim_FluidSolver, 0, Stream[s] >>>
-            ( d_Flu_Array_F_In  + UsedPatch[s],
-              d_Flu_Array_F_Out + UsedPatch[s],
-              d_Mag_Array_F_In  + UsedPatch[s],
-              d_Mag_Array_F_Out + UsedPatch[s],
-              d_DE_Array_F_Out  + UsedPatch[s],
-              d_Flux_Array      + UsedPatch[s],
-              d_Ele_Array       + UsedPatch[s],
-              d_Corner_Array_F  + UsedPatch[s],
-              d_Pot_Array_USG_F + UsedPatch[s],
-              d_PriVar          + UsedPatch[s],
-              d_Slope_PPM       + UsedPatch[s],
-              d_FC_Var          + UsedPatch[s],
-              d_FC_Flux         + UsedPatch[s],
-              d_FC_Mag_Half     + UsedPatch[s],
-              d_EC_Ele          + UsedPatch[s],
-              dt, dh, StoreFlux, StoreElectric, LR_Limiter, MinMod_Coeff, MinMod_MaxIter,
-              Time, UsePot, ExtAcc, GPUExtAcc_Ptr, MinDens, MinPres, MinEint,
-              DualEnergySwitch, PassiveFloor, NormPassive, NNorm, FracPassive, NFrac,
-              JeansMinPres, JeansMinPres_Coeff, EoS, MicroPhy );
+         {
+            extern dpct::constant_memory<int *, 0> c_NormIdx;
+            extern dpct::constant_memory<int *, 0> c_FracIdx;
+
+            c_NormIdx.init(*Stream[s]);
+            c_FracIdx.init(*Stream[s]);
+
+            Stream[s]->submit([&](sycl::handler &cgh) {
+               auto c_NormIdx_ptr = c_NormIdx.get_ptr();
+               auto c_FracIdx_ptr = c_FracIdx.get_ptr();
+
+               auto d_Flu_Array_F_In_ptr = d_Flu_Array_F_In + UsedPatch[s];
+               auto d_Flu_Array_F_Out_ptr = d_Flu_Array_F_Out + UsedPatch[s];
+               auto d_Mag_Array_F_In_ptr = d_Mag_Array_F_In + UsedPatch[s];
+               auto d_Mag_Array_F_Out_ptr = d_Mag_Array_F_Out + UsedPatch[s];
+               auto d_DE_Array_F_Out_ptr = d_DE_Array_F_Out + UsedPatch[s];
+               auto d_Flux_Array_ptr = d_Flux_Array + UsedPatch[s];
+               auto d_Ele_Array_ptr = d_Ele_Array + UsedPatch[s];
+               auto d_Corner_Array_F_ptr = d_Corner_Array_F + UsedPatch[s];
+               auto d_Pot_Array_USG_F_ptr = d_Pot_Array_USG_F + UsedPatch[s];
+               auto d_PriVar_ptr = d_PriVar + UsedPatch[s];
+               auto d_Slope_PPM_ptr = d_Slope_PPM + UsedPatch[s];
+               auto d_FC_Var_ptr = d_FC_Var + UsedPatch[s];
+               auto d_FC_Flux_ptr = d_FC_Flux + UsedPatch[s];
+               auto d_FC_Mag_Half_ptr = d_FC_Mag_Half + UsedPatch[s];
+               auto d_EC_Ele_ptr = d_EC_Ele + UsedPatch[s];
+               auto GPUExtAcc_Ptr_ct = GPUExtAcc_Ptr;
+
+               cgh.parallel_for(
+                   sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * BlockDim_FluidSolver,
+                                     BlockDim_FluidSolver),
+                   [=](sycl::nd_item<3> item_ct1) {
+                      GPU_FluidSolver_MHM(
+                          d_Flu_Array_F_In_ptr,
+                          d_Flu_Array_F_Out_ptr,
+                          d_Mag_Array_F_In_ptr,
+                          d_Mag_Array_F_Out_ptr,
+                          d_DE_Array_F_Out_ptr,
+                          d_Flux_Array_ptr,
+                          d_Ele_Array_ptr,
+                          d_Corner_Array_F_ptr,
+                          d_Pot_Array_USG_F_ptr,
+                          d_PriVar_ptr,
+                          d_Slope_PPM_ptr,
+                          d_FC_Var_ptr,
+                          d_FC_Flux_ptr,
+                          d_FC_Mag_Half_ptr,
+                          d_EC_Ele_ptr,
+                          dt, dh, StoreFlux, StoreElectric, LR_Limiter, MinMod_Coeff, MinMod_MaxIter,
+                          Time, UsePot, ExtAcc, GPUExtAcc_Ptr_ct, MinDens, MinPres, MinEint,
+                          DualEnergySwitch, PassiveFloor, NormPassive, NNorm, FracPassive, NFrac,
+                          JeansMinPres, JeansMinPres_Coeff, EoS, MicroPhy, c_NormIdx_ptr, c_FracIdx_ptr );
+                   });
+            });
+         }
 
 #        elif ( FLU_SCHEME == CTU )
 
-         GPU_FluidSolver_CTU <<< NPatch_per_Stream[s], BlockDim_FluidSolver, 0, Stream[s] >>>
-            ( d_Flu_Array_F_In  + UsedPatch[s],
-              d_Flu_Array_F_Out + UsedPatch[s],
-              d_Mag_Array_F_In  + UsedPatch[s],
-              d_Mag_Array_F_Out + UsedPatch[s],
-              d_DE_Array_F_Out  + UsedPatch[s],
-              d_Flux_Array      + UsedPatch[s],
-              d_Ele_Array       + UsedPatch[s],
-              d_Corner_Array_F  + UsedPatch[s],
-              d_Pot_Array_USG_F + UsedPatch[s],
-              d_PriVar          + UsedPatch[s],
-              d_Slope_PPM       + UsedPatch[s],
-              d_FC_Var          + UsedPatch[s],
-              d_FC_Flux         + UsedPatch[s],
-              d_FC_Mag_Half     + UsedPatch[s],
-              d_EC_Ele          + UsedPatch[s],
-              dt, dh, StoreFlux, StoreElectric, LR_Limiter, MinMod_Coeff,
-              Time, UsePot, ExtAcc, GPUExtAcc_Ptr, MinDens, MinPres, MinEint,
-              DualEnergySwitch, PassiveFloor, NormPassive, NNorm, FracPassive, NFrac,
-              JeansMinPres, JeansMinPres_Coeff, EoS );
+         {
+            extern dpct::constant_memory<int *, 0> c_NormIdx;
+            extern dpct::constant_memory<int *, 0> c_FracIdx;
+
+            c_NormIdx.init(*Stream[s]);
+            c_FracIdx.init(*Stream[s]);
+
+            Stream[s]->submit([&](sycl::handler &cgh) {
+               auto c_NormIdx_ptr = c_NormIdx.get_ptr();
+               auto c_FracIdx_ptr = c_FracIdx.get_ptr();
+
+               auto d_Flu_Array_F_In_ptr = d_Flu_Array_F_In + UsedPatch[s];
+               auto d_Flu_Array_F_Out_ptr = d_Flu_Array_F_Out + UsedPatch[s];
+               auto d_Mag_Array_F_In_ptr = d_Mag_Array_F_In + UsedPatch[s];
+               auto d_Mag_Array_F_Out_ptr = d_Mag_Array_F_Out + UsedPatch[s];
+               auto d_DE_Array_F_Out_ptr = d_DE_Array_F_Out + UsedPatch[s];
+               auto d_Flux_Array_ptr = d_Flux_Array + UsedPatch[s];
+               auto d_Ele_Array_ptr = d_Ele_Array + UsedPatch[s];
+               auto d_Corner_Array_F_ptr = d_Corner_Array_F + UsedPatch[s];
+               auto d_Pot_Array_USG_F_ptr = d_Pot_Array_USG_F + UsedPatch[s];
+               auto d_PriVar_ptr = d_PriVar + UsedPatch[s];
+               auto d_Slope_PPM_ptr = d_Slope_PPM + UsedPatch[s];
+               auto d_FC_Var_ptr = d_FC_Var + UsedPatch[s];
+               auto d_FC_Flux_ptr = d_FC_Flux + UsedPatch[s];
+               auto d_FC_Mag_Half_ptr = d_FC_Mag_Half + UsedPatch[s];
+               auto d_EC_Ele_ptr = d_EC_Ele + UsedPatch[s];
+               auto GPUExtAcc_Ptr_ct = GPUExtAcc_Ptr;
+
+               cgh.parallel_for(
+                   sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * BlockDim_FluidSolver,
+                                     BlockDim_FluidSolver),
+                   [=](sycl::nd_item<3> item_ct1) {
+                      GPU_FluidSolver_CTU(
+                          d_Flu_Array_F_In_ptr,
+                          d_Flu_Array_F_Out_ptr,
+                          d_Mag_Array_F_In_ptr,
+                          d_Mag_Array_F_Out_ptr,
+                          d_DE_Array_F_Out_ptr,
+                          d_Flux_Array_ptr,
+                          d_Ele_Array_ptr,
+                          d_Corner_Array_F_ptr,
+                          d_Pot_Array_USG_F_ptr,
+                          d_PriVar_ptr,
+                          d_Slope_PPM_ptr,
+                          d_FC_Var_ptr,
+                          d_FC_Flux_ptr,
+                          d_FC_Mag_Half_ptr,
+                          d_EC_Ele_ptr,
+                          dt, dh, StoreFlux, StoreElectric, LR_Limiter, MinMod_Coeff,
+                          Time, UsePot, ExtAcc, GPUExtAcc_Ptr_ct, MinDens, MinPres, MinEint,
+                          DualEnergySwitch, PassiveFloor, NormPassive, NNorm, FracPassive, NFrac,
+                          JeansMinPres, JeansMinPres_Coeff, EoS, c_NormIdx_ptr, c_FracIdx_ptr );
+                   });
+            });
+         }
 
 #        else
 
@@ -612,11 +816,22 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 
 #     if   ( WAVE_SCHEME == WAVE_FD )
 
-         GPU_ELBDMSolver_FD <<< NPatch_per_Stream[s], BlockDim_FluidSolver, 0, Stream[s] >>>
-            ( d_Flu_Array_F_In  + UsedPatch[s],
-              d_Flu_Array_F_Out + UsedPatch[s],
-              d_Flux_Array      + UsedPatch[s],
-              dt, 1.0/dh, ELBDM_Eta, StoreFlux, ELBDM_Taylor3_Coeff, XYZ, MinDens );
+         Stream[s]->submit([&](sycl::handler &cgh) {
+            auto d_Flu_Array_F_In_ptr = d_Flu_Array_F_In + UsedPatch[s];
+            auto d_Flu_Array_F_Out_ptr = d_Flu_Array_F_Out + UsedPatch[s];
+            auto d_Flux_Array_ptr = d_Flux_Array + UsedPatch[s];
+
+            cgh.parallel_for(
+                sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * BlockDim_FluidSolver,
+                                  BlockDim_FluidSolver),
+                [=](sycl::nd_item<3> item_ct1) {
+                   GPU_ELBDMSolver_FD(
+                       d_Flu_Array_F_In_ptr,
+                       d_Flu_Array_F_Out_ptr,
+                       d_Flux_Array_ptr,
+                       dt, 1.0/dh, ELBDM_Eta, StoreFlux, ELBDM_Taylor3_Coeff, XYZ, MinDens );
+                });
+         });
 
 #     elif ( WAVE_SCHEME == WAVE_GRAMFE )
 
@@ -630,19 +845,44 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
          IFFT::workspace_type cufftdx_iworkspace = cufftdx::make_workspace<IFFT>( error_code );
          DEVICE_CHECK_ERROR(error_code);
 
-         GPU_ELBDMSolver_GramFE_FFT <<< NPatch_per_Stream[s], FFT::block_dim, cufftdx_shared_memory_size, Stream[s] >>>
-            ( d_Flu_Array_F_In  + UsedPatch[s],
-              d_Flu_Array_F_Out + UsedPatch[s],
-              d_Flux_Array      + UsedPatch[s],
-              dt, 1.0/dh, ELBDM_Eta, StoreFlux, XYZ, MinDens, cufftdx_workspace, cufftdx_iworkspace );
+         Stream[s]->submit([&](sycl::handler &cgh) {
+            auto d_Flu_Array_F_In_ptr = d_Flu_Array_F_In + UsedPatch[s];
+            auto d_Flu_Array_F_Out_ptr = d_Flu_Array_F_Out + UsedPatch[s];
+            auto d_Flux_Array_ptr = d_Flux_Array + UsedPatch[s];
+
+            cgh.parallel_for(
+                sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * FFT::block_dim,
+                                  FFT::block_dim),
+                [=](sycl::nd_item<3> item_ct1) {
+                   GPU_ELBDMSolver_GramFE_FFT(
+                       d_Flu_Array_F_In_ptr,
+                       d_Flu_Array_F_Out_ptr,
+                       d_Flux_Array_ptr,
+                       dt, 1.0/dh, ELBDM_Eta, StoreFlux, XYZ, MinDens, cufftdx_workspace, cufftdx_iworkspace );
+                });
+         });
 
 #     elif ( GRAMFE_SCHEME == GRAMFE_MATMUL )
-         GPU_ELBDMSolver_GramFE_MATMUL <<< NPatch_per_Stream[s], BlockDim_FluidSolver, 0, Stream[s] >>>
-            ( d_Flu_Array_F_In  + UsedPatch[s],
-              d_Flu_Array_F_Out + UsedPatch[s],
-              d_Flux_Array      + UsedPatch[s],
-              d_Flu_TimeEvo,
-              dt, dh, ELBDM_Eta, StoreFlux, XYZ, MinDens );
+
+         Stream[s]->submit([&](sycl::handler &cgh) {
+            auto d_Flu_Array_F_In_ptr = d_Flu_Array_F_In + UsedPatch[s];
+            auto d_Flu_Array_F_Out_ptr = d_Flu_Array_F_Out + UsedPatch[s];
+            auto d_Flux_Array_ptr = d_Flux_Array + UsedPatch[s];
+            auto d_Flu_TimeEvo_ptr = d_Flu_TimeEvo;
+
+            cgh.parallel_for(
+                sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * BlockDim_FluidSolver,
+                                  BlockDim_FluidSolver),
+                [=](sycl::nd_item<3> item_ct1) {
+                   GPU_ELBDMSolver_GramFE_MATMUL(
+                       d_Flu_Array_F_In_ptr,
+                       d_Flu_Array_F_Out_ptr,
+                       d_Flux_Array_ptr,
+                       d_Flu_TimeEvo_ptr,
+                       dt, dh, ELBDM_Eta, StoreFlux, XYZ, MinDens );
+                });
+         });
+
 #     else
 #        error : ERROR : unsupported GRAMFE_SCHEME !!
 #     endif // GRAMFE_SCHEME
@@ -660,13 +900,26 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
          real (*smaller_d_Flu_Array_F_Out)[FLU_NIN ][CUBE(PS2)]     = (real (*)[FLU_NIN][CUBE(PS2)]    ) d_Flu_Array_F_Out;
 #        endif
 
-         GPU_ELBDMSolver_HamiltonJacobi <<< NPatch_per_Stream[s], BlockDim_FluidSolver_HJ, 0, Stream[s] >>>
-            (  smaller_d_Flu_Array_F_In  + UsedPatch[s],
-               smaller_d_Flu_Array_F_Out + UsedPatch[s],
-               d_Flux_Array              + UsedPatch[s],
-               d_IsCompletelyRefined     + UsedPatch[s],
-               d_HasWaveCounterpart      + UsedPatch[s],
-               dt, 1.0/dh, ELBDM_Eta, StoreFlux, XYZ, MinDens );
+         Stream[s]->submit([&](sycl::handler &cgh) {
+            auto smaller_d_Flu_Array_F_In_ptr = smaller_d_Flu_Array_F_In + UsedPatch[s];
+            auto smaller_d_Flu_Array_F_Out_ptr = smaller_d_Flu_Array_F_Out + UsedPatch[s];
+            auto d_Flux_Array_ptr = d_Flux_Array + UsedPatch[s];
+            auto d_IsCompletelyRefined_ptr = d_IsCompletelyRefined + UsedPatch[s];
+            auto d_HasWaveCounterpart_ptr = d_HasWaveCounterpart + UsedPatch[s];
+
+            cgh.parallel_for(
+                sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * BlockDim_FluidSolver_HJ,
+                                  BlockDim_FluidSolver_HJ),
+                [=](sycl::nd_item<3> item_ct1) {
+                   GPU_ELBDMSolver_HamiltonJacobi(
+                       smaller_d_Flu_Array_F_In_ptr,
+                       smaller_d_Flu_Array_F_Out_ptr,
+                       d_Flux_Array_ptr,
+                       d_IsCompletelyRefined_ptr,
+                       d_HasWaveCounterpart_ptr,
+                       dt, 1.0/dh, ELBDM_Eta, StoreFlux, XYZ, MinDens );
+                });
+         });
 
       } // if ( UseWaveFlag ) ... else ...
 #     endif // #if ( ELBDM_SCHEME == ELBDM_HYBRID )
@@ -678,7 +931,6 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 #     endif // MODEL
 
 
-      DEVICE_CHECK_ERROR( cudaGetLastError() );
    } // for (int s=0; s<GPU_NStream; s++)
 
 
@@ -691,33 +943,33 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 #     if ( ELBDM_SCHEME == ELBDM_HYBRID  &&  !defined(GAMER_DEBUG) )
       if ( UseWaveFlag ) {
 #     endif
-      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( h_Flu_Array_Out + UsedPatch[s], d_Flu_Array_F_Out + UsedPatch[s],
-                         Flu_MemSize_Out[s], cudaMemcpyDeviceToHost, Stream[s] )  );
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( h_Flu_Array_Out + UsedPatch[s], d_Flu_Array_F_Out + UsedPatch[s],
+                         Flu_MemSize_Out[s] )  ));
 #     if ( ELBDM_SCHEME == ELBDM_HYBRID  &&  !defined(GAMER_DEBUG) )
       } else {
       real (*smaller_h_Flu_Array_Out  )[FLU_NIN][CUBE(PS2)] = (real (*)[FLU_NIN][CUBE(PS2)]) h_Flu_Array_Out;
       real (*smaller_d_Flu_Array_F_Out)[FLU_NIN][CUBE(PS2)] = (real (*)[FLU_NIN][CUBE(PS2)]) d_Flu_Array_F_Out;
-      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( smaller_h_Flu_Array_Out + UsedPatch[s], smaller_d_Flu_Array_F_Out + UsedPatch[s],
-                         Flu_MemSize_Out[s], cudaMemcpyDeviceToHost, Stream[s] )  );
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( smaller_h_Flu_Array_Out + UsedPatch[s], smaller_d_Flu_Array_F_Out + UsedPatch[s],
+                         Flu_MemSize_Out[s] )  ));
       }
 #     endif
 
       if ( StoreFlux )
-      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( h_Flux_Array    + UsedPatch[s], d_Flux_Array      + UsedPatch[s],
-                         Flux_MemSize[s],    cudaMemcpyDeviceToHost, Stream[s] )  );
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( h_Flux_Array    + UsedPatch[s], d_Flux_Array      + UsedPatch[s],
+                         Flux_MemSize[s] )  ));
 
 #     ifdef MHD
-      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( h_Mag_Array_Out + UsedPatch[s], d_Mag_Array_F_Out + UsedPatch[s],
-                         Mag_MemSize_Out[s], cudaMemcpyDeviceToHost, Stream[s] )  );
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( h_Mag_Array_Out + UsedPatch[s], d_Mag_Array_F_Out + UsedPatch[s],
+                         Mag_MemSize_Out[s] )  ));
 
       if ( StoreElectric )
-      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( h_Ele_Array     + UsedPatch[s], d_Ele_Array       + UsedPatch[s],
-                         Ele_MemSize[s],    cudaMemcpyDeviceToHost, Stream[s] )  );
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( h_Ele_Array     + UsedPatch[s], d_Ele_Array       + UsedPatch[s],
+                         Ele_MemSize[s] )  ));
 #     endif
 
 #     ifdef DUAL_ENERGY
-      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( h_DE_Array_Out  + UsedPatch[s], d_DE_Array_F_Out  + UsedPatch[s],
-                         DE_MemSize_Out[s],  cudaMemcpyDeviceToHost, Stream[s] )  );
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( h_DE_Array_Out  + UsedPatch[s], d_DE_Array_F_Out  + UsedPatch[s],
+                         DE_MemSize_Out[s] )  ));
 #     endif
    } // for (int s=0; s<GPU_NStream; s++)
 

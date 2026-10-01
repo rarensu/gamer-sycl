@@ -1,10 +1,21 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "GPUAPI.h"
 #include "FLU.h"
 
 #ifdef GPU
 
 
-
+#ifdef SYCL_LANGUAGE_VERSION
+void GPU_SrcSolver_IterateAllCells(
+   const real g_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)           ],
+         real g_Flu_Array_Out[][FLU_NOUT_S][ CUBE(PS1)               ],
+   const real g_Mag_Array_In [][NCOMP_MAG ][ SRC_NXT_P1*SQR(SRC_NXT) ],
+   const double g_Corner_Array[][3],
+   const SrcTerms_t SrcTerms, const int NPatchGroup, const real dt, const real dh,
+   const double TimeNew, const double TimeOld,
+   const real MinDens, const real MinPres, const real MinEint, const long PassiveFloor, const EoS_t EoS );
+#else
 __global__
 void GPU_SrcSolver_IterateAllCells(
    const real g_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)           ],
@@ -14,6 +25,7 @@ void GPU_SrcSolver_IterateAllCells(
    const SrcTerms_t SrcTerms, const int NPatchGroup, const real dt, const real dh,
    const double TimeNew, const double TimeOld,
    const real MinDens, const real MinPres, const real MinEint, const long PassiveFloor, const EoS_t EoS );
+#endif
 
 // device pointers
 extern real (*d_Flu_Array_S_In )[FLU_NIN_S ][ CUBE(SRC_NXT)           ];
@@ -25,7 +37,7 @@ static real (*d_Mag_Array_S_In)[NCOMP_MAG  ][ SRC_NXT_P1*SQR(SRC_NXT) ] = NULL;
 #endif
 extern double (*d_Corner_Array_S)[3];
 
-extern cudaStream_t *Stream;
+extern dpct::queue_ptr *Stream;
 
 
 
@@ -89,7 +101,7 @@ void GPU_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)
 
 
 // set the block size
-   dim3 BlockDim_SrcSolver( SRC_BLOCK_SIZE, 1, 1 );
+   dpct::dim3 BlockDim_SrcSolver( SRC_BLOCK_SIZE, 1, 1 );
 
 
 // set the number of patches and the corresponding data size to be transferred into GPU in each stream
@@ -137,16 +149,16 @@ void GPU_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)
    {
       if ( NPatch_per_Stream[s] == 0 )    continue;
 
-      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Flu_Array_S_In + UsedPatch[s], h_Flu_Array_In + UsedPatch[s],
-                         Flu_MemSize_In[s], cudaMemcpyHostToDevice, Stream[s] )  );
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Flu_Array_S_In + UsedPatch[s], h_Flu_Array_In + UsedPatch[s],
+                         Flu_MemSize_In[s] )  ));
 
 #     ifdef MHD
-      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Mag_Array_S_In + UsedPatch[s], h_Mag_Array_In + UsedPatch[s],
-                         Mag_MemSize_In[s], cudaMemcpyHostToDevice, Stream[s] )  );
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Mag_Array_S_In + UsedPatch[s], h_Mag_Array_In + UsedPatch[s],
+                         Mag_MemSize_In[s] )  ));
 #     endif
 
-      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Corner_Array_S + UsedPatch[s], h_Corner_Array + UsedPatch[s],
-                         Corner_MemSize[s], cudaMemcpyHostToDevice, Stream[s] )  );
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Corner_Array_S + UsedPatch[s], h_Corner_Array + UsedPatch[s],
+                         Corner_MemSize[s] )  ));
    } // for (int s=0; s<GPU_NStream; s++)
 
 
@@ -156,15 +168,26 @@ void GPU_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)
    {
       if ( NPatch_per_Stream[s] == 0 )    continue;
 
-      GPU_SrcSolver_IterateAllCells <<< NPatch_per_Stream[s], BlockDim_SrcSolver, 0, Stream[s] >>>
-                                      ( d_Flu_Array_S_In  + UsedPatch[s],
-                                        d_Flu_Array_S_Out + UsedPatch[s],
-                                        d_Mag_Array_S_In  + UsedPatch[s],
-                                        d_Corner_Array_S  + UsedPatch[s],
-                                        SrcTerms, NPatchGroup, dt, dh, TimeNew, TimeOld,
-                                        MinDens, MinPres, MinEint, PassiveFloor, EoS );
+      Stream[s]->submit([&](sycl::handler &cgh) {
+         auto d_Flu_Array_S_In_UsedPatch_s_ct0 = d_Flu_Array_S_In + UsedPatch[s];
+         auto d_Flu_Array_S_Out_UsedPatch_s_ct1 = d_Flu_Array_S_Out + UsedPatch[s];
+         auto d_Mag_Array_S_In_UsedPatch_s_ct2 = d_Mag_Array_S_In + UsedPatch[s];
+         auto d_Corner_Array_S_UsedPatch_s_ct3 = d_Corner_Array_S + UsedPatch[s];
 
-      DEVICE_CHECK_ERROR( cudaGetLastError() );
+         cgh.parallel_for(
+             sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * BlockDim_SrcSolver,
+                               BlockDim_SrcSolver),
+             [=](sycl::nd_item<3> item_ct1) {
+                GPU_SrcSolver_IterateAllCells(
+                    d_Flu_Array_S_In_UsedPatch_s_ct0,
+                    d_Flu_Array_S_Out_UsedPatch_s_ct1,
+                    d_Mag_Array_S_In_UsedPatch_s_ct2,
+                    d_Corner_Array_S_UsedPatch_s_ct3,
+                    SrcTerms, NPatchGroup, dt, dh, TimeNew, TimeOld,
+                    MinDens, MinPres, MinEint, PassiveFloor, EoS );
+             });
+      });
+
    } // for (int s=0; s<GPU_NStream; s++)
 
 
@@ -174,8 +197,8 @@ void GPU_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)
    {
       if ( NPatch_per_Stream[s] == 0 )    continue;
 
-      DEVICE_CHECK_ERROR(  cudaMemcpyAsync( h_Flu_Array_Out + UsedPatch[s], d_Flu_Array_S_Out + UsedPatch[s],
-                         Flu_MemSize_Out[s], cudaMemcpyDeviceToHost, Stream[s] )  );
+      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( h_Flu_Array_Out + UsedPatch[s], d_Flu_Array_S_Out + UsedPatch[s],
+                         Flu_MemSize_Out[s] )  ));
    } // for (int s=0; s<GPU_NStream; s++)
 
 

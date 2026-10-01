@@ -219,27 +219,27 @@ void GPU_SetCache()
 // 1. fluid solver
 #  if   ( MODEL == HYDRO )
 #  if   ( FLU_SCHEME == RTVD )
-   DEVICE_CHECK_ERROR( 0 );
+   // TODO: set preference to `PreferShared` for kernel `GPU_FluidSolver_RTVD`
 #  elif ( FLU_SCHEME == MHM )
-   DEVICE_CHECK_ERROR( 0 );
+   // TODO: set preference to `PreferL1` for kernel `GPU_FluidSolver_MHM`
 #  elif ( FLU_SCHEME == MHM_RP )
-   DEVICE_CHECK_ERROR( 0 );
+   // TODO: set preference to `PreferL1` for kernel `GPU_FluidSolver_MHM`
 #  elif ( FLU_SCHEME == CTU )
-   DEVICE_CHECK_ERROR( 0 );
+   // TODO: set preference to `PreferL1` for kernel `GPU_FluidSolver_CTU`
 #  endif
-   DEVICE_CHECK_ERROR( 0 );
+   // TODO: set preference to `PreferShared` for kernel `GPU_dtSolver_HydroCFL`
 #  ifdef GRAVITY
-   DEVICE_CHECK_ERROR( 0 );
+   // TODO: set preference to `PreferShared` for kernel `GPU_dtSolver_HydroGravity`
 #  endif
 
 #  elif ( MODEL == ELBDM )
 #  if   ( WAVE_SCHEME == WAVE_FD )
-   DEVICE_CHECK_ERROR( 0 );
+   // TODO: set preference to `PreferShared` for kernel `GPU_ELBDMSolver_FD`
 #  elif ( WAVE_SCHEME == WAVE_GRAMFE )
 #   if   ( GRAMFE_SCHEME == GRAMFE_FFT )
-   DEVICE_CHECK_ERROR( 0 );
+   // TODO: set preference to `PreferShared` for kernel `GPU_ELBDMSolver_GramFE_FFT`
 #   elif ( GRAMFE_SCHEME == GRAMFE_MATMUL )
-   DEVICE_CHECK_ERROR( 0 );
+   // TODO: set preference to `PreferShared` for kernel `GPU_ELBDMSolver_GramFE_MATMUL`
 #   else // GRAMFE_SCHEME
 #   error : ERROR : unsupported GRAMFE_SCHEME !!
 #   endif // GRAMFE_SCHEME
@@ -247,7 +247,7 @@ void GPU_SetCache()
 #  error : ERROR : unsupported WAVE_SCHEME !!
 #  endif // WAVE_SCHEME
 #  if ( ELBDM_SCHEME == ELBDM_HYBRID )
-   DEVICE_CHECK_ERROR( 0 );
+   // TODO: set preference to `PreferShared` for kernel `GPU_ELBDMSolver_HamiltonJacobi`
 #  endif
 
 #  else
@@ -259,18 +259,18 @@ void GPU_SetCache()
 
 // 2. Poisson solver
 #  if   ( POT_SCHEME == SOR )
-   DEVICE_CHECK_ERROR( 0 );
+   // TODO: set preference to `PreferShared` for kernel `GPU_PoissonSolver_SOR`
 #  elif ( POT_SCHEME == MG )
-   DEVICE_CHECK_ERROR( 0 );
+   // TODO: set preference to `PreferShared` for kernel `GPU_PoissonSolver_MG`
 #  endif // POT_SCHEME
 
 
 // 3. gravity solver
 #  if   ( MODEL == HYDRO )
-   DEVICE_CHECK_ERROR( 0 );
+   // TODO: set preference to `PreferShared` for kernel `GPU_HydroGravitySolver`
 
 #  elif ( MODEL == ELBDM )
-   DEVICE_CHECK_ERROR( 0 );
+   // TODO: set preference to `PreferL1` for kernel `GPU_ELBDMGravitySolver`
 
 #  else
 #  error : ERROR : unsupported MODEL !!
@@ -280,7 +280,7 @@ void GPU_SetCache()
 
 
 // 4. source-term solver
-   DEVICE_CHECK_ERROR( 0 );
+   // TODO: set preference to `PreferL1` for kernel `GPU_SrcSolver_IterateAllCells`
 
 
    if ( MPI_Rank == 0 )    Aux_Message( stdout, "%s ... done\n", __FUNCTION__ );
