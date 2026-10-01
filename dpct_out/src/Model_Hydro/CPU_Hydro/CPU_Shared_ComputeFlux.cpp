@@ -13,10 +13,10 @@
 #ifdef SYCL_LANGUAGE_VERSION
 
 #if ( RSOLVER == EXACT  ||  RSOLVER_RESCUE == EXACT )
-# include "FLU_Shared_RiemannSolver_Exact.cu"
+# include "CUFLU_Shared_RiemannSolver_Exact.cu"
 #endif
 #if ( RSOLVER == ROE    ||  RSOLVER_RESCUE == ROE   )
-# include "FLU_Shared_RiemannSolver_Roe.cu"
+# include "CUFLU_Shared_RiemannSolver_Roe.cu"
 #endif
 #if ( RSOLVER == HLLE   ||  RSOLVER_RESCUE == HLLE  )
 #include "CPU_Shared_RiemannSolver_HLLE.cpp"
@@ -25,7 +25,7 @@
 #include "CPU_Shared_RiemannSolver_HLLC.cpp"
 #endif
 #if ( RSOLVER == HLLD   ||  RSOLVER_RESCUE == HLLD  )
-# include "FLU_Shared_RiemannSolver_HLLD.cu"
+# include "CUFLU_Shared_RiemannSolver_HLLD.cu"
 #endif
 
 #else // #ifdef __CUDACC__

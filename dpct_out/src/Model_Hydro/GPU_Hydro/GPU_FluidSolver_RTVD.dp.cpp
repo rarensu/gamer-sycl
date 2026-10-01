@@ -11,7 +11,7 @@
 #endif
 
 
-#include "GPU_Shared_FluUtility.cu"
+#include "CUFLU_Shared_FluUtility.cu"
 #include "ConstMemory.h"
 
 #define to1D1(z,y,x) ( __umul24(z, FLU_NXT*FLU_NXT) + __umul24(y, FLU_NXT) + x )

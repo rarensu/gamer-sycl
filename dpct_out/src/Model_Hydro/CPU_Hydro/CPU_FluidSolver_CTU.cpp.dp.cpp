@@ -14,7 +14,7 @@
 #include "CPU_Shared_ComputeFlux.cpp"
 #include "CPU_Shared_FullStepUpdate.cpp"
 #ifdef MHD
-#include "GPU_Shared_ConstrainedTransport.cu"
+#include "CUFLU_Shared_ConstrainedTransport.cu"
 #endif
 
 #include "ConstMemory.h"

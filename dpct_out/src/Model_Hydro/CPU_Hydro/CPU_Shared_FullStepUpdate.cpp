@@ -13,11 +13,11 @@
 #ifdef SYCL_LANGUAGE_VERSION
 
 #if ( NCOMP_PASSIVE > 0 )
-# include "FLU_Shared_FluUtility.cu"
+# include "CUFLU_Shared_FluUtility.cu"
 #endif
 
 #ifdef DUAL_ENERGY
-# include "FLU_Shared_DualEnergy.cu"
+# include "CUFLU_Shared_DualEnergy.cu"
 #endif
 
 #endif // #ifdef __CUDACC__
