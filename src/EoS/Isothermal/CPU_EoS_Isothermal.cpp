@@ -15,7 +15,7 @@
 
 2. This file is shared by both CPU and GPU
 
-   GPU_EoS_Isothermal.cu -> CPU_EoS_Isothermal.cpp
+   GPU_EoS_Isothermal.cpp == CPU_EoS_Isothermal.cpp
 
 3. Three steps are required to implement an EoS
 

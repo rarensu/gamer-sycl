@@ -14,7 +14,7 @@
 #include "CPU_Shared_ComputeFlux.cpp"
 #include "CPU_Shared_FullStepUpdate.cpp"
 #ifdef MHD
-#include "FLU_Shared_ConstrainedTransport.cu"
+#include "CUFLU_Shared_ConstrainedTransport.cu"
 #endif
 
 #include "ConstMemory.h"
@@ -88,7 +88,7 @@ void Hydro_TGradientCorrection(
     const long PassiveFloor);
 
 //-------------------------------------------------------------------------------------------------------
-// Function    :  CPU/FLU_FluidSolver_CTU
+// Function    :  CPU/GPU_FluidSolver_CTU
 // Description :  CPU/GPU fluid solver based on the Corner-Transport-Upwind (CTU) scheme
 //
 // Note        :  1. Ref: (a) Stone et al., ApJS, 178, 137 (2008)
@@ -156,7 +156,7 @@ void Hydro_TGradientCorrection(
 //-------------------------------------------------------------------------------------------------------
 #ifdef SYCL_LANGUAGE_VERSION
 SYCL_EXTERNAL
-void FLU_FluidSolver_CTU(
+void GPU_FluidSolver_CTU(
     const real g_Flu_Array_In[][NCOMP_TOTAL][CUBE(FLU_NXT)],
     real g_Flu_Array_Out[][NCOMP_TOTAL][CUBE(PS2)],
     /*

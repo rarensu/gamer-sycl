@@ -10,10 +10,10 @@
 
 #include "Global.h"
 #include "CheckError.h"
-#include "FLU_Shared_FluUtility.cu"
+#include "CUFLU_Shared_FluUtility.cu"
 #include "ConstMemory.h"
 #ifdef DUAL_ENERGY
-#include "FLU_Shared_DualEnergy.cu"
+#include "CUFLU_Shared_DualEnergy.cu"
 #endif
 
 extern double *d_SrcEC_TEF_lambda;

@@ -15,7 +15,7 @@
 #include "CPU_Shared_FluUtility.cpp"
 
 #if ( FLU_SCHEME == MHM  &&  defined MHD )
-#include "FLU_Shared_ConstrainedTransport.cu"
+#include "CUFLU_Shared_ConstrainedTransport.cu"
 #endif
 
 #else

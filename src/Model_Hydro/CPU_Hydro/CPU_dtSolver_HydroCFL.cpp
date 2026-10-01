@@ -7,7 +7,7 @@
 // external functions and GPU-related set-up
 #ifdef __CUDACC__
 
-#include "CUFLU_Shared_FluUtility.cu"
+#include "CPU_Shared_FluUtility.cpp"
 #include "ConstMemory.h"
 
 // parallel reduction routine
@@ -26,7 +26,7 @@
 
 
 //-----------------------------------------------------------------------------------------
-// Function    :  CPU/CUFLU_dtSolver_HydroCFL
+// Function    :  CPU/GPU_dtSolver_HydroCFL
 // Description :  Estimate the evolution time-step (dt) from the CFL condition of the hydro/MHD solver
 //
 // Note        :  1. This function should be applied to both physical and comoving coordinates and always
@@ -54,7 +54,7 @@
 //-----------------------------------------------------------------------------------------
 #ifdef __CUDACC__
 __global__
-void CUFLU_dtSolver_HydroCFL( real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_T][ CUBE(PS1) ],
+void GPU_dtSolver_HydroCFL( real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_T][ CUBE(PS1) ],
                               const real g_Mag_Array[][NCOMP_MAG][ PS1P1*SQR(PS1) ],
                               const real dh, const real Safety, const real MinPres,
                               const long PassiveFloor, const EoS_t EoS, const MicroPhy_t MicroPhy )
@@ -231,7 +231,7 @@ void CPU_dtSolver_HydroCFL  ( real g_dt_Array[], const real g_Flu_Array[][FLU_NI
 
    } // for (int p=0; p<8*NPG; p++)
 
-} // FUNCTION : CPU/CUFLU_dtSolver_HydroCFL
+} // FUNCTION : CPU/GPU_dtSolver_HydroCFL
 
 
 

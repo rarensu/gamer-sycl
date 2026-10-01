@@ -14,7 +14,7 @@
 
 2. This file is shared by both CPU and GPU
 
-   GPU_Poisson/CUPOT_ExtPot_PointMass.cu -> CPU_Poisson/CPU_ExtPot_PointMass.cpp
+   GPU_Poisson/GPU_ExtPot_PointMass.cpp == CPU_Poisson/CPU_ExtPot_PointMass.cpp
 
 3. Three steps are required to implement external potential
 

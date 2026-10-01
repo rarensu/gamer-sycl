@@ -6,7 +6,7 @@
 
 
 __global__
-void CUSRC_SrcSolver_IterateAllCells(
+void GPU_SrcSolver_IterateAllCells(
    const real g_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)           ],
          real g_Flu_Array_Out[][FLU_NOUT_S][ CUBE(PS1)               ],
    const real g_Mag_Array_In [][NCOMP_MAG ][ SRC_NXT_P1*SQR(SRC_NXT) ],
@@ -156,7 +156,7 @@ void GPU_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)
    {
       if ( NPatch_per_Stream[s] == 0 )    continue;
 
-      CUSRC_SrcSolver_IterateAllCells <<< NPatch_per_Stream[s], BlockDim_SrcSolver, 0, Stream[s] >>>
+      GPU_SrcSolver_IterateAllCells <<< NPatch_per_Stream[s], BlockDim_SrcSolver, 0, Stream[s] >>>
                                       ( d_Flu_Array_S_In  + UsedPatch[s],
                                         d_Flu_Array_S_Out + UsedPatch[s],
                                         d_Mag_Array_S_In  + UsedPatch[s],

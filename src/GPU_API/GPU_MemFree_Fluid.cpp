@@ -1,3 +1,5 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "GPUAPI.h"
 #include "FLU.h"
 
@@ -54,7 +56,7 @@ extern gramfe_matmul_float (*d_Flu_TimeEvo)[ 2*FLU_NXT ];
 #  warning : DO YOU WANT TO ADD SOMETHING HERE FOR THE NEW MODEL ??
 #endif
 
-extern cudaStream_t *Stream;
+extern dpct::queue_ptr *Stream;
 
 
 
@@ -63,55 +65,55 @@ extern cudaStream_t *Stream;
 // Function    :  GPU_MemFree_Fluid
 // Description :  Free the GPU and CPU memory previously allocated by GPU_MemAllocate_Fluid()
 //
-// Parameter   :  GPU_NStream : Number of CUDA streams for the asynchronous memory copy
+// Parameter   :  GPU_NStream : Number of GPU queues/streams for the asynchronous memory copy
 //-------------------------------------------------------------------------------------------------------
 void GPU_MemFree_Fluid( const int GPU_NStream )
 {
 
 // free the device memory
-   if ( d_Flu_Array_F_In      != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_Flu_Array_F_In      )  );  d_Flu_Array_F_In      = NULL; }
-   if ( d_Flu_Array_F_Out     != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_Flu_Array_F_Out     )  );  d_Flu_Array_F_Out     = NULL; }
-   if ( d_Flux_Array          != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_Flux_Array          )  );  d_Flux_Array          = NULL; }
+   if ( d_Flu_Array_F_In      != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_Flu_Array_F_In,      dpct::get_in_order_queue() )  ));  d_Flu_Array_F_In      = NULL; }
+   if ( d_Flu_Array_F_Out     != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_Flu_Array_F_Out,     dpct::get_in_order_queue() )  ));  d_Flu_Array_F_Out     = NULL; }
+   if ( d_Flux_Array          != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_Flux_Array,          dpct::get_in_order_queue() )  ));  d_Flux_Array          = NULL; }
 #  ifdef UNSPLIT_GRAVITY
-   if ( d_Pot_Array_USG_F     != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_Pot_Array_USG_F     )  );  d_Pot_Array_USG_F     = NULL; }
-   if ( d_Corner_Array_F      != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_Corner_Array_F      )  );  d_Corner_Array_F      = NULL; }
+   if ( d_Pot_Array_USG_F     != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_Pot_Array_USG_F,     dpct::get_in_order_queue() )  ));  d_Pot_Array_USG_F     = NULL; }
+   if ( d_Corner_Array_F      != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_Corner_Array_F,      dpct::get_in_order_queue() )  ));  d_Corner_Array_F      = NULL; }
 #  endif
 #  ifdef DUAL_ENERGY
-   if ( d_DE_Array_F_Out      != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_DE_Array_F_Out      )  );  d_DE_Array_F_Out      = NULL; }
+   if ( d_DE_Array_F_Out      != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_DE_Array_F_Out,      dpct::get_in_order_queue() )  ));  d_DE_Array_F_Out      = NULL; }
 #  endif
 #  ifdef MHD
-   if ( d_Mag_Array_F_In      != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_Mag_Array_F_In      )  );  d_Mag_Array_F_In      = NULL; }
-   if ( d_Mag_Array_F_Out     != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_Mag_Array_F_Out     )  );  d_Mag_Array_F_Out     = NULL; }
-   if ( d_Ele_Array           != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_Ele_Array           )  );  d_Ele_Array           = NULL; }
-   if ( d_Mag_Array_T         != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_Mag_Array_T         )  );  d_Mag_Array_T         = NULL; }
-   if ( d_Mag_Array_S_In      != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_Mag_Array_S_In      )  );  d_Mag_Array_S_In      = NULL; }
+   if ( d_Mag_Array_F_In      != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_Mag_Array_F_In,      dpct::get_in_order_queue() )  ));  d_Mag_Array_F_In      = NULL; }
+   if ( d_Mag_Array_F_Out     != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_Mag_Array_F_Out,     dpct::get_in_order_queue() )  ));  d_Mag_Array_F_Out     = NULL; }
+   if ( d_Ele_Array           != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_Ele_Array,           dpct::get_in_order_queue() )  ));  d_Ele_Array           = NULL; }
+   if ( d_Mag_Array_T         != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_Mag_Array_T,         dpct::get_in_order_queue() )  ));  d_Mag_Array_T         = NULL; }
+   if ( d_Mag_Array_S_In      != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_Mag_Array_S_In,      dpct::get_in_order_queue() )  ));  d_Mag_Array_S_In      = NULL; }
 #  endif
-   if ( d_dt_Array_T          != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_dt_Array_T          )  );  d_dt_Array_T          = NULL; }
-   if ( d_Flu_Array_T         != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_Flu_Array_T         )  );  d_Flu_Array_T         = NULL; }
-   if ( d_Flu_Array_S_In      != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_Flu_Array_S_In      )  );  d_Flu_Array_S_In      = NULL; }
-   if ( d_Flu_Array_S_Out     != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_Flu_Array_S_Out     )  );  d_Flu_Array_S_Out     = NULL; }
-   if ( d_Corner_Array_S      != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_Corner_Array_S      )  );  d_Corner_Array_S      = NULL; }
+   if ( d_dt_Array_T          != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_dt_Array_T,          dpct::get_in_order_queue() )  ));  d_dt_Array_T          = NULL; }
+   if ( d_Flu_Array_T         != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_Flu_Array_T,         dpct::get_in_order_queue() )  ));  d_Flu_Array_T         = NULL; }
+   if ( d_Flu_Array_S_In      != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_Flu_Array_S_In,      dpct::get_in_order_queue() )  ));  d_Flu_Array_S_In      = NULL; }
+   if ( d_Flu_Array_S_Out     != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_Flu_Array_S_Out,     dpct::get_in_order_queue() )  ));  d_Flu_Array_S_Out     = NULL; }
+   if ( d_Corner_Array_S      != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_Corner_Array_S,      dpct::get_in_order_queue() )  ));  d_Corner_Array_S      = NULL; }
 #  if ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP  ||  FLU_SCHEME == CTU )
-   if ( d_PriVar              != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_PriVar              )  );  d_PriVar              = NULL; }
-   if ( d_Slope_PPM           != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_Slope_PPM           )  );  d_Slope_PPM           = NULL; }
-   if ( d_FC_Var              != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_FC_Var              )  );  d_FC_Var              = NULL; }
-   if ( d_FC_Flux             != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_FC_Flux             )  );  d_FC_Flux             = NULL; }
+   if ( d_PriVar              != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_PriVar,              dpct::get_in_order_queue() )  ));  d_PriVar              = NULL; }
+   if ( d_Slope_PPM           != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_Slope_PPM,           dpct::get_in_order_queue() )  ));  d_Slope_PPM           = NULL; }
+   if ( d_FC_Var              != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_FC_Var,              dpct::get_in_order_queue() )  ));  d_FC_Var              = NULL; }
+   if ( d_FC_Flux             != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_FC_Flux,             dpct::get_in_order_queue() )  ));  d_FC_Flux             = NULL; }
 #  ifdef MHD
-   if ( d_FC_Mag_Half         != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_FC_Mag_Half         )  );  d_FC_Mag_Half         = NULL; }
-   if ( d_EC_Ele              != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_EC_Ele              )  );  d_EC_Ele              = NULL; }
+   if ( d_FC_Mag_Half         != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_FC_Mag_Half,         dpct::get_in_order_queue() )  ));  d_FC_Mag_Half         = NULL; }
+   if ( d_EC_Ele              != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_EC_Ele,              dpct::get_in_order_queue() )  ));  d_EC_Ele              = NULL; }
 #  endif
 #  endif // FLU_SCHEME
 
 #  if ( MODEL == ELBDM )
-   if ( d_IsCompletelyRefined != NULL ) {  DEVICE_CHECK_ERROR (  cudaFree( d_IsCompletelyRefined)  );  d_IsCompletelyRefined = NULL; }
+   if ( d_IsCompletelyRefined != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_IsCompletelyRefined, dpct::get_in_order_queue() )  ));  d_IsCompletelyRefined = NULL; }
 #  endif
 
 #  if ( ELBDM_SCHEME == ELBDM_HYBRID )
-   if ( d_HasWaveCounterpart  != NULL ) {  DEVICE_CHECK_ERROR (  cudaFree( d_HasWaveCounterpart )  );  d_HasWaveCounterpart  = NULL; }
+   if ( d_HasWaveCounterpart  != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_HasWaveCounterpart,  dpct::get_in_order_queue() )  ));  d_HasWaveCounterpart  = NULL; }
 #  endif
 
 #  if ( GRAMFE_SCHEME == GRAMFE_MATMUL )
-   if ( d_Flu_TimeEvo         != NULL ) {  DEVICE_CHECK_ERROR (   cudaFree ( d_Flu_TimeEvo      )  );  d_Flu_TimeEvo         = NULL; }
+   if ( d_Flu_TimeEvo         != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::dpct_free( d_Flu_TimeEvo,         dpct::get_in_order_queue() )  ));  d_Flu_TimeEvo         = NULL; }
 #  endif
 
 #  if ( MODEL != HYDRO  &&  MODEL != ELBDM )
@@ -119,49 +121,49 @@ void GPU_MemFree_Fluid( const int GPU_NStream )
 #  endif
 
 
-// free the host memory allocated by CUDA
+// free the host memory allocated by SYCL
    for (int t=0; t<2; t++)
    {
-      if ( h_Flu_Array_F_In     [t] != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost( h_Flu_Array_F_In     [t] )  );  h_Flu_Array_F_In     [t] = NULL; }
-      if ( h_Flu_Array_F_Out    [t] != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost( h_Flu_Array_F_Out    [t] )  );  h_Flu_Array_F_Out    [t] = NULL; }
-      if ( h_Flux_Array         [t] != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost( h_Flux_Array         [t] )  );  h_Flux_Array         [t] = NULL; }
+      if ( h_Flu_Array_F_In     [t] != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  sycl::free( h_Flu_Array_F_In     [t], dpct::get_in_order_queue() )  ));  h_Flu_Array_F_In     [t] = NULL; }
+      if ( h_Flu_Array_F_Out    [t] != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  sycl::free( h_Flu_Array_F_Out    [t], dpct::get_in_order_queue() )  ));  h_Flu_Array_F_Out    [t] = NULL; }
+      if ( h_Flux_Array         [t] != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  sycl::free( h_Flux_Array         [t], dpct::get_in_order_queue() )  ));  h_Flux_Array         [t] = NULL; }
 #     ifdef UNSPLIT_GRAVITY
-      if ( h_Pot_Array_USG_F    [t] != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost( h_Pot_Array_USG_F    [t] )  );  h_Pot_Array_USG_F    [t] = NULL; }
-      if ( h_Corner_Array_F     [t] != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost( h_Corner_Array_F     [t] )  );  h_Corner_Array_F     [t] = NULL; }
+      if ( h_Pot_Array_USG_F    [t] != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  sycl::free( h_Pot_Array_USG_F    [t], dpct::get_in_order_queue() )  ));  h_Pot_Array_USG_F    [t] = NULL; }
+      if ( h_Corner_Array_F     [t] != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  sycl::free( h_Corner_Array_F     [t], dpct::get_in_order_queue() )  ));  h_Corner_Array_F     [t] = NULL; }
 #     endif
 #     ifdef DUAL_ENERGY
-      if ( h_DE_Array_F_Out     [t] != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost( h_DE_Array_F_Out     [t] )  );  h_DE_Array_F_Out     [t] = NULL; }
+      if ( h_DE_Array_F_Out     [t] != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  sycl::free( h_DE_Array_F_Out     [t], dpct::get_in_order_queue() )  ));  h_DE_Array_F_Out     [t] = NULL; }
 #     endif
 #     ifdef MHD
-      if ( h_Mag_Array_F_In     [t] != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost( h_Mag_Array_F_In     [t] )  );  h_Mag_Array_F_In     [t] = NULL; }
-      if ( h_Mag_Array_F_Out    [t] != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost( h_Mag_Array_F_Out    [t] )  );  h_Mag_Array_F_Out    [t] = NULL; }
-      if ( h_Ele_Array          [t] != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost( h_Ele_Array          [t] )  );  h_Ele_Array          [t] = NULL; }
-      if ( h_Mag_Array_T        [t] != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost( h_Mag_Array_T        [t] )  );  h_Mag_Array_T        [t] = NULL; }
-      if ( h_Mag_Array_S_In     [t] != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost( h_Mag_Array_S_In     [t] )  );  h_Mag_Array_S_In     [t] = NULL; }
+      if ( h_Mag_Array_F_In     [t] != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  sycl::free( h_Mag_Array_F_In     [t], dpct::get_in_order_queue() )  ));  h_Mag_Array_F_In     [t] = NULL; }
+      if ( h_Mag_Array_F_Out    [t] != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  sycl::free( h_Mag_Array_F_Out    [t], dpct::get_in_order_queue() )  ));  h_Mag_Array_F_Out    [t] = NULL; }
+      if ( h_Ele_Array          [t] != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  sycl::free( h_Ele_Array          [t], dpct::get_in_order_queue() )  ));  h_Ele_Array          [t] = NULL; }
+      if ( h_Mag_Array_T        [t] != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  sycl::free( h_Mag_Array_T        [t], dpct::get_in_order_queue() )  ));  h_Mag_Array_T        [t] = NULL; }
+      if ( h_Mag_Array_S_In     [t] != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  sycl::free( h_Mag_Array_S_In     [t], dpct::get_in_order_queue() )  ));  h_Mag_Array_S_In     [t] = NULL; }
 #     endif
-      if ( h_dt_Array_T         [t] != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost( h_dt_Array_T         [t] )  );  h_dt_Array_T         [t] = NULL; }
-      if ( h_Flu_Array_T        [t] != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost( h_Flu_Array_T        [t] )  );  h_Flu_Array_T        [t] = NULL; }
-      if ( h_Flu_Array_S_In     [t] != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost( h_Flu_Array_S_In     [t] )  );  h_Flu_Array_S_In     [t] = NULL; }
-      if ( h_Flu_Array_S_Out    [t] != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost( h_Flu_Array_S_Out    [t] )  );  h_Flu_Array_S_Out    [t] = NULL; }
-      if ( h_Corner_Array_S     [t] != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost( h_Corner_Array_S     [t] )  );  h_Corner_Array_S     [t] = NULL; }
+      if ( h_dt_Array_T         [t] != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  sycl::free( h_dt_Array_T         [t], dpct::get_in_order_queue() )  ));  h_dt_Array_T         [t] = NULL; }
+      if ( h_Flu_Array_T        [t] != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  sycl::free( h_Flu_Array_T        [t], dpct::get_in_order_queue() )  ));  h_Flu_Array_T        [t] = NULL; }
+      if ( h_Flu_Array_S_In     [t] != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  sycl::free( h_Flu_Array_S_In     [t], dpct::get_in_order_queue() )  ));  h_Flu_Array_S_In     [t] = NULL; }
+      if ( h_Flu_Array_S_Out    [t] != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  sycl::free( h_Flu_Array_S_Out    [t], dpct::get_in_order_queue() )  ));  h_Flu_Array_S_Out    [t] = NULL; }
+      if ( h_Corner_Array_S     [t] != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  sycl::free( h_Corner_Array_S     [t], dpct::get_in_order_queue() )  ));  h_Corner_Array_S     [t] = NULL; }
 
 #     if ( MODEL == ELBDM )
-      if ( h_IsCompletelyRefined[t] != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost( h_IsCompletelyRefined[t] )  );  h_IsCompletelyRefined[t] = NULL; }
+      if ( h_IsCompletelyRefined[t] != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  sycl::free( h_IsCompletelyRefined[t], dpct::get_in_order_queue() )  ));  h_IsCompletelyRefined[t] = NULL; }
 #     endif
 
 #     if ( ELBDM_SCHEME == ELBDM_HYBRID )
-      if ( h_HasWaveCounterpart [t] != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost( h_HasWaveCounterpart [t] )  ); h_HasWaveCounterpart  [t] = NULL; }
+      if ( h_HasWaveCounterpart [t] != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  sycl::free( h_HasWaveCounterpart [t], dpct::get_in_order_queue() )  )); h_HasWaveCounterpart  [t] = NULL; }
 #     endif
    } // for (int t=0; t<2; t++)
 
 #  if ( GRAMFE_SCHEME == GRAMFE_MATMUL )
-   if ( h_GramFE_TimeEvo != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost ( h_GramFE_TimeEvo )  );  h_GramFE_TimeEvo = NULL; }
+   if ( h_GramFE_TimeEvo != NULL ) {  DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  sycl::free( h_GramFE_TimeEvo, dpct::get_in_order_queue() )  ));  h_GramFE_TimeEvo = NULL; }
 #  endif
 
-// destroy streams
+// destroy queues
    if ( Stream != NULL )
    {
-      for (int s=0; s<GPU_NStream; s++)   DEVICE_CHECK_ERROR(  cudaStreamDestroy( Stream[s] )  );
+      for (int s=0; s<GPU_NStream; s++)   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  dpct::get_current_device().destroy_queue(Stream[s])  ));
 
       delete [] Stream;
       Stream = NULL;

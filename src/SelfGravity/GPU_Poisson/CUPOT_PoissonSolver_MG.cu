@@ -71,7 +71,7 @@ static __device__ void EstimateError( const real *Sol, const real *RHS, const re
 
 
 //-------------------------------------------------------------------------------------------------------
-// Function    :  CUPOT_PoissonSolver_MG
+// Function    :  GPU_PoissonSolver_MG
 // Description :  GPU Poisson solver using the multigrid scheme
 //
 // Note        :  a. Work for POT_GHOST_SIZE = 1, 2, 3, 4, 5 <--> POT_NXT_F = 10, 12, 14, 16, 18
@@ -94,7 +94,7 @@ static __device__ void EstimateError( const real *Sol, const real *RHS, const re
 //                                        INT_CQUAD : conservative quadratic interpolation
 //                                        INT_QUAD  : quadratic interpolation
 //---------------------------------------------------------------------------------------------------
-__global__ void CUPOT_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_NXT*RHO_NXT ],
+__global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_NXT*RHO_NXT ],
                                         const real g_Pot_Array_In [][ POT_NXT*POT_NXT*POT_NXT ],
                                               real g_Pot_Array_Out[][ GRA_NXT*GRA_NXT*GRA_NXT ],
                                         const real dh_Min, const int Max_Iter, const int NPre_Smooth,
@@ -487,7 +487,7 @@ __global__ void CUPOT_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RH
    }
 #  endif
 
-} // FUNCTION : CUPOT_PoissonSolver_MG
+} // FUNCTION : GPU_PoissonSolver_MG
 
 
 

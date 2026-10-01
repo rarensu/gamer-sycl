@@ -15,7 +15,7 @@
 
 2. This file is shared by both CPU and GPU
 
-   GPU_EoS_User_Template.cu -> CPU_EoS_User_Template.cpp
+   GPU_EoS_User_Template.cpp == CPU_EoS_User_Template.cpp
 
 3. Three steps are required to implement an EoS
 

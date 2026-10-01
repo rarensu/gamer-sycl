@@ -85,12 +85,12 @@ void GPU_MemAllocate()
 
 
             if ( MPI_Rank == 0 )
-               Aux_Message( stderr, "WARNING : CUDA out of memory --> reducing GPU_NSTREAM from %d to %d automatically\n",
+               Aux_Message( stderr, "WARNING : GPU out of memory --> reducing GPU_NSTREAM from %d to %d automatically\n",
                             NStreamOld, GPU_NSTREAM );
          }
 
          else
-            Aux_Error( ERROR_INFO, "CUDA out of memory even with GPU_NSTREAM = 1\n"
+            Aux_Error( ERROR_INFO, "GPU out of memory even with GPU_NSTREAM = 1\n"
                        "        --> Try reducing *_GPU_NPGROUP in Input__Parameter manually (or set to -1) !!\n" );
       }
    } // while ( true )

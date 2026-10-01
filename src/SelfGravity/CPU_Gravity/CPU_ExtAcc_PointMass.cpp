@@ -14,7 +14,7 @@
 
 2. This file is shared by both CPU and GPU
 
-   GPU_Gravity/CUPOT_ExtAcc_PointMass.cu -> CPU_Gravity/CPU_ExtAcc_PointMass.cpp
+   GPU_Gravity/GPU_ExtAcc_PointMass.cpp == CPU_Gravity/CPU_ExtAcc_PointMass.cpp
 
 3. Three steps are required to implement external acceleration
 

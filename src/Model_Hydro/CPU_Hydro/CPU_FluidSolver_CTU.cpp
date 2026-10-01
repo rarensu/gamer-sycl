@@ -7,12 +7,12 @@
 // external functions
 #ifdef __CUDACC__
 
-#include "CUFLU_Shared_FluUtility.cu"
-#include "CUFLU_Shared_DataReconstruction.cu"
-#include "CUFLU_Shared_ComputeFlux.cu"
-#include "CUFLU_Shared_FullStepUpdate.cu"
+#include "CPU_Shared_FluUtility.cpp"
+#include "CPU_Shared_DataReconstruction.cpp"
+#include "CPU_Shared_ComputeFlux.cpp"
+#include "CPU_Shared_FullStepUpdate.cpp"
 #ifdef MHD
-#include "CUFLU_Shared_ConstrainedTransport.cu"
+#include "CPU_Shared_ConstrainedTransport.cpp"
 #endif
 
 #include "ConstMemory.h"
@@ -89,7 +89,7 @@ void Hydro_TGradientCorrection(       real g_FC_Var   [][NCOMP_TOTAL_PLUS_MAG][ 
 
 
 //-------------------------------------------------------------------------------------------------------
-// Function    :  CPU/CUFLU_FluidSolver_CTU
+// Function    :  CPU/GPU_FluidSolver_CTU
 // Description :  CPU/GPU fluid solver based on the Corner-Transport-Upwind (CTU) scheme
 //
 // Note        :  1. Ref: (a) Stone et al., ApJS, 178, 137 (2008)
@@ -157,7 +157,7 @@ void Hydro_TGradientCorrection(       real g_FC_Var   [][NCOMP_TOTAL_PLUS_MAG][ 
 //-------------------------------------------------------------------------------------------------------
 #ifdef __CUDACC__
 __global__
-void CUFLU_FluidSolver_CTU(
+void GPU_FluidSolver_CTU(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
          real   g_Flu_Array_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
    const real   g_Mag_Array_In [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],

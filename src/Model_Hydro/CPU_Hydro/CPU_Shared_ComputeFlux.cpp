@@ -13,19 +13,19 @@
 #ifdef __CUDACC__
 
 #if ( RSOLVER == EXACT  ||  RSOLVER_RESCUE == EXACT )
-# include "CUFLU_Shared_RiemannSolver_Exact.cu"
+# include "CPU_Shared_RiemannSolver_Exact.cpp"
 #endif
 #if ( RSOLVER == ROE    ||  RSOLVER_RESCUE == ROE   )
-# include "CUFLU_Shared_RiemannSolver_Roe.cu"
+# include "CPU_Shared_RiemannSolver_Roe.cpp"
 #endif
 #if ( RSOLVER == HLLE   ||  RSOLVER_RESCUE == HLLE  )
-# include "CUFLU_Shared_RiemannSolver_HLLE.cu"
+# include "CPU_Shared_RiemannSolver_HLLE.cpp"
 #endif
 #if ( RSOLVER == HLLC   ||  RSOLVER_RESCUE == HLLC  )
-# include "CUFLU_Shared_RiemannSolver_HLLC.cu"
+# include "CPU_Shared_RiemannSolver_HLLC.cpp"
 #endif
 #if ( RSOLVER == HLLD   ||  RSOLVER_RESCUE == HLLD  )
-# include "CUFLU_Shared_RiemannSolver_HLLD.cu"
+# include "CPU_Shared_RiemannSolver_HLLD.cpp"
 #endif
 
 #else // #ifdef __CUDACC__

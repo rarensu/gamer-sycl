@@ -12,7 +12,7 @@
 
 
 //-----------------------------------------------------------------------------------------
-// Function    :  CPU/CUPOT_ELBDMGravitySolver
+// Function    :  CPU/GPU_ELBDMGravitySolver
 // Description :  CPU/GPU ELBDM gravity solver for advancing wave function by exp( -i*Eta*(Phi+Lambda*Rho)*dt )
 //
 // Note        :  1. ELBDM gravity solver requires NO potential and fluid ghost zone
@@ -39,7 +39,7 @@
 //-----------------------------------------------------------------------------------------
 #ifdef __CUDACC__
 __global__
-void CUPOT_ELBDMGravitySolver(       real g_Flu_Array[][GRA_NIN][ CUBE(PS1) ],
+void GPU_ELBDMGravitySolver(       real g_Flu_Array[][GRA_NIN][ CUBE(PS1) ],
                                const real g_Pot_Array[][ CUBE(GRA_NXT) ],
                                const real EtaDt, const real dh, const real Lambda )
 #else
@@ -94,7 +94,7 @@ void CPU_ELBDMGravitySolver  (       real g_Flu_Array[][GRA_NIN][ CUBE(PS1) ],
       } // CGPU_LOOP( idx_flu, CUBE(PS1) )
    } // for (int P=0; P<NPatchGroup*8; P++)
 
-} // FUNCTION : CPU/CUPOT_ELBDMGravitySolver
+} // FUNCTION : CPU/GPU_ELBDMGravitySolver
 
 
 

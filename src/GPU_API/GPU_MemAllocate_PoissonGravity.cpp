@@ -1,3 +1,5 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "GPUAPI.h"
 
 #if ( defined GPU  &&  defined GRAVITY )
@@ -81,64 +83,88 @@ int GPU_MemAllocate_PoissonGravity( const int Pot_NPG )
 
 
 // allocate the device memory
-   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Rho_Array_P,       Rho_MemSize_P     )  );
-   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Pot_Array_P_In,    Pot_MemSize_P_In  )  );
-   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Pot_Array_P_Out,   Pot_MemSize_P_Out )  );
+   DEVICE_CHECK_MALLOC( d_Rho_Array_P = (real(*)[CUBE(RHO_NXT)])sycl::malloc_device(
+                           Rho_MemSize_P, dpct::get_in_order_queue()) );
+   DEVICE_CHECK_MALLOC( d_Pot_Array_P_In = (real(*)[CUBE(POT_NXT)])sycl::malloc_device(
+                           Pot_MemSize_P_In, dpct::get_in_order_queue()) );
+   DEVICE_CHECK_MALLOC( d_Pot_Array_P_Out = (real(*)[CUBE(GRA_NXT)])sycl::malloc_device(
+                           Pot_MemSize_P_Out, dpct::get_in_order_queue()) );
 #  ifdef UNSPLIT_GRAVITY
-   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Pot_Array_USG_G,   Pot_MemSize_USG_G )  );
-   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Flu_Array_USG_G,   Flu_MemSize_USG_G )  );
+   DEVICE_CHECK_MALLOC( d_Pot_Array_USG_G = (real(*)[CUBE(USG_NXT_G)])sycl::malloc_device(
+                           Pot_MemSize_USG_G, dpct::get_in_order_queue()) );
+   DEVICE_CHECK_MALLOC( d_Flu_Array_USG_G = (real(*)[GRA_NIN-1][CUBE(PS1)])sycl::malloc_device(
+                           Flu_MemSize_USG_G, dpct::get_in_order_queue()) );
 #  endif
-   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Flu_Array_G,       Flu_MemSize_G     )  );
+   DEVICE_CHECK_MALLOC( d_Flu_Array_G = (real(*)[GRA_NIN][CUBE(PS1)])sycl::malloc_device(
+                           Flu_MemSize_G, dpct::get_in_order_queue()) );
 
    if ( OPT__EXT_ACC  ||  OPT__EXT_POT )
-   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Corner_Array_PGT,  Corner_MemSize    )  );
+   DEVICE_CHECK_MALLOC( d_Corner_Array_PGT = (double(*)[3])sycl::malloc_device(
+                           Corner_MemSize, dpct::get_in_order_queue()) );
 
 #  ifdef DUAL_ENERGY
-   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_DE_Array_G,        DE_MemSize_G      )  );
+   DEVICE_CHECK_MALLOC( d_DE_Array_G = (char(*)[CUBE(PS1)])sycl::malloc_device(
+                           DE_MemSize_G, dpct::get_in_order_queue()) );
 #  endif
 
 #  ifdef MHD
-   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Emag_Array_G,      Emag_MemSize_G    )  );
+   DEVICE_CHECK_MALLOC( d_Emag_Array_G = (real(*)[CUBE(PS1)])sycl::malloc_device(
+                           Emag_MemSize_G, dpct::get_in_order_queue()) );
 #  endif
 
-   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_Pot_Array_T,       Pot_MemSize_T     )  );
+   DEVICE_CHECK_MALLOC( d_Pot_Array_T = (real(*)[CUBE(GRA_NXT)])sycl::malloc_device(
+                           Pot_MemSize_T, dpct::get_in_order_queue()) );
 
    if ( OPT__EXT_POT == EXT_POT_TABLE )
-   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_ExtPotTable,       ExtPot_MemSize    )  );
+   DEVICE_CHECK_MALLOC( d_ExtPotTable = (real *)sycl::malloc_device(
+                           ExtPot_MemSize, dpct::get_in_order_queue()) );
 
-   DEVICE_CHECK_MALLOC(  cudaMalloc( (void**) &d_ExtPotGenePtr,     GenePtr_MemSize   )  );
+   DEVICE_CHECK_MALLOC( d_ExtPotGenePtr = (void **)sycl::malloc_device(
+                           GenePtr_MemSize, dpct::get_in_order_queue()) );
 
 
-// allocate the host memory by CUDA
+// allocate the host memory by SYCL
    for (int t=0; t<2; t++)
    {
-      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Rho_Array_P     [t], Rho_MemSize_P     )  );
-      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Pot_Array_P_In  [t], Pot_MemSize_P_In  )  );
-      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Pot_Array_P_Out [t], Pot_MemSize_P_Out )  );
+      DEVICE_CHECK_MALLOC( h_Rho_Array_P[t] = (real(*)[CUBE(RHO_NXT)])sycl::malloc_host(
+                              Rho_MemSize_P, dpct::get_in_order_queue()) );
+      DEVICE_CHECK_MALLOC( h_Pot_Array_P_In[t] = (real(*)[CUBE(POT_NXT)])sycl::malloc_host(
+                              Pot_MemSize_P_In, dpct::get_in_order_queue()) );
+      DEVICE_CHECK_MALLOC( h_Pot_Array_P_Out[t] = (real(*)[CUBE(GRA_NXT)])sycl::malloc_host(
+                              Pot_MemSize_P_Out, dpct::get_in_order_queue()) );
 #     ifdef UNSPLIT_GRAVITY
-      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Pot_Array_USG_G [t], Pot_MemSize_USG_G )  );
-      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Flu_Array_USG_G [t], Flu_MemSize_USG_G )  );
+      DEVICE_CHECK_MALLOC( h_Pot_Array_USG_G[t] = (real(*)[CUBE(USG_NXT_G)])sycl::malloc_host(
+                              Pot_MemSize_USG_G, dpct::get_in_order_queue()) );
+      DEVICE_CHECK_MALLOC( h_Flu_Array_USG_G[t] = (real(*)[GRA_NIN-1][CUBE(PS1)])sycl::malloc_host(
+                              Flu_MemSize_USG_G, dpct::get_in_order_queue()) );
 #     endif
-      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Flu_Array_G     [t], Flu_MemSize_G     )  );
+      DEVICE_CHECK_MALLOC( h_Flu_Array_G[t] = (real(*)[GRA_NIN][CUBE(PS1)])sycl::malloc_host(
+                              Flu_MemSize_G, dpct::get_in_order_queue()) );
 
       if ( OPT__EXT_ACC  ||  OPT__EXT_POT )
-      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Corner_Array_PGT[t], Corner_MemSize    )  );
+      DEVICE_CHECK_MALLOC( h_Corner_Array_PGT[t] = (double(*)[3])sycl::malloc_host(
+                              Corner_MemSize, dpct::get_in_order_queue()) );
 
 #     ifdef DUAL_ENERGY
-      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_DE_Array_G      [t], DE_MemSize_G      )  );
+      DEVICE_CHECK_MALLOC( h_DE_Array_G[t] = (char(*)[CUBE(PS1)])sycl::malloc_host(
+                              DE_MemSize_G, dpct::get_in_order_queue()) );
 #     endif
 
 #     ifdef MHD
-      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Emag_Array_G    [t], Emag_MemSize_G    )  );
+      DEVICE_CHECK_MALLOC( h_Emag_Array_G[t] = (real(*)[CUBE(PS1)])sycl::malloc_host(
+                              Emag_MemSize_G, dpct::get_in_order_queue()) );
 #     endif
 
-      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_Pot_Array_T     [t], Pot_MemSize_T     )  );
+      DEVICE_CHECK_MALLOC( h_Pot_Array_T[t] = (real(*)[CUBE(GRA_NXT)])sycl::malloc_host(
+                              Pot_MemSize_T, dpct::get_in_order_queue()) );
    } // for (int t=0; t<2; t++)
 
    if ( OPT__EXT_POT == EXT_POT_TABLE )
-      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_ExtPotTable,         ExtPot_MemSize    )  );
+      DEVICE_CHECK_MALLOC( h_ExtPotTable = (real *)sycl::malloc_host(
+                              ExtPot_MemSize, dpct::get_in_order_queue()) );
 
-      DEVICE_CHECK_MALLOC(  cudaMallocHost( (void**) &h_ExtPotGenePtr,       GenePtr_MemSize   )  );
+      DEVICE_CHECK_MALLOC( h_ExtPotGenePtr = (void **)sycl::malloc_host(
+                              GenePtr_MemSize, dpct::get_in_order_queue()) );
 
 
    return GAMER_SUCCESS;

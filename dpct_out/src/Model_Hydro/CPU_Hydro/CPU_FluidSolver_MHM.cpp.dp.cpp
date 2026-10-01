@@ -9,34 +9,34 @@
 // external functions
 #ifdef __CUDACC__
 
-#include "FLU_Shared_FluUtility.cu"
-#include "FLU_Shared_DataReconstruction.cu"
-#include "FLU_Shared_ComputeFlux.cu"
-#include "FLU_Shared_FullStepUpdate.cu"
+#include "CUFLU_Shared_FluUtility.cu"
+#include "CUFLU_Shared_DataReconstruction.cu"
+#include "CUFLU_Shared_ComputeFlux.cu"
+#include "CUFLU_Shared_FullStepUpdate.cu"
 #ifdef MHD
-#include "FLU_Shared_ConstrainedTransport.cu"
+#include "CUFLU_Shared_ConstrainedTransport.cu"
 #endif
 
 #if ( RSOLVER == EXACT  ||  RSOLVER_RESCUE == EXACT )
-# include "FLU_Shared_RiemannSolver_Exact.cu"
+# include "CUFLU_Shared_RiemannSolver_Exact.cu"
 #endif
 #if ( RSOLVER == ROE    ||  RSOLVER_RESCUE == ROE   )
-# include "FLU_Shared_RiemannSolver_Roe.cu"
+# include "CUFLU_Shared_RiemannSolver_Roe.cu"
 #endif
 #if ( RSOLVER == HLLE   ||  RSOLVER_RESCUE == HLLE  )
-# include "FLU_Shared_RiemannSolver_HLLE.cu"
+# include "CUFLU_Shared_RiemannSolver_HLLE.cu"
 #endif
 #if ( RSOLVER == HLLC   ||  RSOLVER_RESCUE == HLLC  )
-# include "FLU_Shared_RiemannSolver_HLLC.cu"
+# include "CUFLU_Shared_RiemannSolver_HLLC.cu"
 #endif
 #if ( RSOLVER == HLLD   ||  RSOLVER_RESCUE == HLLD  )
-# include "FLU_Shared_RiemannSolver_HLLD.cu"
+# include "CUFLU_Shared_RiemannSolver_HLLD.cu"
 #endif
 
 #include "ConstMemory.h"
 
 #ifdef COSMIC_RAY
-# include "FLU_CosmicRay.cu"
+# include "CUFLU_CosmicRay.cu"
 #ifdef CR_DIFFUSION
 # include "../../Microphysics/CosmicRayDiffusion/FLU_CR_AddDiffuseFlux.cu"
 #endif
@@ -183,7 +183,7 @@ static void Hydro_RiemannPredict( const real g_ConVar_In[][ CUBE(FLU_NXT) ],
 
 
 //-------------------------------------------------------------------------------------------------------
-// Function    :  CPU/FLU_FluidSolver_MHM
+// Function    :  CPU/GPU_FluidSolver_MHM
 // Description :  CPU/GPU fluid solver based on the MUSCL-Hancock scheme
 //
 // Note        :  1. The three-dimensional evolution is achieved by using the unsplit method
@@ -264,7 +264,7 @@ static void Hydro_RiemannPredict( const real g_ConVar_In[][ CUBE(FLU_NXT) ],
 //-------------------------------------------------------------------------------------------------------
 #ifdef __CUDACC__
 __global__
-void FLU_FluidSolver_MHM(
+void GPU_FluidSolver_MHM(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
          real   g_Flu_Array_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
    const real   g_Mag_Array_In [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],

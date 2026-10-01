@@ -188,7 +188,7 @@ static uint get1D2(uint k, uint j, uint i, int XYZ) {
 
 
 GPU_DEVICE
-static void CUFLU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+static void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                            real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
                            int NPatchGroup,
                            const gramfe_fft_float dt, const gramfe_fft_float _dh, const gramfe_fft_float Eta,
@@ -258,7 +258,7 @@ gramfe_fft_float SineTaylorExpansion(gramfe_fft_float x, int Nterms) {
 
 
 //-------------------------------------------------------------------------------------------------------
-// Function    :  CUFLU_ELBDMSolver_GramFE_FFT
+// Function    :  GPU_ELBDMSolver_GramFE_FFT
 // Description :  CPU and GPU ELBDM kinematic solver based on computing Gram (FE) extension and evolving wave function
 //                using pseudo-spectral method on extended domain
 //
@@ -286,7 +286,7 @@ gramfe_fft_float SineTaylorExpansion(gramfe_fft_float x, int Nterms) {
 #ifdef __CUDACC__
 __launch_bounds__(FFT::max_threads_per_block)
 __global__
-void CUFLU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+void GPU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                    real g_Fluid_Out[][FLU_NOUT ][ CUBE(PS2) ],
                                    real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                    const real dt, const real _dh, const real Eta, const bool StoreFlux,
@@ -358,27 +358,27 @@ void CPU_ELBDMSolver_GramFE_FFT(   real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ]
 
    if ( XYZ )
    {
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, NPatchGroup, dt, _dh, Eta,
+      GPU_Advance( g_Fluid_In, g_Fluid_Out, NPatchGroup, dt, _dh, Eta,
                                   0,              0, s_In, s_Ae, s_Ao, ExpCoeff, false, 0, MinDens, Workspace, WorkspaceInv );
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, NPatchGroup, dt, _dh, Eta,
+      GPU_Advance( g_Fluid_In, g_Fluid_Out, NPatchGroup, dt, _dh, Eta,
                      FLU_GHOST_SIZE,              0, s_In, s_Ae, s_Ao, ExpCoeff, false, 3, MinDens, Workspace, WorkspaceInv );
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, NPatchGroup, dt, _dh, Eta,
+      GPU_Advance( g_Fluid_In, g_Fluid_Out, NPatchGroup, dt, _dh, Eta,
                      FLU_GHOST_SIZE, FLU_GHOST_SIZE, s_In, s_Ae, s_Ao, ExpCoeff, true,  6, MinDens, Workspace, WorkspaceInv );
    } else  {
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, NPatchGroup, dt, _dh, Eta,
+      GPU_Advance( g_Fluid_In, g_Fluid_Out, NPatchGroup, dt, _dh, Eta,
                                   0,              0, s_In, s_Ae, s_Ao, ExpCoeff, false, 6, MinDens, Workspace, WorkspaceInv );
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, NPatchGroup, dt, _dh, Eta,
+      GPU_Advance( g_Fluid_In, g_Fluid_Out, NPatchGroup, dt, _dh, Eta,
                                   0, FLU_GHOST_SIZE, s_In, s_Ae, s_Ao, ExpCoeff, false, 3, MinDens, Workspace, WorkspaceInv );
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, NPatchGroup, dt, _dh, Eta,
+      GPU_Advance( g_Fluid_In, g_Fluid_Out, NPatchGroup, dt, _dh, Eta,
                      FLU_GHOST_SIZE, FLU_GHOST_SIZE, s_In, s_Ae, s_Ao, ExpCoeff, true,  0, MinDens, Workspace, WorkspaceInv );
    }
 
-} // FUNCTION : CUFLU_ELBDMSolver_GramFE_FFT
+} // FUNCTION : GPU_ELBDMSolver_GramFE_FFT
 
 
 
 //-------------------------------------------------------------------------------------------------------
-// Function    :  CUFLU_Advance
+// Function    :  GPU_Advance
 // Description :  Use CPU/GPU to advance a single patch group by one time-step in the x direction
 //
 // Note        :  Based on Gram-Fourier extension with pseudo-spectral solver on extended domain
@@ -405,7 +405,7 @@ void CPU_ELBDMSolver_GramFE_FFT(   real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ]
 //                WorkspaceInv : Workspace for inverse GPU FFT (useless in CPU mode)
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE
-void CUFLU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                     real g_Fluid_Out[][FLU_NOUT ][ CUBE(PS2) ],
                     int NPatchGroup,
                     const gramfe_fft_float dt, const gramfe_fft_float _dh, const gramfe_fft_float Eta,
@@ -624,7 +624,7 @@ void CUFLU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
 #     endif
    } // #pragma omp parallel
 
-} // FUNCTION : CUFLU_Advance
+} // FUNCTION : GPU_Advance
 
 
 

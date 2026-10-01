@@ -12,7 +12,7 @@
 
 2. This file is shared by both CPU and GPU
 
-   GPU_Poisson/CUPOT_ExtPot_Tabular.cu -> CPU_Poisson/CPU_ExtPot_Tabular.cpp
+   GPU_Poisson/GPU_ExtPot_Tabular.cpp == CPU_Poisson/CPU_ExtPot_Tabular.cpp
 
 3. Three steps are required to implement external potential
 

@@ -6,7 +6,7 @@
 #ifdef GPU
 
 SYCL_EXTERNAL
-void CUSRC_SrcSolver_IterateAllCells(
+void GPU_SrcSolver_IterateAllCells(
     const real g_Flu_Array_In[][FLU_NIN_S][CUBE(SRC_NXT)],
     real g_Flu_Array_Out[][FLU_NOUT_S][CUBE(PS1)],
     /*
@@ -196,7 +196,7 @@ void GPU_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)
                                       BlockDim_SrcSolver,
                                   BlockDim_SrcSolver),
                 [=](sycl::nd_item<3> item_ct1) {
-                   CUSRC_SrcSolver_IterateAllCells(
+                   GPU_SrcSolver_IterateAllCells(
                        d_Flu_Array_S_In_UsedPatch_s_ct0,
                        d_Flu_Array_S_Out_UsedPatch_s_ct1,
                        d_Mag_Array_S_In_UsedPatch_s_ct2,

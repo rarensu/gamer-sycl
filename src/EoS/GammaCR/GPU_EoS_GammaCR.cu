@@ -1,1 +1,0 @@
-CPU_EoS_GammaCR.cpp

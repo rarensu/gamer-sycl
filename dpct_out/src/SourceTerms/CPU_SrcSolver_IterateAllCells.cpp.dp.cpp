@@ -41,7 +41,7 @@
 //-------------------------------------------------------------------------------------------------------
 #ifdef SYCL_LANGUAGE_VERSION
 SYCL_EXTERNAL
-void CUSRC_SrcSolver_IterateAllCells(
+void GPU_SrcSolver_IterateAllCells(
     const real g_Flu_Array_In[][FLU_NIN_S][CUBE(SRC_NXT)],
     real g_Flu_Array_Out[][FLU_NOUT_S][CUBE(PS1)],
     /*

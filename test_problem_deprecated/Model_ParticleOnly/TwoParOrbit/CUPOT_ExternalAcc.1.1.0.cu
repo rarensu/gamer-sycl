@@ -11,11 +11,11 @@
 
 
 //-----------------------------------------------------------------------------------------
-// Function    :  CUPOT_ExternalAcc / CPU_ExternlAcc
+// Function    :  GPU_ExternalAcc / CPU_ExternlAcc
 // Description :  1. Cacalculate the external acceleration from the input coordinates and time
 //                2. This function will be invoked in both the CPU and GPU codes
 //                3. "__forceinline__" is required since this device function will be invoked by more than one kernel
-//                   (e.g., CUPOT_HydroGravitySolver, CUFLU_ComputeFlux <-- which will be called by different fluid solvers)
+//                   (e.g., GPU_HydroGravitySolver, GPU_ComputeFlux <-- which will be called by different fluid solvers)
 //
 // Parameter   :  Acc         : Array to store the output external acceleration
 //                x/y/z       : Spatial coordinates
@@ -26,7 +26,7 @@
 //-----------------------------------------------------------------------------------------
 #ifdef __CUDACC__
 __forceinline__ __device__
-void CUPOT_ExternalAcc( real Acc[], const double x, const double y, const double z, const double Time, const double UserArray[] )
+void GPU_ExternalAcc( real Acc[], const double x, const double y, const double z, const double Time, const double UserArray[] )
 #else
 void   CPU_ExternalAcc( real Acc[], const double x, const double y, const double z, const double Time, const double UserArray[] )
 #endif
@@ -44,7 +44,7 @@ void   CPU_ExternalAcc( real Acc[], const double x, const double y, const double
    Acc[1] = -GM_4*_r3*dy;
    Acc[2] = -GM_4*_r3*dz;
 
-} // FUNCTION : CUPOT_ExternalAcc / CPU_ExternalAcc
+} // FUNCTION : GPU_ExternalAcc / CPU_ExternalAcc
 
 
 

@@ -1,1 +1,0 @@
-ExtPot_LogBar.cpp

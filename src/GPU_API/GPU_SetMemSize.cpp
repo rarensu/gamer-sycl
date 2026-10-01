@@ -1,3 +1,5 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "GPUAPI.h"
 
 #ifdef GPU
@@ -25,19 +27,20 @@ void GPU_SetMemSize( int &GPU_NStream, int &Flu_GPU_NPGroup, int &Pot_GPU_NPGrou
 
 // get the device ID
    int GetDeviceID = 999;
-   DEVICE_CHECK_ERROR(  cudaGetDevice( &GetDeviceID )  );
+   DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( GetDeviceID = dpct::get_current_device_id() ) );
 
 
 // load the device properties
-   cudaDeviceProp DeviceProp;
-   DEVICE_CHECK_ERROR(  cudaGetDeviceProperties( &DeviceProp, GetDeviceID )  );
+   dpct::device_info DeviceProp;
+   DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( dpct::get_device( GetDeviceID ).get_device_info( DeviceProp ) ) );
 
 
 // (1) GPU_NSTREAM
    if ( GPU_NStream <= 0 )
    {
-      int gpuOverlap;
-      DEVICE_CHECK_ERROR(  cudaDeviceGetAttribute(&gpuOverlap, cudaDevAttrGpuOverlap, GetDeviceID)  );
+      // Modern SYCL devices support asynchronous memory overlap by default.
+      // TODO: Replace this constant with an attribute check.
+      int gpuOverlap = 1;
 
       if ( gpuOverlap )
       {
@@ -108,50 +111,50 @@ void GPU_SetMemSize( int &GPU_NStream, int &Flu_GPU_NPGroup, int &Pot_GPU_NPGrou
    {
 #     if   ( MODEL == HYDRO )
 #        if   ( GPU_ARCH == FERMI )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        elif ( GPU_ARCH == KEPLER )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        elif ( GPU_ARCH == MAXWELL )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        elif ( GPU_ARCH == PASCAL )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        elif ( GPU_ARCH == VOLTA )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        elif ( GPU_ARCH == TURING )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        elif ( GPU_ARCH == AMPERE )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        elif ( GPU_ARCH == ADA_LOVELACE )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        elif ( GPU_ARCH == HOPPER )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        elif ( GPU_ARCH == BLACKWELL )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        else
 #        error : UNKNOWN GPU_ARCH !!
 #        endif
 
 #     elif ( MODEL == ELBDM )
 #        if   ( GPU_ARCH == FERMI )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        elif ( GPU_ARCH == KEPLER )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        elif ( GPU_ARCH == MAXWELL )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        elif ( GPU_ARCH == PASCAL )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        elif ( GPU_ARCH == VOLTA )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        elif ( GPU_ARCH == TURING )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        elif ( GPU_ARCH == AMPERE )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        elif ( GPU_ARCH == ADA_LOVELACE )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        elif ( GPU_ARCH == HOPPER )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        elif ( GPU_ARCH == BLACKWELL )
-         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+         Flu_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #        else
 #        error : UNKNOWN GPU_ARCH !!
 #        endif
@@ -167,25 +170,25 @@ void GPU_SetMemSize( int &GPU_NStream, int &Flu_GPU_NPGroup, int &Pot_GPU_NPGrou
    if ( Pot_GPU_NPGroup <= 0 )
    {
 #     if   ( GPU_ARCH == FERMI )
-      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == KEPLER )
-      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == MAXWELL )
-      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == PASCAL )
-      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == VOLTA )
-      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == TURING )
-      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == AMPERE )
-      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == ADA_LOVELACE )
-      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == HOPPER )
-      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == BLACKWELL )
-      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Pot_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     else
 #     error : UNKNOWN GPU_ARCH !!
 #     endif
@@ -199,25 +202,25 @@ void GPU_SetMemSize( int &GPU_NStream, int &Flu_GPU_NPGroup, int &Pot_GPU_NPGrou
    if ( Che_GPU_NPGroup <= 0 )
    {
 #     if   ( GPU_ARCH == FERMI )
-      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == KEPLER )
-      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == MAXWELL )
-      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == PASCAL )
-      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == VOLTA )
-      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == TURING )
-      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == AMPERE )
-      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == ADA_LOVELACE )
-      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == HOPPER )
-      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == BLACKWELL )
-      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Che_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     else
 #     error : UNKNOWN GPU_ARCH !!
 #     endif
@@ -230,25 +233,25 @@ void GPU_SetMemSize( int &GPU_NStream, int &Flu_GPU_NPGroup, int &Pot_GPU_NPGrou
    if ( Src_GPU_NPGroup <= 0 )
    {
 #     if   ( GPU_ARCH == FERMI )
-      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == KEPLER )
-      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == MAXWELL )
-      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == PASCAL )
-      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == VOLTA )
-      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == TURING )
-      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == AMPERE )
-      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == ADA_LOVELACE )
-      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == HOPPER )
-      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     elif ( GPU_ARCH == BLACKWELL )
-      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.multiProcessorCount;
+      Src_GPU_NPGroup = 1*GPU_NStream*DeviceProp.get_max_compute_units();
 #     else
 #     error : UNKNOWN GPU_ARCH !!
 #     endif

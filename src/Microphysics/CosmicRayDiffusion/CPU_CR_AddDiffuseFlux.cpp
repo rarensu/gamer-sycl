@@ -12,7 +12,7 @@
 // external functions
 #ifdef __CUDACC__
 
-# include "CUFLU_CR_ComputeDiffusivity.cu"
+# include "CPU_CR_ComputeDiffusivity.cpp"
 
 #else // #ifdef __CUDACC__
 

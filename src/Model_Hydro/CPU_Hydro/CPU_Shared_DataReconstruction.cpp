@@ -12,14 +12,14 @@
 // external functions
 #ifdef __CUDACC__
 
-#include "CUFLU_Shared_FluUtility.cu"
+#include "CPU_Shared_FluUtility.cpp"
 
 #if ( FLU_SCHEME == MHM  &&  defined MHD )
-#include "CUFLU_Shared_ConstrainedTransport.cu"
+#include "CPU_Shared_ConstrainedTransport.cpp"
 #endif
 
 #ifdef DUAL_ENERGY_PREDICT
-# include "CUFLU_Shared_DualEnergy.cu"
+# include "CPU_Shared_DualEnergy.cpp"
 #endif
 
 #else

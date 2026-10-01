@@ -1,3 +1,5 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "GPUAPI.h"
 #include "ConstMemory.h"
 
@@ -12,7 +14,7 @@ extern real *d_EoS_Table[EOS_NTABLE_MAX];
 // Function    :  GPU_SetConstMemory_EoS
 // Description :  Set the EoS constant memory variables on GPU
 //
-// Note        :  1. Adopt the suggested approach for CUDA version >= 5.0
+// Note        :  1. Adopt the suggested approach for SYCL
 //                2. Invoked by EoS_Init()
 //
 // Parameter   :  None
@@ -24,14 +26,29 @@ void GPU_SetConstMemory_EoS()
 {
 
 // copy data to constant memory
-   DEVICE_CHECK_ERROR(  cudaMemcpyToSymbol( c_EoS_AuxArray_Flt, EoS_AuxArray_Flt, EOS_NAUX_MAX  *sizeof(double) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyToSymbol( c_EoS_AuxArray_Int, EoS_AuxArray_Int, EOS_NAUX_MAX  *sizeof(int   ) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyToSymbol( c_EoS_Table,        d_EoS_Table,      EOS_NTABLE_MAX*sizeof(real* ) )  );
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(dpct::get_in_order_queue()
+                                         .memcpy(c_EoS_AuxArray_Flt.get_ptr(),
+                                                 EoS_AuxArray_Flt,
+                                                 EOS_NAUX_MAX * sizeof(double))
+                                         .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(dpct::get_in_order_queue()
+                                         .memcpy(c_EoS_AuxArray_Int.get_ptr(),
+                                                 EoS_AuxArray_Int,
+                                                 EOS_NAUX_MAX * sizeof(int))
+                                         .wait()));
+   DEVICE_CHECK_ERROR(
+       DPCT_CHECK_ERROR(dpct::get_in_order_queue()
+                            .memcpy(c_EoS_Table.get_ptr(), d_EoS_Table,
+                                    EOS_NTABLE_MAX * sizeof(real *))
+                            .wait()));
 
 // obtain the constant-memory pointers
-   DEVICE_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&EoS.AuxArrayDevPtr_Flt, c_EoS_AuxArray_Flt )   );
-   DEVICE_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&EoS.AuxArrayDevPtr_Int, c_EoS_AuxArray_Int )   );
-   DEVICE_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&EoS.Table,              c_EoS_Table        )   );
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&EoS.AuxArrayDevPtr_Flt) =
+                                         c_EoS_AuxArray_Flt.get_ptr()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&EoS.AuxArrayDevPtr_Int) =
+                                         c_EoS_AuxArray_Int.get_ptr()));
+   DEVICE_CHECK_ERROR(
+       DPCT_CHECK_ERROR(*((void **)&EoS.Table) = c_EoS_Table.get_ptr()));
 
 } // FUNCTION : GPU_SetConstMemory_EoS
 

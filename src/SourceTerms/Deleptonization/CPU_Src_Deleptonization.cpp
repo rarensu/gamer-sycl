@@ -9,7 +9,7 @@
 
 #include "Global.h"
 #include "CheckError.h"
-#include "CUFLU_Shared_FluUtility.cu"
+#include "CPU_Shared_FluUtility.cpp"
 #include "ConstMemory.h"
 
 extern real (*d_SrcDlepProf_Data)[SRC_DLEP_PROF_NBINMAX];
@@ -40,7 +40,7 @@ void Src_PassData2GPU_Deleptonization();
 
 2. This file is shared by both CPU and GPU
 
-   CUSRC_Src_Deleptonization.cu -> CPU_Src_Deleptonization.cpp
+   GPU_Src_Deleptonization.cpp == CPU_Src_Deleptonization.cpp
 
 3. Four steps are required to implement a source term
 

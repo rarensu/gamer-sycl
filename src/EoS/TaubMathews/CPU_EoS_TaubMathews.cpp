@@ -15,7 +15,7 @@
 
 2. This file is shared by both CPU and GPU
 
-   GPU_EoS_TaubMathews.cu -> CPU_EoS_TaubMathews.cpp
+   GPU_EoS_TaubMathews.cpp == CPU_EoS_TaubMathews.cpp
 
 3. Three steps are required to implement an EoS
 

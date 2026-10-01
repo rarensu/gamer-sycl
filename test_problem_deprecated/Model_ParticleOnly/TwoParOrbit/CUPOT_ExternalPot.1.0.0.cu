@@ -11,7 +11,7 @@
 
 
 //-----------------------------------------------------------------------------------------
-// Function    :  CUPOT_ExternalPot / CPU_ExternalPot
+// Function    :  GPU_ExternalPot / CPU_ExternalPot
 // Description :  1. Cacalculate the external potential from the input coordinates and time
 //                2. This function will be invoked by both the CPU and GPU codes
 //
@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------------------------
 #ifdef __CUDACC__
 __device__
-real CUPOT_ExternalPot( const double x, const double y, const double z, const double Time, const double UserArray[] )
+real GPU_ExternalPot( const double x, const double y, const double z, const double Time, const double UserArray[] )
 #else
 real   CPU_ExternalPot( const double x, const double y, const double z, const double Time, const double UserArray[] )
 #endif
@@ -38,7 +38,7 @@ real   CPU_ExternalPot( const double x, const double y, const double z, const do
 
    return -GM_4*_r;
 
-} // FUNCTION : CUPOT_ExternalPot // CPU_ExternalPot
+} // FUNCTION : GPU_ExternalPot // CPU_ExternalPot
 
 
 

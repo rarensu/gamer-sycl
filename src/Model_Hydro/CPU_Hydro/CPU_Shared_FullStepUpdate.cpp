@@ -13,15 +13,15 @@
 #ifdef __CUDACC__
 
 #if ( NCOMP_PASSIVE > 0 )
-# include "CUFLU_Shared_FluUtility.cu"
+# include "CPU_Shared_FluUtility.cpp"
 #endif
 
 #ifdef DUAL_ENERGY
-# include "CUFLU_Shared_DualEnergy.cu"
+# include "CPU_Shared_DualEnergy.cpp"
 #endif
 
 #ifdef COSMIC_RAY
-# include "CUFLU_CosmicRay.cu"
+# include "CPU_CosmicRay.cpp"
 #endif
 
 #else // #ifdef __CUDACC__
