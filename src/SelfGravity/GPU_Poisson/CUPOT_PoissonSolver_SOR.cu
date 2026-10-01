@@ -42,7 +42,7 @@
 
 
 //-------------------------------------------------------------------------------------------------------
-// Function    :  CUPOT_PoissonSolver_SOR
+// Function    :  GPU_PoissonSolver_SOR
 // Description :  GPU Poisson solver using the SOR scheme
 //
 // Note        :  1. Take advantage of shared memory
@@ -101,7 +101,7 @@
 //                                      INT_CQUAD : conservative quadratic interpolation
 //                                      INT_QUAD  : quadratic interpolation
 //---------------------------------------------------------------------------------------------------
-__global__ void CUPOT_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO_NXT*RHO_NXT ],
+__global__ void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO_NXT*RHO_NXT ],
                                          const real g_Pot_Array_In [][ POT_NXT*POT_NXT*POT_NXT ],
                                                real g_Pot_Array_Out[][ GRA_NXT*GRA_NXT*GRA_NXT ],
                                          const int Min_Iter, const int Max_Iter, const real Omega_6,
@@ -451,7 +451,7 @@ __global__ void CUPOT_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*R
    }
    while ( t < GRA_NXT*GRA_NXT*GRA_NXT );
 
-} // FUNCTION : CUPOT_PoissonSolver_SOR
+} // FUNCTION : GPU_PoissonSolver_SOR
 
 
 
