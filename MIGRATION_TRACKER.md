@@ -53,14 +53,3 @@ This file tracks which **original GAMER source files** have had the correspondin
 | DONE | `/home/rlawrence/Projects/gamer-sycl/src/GPU_API/GPU_MemAllocate_Fluid.cpp` | `/home/rlawrence/Projects/gamer-sycl/dpct_out/src/GPU_API/GPU_MemAllocate_Fluid.dp.cpp` | Fully migrated to SYCL. Converted host deallocations, device/host allocations, and queue destructions to standard SYCL/DPCT equivalents, cleaned legacy CUDA comments. |
 | DONE | `/home/rlawrence/Projects/gamer-sycl/src/GPU_API/GPU_MemFree_Fluid.cpp` | `/home/rlawrence/Projects/gamer-sycl/dpct_out/src/GPU_API/GPU_MemFree_Fluid.dp.cpp` | Fully migrated to SYCL. Converted host deallocations and queue destructions to standard SYCL/DPCT equivalents, cleaned legacy CUDA comments. |
 
-## Plan Discussion Notes
-
-### Renaming of legacy CUDA-prefixed solver functions to unified `GPU_` prefix
-- **Decision**: All device-side/GPU solver functions starting with `CUFLU_`, `CUSRC_`, and `CUPOT_` are renamed to use a unified `GPU_` prefix (e.g., `CUFLU_FluidSolver_RTVD` $\rightarrow$ `GPU_FluidSolver_RTVD`).
-- **Rationale**: 
-  - Aligns and creates clear, symmetric mappings with GAMER's fallback CPU solvers (e.g., `CPU_FluidSolver_RTVD`).
-  - Distinguishes device-side solvers from host-side asynchronous scheduler wrappers, which use the prefix `GPU_Asyn_` (e.g., `GPU_Asyn_FluidSolver`).
-  - Keeps the codebase backend-neutral and clean of legacy CUDA nomenclature.
-- **Scope**: Includes both active `src/` tree files and `dpct_out/` suggestion files to prevent accidental reversion to or reuse of outdated prefixes in future migrations. Since this is an architectural renaming and refactoring rather than a full SYCL file-by-file migration, no new file rows are added to the migration tracking table.
-
-
