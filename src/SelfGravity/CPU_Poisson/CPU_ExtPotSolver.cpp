@@ -13,7 +13,7 @@
 
 
 //-----------------------------------------------------------------------------------------
-// Function    :  CPU/CUPOT_ExtPotSolver
+// Function    :  CPU/GPU_ExtPotSolver
 // Description :  Add external potential
 //
 // Note        :  1. External potential is specified by the input function ExtPot_Func()
@@ -40,7 +40,7 @@
 //-----------------------------------------------------------------------------------------
 #ifdef __CUDACC__
 __global__
-void CUPOT_ExtPotSolver( real g_Pot_Array[][ CUBE(GRA_NXT) ],
+void GPU_ExtPotSolver( real g_Pot_Array[][ CUBE(GRA_NXT) ],
                          const double g_Corner_Array[][3],
                          const real g_ExtPotTable[],
                          void **g_ExtPotGenePtr,
@@ -95,7 +95,7 @@ void CPU_ExtPotSolver  ( real g_Pot_Array[][ CUBE(GRA_NXT) ],
       }
    } // for (int P=0; P<NPatchGroup*8; P++)
 
-} // FUNCTION : CPU/CUPOT_ExtPotSolver
+} // FUNCTION : CPU/GPU_ExtPotSolver
 
 
 

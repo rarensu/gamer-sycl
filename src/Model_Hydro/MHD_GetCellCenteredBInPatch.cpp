@@ -10,7 +10,7 @@
 // Description :  Calculate the cell-centered magnetic field from the face-centered values of a given cell
 //                in a given patch
 //
-// Note        :  1. Invoke MHD_GetCellCenteredBField() defined in CPU/CUFLU_Shared_FluUtility.cpp
+// Note        :  1. Invoke MHD_GetCellCenteredBField() defined in CPU/GPU_Shared_FluUtility.cpp
 //                2. Return all three components of the magnetic field
 //
 // Parameter   :  B_CC  : Cell-centered magnetic field to be returned
@@ -59,7 +59,7 @@ void MHD_GetCellCenteredBFieldInPatch( real B_CC[], const int lv, const int PID,
 // Description :  Calculate the cell-centered magnetic energy (i.e., 0.5*B^2) from the face-centered values
 //                of a given cell in a given patch
 //
-// Note        :  1. Invoke MHD_GetCellCenteredBEnergy() defined in CPU/CUFLU_Shared_FluUtility.cpp
+// Note        :  1. Invoke MHD_GetCellCenteredBEnergy() defined in CPU/GPU_Shared_FluUtility.cpp
 //
 // Parameter   :  lv    : Target AMR level
 //                PID   : Target patch index

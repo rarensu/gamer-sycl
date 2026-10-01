@@ -9,14 +9,14 @@
 
 // Poisson solver prototypes
 #if   ( POT_SCHEME == SOR )
-__global__ void CUPOT_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO_NXT*RHO_NXT ],
+__global__ void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO_NXT*RHO_NXT ],
                                          const real g_Pot_Array_In [][ POT_NXT*POT_NXT*POT_NXT ],
                                                real g_Pot_Array_Out[][ GRA_NXT*GRA_NXT*GRA_NXT ],
                                          const int Min_Iter, const int Max_Iter, const real Omega_6,
                                          const real Const, const IntScheme_t IntScheme );
 
 #elif ( POT_SCHEME == MG  )
-__global__ void CUPOT_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_NXT*RHO_NXT ],
+__global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_NXT*RHO_NXT ],
                                         const real g_Pot_Array_In [][ POT_NXT*POT_NXT*POT_NXT ],
                                               real g_Pot_Array_Out[][ GRA_NXT*GRA_NXT*GRA_NXT ],
                                         const real dh_Min, const int Max_Iter, const int NPre_Smooth,
@@ -25,7 +25,7 @@ __global__ void CUPOT_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RH
 #endif // POT_SCHEME
 
 __global__
-void CUPOT_ExtPotSolver( real g_Pot_Array[][ CUBE(GRA_NXT) ],
+void GPU_ExtPotSolver( real g_Pot_Array[][ CUBE(GRA_NXT) ],
                          const double g_Corner_Array[][3],
                          const real g_ExtPotTable[],
                          void **g_ExtPotGenePtr,
@@ -36,7 +36,7 @@ void CUPOT_ExtPotSolver( real g_Pot_Array[][ CUBE(GRA_NXT) ],
 // Gravity solver prototypes
 #if   ( MODEL == HYDRO )
 __global__
-void CUPOT_HydroGravitySolver(
+void GPU_HydroGravitySolver(
          real   g_Flu_Array_New[][GRA_NIN][ CUBE(PS1) ],
    const real   g_Pot_Array_New[][ CUBE(GRA_NXT) ],
    const double g_Corner_Array [][3],
@@ -50,13 +50,13 @@ void CUPOT_HydroGravitySolver(
 
 #elif ( MODEL == ELBDM )
 __global__
-void CUPOT_ELBDMGravitySolver(       real g_Flu_Array[][GRA_NIN][ CUBE(PS1) ],
+void GPU_ELBDMGravitySolver(       real g_Flu_Array[][GRA_NIN][ CUBE(PS1) ],
                                const real g_Pot_Array[][ CUBE(GRA_NXT) ],
                                const real EtaDt, const real dh, const real Lambda );
 
 #if ( ELBDM_SCHEME == ELBDM_HYBRID )
 __global__
-void CUPOT_ELBDMGravitySolver_HamiltonJacobi(       real g_Flu_Array[][GRA_NIN][ CUBE(PS1) ],
+void GPU_ELBDMGravitySolver_HamiltonJacobi(       real g_Flu_Array[][GRA_NIN][ CUBE(PS1) ],
                                               const real g_Pot_Array[][ CUBE(GRA_NXT) ],
                                               const real EtaDt, const real dh, const real Lambda );
 #endif
@@ -100,7 +100,7 @@ extern dpct::queue_ptr *Stream;
 
 //-------------------------------------------------------------------------------------------------------
 // Function    :  GPU_Asyn_PoissonGravitySolver
-// Description :  Invoke the CUPOT_PoissonSolver_XXtoXXcube and/or CUPOT_GravitySolver kernel(s) to evaluate
+// Description :  Invoke the GPU_PoissonSolver_XXtoXXcube and/or GPU_GravitySolver kernel(s) to evaluate
 //                the gravitational potential and/or advance the fluid variables by the gravitational
 //                acceleration for a group of patches
 //
@@ -219,7 +219,7 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
             Aux_Error( ERROR_INFO, "Poi_NThread (%d) < (POT_NXT-2)*(POT_NXT-2) (%d) !!\n",
                        Poi_NThread, (POT_NXT-2)*(POT_NXT-2) );
 
-//       constraint due to the reduction operation in CUPOT_PoissonSolver_SOR() and CUPOT_PoissonSolver_MG()
+//       constraint due to the reduction operation in GPU_PoissonSolver_SOR() and GPU_PoissonSolver_MG()
 #        if ( POT_SCHEME == SOR  ||  POT_SCHEME == MG )
          if ( Poi_NThread < 64 )
             Aux_Error( ERROR_INFO, "incorrect parameter %s = %d (must >= 64) !!\n", "Poi_NThread", Poi_NThread );
@@ -397,7 +397,7 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
                                          Poi_Block_Dim,
                                      Poi_Block_Dim),
                    [=](sycl::nd_item<3> item_ct1) {
-                      CUPOT_PoissonSolver_SOR(
+                      GPU_PoissonSolver_SOR(
                           d_Rho_Array_P     + UsedPatch[s],
                           d_Pot_Array_P_In  + UsedPatch[s],
                           d_Pot_Array_P_Out + UsedPatch[s],
@@ -413,7 +413,7 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
                                          Poi_Block_Dim,
                                      Poi_Block_Dim),
                    [=](sycl::nd_item<3> item_ct1) {
-                      CUPOT_PoissonSolver_MG(
+                      GPU_PoissonSolver_MG(
                           d_Rho_Array_P     + UsedPatch[s],
                           d_Pot_Array_P_In  + UsedPatch[s],
                           d_Pot_Array_P_Out + UsedPatch[s],
@@ -438,7 +438,7 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
                                          ExtPot_Block_Dim,
                                      ExtPot_Block_Dim),
                    [=](sycl::nd_item<3> item_ct1) {
-                      CUPOT_ExtPotSolver(
+                      GPU_ExtPotSolver(
                           d_Pot_Array_P_Out  + UsedPatch[s],
                           d_Corner_Array_PGT + UsedPatch[s],
                           d_ExtPotTable, d_ExtPotGenePtr,
@@ -459,7 +459,7 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
                                       Gra_Block_Dim,
                                   Gra_Block_Dim),
                 [=](sycl::nd_item<3> item_ct1) {
-                   CUPOT_HydroGravitySolver(
+                   GPU_HydroGravitySolver(
                        d_Flu_Array_G      + UsedPatch[s],
                        d_Pot_Array_P_Out  + UsedPatch[s],
                        d_Corner_Array_PGT + UsedPatch[s],
@@ -483,7 +483,7 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
                                       Gra_Block_Dim,
                                   Gra_Block_Dim),
                 [=](sycl::nd_item<3> item_ct1) {
-                   CUPOT_ELBDMGravitySolver(
+                   GPU_ELBDMGravitySolver(
                        d_Flu_Array_G      + UsedPatch[s],
                        d_Pot_Array_P_Out  + UsedPatch[s],
                        ELBDM_EtaDt, dh, ELBDM_Lambda );
@@ -497,7 +497,7 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
                                       Gra_Block_Dim,
                                   Gra_Block_Dim),
                 [=](sycl::nd_item<3> item_ct1) {
-                   CUPOT_ELBDMGravitySolver_HamiltonJacobi(
+                   GPU_ELBDMGravitySolver_HamiltonJacobi(
                        d_Flu_Array_G      + UsedPatch[s],
                        d_Pot_Array_P_Out  + UsedPatch[s],
                        ELBDM_EtaDt, dh, ELBDM_Lambda );

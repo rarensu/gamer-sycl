@@ -5,7 +5,7 @@
 
 #if   ( MODEL == HYDRO )
 #if   ( FLU_SCHEME == RTVD )
-__global__ void CUFLU_FluidSolver_RTVD(
+__global__ void GPU_FluidSolver_RTVD(
    real g_Fluid_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
    real g_Fluid_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
    real g_Flux     [][9][NCOMP_TOTAL][ SQR(PS2) ],
@@ -16,7 +16,7 @@ __global__ void CUFLU_FluidSolver_RTVD(
    const EoS_t EoS );
 #elif ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP )
 __global__
-void CUFLU_FluidSolver_MHM(
+void GPU_FluidSolver_MHM(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
          real   g_Flu_Array_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
    const real   g_Mag_Array_In [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
@@ -45,7 +45,7 @@ void CUFLU_FluidSolver_MHM(
    const EoS_t EoS, const MicroPhy_t MicroPhy );
 #elif ( FLU_SCHEME == CTU )
 __global__
-void CUFLU_FluidSolver_CTU(
+void GPU_FluidSolver_CTU(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
          real   g_Flu_Array_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
    const real   g_Mag_Array_In [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
@@ -77,7 +77,7 @@ void CUFLU_FluidSolver_CTU(
 #elif ( MODEL == ELBDM )
 
 #if   ( WAVE_SCHEME == WAVE_FD )
-__global__ void CUFLU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+__global__ void GPU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                       real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
                                       real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                       const real dt, const real _dh, const real Eta, const bool StoreFlux,
@@ -87,7 +87,7 @@ real ELBDM_SetTaylor3Coeff( const real dt, const real dh, const real Eta );
 #if   ( GRAMFE_SCHEME == GRAMFE_FFT )
 __launch_bounds__(FFT::max_threads_per_block)
 __global__
-void CUFLU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+void GPU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                    real g_Fluid_Out[][FLU_NOUT ][ CUBE(PS2) ],
                                    real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                    const real dt, const real _dh, const real Eta, const bool StoreFlux,
@@ -97,7 +97,7 @@ void CUFLU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ]
 #elif ( GRAMFE_SCHEME == GRAMFE_MATMUL )
 void ELBDM_GramFE_ComputeTimeEvolutionMatrix( gramfe_matmul_float (*output)[ 2*FLU_NXT ], const real dt, const real dh, const real Eta );
 __global__
-void CUFLU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+void GPU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                       real g_Fluid_Out[][FLU_NOUT ][ CUBE(PS2) ],
                                       real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                       gramfe_matmul_float g_Evolve[][ FLU_NXT*2 ],
@@ -111,7 +111,7 @@ void CUFLU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT
 #endif // WAVE_SCHEME
 
 #if ( ELBDM_SCHEME == ELBDM_HYBRID )
-__global__ void CUFLU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
+__global__ void GPU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
 #                                                 ifdef GAMER_DEBUG
                                                   real g_Fluid_Out[][FLU_NOUT ][ CUBE(PS2) ],
 #                                                 else
@@ -194,9 +194,9 @@ extern cudaStream_t *Stream;
 //-------------------------------------------------------------------------------------------------------
 // Function    :  GPU_Asyn_FluidSolver
 // Description :  1. MODEL == HYDRO : use GPU to solve the Euler equations by different schemes
-//                                    --> invoke the kernel "CUFLU_FluidSolver_XXX"
+//                                    --> invoke the kernel "GPU_FluidSolver_XXX"
 //                2. MODEL == ELBDM : use GPU to solve the kinematic operator in the Schrodinger's equations
-//                                    --> invoke the kernel "CUFLU_ELBDMSolver_XXX"
+//                                    --> invoke the kernel "GPU_ELBDMSolver_XXX"
 //
 //                ***********************************************************
 //                **                Asynchronous Function                  **
@@ -382,7 +382,7 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
    cufftdx_shared_memory_size = std::max( (unsigned int)FFT::shared_memory_size, (unsigned int)size_bytes );
 
 // increase max shared memory if needed
-   DEVICE_CHECK_ERROR(  cudaFuncSetAttribute( CUFLU_ELBDMSolver_GramFE_FFT, cudaFuncAttributeMaxDynamicSharedMemorySize,
+   DEVICE_CHECK_ERROR(  cudaFuncSetAttribute( GPU_ELBDMSolver_GramFE_FFT, cudaFuncAttributeMaxDynamicSharedMemorySize,
                                             cufftdx_shared_memory_size )  );
 
 #  elif ( GRAMFE_SCHEME == GRAMFE_MATMUL )
@@ -544,7 +544,7 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 
 #        if   ( FLU_SCHEME == RTVD )
 
-         CUFLU_FluidSolver_RTVD <<< NPatch_per_Stream[s], BlockDim_FluidSolver, 0, Stream[s] >>>
+         GPU_FluidSolver_RTVD <<< NPatch_per_Stream[s], BlockDim_FluidSolver, 0, Stream[s] >>>
             ( d_Flu_Array_F_In  + UsedPatch[s],
               d_Flu_Array_F_Out + UsedPatch[s],
               d_Flux_Array      + UsedPatch[s],
@@ -554,7 +554,7 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 
 #        elif ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP )
 
-         CUFLU_FluidSolver_MHM <<< NPatch_per_Stream[s], BlockDim_FluidSolver, 0, Stream[s] >>>
+         GPU_FluidSolver_MHM <<< NPatch_per_Stream[s], BlockDim_FluidSolver, 0, Stream[s] >>>
             ( d_Flu_Array_F_In  + UsedPatch[s],
               d_Flu_Array_F_Out + UsedPatch[s],
               d_Mag_Array_F_In  + UsedPatch[s],
@@ -577,7 +577,7 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 
 #        elif ( FLU_SCHEME == CTU )
 
-         CUFLU_FluidSolver_CTU <<< NPatch_per_Stream[s], BlockDim_FluidSolver, 0, Stream[s] >>>
+         GPU_FluidSolver_CTU <<< NPatch_per_Stream[s], BlockDim_FluidSolver, 0, Stream[s] >>>
             ( d_Flu_Array_F_In  + UsedPatch[s],
               d_Flu_Array_F_Out + UsedPatch[s],
               d_Mag_Array_F_In  + UsedPatch[s],
@@ -612,7 +612,7 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 
 #     if   ( WAVE_SCHEME == WAVE_FD )
 
-         CUFLU_ELBDMSolver_FD <<< NPatch_per_Stream[s], BlockDim_FluidSolver, 0, Stream[s] >>>
+         GPU_ELBDMSolver_FD <<< NPatch_per_Stream[s], BlockDim_FluidSolver, 0, Stream[s] >>>
             ( d_Flu_Array_F_In  + UsedPatch[s],
               d_Flu_Array_F_Out + UsedPatch[s],
               d_Flux_Array      + UsedPatch[s],
@@ -630,14 +630,14 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
          IFFT::workspace_type cufftdx_iworkspace = cufftdx::make_workspace<IFFT>( error_code );
          DEVICE_CHECK_ERROR(error_code);
 
-         CUFLU_ELBDMSolver_GramFE_FFT <<< NPatch_per_Stream[s], FFT::block_dim, cufftdx_shared_memory_size, Stream[s] >>>
+         GPU_ELBDMSolver_GramFE_FFT <<< NPatch_per_Stream[s], FFT::block_dim, cufftdx_shared_memory_size, Stream[s] >>>
             ( d_Flu_Array_F_In  + UsedPatch[s],
               d_Flu_Array_F_Out + UsedPatch[s],
               d_Flux_Array      + UsedPatch[s],
               dt, 1.0/dh, ELBDM_Eta, StoreFlux, XYZ, MinDens, cufftdx_workspace, cufftdx_iworkspace );
 
 #     elif ( GRAMFE_SCHEME == GRAMFE_MATMUL )
-         CUFLU_ELBDMSolver_GramFE_MATMUL <<< NPatch_per_Stream[s], BlockDim_FluidSolver, 0, Stream[s] >>>
+         GPU_ELBDMSolver_GramFE_MATMUL <<< NPatch_per_Stream[s], BlockDim_FluidSolver, 0, Stream[s] >>>
             ( d_Flu_Array_F_In  + UsedPatch[s],
               d_Flu_Array_F_Out + UsedPatch[s],
               d_Flux_Array      + UsedPatch[s],
@@ -660,7 +660,7 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
          real (*smaller_d_Flu_Array_F_Out)[FLU_NIN ][CUBE(PS2)]     = (real (*)[FLU_NIN][CUBE(PS2)]    ) d_Flu_Array_F_Out;
 #        endif
 
-         CUFLU_ELBDMSolver_HamiltonJacobi <<< NPatch_per_Stream[s], BlockDim_FluidSolver_HJ, 0, Stream[s] >>>
+         GPU_ELBDMSolver_HamiltonJacobi <<< NPatch_per_Stream[s], BlockDim_FluidSolver_HJ, 0, Stream[s] >>>
             (  smaller_d_Flu_Array_F_In  + UsedPatch[s],
                smaller_d_Flu_Array_F_Out + UsedPatch[s],
                d_Flux_Array              + UsedPatch[s],

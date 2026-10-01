@@ -148,7 +148,7 @@ const static double FLUX_COEFFS[ELBDM_HJ_RK_ORDER]                    = {1.0/6.0
 #define QP_DENSITY_FLOOR TINY_NUMBER
 
 GPU_DEVICE
-static void CUFLU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
+static void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
 #                          ifdef GAMER_DEBUG
                            real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
 #                          else
@@ -166,7 +166,7 @@ static void CUFLU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
 
 
 //-------------------------------------------------------------------------------------------------------
-// Function    :  CUFLU_ELBDMSolver_HamiltonJacobi
+// Function    :  GPU_ELBDMSolver_HamiltonJacobi
 // Description :  GPU solver for kinetic term in Hamilton Jacobi-Madelung equations
 //
 // Note        :  1. The three-dimensional evolution is achieved by applying x, y, and z operators successively.
@@ -195,7 +195,7 @@ static void CUFLU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
 //-------------------------------------------------------------------------------------------------------
 #ifdef __CUDACC__
 __global__
-void CUFLU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
+void GPU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
 #                                      ifdef GAMER_DEBUG
                                        real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
 #                                      else
@@ -231,29 +231,29 @@ void CPU_ELBDMSolver_HamiltonJacobi(   real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NX
 
    if ( XYZ )
    {
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, g_IsCompletelyRefined, g_HasWaveCounterpart, NPatchGroup, dt, _dh, Eta, StoreFlux,
+      GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, g_IsCompletelyRefined, g_HasWaveCounterpart, NPatchGroup, dt, _dh, Eta, StoreFlux,
                                   0,              0, false, 0, MinDens );
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, g_IsCompletelyRefined, g_HasWaveCounterpart, NPatchGroup, dt, _dh, Eta, StoreFlux,
+      GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, g_IsCompletelyRefined, g_HasWaveCounterpart, NPatchGroup, dt, _dh, Eta, StoreFlux,
                      HYB_GHOST_SIZE,              0, false, 3, MinDens );
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, g_IsCompletelyRefined, g_HasWaveCounterpart, NPatchGroup, dt, _dh, Eta, StoreFlux,
+      GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, g_IsCompletelyRefined, g_HasWaveCounterpart, NPatchGroup, dt, _dh, Eta, StoreFlux,
                      HYB_GHOST_SIZE, HYB_GHOST_SIZE,  true, 6, MinDens );
    }
    else
    {
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, g_IsCompletelyRefined, g_HasWaveCounterpart, NPatchGroup, dt, _dh, Eta, StoreFlux,
+      GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, g_IsCompletelyRefined, g_HasWaveCounterpart, NPatchGroup, dt, _dh, Eta, StoreFlux,
                                   0,              0, false, 6, MinDens );
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, g_IsCompletelyRefined, g_HasWaveCounterpart, NPatchGroup, dt, _dh, Eta, StoreFlux,
+      GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, g_IsCompletelyRefined, g_HasWaveCounterpart, NPatchGroup, dt, _dh, Eta, StoreFlux,
                                   0, HYB_GHOST_SIZE, false, 3, MinDens );
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, g_IsCompletelyRefined, g_HasWaveCounterpart, NPatchGroup, dt, _dh, Eta, StoreFlux,
+      GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, g_IsCompletelyRefined, g_HasWaveCounterpart, NPatchGroup, dt, _dh, Eta, StoreFlux,
                      HYB_GHOST_SIZE, HYB_GHOST_SIZE,  true, 0, MinDens );
    }
 
-} // FUNCTION : CUFLU_ELBDMSolver_HamiltonJacobi
+} // FUNCTION : GPU_ELBDMSolver_HamiltonJacobi
 
 
 
 //-------------------------------------------------------------------------------------------------------
-// Function    :  CUFLU_Advance
+// Function    :  GPU_Advance
 // Description :  Use CPU/GPU to advance solutions by one time-step
 //
 // Note        :  1. Based on solving the continuity equation via upwinding and higher-order flux reconstruction and the Hamilton-Jacobi equation via upwinding with higher-order central differences
@@ -284,7 +284,7 @@ void CPU_ELBDMSolver_HamiltonJacobi(   real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NX
 //                MinDens               : Minimum allowed density
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE
-void CUFLU_Advance(  real g_Fluid_In [][FLU_NIN  ][ CUBE(HYB_NXT) ],
+void GPU_Advance(  real g_Fluid_In [][FLU_NIN  ][ CUBE(HYB_NXT) ],
 #                    ifdef GAMER_DEBUG
                      real g_Fluid_Out[][FLU_NOUT ][ CUBE(PS2) ],
 #                    else
@@ -599,7 +599,7 @@ void CUFLU_Advance(  real g_Fluid_In [][FLU_NIN  ][ CUBE(HYB_NXT) ],
       } // for (int bx=0; bx<NPatchGroup; bx++)
    } // #pragma omp parallel
 
-} // FUNCTION : CUFLU_Advance
+} // FUNCTION : GPU_Advance
 
 
 

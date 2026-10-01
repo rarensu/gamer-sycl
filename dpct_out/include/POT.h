@@ -1,5 +1,5 @@
-#ifndef __CUPOT_H__
-#define __CUPOT_H__
+#ifndef __POT_H__
+#define __POT_H__
 
 
 
@@ -122,7 +122,7 @@
 #endif // POT_GHOST_SIZE
 
 
-// optimization options for CUPOT_PoissonSolver_SOR.cu
+// optimization options for GPU_PoissonSolver_SOR.cu
 // load density into shared memory for higher performance
 #  ifndef FLOAT8
 #     define SOR_RHO_SHARED
@@ -241,4 +241,4 @@
 
 
 
-#endif // #ifndef __CUPOT_H__
+#endif // #ifndef __POT_H__

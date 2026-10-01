@@ -13,7 +13,7 @@
 
 
 //-----------------------------------------------------------------------------------------
-// Function    :  CPU/CUPOT_HydroGravitySolver
+// Function    :  CPU/GPU_HydroGravitySolver
 // Description :  Advances the momentum and energy density of a group of patches by gravitational acceleration
 //                (including external gravity)
 //
@@ -51,7 +51,7 @@
 //-----------------------------------------------------------------------------------------
 #ifdef __CUDACC__
 __global__
-void CUPOT_HydroGravitySolver(
+void GPU_HydroGravitySolver(
          real   g_Flu_Array_New[][GRA_NIN][ CUBE(PS1) ],
    const real   g_Pot_Array_New[][ CUBE(GRA_NXT) ],
    const double g_Corner_Array [][3],
@@ -389,7 +389,7 @@ void CPU_HydroGravitySolver(
       } // CGPU_LOOP( idx_g0, CUBE(PS1) )
    } // for (int P=0; P<NPatchGroup*8; P++)
 
-} // FUNCTION : CPU/CUPOT_HydroGravitySolver
+} // FUNCTION : CPU/GPU_HydroGravitySolver
 
 
 

@@ -13,7 +13,7 @@
 // fluid solver prototypes in different models
 #if   ( MODEL == HYDRO )
 #if   ( FLU_SCHEME == RTVD )
-__global__ void FLU_FluidSolver_RTVD(
+__global__ void GPU_FluidSolver_RTVD(
    real g_Fluid_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
    real g_Fluid_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
    real g_Flux     [][9][NCOMP_TOTAL][ SQR(PS2) ],
@@ -24,7 +24,7 @@ __global__ void FLU_FluidSolver_RTVD(
    const EoS_t EoS );
 #elif ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP )
 __global__
-void FLU_FluidSolver_MHM(
+void GPU_FluidSolver_MHM(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
          real   g_Flu_Array_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
    const real   g_Mag_Array_In [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
@@ -53,7 +53,7 @@ void FLU_FluidSolver_MHM(
    const EoS_t EoS, const MicroPhy_t MicroPhy );
 #elif ( FLU_SCHEME == CTU )
 SYCL_EXTERNAL
-void FLU_FluidSolver_CTU(
+void GPU_FluidSolver_CTU(
     const real g_Flu_Array_In[][NCOMP_TOTAL][CUBE(FLU_NXT)],
     real g_Flu_Array_Out[][NCOMP_TOTAL][CUBE(PS2)],
     /*
@@ -90,7 +90,7 @@ void FLU_FluidSolver_CTU(
     const int NFrac, const bool JeansMinPres, const real JeansMinPres_Coeff,
     const EoS_t EoS, int *const c_NormIdx, int *const c_FracIdx);
 #endif // FLU_SCHEME
-SYCL_EXTERNAL void FLU_dtSolver_HydroCFL(
+SYCL_EXTERNAL void GPU_dtSolver_HydroCFL(
     real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_T][CUBE(PS1)],
     /*
     DPCT1102:74: Zero-length arrays are not permitted in SYCL device code.
@@ -100,7 +100,7 @@ SYCL_EXTERNAL void FLU_dtSolver_HydroCFL(
     const EoS_t EoS, const MicroPhy_t MicroPhy, real *shared);
 #ifdef GRAVITY
 __global__
-void CUPOT_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ CUBE(GRA_NXT) ],
+void GPU_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ CUBE(GRA_NXT) ],
                                   const double g_Corner_Array[][3],
                                   const real dh, const real Safety, const bool P5_Gradient,
                                   const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,
@@ -109,14 +109,14 @@ void CUPOT_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ C
 
 #elif ( MODEL == ELBDM )
 # if   ( WAVE_SCHEME == WAVE_FD )
-__global__ void FLU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+__global__ void GPU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                       real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
                                       real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                       const real dt, const real _dh, const real Eta, const bool StoreFlux,
                                       const real Taylor3_Coeff, const bool XYZ, const real MinDens );
 # elif ( WAVE_SCHEME == WAVE_GRAMFE )
 #  if   ( GRAMFE_SCHEME == GRAMFE_FFT )
-__global__ void FLU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+__global__ void GPU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                               real g_Fluid_Out[][FLU_NOUT ][ CUBE(PS2) ],
                                               real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                               const real dt, const real _dh, const real Eta, const bool StoreFlux,
@@ -124,7 +124,7 @@ __global__ void FLU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(F
                                               typename FFT::workspace_type  Workspace,
                                               typename IFFT::workspace_type WorkspaceInv );
 #  elif ( GRAMFE_SCHEME == GRAMFE_MATMUL )
-__global__ void FLU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+__global__ void GPU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                                  real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
                                                  real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                                  gramfe_matmul_float g_TimeEvo[][ FLU_NXT*2 ],
@@ -138,7 +138,7 @@ __global__ void FLU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUB
 # endif // WAVE_SCHEME
 
 #if ( ELBDM_SCHEME == ELBDM_HYBRID )
-__global__ void FLU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
+__global__ void GPU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
                                                   #ifdef GAMER_DEBUG
                                                   real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
                                                   #else
@@ -160,13 +160,13 @@ __global__ void FLU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CU
 
 // Poisson solver prototypes
 #if   ( POT_SCHEME == SOR )
-__global__ void CUPOT_PoissonSolver_SOR( const real g_Rho_Array    [][ CUBE(RHO_NXT) ],
+__global__ void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ CUBE(RHO_NXT) ],
                                          const real g_Pot_Array_In [][ CUBE(POT_NXT) ],
                                                real g_Pot_Array_Out[][ CUBE(GRA_NXT) ],
                                          const int Min_Iter, const int Max_Iter, const real Omega_6,
                                          const real Const, const IntScheme_t IntScheme );
 #elif ( POT_SCHEME == MG )
-__global__ void CUPOT_PoissonSolver_MG( const real g_Rho_Array    [][ CUBE(RHO_NXT) ],
+__global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ CUBE(RHO_NXT) ],
                                         const real g_Pot_Array_In [][ CUBE(POT_NXT) ],
                                               real g_Pot_Array_Out[][ CUBE(GRA_NXT) ],
                                         const real dh_Min, const int Max_Iter, const int NPre_Smooth,
@@ -178,7 +178,7 @@ __global__ void CUPOT_PoissonSolver_MG( const real g_Rho_Array    [][ CUBE(RHO_N
 // Gravity solver prototypes in different models
 #if   ( MODEL == HYDRO )
 __global__
-void CUPOT_HydroGravitySolver(
+void GPU_HydroGravitySolver(
          real   g_Flu_Array_New[][GRA_NIN][ CUBE(PS1) ],
    const real   g_Pot_Array_New[][ CUBE(GRA_NXT) ],
    const double g_Corner_Array [][3],
@@ -192,7 +192,7 @@ void CUPOT_HydroGravitySolver(
 
 #elif ( MODEL == ELBDM )
 __global__
-void CUPOT_ELBDMGravitySolver(       real g_Flu_Array[][GRA_NIN][ CUBE(PS1) ],
+void GPU_ELBDMGravitySolver(       real g_Flu_Array[][GRA_NIN][ CUBE(PS1) ],
                                const real g_Pot_Array[][ CUBE(GRA_NXT) ],
                                const real EtaDt, const real dh, const real Lambda );
 
@@ -205,7 +205,7 @@ void CUPOT_ELBDMGravitySolver(       real g_Flu_Array[][GRA_NIN][ CUBE(PS1) ],
 
 // source-term solver prototype
 SYCL_EXTERNAL
-void CUSRC_SrcSolver_IterateAllCells(
+void GPU_SrcSolver_IterateAllCells(
     const real g_Flu_Array_In[][FLU_NIN_S][CUBE(SRC_NXT)],
     real g_Flu_Array_Out[][FLU_NOUT_S][CUBE(PS1)],
     /*
@@ -232,11 +232,11 @@ void GPU_SetCache()
 // 1. fluid solver
 #  if   ( MODEL == HYDRO )
 #  if   ( FLU_SCHEME == RTVD )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_FluidSolver_RTVD,             cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( GPU_FluidSolver_RTVD,             cudaFuncCachePreferShared )  );
 #  elif ( FLU_SCHEME == MHM )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_FluidSolver_MHM,              cudaFuncCachePreferL1     )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( GPU_FluidSolver_MHM,              cudaFuncCachePreferL1     )  );
 #  elif ( FLU_SCHEME == MHM_RP )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_FluidSolver_MHM,              cudaFuncCachePreferL1     )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( GPU_FluidSolver_MHM,              cudaFuncCachePreferL1     )  );
 #  elif ( FLU_SCHEME == CTU )
    /*
    DPCT1027:76: The call to cudaFuncSetCacheConfig was replaced with 0 because
@@ -250,17 +250,17 @@ void GPU_SetCache()
    */
    DEVICE_CHECK_ERROR(0);
 #  ifdef GRAVITY
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_dtSolver_HydroGravity,        cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( GPU_dtSolver_HydroGravity,        cudaFuncCachePreferShared )  );
 #  endif
 
 #  elif ( MODEL == ELBDM )
 #  if   ( WAVE_SCHEME == WAVE_FD )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_ELBDMSolver_FD,               cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( GPU_ELBDMSolver_FD,               cudaFuncCachePreferShared )  );
 #  elif ( WAVE_SCHEME == WAVE_GRAMFE )
 #   if   ( GRAMFE_SCHEME == GRAMFE_FFT )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_ELBDMSolver_GramFE_FFT,       cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( GPU_ELBDMSolver_GramFE_FFT,       cudaFuncCachePreferShared )  );
 #   elif ( GRAMFE_SCHEME == GRAMFE_MATMUL )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_ELBDMSolver_GramFE_MATMUL,    cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( GPU_ELBDMSolver_GramFE_MATMUL,    cudaFuncCachePreferShared )  );
 #   else // GRAMFE_SCHEME
 #   error : ERROR : unsupported GRAMFE_SCHEME !!
 #   endif // GRAMFE_SCHEME
@@ -268,7 +268,7 @@ void GPU_SetCache()
 #  error : ERROR : unsupported WAVE_SCHEME !!
 #  endif // WAVE_SCHEME
 #  if ( ELBDM_SCHEME == ELBDM_HYBRID )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( FLU_ELBDMSolver_HamiltonJacobi,   cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( GPU_ELBDMSolver_HamiltonJacobi,   cudaFuncCachePreferShared )  );
 #  endif
 
 #  else
@@ -280,18 +280,18 @@ void GPU_SetCache()
 
 // 2. Poisson solver
 #  if   ( POT_SCHEME == SOR )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_PoissonSolver_SOR,            cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( GPU_PoissonSolver_SOR,            cudaFuncCachePreferShared )  );
 #  elif ( POT_SCHEME == MG )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_PoissonSolver_MG,             cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( GPU_PoissonSolver_MG,             cudaFuncCachePreferShared )  );
 #  endif // POT_SCHEME
 
 
 // 3. gravity solver
 #  if   ( MODEL == HYDRO )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_HydroGravitySolver,           cudaFuncCachePreferShared )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( GPU_HydroGravitySolver,           cudaFuncCachePreferShared )  );
 
 #  elif ( MODEL == ELBDM )
-   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( CUPOT_ELBDMGravitySolver,           cudaFuncCachePreferL1     )  );
+   DEVICE_CHECK_ERROR(  cudaFuncSetCacheConfig( GPU_ELBDMGravitySolver,           cudaFuncCachePreferL1     )  );
 
 #  else
 #  error : ERROR : unsupported MODEL !!

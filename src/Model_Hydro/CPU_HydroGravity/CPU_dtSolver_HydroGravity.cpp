@@ -27,7 +27,7 @@
 
 
 //-----------------------------------------------------------------------------------------
-// Function    :  CPU/CUPOT_dtSolver_HydroGravity
+// Function    :  CPU/GPU_dtSolver_HydroGravity
 // Description :  Estimate the evolution time-step (dt) required for the hydro gravity solver
 //
 // Note        :  1. This function should be applied to both physical and comoving coordinates and always
@@ -58,7 +58,7 @@
 //-----------------------------------------------------------------------------------------
 #ifdef __CUDACC__
 __global__
-void CUPOT_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ CUBE(GRA_NXT) ],
+void GPU_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ CUBE(GRA_NXT) ],
                                   const double g_Corner_Array[][3],
                                   const real dh, const real Safety, const bool P5_Gradient,
                                   const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,
@@ -200,7 +200,7 @@ void CPU_dtSolver_HydroGravity  ( real g_dt_Array[], const real g_Pot_Array[][ C
 
    } // for (int P=0; P<NPatchGroup*8; P++)
 
-} // FUNCTION : CPU/CUPOT_dtSolver_HydroGravity
+} // FUNCTION : CPU/GPU_dtSolver_HydroGravity
 
 
 

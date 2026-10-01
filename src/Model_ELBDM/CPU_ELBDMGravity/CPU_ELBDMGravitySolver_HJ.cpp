@@ -12,7 +12,7 @@
 
 
 //-----------------------------------------------------------------------------------------
-// Function    :  CPU/CUPOT_ELBDMGravitySolver_HamiltonJacobi
+// Function    :  CPU/GPU_ELBDMGravitySolver_HamiltonJacobi
 // Description :  CPU/GPU ELBDM gravity solver for advancing the phase S by S = S - Eta*(Phi + Lambda*Rho)*dt
 //
 // Note        :  1. ELBDM gravity solver requires NO potential and fluid ghost zone
@@ -36,7 +36,7 @@
 //-----------------------------------------------------------------------------------------
 #ifdef __CUDACC__
 __global__
-void CUPOT_ELBDMGravitySolver_HamiltonJacobi(       real g_Flu_Array[][GRA_NIN][ CUBE(PS1) ],
+void GPU_ELBDMGravitySolver_HamiltonJacobi(       real g_Flu_Array[][GRA_NIN][ CUBE(PS1) ],
                                               const real g_Pot_Array[][ CUBE(GRA_NXT) ],
                                               const real EtaDt, const real dh, const real Lambda )
 #else
@@ -84,7 +84,7 @@ void CPU_ELBDMGravitySolver_HamiltonJacobi  (       real g_Flu_Array[][GRA_NIN][
       } // CGPU_LOOP( idx_flu, CUBE(PS1) )
    } // for (int P=0; P<NPatchGroup*8; P++)
 
-} // FUNCTION : CPU/CUPOT_ELBDMGravitySolver_HJ
+} // FUNCTION : CPU/GPU_ELBDMGravitySolver_HJ
 
 
 

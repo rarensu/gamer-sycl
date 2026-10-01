@@ -54,7 +54,7 @@ extern long       FixUpVar_Flux, FixUpVar_Restrict, PassiveFloorMask;
 // NCOMP_PASSIVE may be zero in some configurations, but zero-length arrays are
 // not permitted in SYCL device code. Keep these declarations guarded locally
 // so we do not need to change the macro definition site.
-#if ( NCOMP_PASSIVE > 0 )
+#if ( NCOMP_PASSIVE > 0 ) || !defined(SYCL_LANGUAGE_VERSION)
 extern int        PassiveNorm_NVar, PassiveNorm_VarIdx[NCOMP_PASSIVE];
 extern int        PassiveIntFrac_NVar, PassiveIntFrac_VarIdx[NCOMP_PASSIVE];
 #elif defined(SYCL_LANGUAGE_VERSION)
