@@ -12,16 +12,16 @@
 // external functions
 #ifdef __CUDACC__
 
-#include "CUFLU_Shared_FluUtility.cu"
+#include "CPU_Shared_FluUtility.cpp"
 
 #if   ( CHECK_INTERMEDIATE == EXACT )
-# include "CUFLU_Shared_RiemannSolver_Exact.cu"
+# include "CPU_Shared_RiemannSolver_Exact.cpp"
 #elif ( CHECK_INTERMEDIATE == HLLE )
-# include "CUFLU_Shared_RiemannSolver_HLLE.cu"
+# include "CPU_Shared_RiemannSolver_HLLE.cpp"
 #elif ( CHECK_INTERMEDIATE == HLLC )
-# include "CUFLU_Shared_RiemannSolver_HLLC.cu"
+# include "CPU_Shared_RiemannSolver_HLLC.cpp"
 #elif ( CHECK_INTERMEDIATE == HLLD )
-# include "CUFLU_Shared_RiemannSolver_HLLD.cu"
+# include "CPU_Shared_RiemannSolver_HLLD.cpp"
 #endif
 
 #else // #ifdef __CUDACC__

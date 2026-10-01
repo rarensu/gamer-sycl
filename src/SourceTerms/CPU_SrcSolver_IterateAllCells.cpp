@@ -6,7 +6,7 @@
 #ifdef __CUDACC__
 
 #if ( MODEL == HYDRO )
-#include "CUFLU_Shared_FluUtility.cu"
+#include "CPU_Shared_FluUtility.cpp"
 #endif
 #include "ConstMemory.h"
 

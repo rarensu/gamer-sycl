@@ -7,12 +7,12 @@
 // external functions
 #ifdef __CUDACC__
 
-#include "GPU_Shared_FluUtility.cu"
-#include "GPU_Shared_DataReconstruction.cu"
-#include "GPU_Shared_ComputeFlux.cu"
-#include "GPU_Shared_FullStepUpdate.cu"
+#include "CPU_Shared_FluUtility.cpp"
+#include "CPU_Shared_DataReconstruction.cpp"
+#include "CPU_Shared_ComputeFlux.cpp"
+#include "CPU_Shared_FullStepUpdate.cpp"
 #ifdef MHD
-#include "GPU_Shared_ConstrainedTransport.cu"
+#include "CPU_Shared_ConstrainedTransport.cpp"
 #endif
 
 #include "ConstMemory.h"

@@ -38,7 +38,7 @@ void Src_End_User_Template();
 
 2. This file is shared by both CPU and GPU
 
-   CUSRC_Src_User_Template.cu -> CPU_Src_User_Template.cpp
+   GPU_Src_User_Template.cpp == CPU_Src_User_Template.cpp
 
 3. Four steps are required to implement a source term
 

@@ -7,7 +7,7 @@
 // external functions and GPU-related set-up
 #ifdef __CUDACC__
 
-#include "CUFLU_Shared_FluUtility.cu"
+#include "CPU_Shared_FluUtility.cpp"
 #include "ConstMemory.h"
 
 // parallel reduction routine

@@ -8,10 +8,10 @@
 
 #include "Global.h"
 #include "CheckError.h"
-#include "CUFLU_Shared_FluUtility.cu"
+#include "CPU_Shared_FluUtility.cpp"
 #include "ConstMemory.h"
 #ifdef DUAL_ENERGY
-#include "CUFLU_Shared_DualEnergy.cu"
+#include "CPU_Shared_DualEnergy.cpp"
 #endif
 
 extern double *d_SrcEC_TEF_lambda;
@@ -57,7 +57,7 @@ double TEFinv( double Y, int k, const double TEF_lambda[], const double TEF_alph
 
 2. This file is shared by both CPU and GPU
 
-   CUSRC_Src_ExactCooling.cu -> CPU_Src_ExactCooling.cpp
+   GPU_Src_ExactCooling.cpp == CPU_Src_ExactCooling.cpp
 
 3. Four steps are required to implement a source term
 

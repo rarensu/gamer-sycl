@@ -7,36 +7,36 @@
 // external functions
 #ifdef __CUDACC__
 
-#include "CUFLU_Shared_FluUtility.cu"
-#include "CUFLU_Shared_DataReconstruction.cu"
-#include "CUFLU_Shared_ComputeFlux.cu"
-#include "CUFLU_Shared_FullStepUpdate.cu"
+#include "CPU_Shared_FluUtility.cpp"
+#include "CPU_Shared_DataReconstruction.cpp"
+#include "CPU_Shared_ComputeFlux.cpp"
+#include "CPU_Shared_FullStepUpdate.cpp"
 #ifdef MHD
-#include "CUFLU_Shared_ConstrainedTransport.cu"
+#include "CPU_Shared_ConstrainedTransport.cpp"
 #endif
 
 #if ( RSOLVER == EXACT  ||  RSOLVER_RESCUE == EXACT )
-# include "CUFLU_Shared_RiemannSolver_Exact.cu"
+# include "CPU_Shared_RiemannSolver_Exact.cpp"
 #endif
 #if ( RSOLVER == ROE    ||  RSOLVER_RESCUE == ROE   )
-# include "CUFLU_Shared_RiemannSolver_Roe.cu"
+# include "CPU_Shared_RiemannSolver_Roe.cpp"
 #endif
 #if ( RSOLVER == HLLE   ||  RSOLVER_RESCUE == HLLE  )
-# include "CUFLU_Shared_RiemannSolver_HLLE.cu"
+# include "CPU_Shared_RiemannSolver_HLLE.cpp"
 #endif
 #if ( RSOLVER == HLLC   ||  RSOLVER_RESCUE == HLLC  )
-# include "CUFLU_Shared_RiemannSolver_HLLC.cu"
+# include "CPU_Shared_RiemannSolver_HLLC.cpp"
 #endif
 #if ( RSOLVER == HLLD   ||  RSOLVER_RESCUE == HLLD  )
-# include "CUFLU_Shared_RiemannSolver_HLLD.cu"
+# include "CPU_Shared_RiemannSolver_HLLD.cpp"
 #endif
 
-#include "CUDA_ConstMemory.h"
+#include "ConstMemory.h"
 
 #ifdef COSMIC_RAY
-# include "CUFLU_CosmicRay.cu"
+# include "CPU_CosmicRay.cpp"
 #ifdef CR_DIFFUSION
-# include "../../Microphysics/CosmicRayDiffusion/CUFLU_CR_AddDiffuseFlux.cu"
+# include "../../Microphysics/CosmicRayDiffusion/CPU_CR_AddDiffuseFlux.cpp"
 #endif
 #endif // #ifdef COSMIC_RAY
 
@@ -231,7 +231,7 @@ static void Hydro_RiemannPredict( const real g_ConVar_In[][ CUBE(FLU_NXT) ],
 //                ExtAcc_Func        : Function pointer to the external acceleration routine (for UNSPLIT_GRAVITY only)
 //                c_ExtAcc_AuxArray  : Auxiliary array for adding external acceleration      (for UNSPLIT_GRAVITY and CPU only)
 //                                     --> When using GPU, this array is stored in the constant memory header
-//                                         CUDA_ConstMemory.h and does not need to be passed as a function argument
+//                                         ConstMemory.h and does not need to be passed as a function argument
 //                MinDens/Pres/Eint  : Density, pressure, and internal energy floors
 //                DualEnergySwitch   : Use the dual-energy formalism if E_int/E_kin < DualEnergySwitch
 //                PassiveFloor       : Bitwise flag to specify the passive scalars to be floored
@@ -243,7 +243,7 @@ static void Hydro_RiemannPredict( const real g_ConVar_In[][ CUBE(FLU_NXT) ],
 //                                     --> Should be set to the global variable "PassiveNorm_VarIdx"
 //                                     --> When using GPU, this array is stored in the constant memory and does
 //                                         not need to be passed as a function argument
-//                                         --> Declared in CUDA_ConstMemory.h with the prefix "c_" to
+//                                         --> Declared in ConstMemory.h with the prefix "c_" to
 //                                             highlight that this is a constant variable on GPU
 //                FracPassive        : true --> convert passive scalars to mass fraction during data reconstruction
 //                NFrac              : Number of passive scalars for the option "FracPassive"
@@ -252,7 +252,7 @@ static void Hydro_RiemannPredict( const real g_ConVar_In[][ CUBE(FLU_NXT) ],
 //                                     --> Should be set to the global variable "PassiveIntFrac_VarIdx"
 //                                     --> When using GPU, this array is stored in the constant memory and does
 //                                         not need to be passed as a function argument
-//                                         --> Declared in CUDA_ConstMemory.h with the prefix "c_" to
+//                                         --> Declared in ConstMemory.h with the prefix "c_" to
 //                                             highlight that this is a constant variable on GPU
 //                JeansMinPres       : Apply minimum pressure estimated from the Jeans length
 //                JeansMinPres_Coeff : Coefficient used by JeansMinPres = G*(Jeans_NCell*Jeans_dh)^2/(Gamma*pi);

@@ -20,7 +20,7 @@ static real EoS_CREint2CRPres_GammaCR( const real E_CR,
 
 2. This file is shared by both CPU and GPU
 
-   GPU_EoS_GammaCR.cu -> CPU_EoS_GammaCR.cpp
+   GPU_EoS_GammaCR.cpp == CPU_EoS_GammaCR.cpp
 
 3. Three steps are required to implement an EoS
 

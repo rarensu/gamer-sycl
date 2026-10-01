@@ -1,1 +1,0 @@
-ExtPot_ParEqmIC.cpp

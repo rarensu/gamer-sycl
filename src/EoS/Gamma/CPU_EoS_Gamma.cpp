@@ -15,7 +15,7 @@
 
 2. This file is shared by both CPU and GPU
 
-   GPU_EoS_Gamma.cu -> CPU_EoS_Gamma.cpp
+   GPU_EoS_Gamma.cpp == CPU_EoS_Gamma.cpp
 
 3. Three steps are required to implement an EoS
 

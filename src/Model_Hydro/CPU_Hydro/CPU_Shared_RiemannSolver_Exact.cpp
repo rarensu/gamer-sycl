@@ -14,7 +14,7 @@
 // external functions
 #ifdef __CUDACC__
 
-#include "CUFLU_Shared_FluUtility.cu"
+#include "CPU_Shared_FluUtility.cpp"
 
 #else // #ifdef __CUDACC__
 
