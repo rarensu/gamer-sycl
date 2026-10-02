@@ -1,6 +1,11 @@
 #include "Macro.h"
 #include "POT.h"
 
+#ifdef SYCL_LANGUAGE_VERSION
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
+#endif
+
 #if ( defined GRAVITY  &&  defined GPU  &&  POT_SCHEME == SOR )
 
 
@@ -101,13 +106,31 @@
 //                                      INT_CQUAD : conservative quadratic interpolation
 //                                      INT_QUAD  : quadratic interpolation
 //---------------------------------------------------------------------------------------------------
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO_NXT*RHO_NXT ],
+                                         const real g_Pot_Array_In [][ POT_NXT*POT_NXT*POT_NXT ],
+                                               real g_Pot_Array_Out[][ GRA_NXT*GRA_NXT*GRA_NXT ],
+                                         const int Min_Iter, const int Max_Iter, const real Omega_6,
+                                         const real Const, const IntScheme_t IntScheme )
+#else
 __global__ void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO_NXT*RHO_NXT ],
                                          const real g_Pot_Array_In [][ POT_NXT*POT_NXT*POT_NXT ],
                                                real g_Pot_Array_Out[][ GRA_NXT*GRA_NXT*GRA_NXT ],
                                          const int Min_Iter, const int Max_Iter, const real Omega_6,
                                          const real Const, const IntScheme_t IntScheme )
+#endif
 {
 
+#ifdef SYCL_LANGUAGE_VERSION
+   auto item_ct1        = sycl::ext::oneapi::this_work_item::get_nd_item<3>();
+   const uint bid       = item_ct1.get_group(2);
+   const uint tid_x     = item_ct1.get_local_id(2);
+   const uint tid_y     = item_ct1.get_local_id(1);
+   const uint tid_z     = item_ct1.get_local_id(0);
+   const uint bdim_x    = item_ct1.get_local_range(2);
+   const uint bdim_y    = item_ct1.get_local_range(1);
+   const uint bdim_z    = item_ct1.get_local_range(0);
+#else
    const uint bid       = blockIdx.x;
    const uint tid_x     = threadIdx.x;
    const uint tid_y     = threadIdx.y;
@@ -115,6 +138,7 @@ __global__ void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO
    const uint bdim_x    = blockDim.x;
    const uint bdim_y    = blockDim.y;
    const uint bdim_z    = blockDim.z;
+#endif
    const uint ID        = __umul24( tid_z, __umul24(bdim_x,bdim_y) ) + __umul24( tid_y, bdim_x ) + tid_x;
    const uint dx        = 1;
    const uint dy        = POT_NXT_F;
