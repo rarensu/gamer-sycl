@@ -1,5 +1,18 @@
 #include "Macro.h"
 
+#ifdef SYCL_LANGUAGE_VERSION
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
+#endif
+
+#ifndef GPU_DEVICE
+#  ifdef SYCL_LANGUAGE_VERSION
+#    define GPU_DEVICE __dpct_inline__
+#  else
+#    define GPU_DEVICE __forceinline__ __device__
+#  endif
+#endif
+
 #ifdef GPU
 
 
@@ -42,15 +55,24 @@
 //
 // Return value:  Reduction of "val"
 //---------------------------------------------------------------------------------------------------
-__inline__ __device__
+__inline__ GPU_DEVICE
 real BlockReduction_WarpSync( real val )
 {
 
+#ifdef SYCL_LANGUAGE_VERSION
+   auto item_ct1 = sycl::ext::oneapi::this_work_item::get_nd_item<3>();
+   const uint tid_x = item_ct1.get_local_id(2);
+   const uint tid_y = item_ct1.get_local_id(1);
+   const uint tid_z = item_ct1.get_local_id(0);
+   const uint bdim_x = item_ct1.get_local_range(2);
+   const uint bdim_y = item_ct1.get_local_range(1);
+#else
    const uint tid_x     = threadIdx.x;
    const uint tid_y     = threadIdx.y;
    const uint tid_z     = threadIdx.z;
    const uint bdim_x    = blockDim.x;
    const uint bdim_y    = blockDim.y;
+#endif
    const uint ID        = __umul24( tid_z, __umul24(bdim_x,bdim_y) ) + __umul24( tid_y, bdim_x ) + tid_x;
    const uint FloorPow2 = 1 << ( 31-__clz(RED_NTHREAD) );   // largest power-of-two value not greater than RED_NTHREAD
    const uint Remain    = RED_NTHREAD - FloorPow2;

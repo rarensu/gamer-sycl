@@ -1,5 +1,18 @@
 #include "Macro.h"
 
+#ifdef SYCL_LANGUAGE_VERSION
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
+#endif
+
+#ifndef GPU_DEVICE
+#  ifdef SYCL_LANGUAGE_VERSION
+#    define GPU_DEVICE __dpct_inline__
+#  else
+#    define GPU_DEVICE __forceinline__ __device__
+#  endif
+#endif
+
 #ifdef GPU
 
 
@@ -44,7 +57,7 @@
 //
 // Return value:  Reduction of "val" within each warp
 //---------------------------------------------------------------------------------------------------
-__inline__ __device__
+__inline__ GPU_DEVICE
 real WarpReduction_Shuffle( real val )
 {
 
@@ -58,7 +71,10 @@ real WarpReduction_Shuffle( real val )
 
 //    use this approach instead to invoke "__shfl_down(val,offset, WARP_SIZE)" only once
 //    also, note that __shfl_down has been deprecated since CUDA 9.0
-#     if ( CUDART_VERSION >= 9000 )
+#     ifdef SYCL_LANGUAGE_VERSION
+      const real tmp = dpct::shift_sub_group_left(
+          sycl::ext::oneapi::this_work_item::get_sub_group(), val, offset);
+#     elif ( CUDART_VERSION >= 9000 )
       const real tmp = __shfl_down_sync( 0xffffffff, val, offset, WARP_SIZE );
 #     else
       const real tmp = __shfl_down( val, offset, WARP_SIZE );
@@ -89,15 +105,24 @@ real WarpReduction_Shuffle( real val )
 //
 // Return value:  Reduction of "val" within each thread block
 //---------------------------------------------------------------------------------------------------
-__inline__ __device__
+__inline__ GPU_DEVICE
 real BlockReduction_Shuffle( real val )
 {
 
+#ifdef SYCL_LANGUAGE_VERSION
+   auto item_ct1 = sycl::ext::oneapi::this_work_item::get_nd_item<3>();
+   const uint tid_x = item_ct1.get_local_id(2);
+   const uint tid_y = item_ct1.get_local_id(1);
+   const uint tid_z = item_ct1.get_local_id(0);
+   const uint bdim_x = item_ct1.get_local_range(2);
+   const uint bdim_y = item_ct1.get_local_range(1);
+#else
    const uint tid_x   = threadIdx.x;
    const uint tid_y   = threadIdx.y;
    const uint tid_z   = threadIdx.z;
    const uint bdim_x  = blockDim.x;
    const uint bdim_y  = blockDim.y;
+#endif
    const uint ID      = __umul24( tid_z, __umul24(bdim_x,bdim_y) ) + __umul24( tid_y, bdim_x ) + tid_x;
    const int lane     = ID % WARP_SIZE;         // local lane ID within a warp [0 ... WARP_SIZE-1]
    const int wid      = ID / WARP_SIZE;         // warp ID
@@ -106,7 +131,11 @@ real BlockReduction_Shuffle( real val )
    const int NWarp    = RED_NTHREAD/WARP_SIZE;  // actual number of warps (which must be <= WARP_SIZE since we apply the
                                                 // final reduction only to the first warp)
 
+#ifdef SYCL_LANGUAGE_VERSION
+   __shared__ real shared[MaxNWarp];
+#else
    static __shared__ real shared[MaxNWarp];     // maximum shared memory required for 32 partial sums (must be <= WARP_SIZE)
+#endif
 
 // perform reduction within each warp
    val = WarpReduction_Shuffle( val );
