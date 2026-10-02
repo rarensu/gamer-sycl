@@ -1,3 +1,5 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
 
 #if ( MODEL == HYDRO )
@@ -5,7 +7,7 @@
 
 
 // external functions and GPU-related set-up
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 
 #include "Global.h"
 #include "CheckError.h"
@@ -15,11 +17,11 @@
 extern real (*d_SrcDlepProf_Data)[SRC_DLEP_PROF_NBINMAX];
 extern real  *d_SrcDlepProf_Radius;
 
-#endif // #ifdef __CUDACC__
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 
 // local function prototypes
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 
 void Src_SetAuxArray_Deleptonization( double [], int [] );
 void Src_SetCPUFunc_Deleptonization( SrcFunc_t & );
@@ -66,20 +68,20 @@ void Src_PassData2GPU_Deleptonization();
 //
 // Note        :  1. Invoked by Src_Init_Deleptonization()
 //                2. AuxArray_Flt/Int[] have the size of SRC_NAUX_DLEP defined in Macro.h (default = 5)
-//                3. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+//                3. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //
 // Parameter   :  AuxArray_Flt/Int : Floating-point/Integer arrays to be filled up
 //
 // Return      :  AuxArray_Flt/Int[]
 //-------------------------------------------------------------------------------------------------------
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 void Src_SetAuxArray_Deleptonization( double AuxArray_Flt[], int AuxArray_Int[] )
 {
 
 // TBF
 
 } // FUNCTION : Src_SetAuxArray_Deleptonization
-#endif // #ifndef __CUDACC__
+#endif // #ifndef SYCL_LANGUAGE_VERSION
 
 
 
@@ -145,7 +147,7 @@ static void Src_Deleptonization( real fluid[], const real B[],
 // Description :  Specify work to be done every time before calling the major source-term function
 //
 // Note        :  1. Invoked by Src_WorkBeforeMajorFunc()
-//                2. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+//                2. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //
 // Parameter   :  lv               : Target refinement level
 //                TimeNew          : Target physical time to reach
@@ -160,7 +162,7 @@ static void Src_Deleptonization( real fluid[], const real B[],
 //
 // Return      :  AuxArray_Flt/Int[]
 //-------------------------------------------------------------------------------------------------------
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 void Src_WorkBeforeMajorFunc_Deleptonization( const int lv, const double TimeNew, const double TimeOld, const double dt,
                                               double AuxArray_Flt[], int AuxArray_Int[] )
 {
@@ -231,9 +233,7 @@ void Src_WorkBeforeMajorFunc_Deleptonization( const int lv, const double TimeNew
 } // FUNCTION : Src_WorkBeforeMajorFunc_Deleptonization
 #endif
 
-
-
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 //-------------------------------------------------------------------------------------------------------
 // Function    :  Src_PassData2GPU_Deleptonization
 // Description :  Transfer data to GPU
@@ -252,11 +252,17 @@ void Src_PassData2GPU_Deleptonization()
    const long Size_Radius = sizeof(real)*                   SRC_DLEP_PROF_NBINMAX;
 
 // use synchronous transfer
-   DEVICE_CHECK_ERROR(  cudaMemcpy( d_SrcDlepProf_Data,   h_SrcDlepProf_Data,   Size_Data,   cudaMemcpyHostToDevice )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpy( d_SrcDlepProf_Radius, h_SrcDlepProf_Radius, Size_Radius, cudaMemcpyHostToDevice )  );
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(d_SrcDlepProf_Data, h_SrcDlepProf_Data, Size_Data)
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(d_SrcDlepProf_Radius, h_SrcDlepProf_Radius, Size_Radius)
+           .wait()));
 
 } // FUNCTION : Src_PassData2GPU_Deleptonization
-#endif // #ifdef __CUDACC__
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 
 
@@ -264,13 +270,7 @@ void Src_PassData2GPU_Deleptonization()
 // IV. Set initialization functions
 // ================================
 
-#ifdef __CUDACC__
-#  define FUNC_SPACE __device__ static
-#else
-#  define FUNC_SPACE            static
-#endif
-
-FUNC_SPACE SrcFunc_t SrcFunc_Ptr = Src_Deleptonization;
+static dpct::global_memory<SrcFunc_t, 0> SrcFunc_Ptr(Src_Deleptonization);
 
 //-----------------------------------------------------------------------------------------
 // Function    :  Src_SetCPU/GPUFunc_Deleptonization
@@ -283,11 +283,14 @@ FUNC_SPACE SrcFunc_t SrcFunc_Ptr = Src_Deleptonization;
 //
 // Return      :  SrcFunc_CPU/GPUPtr
 //-----------------------------------------------------------------------------------------
-#ifdef __CUDACC__
-__host__
+#ifdef SYCL_LANGUAGE_VERSION
+
 void Src_SetGPUFunc_Deleptonization( SrcFunc_t &SrcFunc_GPUPtr )
 {
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &SrcFunc_GPUPtr, SrcFunc_Ptr, sizeof(SrcFunc_t) )  );
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&SrcFunc_GPUPtr, SrcFunc_Ptr.get_ptr(), sizeof(SrcFunc_t))
+           .wait()));
 }
 
 #else
@@ -297,17 +300,15 @@ void Src_SetCPUFunc_Deleptonization( SrcFunc_t &SrcFunc_CPUPtr )
    SrcFunc_CPUPtr = SrcFunc_Ptr;
 }
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
-
-
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 //-------------------------------------------------------------------------------------------------------
 // Function    :  Src_SetConstMemory_Deleptonization
 // Description :  Set the constant memory variables on GPU
 //
-// Note        :  1. Adopt the suggested approach for CUDA version >= 5.0
-//                2. Invoked by Src_Init_Deleptonizatio() and, if necessary, Src_WorkBeforeMajorFunc_Deleptonizatio()
+// Note        :  1. Adopt the suggested approach for SYCL
+//                2. Invoked by Src_Init_Deleptonization() and, if necessary, Src_WorkBeforeMajorFunc_Deleptonization()
 //                3. SRC_NAUX_DLEP is defined in Macro.h
 //
 // Parameter   :  AuxArray_Flt/Int : Auxiliary arrays to be copied to the constant memory
@@ -320,19 +321,27 @@ void Src_SetConstMemory_Deleptonization( const double AuxArray_Flt[], const int 
 {
 
 // copy data to constant memory
-   DEVICE_CHECK_ERROR(  cudaMemcpyToSymbol( c_Src_Dlep_AuxArray_Flt, AuxArray_Flt, SRC_NAUX_DLEP*sizeof(double) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyToSymbol( c_Src_Dlep_AuxArray_Int, AuxArray_Int, SRC_NAUX_DLEP*sizeof(int   ) )  );
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(c_Src_Dlep_AuxArray_Flt.get_ptr(), AuxArray_Flt,
+                   SRC_NAUX_DLEP * sizeof(double))
+           .wait()));
+   DEVICE_CHECK_ERROR(
+       DPCT_CHECK_ERROR(dpct::get_in_order_queue()
+                            .memcpy(c_Src_Dlep_AuxArray_Int.get_ptr(),
+                                    AuxArray_Int, SRC_NAUX_DLEP * sizeof(int))
+                            .wait()));
 
 // obtain the constant-memory pointers
-   DEVICE_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&DevPtr_Flt, c_Src_Dlep_AuxArray_Flt )  );
-   DEVICE_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&DevPtr_Int, c_Src_Dlep_AuxArray_Int )  );
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&DevPtr_Flt) =
+                                         c_Src_Dlep_AuxArray_Flt.get_ptr()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&DevPtr_Int) =
+                                         c_Src_Dlep_AuxArray_Int.get_ptr()));
 
 } // FUNCTION : Src_SetConstMemory_Deleptonization
-#endif // #ifdef __CUDACC__
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
-
-
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 
 //-----------------------------------------------------------------------------------------
 // Function    :  Src_Init_Deleptonization
@@ -342,7 +351,7 @@ void Src_SetConstMemory_Deleptonization( const double AuxArray_Flt[], const int 
 //                   --> Copy to the GPU constant memory and store the associated addresses
 //                2. Set the source-term function by invoking Src_SetCPU/GPUFunc_*()
 //                3. Invoked by Src_Init()
-//                4. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+//                4. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //
 // Parameter   :  None
 //
@@ -382,7 +391,7 @@ void Src_Init_Deleptonization()
 // Description :  Release the resources used by the deleptonization source term
 //
 // Note        :  1. Invoked by Src_End()
-//                2. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+//                2. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //
 // Parameter   :  None
 //
@@ -395,7 +404,7 @@ void Src_End_Deleptonization()
 
 } // FUNCTION : Src_End_Deleptonization
 
-#endif // #ifndef __CUDACC__
+#endif // #ifndef SYCL_LANGUAGE_VERSION
 
 
 

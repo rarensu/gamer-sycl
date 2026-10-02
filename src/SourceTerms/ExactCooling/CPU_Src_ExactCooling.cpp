@@ -1,10 +1,12 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
 
 #ifdef EXACT_COOLING
 
 
 // external functions and GPU-related set-up
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 
 #include "Global.h"
 #include "CheckError.h"
@@ -18,11 +20,11 @@ extern double *d_SrcEC_TEF_lambda;
 extern double *d_SrcEC_TEF_alpha;
 extern double *d_SrcEC_TEFc;
 
-#endif // #ifdef __CUDACC__
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 
 // local function prototypes
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 
 void Src_SetAuxArray_ExactCooling( double [], int [] );
 void Src_SetConstMemory_ExactCooling( const double AuxArray_Flt[], const int AuxArray_Int[],
@@ -40,7 +42,7 @@ void Src_WorkBeforeMajorFunc_ExactCooling( const int lv, const double TimeNew, c
 void Src_End_ExactCooling();
 
 void Cool_fct( double Dens, double Temp, double* Emis, double* Lambdat, double Z, double cl_moli_mole, double mp );
-#endif // #ifndef __CUDACC__
+#endif // #ifndef SYCL_LANGUAGE_VERSION
 /*
 GPU_DEVICE static
 double TEF( double TEMP, int k, const double TEF_lambda[], const double TEF_alpha[], const double TEFc[],
@@ -83,13 +85,13 @@ double TEFinv( double Y, int k, const double TEF_lambda[], const double TEF_alph
 //
 // Note        :  1. Invoked by Src_Init_ExactCooling()
 //                2. AuxArray_Flt/Int[] have the size of SRC_NAUX_EC defined in Macro.h (default = 10)
-//                3. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+//                3. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //
 // Parameter   :  AuxArray_Flt/Int : Floating-point/Integer arrays to be filled up
 //
 // Return      :  AuxArray_Flt/Int[]
 //-------------------------------------------------------------------------------------------------------
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 void Src_SetAuxArray_ExactCooling( double AuxArray_Flt[], int AuxArray_Int[] )
 {
 
@@ -122,7 +124,7 @@ void Src_SetAuxArray_ExactCooling( double AuxArray_Flt[], int AuxArray_Int[] )
    AuxArray_Int[0] = TEF_N;
 
 } // FUNCTION : Src_SetAuxArray_ExactCooling
-#endif // #ifndef __CUDACC__
+#endif // #ifndef SYCL_LANGUAGE_VERSION
 
 
 // ======================================
@@ -217,12 +219,12 @@ double TEFinv( double Y, int k, const double TEF_lambda[], const double TEF_alph
 //      before calling the major source-term function
 // ==================================================
 
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 //-------------------------------------------------------------------------------------------------------
 // Function    :  Src_WorkBeforeMajorFunc_ExactCooling
 // Description :  Specify work to be done every time before calling the major source-term function
 //
-// Note        :  1. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+// Note        :  1. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //
 // Parameter   :  lv               : Target refinement level
 //                TimeNew          : Target physical time to reach
@@ -242,11 +244,11 @@ void Src_WorkBeforeMajorFunc_ExactCooling( const int lv, const double TimeNew, c
 {
 //  nothing to do here
 } // FUNCTION : Src_WorkBeforeMajorFunc_ExactCooling
-#endif // #ifndef __CUDACC__
+#endif // #ifndef SYCL_LANGUAGE_VERSION
 
 
 
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 //-------------------------------------------------------------------------------------------------------
 // Function    :  Src_PassData2GPU_ExactCooling
 // Description :  Transfer data to GPU
@@ -261,9 +263,15 @@ void Src_PassData2GPU_ExactCooling()
 {
    const long EC_TEF_MemSize = sizeof(double)*SrcTerms.EC_TEF_N;
 
-   DEVICE_CHECK_ERROR(  cudaMalloc( (void**) &d_SrcEC_TEF_lambda, EC_TEF_MemSize )  );
-   DEVICE_CHECK_ERROR(  cudaMalloc( (void**) &d_SrcEC_TEF_alpha,  EC_TEF_MemSize )  );
-   DEVICE_CHECK_ERROR(  cudaMalloc( (void**) &d_SrcEC_TEFc,       EC_TEF_MemSize )  );
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       d_SrcEC_TEF_lambda =
+           (double *)dpct::dpct_malloc(EC_TEF_MemSize)));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       d_SrcEC_TEF_alpha =
+           (double *)dpct::dpct_malloc(EC_TEF_MemSize)));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       d_SrcEC_TEFc =
+           (double *)dpct::dpct_malloc(EC_TEF_MemSize)));
 
 // store the device pointers in SrcTerms when using GPU
    SrcTerms.EC_TEF_lambda_DevPtr = d_SrcEC_TEF_lambda;
@@ -271,25 +279,28 @@ void Src_PassData2GPU_ExactCooling()
    SrcTerms.EC_TEFc_DevPtr       = d_SrcEC_TEFc;
 
 // use synchronous transfer
-   DEVICE_CHECK_ERROR(  cudaMemcpy( d_SrcEC_TEF_lambda, h_SrcEC_TEF_lambda, EC_TEF_MemSize, cudaMemcpyHostToDevice )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpy( d_SrcEC_TEF_alpha,  h_SrcEC_TEF_alpha,  EC_TEF_MemSize, cudaMemcpyHostToDevice )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpy( d_SrcEC_TEFc,       h_SrcEC_TEFc,       EC_TEF_MemSize, cudaMemcpyHostToDevice )  );
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(d_SrcEC_TEF_lambda, h_SrcEC_TEF_lambda, EC_TEF_MemSize)
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(d_SrcEC_TEF_alpha, h_SrcEC_TEF_alpha, EC_TEF_MemSize)
+           .wait()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(d_SrcEC_TEFc, h_SrcEC_TEFc, EC_TEF_MemSize)
+           .wait()));
 
 } // FUNCTION : Src_PassData2GPU_ExactCooling
-#endif // #ifdef __CUDACC__
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 
 // ================================
 // IV. Set initialization functions
 // ================================
 
-#ifdef __CUDACC__
-#  define FUNC_SPACE __device__ static
-#else
-#  define FUNC_SPACE            static
-#endif
-
-FUNC_SPACE SrcFunc_t SrcFunc_Ptr = Src_ExactCooling;
+static dpct::global_memory<SrcFunc_t, 0> SrcFunc_Ptr(Src_ExactCooling);
 
 //-----------------------------------------------------------------------------------------
 // Function    :  Src_SetCPU/GPUFunc_ExactCooling
@@ -302,11 +313,14 @@ FUNC_SPACE SrcFunc_t SrcFunc_Ptr = Src_ExactCooling;
 //
 // Return      :  SrcFunc_CPU/GPUPtr
 //-----------------------------------------------------------------------------------------
-#ifdef __CUDACC__
-__host__
+#ifdef SYCL_LANGUAGE_VERSION
+
 void Src_SetGPUFunc_ExactCooling( SrcFunc_t &SrcFunc_GPUPtr )
 {
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &SrcFunc_GPUPtr, SrcFunc_Ptr, sizeof(SrcFunc_t) )  );
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(&SrcFunc_GPUPtr, SrcFunc_Ptr.get_ptr(), sizeof(SrcFunc_t))
+           .wait()));
 }
 
 #else
@@ -316,16 +330,16 @@ void Src_SetCPUFunc_ExactCooling( SrcFunc_t &SrcFunc_CPUPtr )
    SrcFunc_CPUPtr = SrcFunc_Ptr;
 }
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
 
 
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 //-------------------------------------------------------------------------------------------------------
 // Function    :  Src_SetConstMemory_ExactCooling
 // Description :  Set the constant memory variables on GPU
 //
-// Note        :  1. Adopt the suggested approach for CUDA version >= 5.0
+// Note        :  1. Adopt the suggested approach for SYCL
 //                2. Invoked by Src_Init_ExactCooling() and, if necessary, Src_WorkBeforeMajorFunc_ExactCooling()
 //                3. SRC_NAUX_EC is defined in Macro.h
 //
@@ -339,19 +353,29 @@ void Src_SetConstMemory_ExactCooling( const double AuxArray_Flt[], const int Aux
 {
 
 // copy data to constant memory
-   DEVICE_CHECK_ERROR(  cudaMemcpyToSymbol( c_Src_EC_AuxArray_Flt, AuxArray_Flt, SRC_NAUX_EC*sizeof(double) )  );
-   DEVICE_CHECK_ERROR(  cudaMemcpyToSymbol( c_Src_EC_AuxArray_Int, AuxArray_Int, SRC_NAUX_EC*sizeof(int   ) )  );
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+       dpct::get_in_order_queue()
+           .memcpy(c_Src_EC_AuxArray_Flt.get_ptr(), AuxArray_Flt,
+                   SRC_NAUX_EC * sizeof(double))
+           .wait()));
+   DEVICE_CHECK_ERROR(
+       DPCT_CHECK_ERROR(dpct::get_in_order_queue()
+                            .memcpy(c_Src_EC_AuxArray_Int.get_ptr(),
+                                    AuxArray_Int, SRC_NAUX_EC * sizeof(int))
+                            .wait()));
 
 // obtain the constant-memory pointers
-   DEVICE_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&DevPtr_Flt, c_Src_EC_AuxArray_Flt )  );
-   DEVICE_CHECK_ERROR(  cudaGetSymbolAddress( (void **)&DevPtr_Int, c_Src_EC_AuxArray_Int )  );
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&DevPtr_Flt) =
+                                         c_Src_EC_AuxArray_Flt.get_ptr()));
+   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&DevPtr_Int) =
+                                         c_Src_EC_AuxArray_Int.get_ptr()));
 
 } // FUNCTION : Src_SetConstMemory_ExactCooling
-#endif // #ifdef __CUDACC__
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 
 
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 //-----------------------------------------------------------------------------------------
 // Function    :  Src_Init_ExactCooling
 // Description :  Initialize the exact-cooling source term
@@ -360,7 +384,7 @@ void Src_SetConstMemory_ExactCooling( const double AuxArray_Flt[], const int Aux
 //                   --> Copy to the GPU constant memory and store the associated addresses
 //                2. Set the source-term function by invoking Src_SetCPU/GPUFunc_*()
 //                3. Invoked by Src_Init()
-//                4. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+//                4. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //
 // Parameter   :  None
 //
@@ -436,7 +460,7 @@ void Cool_fct( double Dens, double Temp, double* Emis, double* Lambdat, double Z
 // Description :  Free the resources used by the exact-cooling source term
 //
 // Note        :  1. Invoked by Src_End()
-//                2. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+//                2. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //
 // Parameter   :  None
 //
@@ -459,11 +483,11 @@ void Src_End_ExactCooling()
 #  endif
 
 } // FUNCTION : Src_End_ExactCooling
-#endif // #ifndef __CUDACC__
+#endif // #ifndef SYCL_LANGUAGE_VERSION
 
 
 
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 //-------------------------------------------------------------------------------------------------------
 // Function    :  GPU_MemFree_ExactCooling
 // Description :  Free the GPU memory of the ExactCooling arrays
@@ -477,16 +501,16 @@ void Src_End_ExactCooling()
 void GPU_MemFree_ExactCooling()
 {
 
-   if ( d_SrcEC_TEF_lambda != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_SrcEC_TEF_lambda )  );  d_SrcEC_TEF_lambda = NULL; }
-   if ( d_SrcEC_TEF_alpha  != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_SrcEC_TEF_alpha  )  );  d_SrcEC_TEF_alpha  = NULL; }
-   if ( d_SrcEC_TEFc       != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_SrcEC_TEFc       )  );  d_SrcEC_TEFc       = NULL; }
+   if ( d_SrcEC_TEF_lambda != NULL ) {  DEVICE_CHECK_ERROR(  DPCT_CHECK_ERROR(dpct::dpct_free( d_SrcEC_TEF_lambda ))  );  d_SrcEC_TEF_lambda = NULL; }
+   if ( d_SrcEC_TEF_alpha  != NULL ) {  DEVICE_CHECK_ERROR(  DPCT_CHECK_ERROR(dpct::dpct_free( d_SrcEC_TEF_alpha  ))  );  d_SrcEC_TEF_alpha  = NULL; }
+   if ( d_SrcEC_TEFc       != NULL ) {  DEVICE_CHECK_ERROR(  DPCT_CHECK_ERROR(dpct::dpct_free( d_SrcEC_TEFc       ))  );  d_SrcEC_TEFc       = NULL; }
 
    SrcTerms.EC_TEF_lambda_DevPtr = NULL;
    SrcTerms.EC_TEF_alpha_DevPtr  = NULL;
    SrcTerms.EC_TEFc_DevPtr       = NULL;
 
 } // FUNCTION : GPU_MemFree_ExactCooling
-#endif // #ifdef __CUDACC__
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 
 #endif // #ifdef EXACT_COOLING
