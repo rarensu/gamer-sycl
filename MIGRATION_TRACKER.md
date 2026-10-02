@@ -13,6 +13,9 @@ This file tracks which **original GAMER source files** have had the correspondin
 - Mark a file here only after its matching change has been applied to the original file.
 - Use this file as the source of truth for migration progress.
 - Keep entries aligned with the paths in `dpct_out/` and the corresponding paths in the root source tree.
+- **First-pass and Second-pass policy**:
+  - The first pass is to attempt all files. Do not retry on the first pass if a file has complex compilation issues or blockages; move to the next file.
+  - Retries, deeper debugging, and unresolved issues should be tackled on the second pass.
 
 ## Suggested status format
 - `TODO` — not yet applied to the original file
@@ -55,4 +58,6 @@ This file tracks which **original GAMER source files** have had the correspondin
 | DONE | `/home/rlawrence/Projects/gamer-sycl/src/GPU_API/GPU_MemAllocate_Fluid.cpp` | `/home/rlawrence/Projects/gamer-sycl/dpct_out/src/GPU_API/GPU_MemAllocate_Fluid.dp.cpp` | Fully migrated to SYCL. Converted host deallocations, device/host allocations, and queue destructions to standard SYCL/DPCT equivalents, cleaned legacy CUDA comments. |
 | DONE | `/home/rlawrence/Projects/gamer-sycl/src/GPU_API/GPU_MemFree_Fluid.cpp` | `/home/rlawrence/Projects/gamer-sycl/dpct_out/src/GPU_API/GPU_MemFree_Fluid.dp.cpp` | Fully migrated to SYCL. Converted host deallocations and queue destructions to standard SYCL/DPCT equivalents, cleaned legacy CUDA comments. |
 | DONE | `/home/rlawrence/Projects/gamer-sycl/src/GPU_API/GPU_Asyn_FluidSolver.cpp` | `/home/rlawrence/Projects/gamer-sycl/dpct_out/src/GPU_API/GPU_Asyn_FluidSolver.dp.cpp` | Fully migrated asynchronous fluid solver wrappers and launch blocks to SYCL using the standard Stream submission and memcpy API. |
+| DONE | `/home/rlawrence/Projects/gamer-sycl/src/GPU_API/GPU_Asyn_SrcSolver.cpp` | `/home/rlawrence/Projects/gamer-sycl/dpct_out/src/GPU_API/GPU_Asyn_SrcSolver.dp.cpp` | Fully migrated asynchronous source solver wrappers and launch blocks to SYCL using the standard Stream submission and memcpy API. |
+| DONE | `/home/rlawrence/Projects/gamer-sycl/src/GPU_API/GPU_Asyn_dtSolver.cpp` | `/home/rlawrence/Projects/gamer-sycl/dpct_out/src/GPU_API/GPU_Asyn_dtSolver.dp.cpp` | Fully migrated asynchronous dt solver wrappers and launch blocks to SYCL using the standard Stream submission and memcpy API. |
 
