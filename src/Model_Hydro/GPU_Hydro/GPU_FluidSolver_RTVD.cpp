@@ -1,6 +1,11 @@
 #include "Macro.h"
 #include "FLU.h"
 
+#ifdef SYCL_LANGUAGE_VERSION
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
+#endif
+
 #if ( defined GPU  &&  MODEL == HYDRO  &&  FLU_SCHEME == RTVD  &&  !defined SRHD )
 
 // check before compiling anything else
@@ -15,6 +20,17 @@
 #define to1D1(z,y,x) ( __umul24(z, FLU_NXT*FLU_NXT) + __umul24(y, FLU_NXT) + x )
 #define to1D2(z,y,x) ( __umul24(z-FLU_GHOST_SIZE, PS2*PS2) + __umul24(y-FLU_GHOST_SIZE, PS2) + x-FLU_GHOST_SIZE )
 
+#ifdef SYCL_LANGUAGE_VERSION
+static GPU_DEVICE void GPU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
+                                      real g_Fluid_Out[][5][ CUBE(PS2) ],
+                                      real g_Flux[][9][5][ SQR(PS2) ],
+                                      const real dt, const real _dh, const bool StoreFlux,
+                                      const int j_gap, const int k_gap, real s_cu[][5][FLU_NXT],
+                                      real s_cw[][5][FLU_NXT], real s_flux[][5][FLU_NXT], real s_RLflux[][5][FLU_NXT],
+                                      const bool FinalOut, const int XYZ,
+                                      const real MinDens, const real MinPres, const real MinEint, const long PassiveFloor,
+                                      const EoS_t *EoS );
+#else
 static __device__ void GPU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
                                       real g_Fluid_Out[][5][ CUBE(PS2) ],
                                       real g_Flux[][9][5][ SQR(PS2) ],
@@ -24,6 +40,7 @@ static __device__ void GPU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
                                       const bool FinalOut, const int XYZ,
                                       const real MinDens, const real MinPres, const real MinEint, const long PassiveFloor,
                                       const EoS_t *EoS );
+#endif
 
 
 
@@ -52,7 +69,11 @@ static __device__ void GPU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
 //                PassiveFloor : Bitwise flag to specify the passive scalars to be floored
 //                EoS          : EoS object
 //-------------------------------------------------------------------------------------------------------
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL void GPU_FluidSolver_RTVD(
+#else
 __global__ void GPU_FluidSolver_RTVD(
+#endif
    real g_Fluid_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
    real g_Fluid_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
    real g_Flux     [][9][NCOMP_TOTAL][ SQR(PS2) ],
@@ -126,6 +147,17 @@ __global__ void GPU_FluidSolver_RTVD(
 //                PassiveFloor : Bitwise flag to specify the passive scalars to be floored
 //                EoS          : EoS object
 //-------------------------------------------------------------------------------------------------------
+#ifdef SYCL_LANGUAGE_VERSION
+GPU_DEVICE void GPU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
+                               real g_Fluid_Out[][5][ CUBE(PS2) ],
+                               real g_Flux[][9][5][ SQR(PS2) ],
+                               const real dt, const real _dh, const bool StoreFlux,
+                               const int j_gap, const int k_gap, real s_cu[][5][FLU_NXT],
+                               real s_cw[][5][FLU_NXT], real s_flux[][5][FLU_NXT], real s_RLflux[][5][FLU_NXT],
+                               const bool FinalOut, const int XYZ,
+                               const real MinDens, const real MinPres, const real MinEint, const long PassiveFloor,
+                               const EoS_t *EoS )
+#else
 __device__ void GPU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
                                real g_Fluid_Out[][5][ CUBE(PS2) ],
                                real g_Flux[][9][5][ SQR(PS2) ],
@@ -135,6 +167,7 @@ __device__ void GPU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
                                const bool FinalOut, const int XYZ,
                                const real MinDens, const real MinPres, const real MinEint, const long PassiveFloor,
                                const EoS_t *EoS )
+#endif
 {
 
    const uint bx               = blockIdx.x;
