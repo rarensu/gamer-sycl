@@ -1,6 +1,11 @@
 #include "Macro.h"
 #include "POT.h"
 
+#ifdef SYCL_LANGUAGE_VERSION
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
+#endif
+
 #if ( defined GRAVITY  &&  defined GPU  &&  POT_SCHEME == MG )
 
 
@@ -56,15 +61,15 @@
 #include "ConstMemory.h"
 
 // prototype
-static __device__ void LoadRho( const real *g_Rho, real *s_Rho, const real Poi_Coeff, const uint g_Idx0 );
-static __device__ void Smoothing( real *Sol, const real *RHS, const real dh, const uint NGrid, const uint Idx0 );
-static __device__ void ComputeDefect( const real *Sol, const real *RHS, real *Def, const real dh,
+static GPU_DEVICE void LoadRho( const real *g_Rho, real *s_Rho, const real Poi_Coeff, const uint g_Idx0 );
+static GPU_DEVICE void Smoothing( real *Sol, const real *RHS, const real dh, const uint NGrid, const uint Idx0 );
+static GPU_DEVICE void ComputeDefect( const real *Sol, const real *RHS, real *Def, const real dh,
                                       const uint NGrid, const uint Idx0 );
-static __device__ void Restrict( const real *FData, real *CData, const uint NGrid_F, const uint NGrid_C,
+static GPU_DEVICE void Restrict( const real *FData, real *CData, const uint NGrid_F, const uint NGrid_C,
                                  const uint Idx0 );
-static __device__ void Prolongate_and_Correct( const real *CData, real *FData, const uint NGrid_C,
+static GPU_DEVICE void Prolongate_and_Correct( const real *CData, real *FData, const uint NGrid_C,
                                                const uint NGrid_F, const uint FIdx0 );
-static __device__ void EstimateError( const real *Sol, const real *RHS, const real dh, real *s_Error,
+static GPU_DEVICE void EstimateError( const real *Sol, const real *RHS, const real dh, real *s_Error,
                                       real *s_SolSum, const uint tid );
 
 
@@ -94,16 +99,31 @@ static __device__ void EstimateError( const real *Sol, const real *RHS, const re
 //                                        INT_CQUAD : conservative quadratic interpolation
 //                                        INT_QUAD  : quadratic interpolation
 //---------------------------------------------------------------------------------------------------
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_NXT*RHO_NXT ],
+                                         const real g_Pot_Array_In [][ POT_NXT*POT_NXT*POT_NXT ],
+                                               real g_Pot_Array_Out[][ GRA_NXT*GRA_NXT*GRA_NXT ],
+                                         const real dh_Min, const int Max_Iter, const int NPre_Smooth,
+                                         const int NPost_Smooth, const real Tolerated_Error, const real Poi_Coeff,
+                                         const IntScheme_t IntScheme )
+#else
 __global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_NXT*RHO_NXT ],
                                         const real g_Pot_Array_In [][ POT_NXT*POT_NXT*POT_NXT ],
                                               real g_Pot_Array_Out[][ GRA_NXT*GRA_NXT*GRA_NXT ],
                                         const real dh_Min, const int Max_Iter, const int NPre_Smooth,
                                         const int NPost_Smooth, const real Tolerated_Error, const real Poi_Coeff,
                                         const IntScheme_t IntScheme )
+#endif
 {
 
+#ifdef SYCL_LANGUAGE_VERSION
+   auto item_ct1  = sycl::ext::oneapi::this_work_item::get_nd_item<3>();
+   const uint bid = item_ct1.get_group(2);
+   const uint tid = item_ct1.get_local_id(2);
+#else
    const uint bid = blockIdx.x;
    const uint tid = threadIdx.x;
+#endif
    const uint dy  = POT_NXT_F;
    const uint dz  = POT_NXT_F*POT_NXT_F;
 
@@ -504,7 +524,7 @@ __global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_
 //                NGrid : Number of cells in each spatial direction for Sol and RHS
 //                Idx0  : Starting cell index
 //-------------------------------------------------------------------------------------------------------
-__device__ void Smoothing( real *Sol, const real *RHS, const real dh, const uint NGrid, const uint Idx0 )
+GPU_DEVICE void Smoothing( real *Sol, const real *RHS, const real dh, const uint NGrid, const uint Idx0 )
 {
 
    const real dh2      = dh*dh;
@@ -580,7 +600,7 @@ __device__ void Smoothing( real *Sol, const real *RHS, const real dh, const uint
 //                NGrid          : Number of cells in each spatial direction for Sol and RHS
 //                Idx0           : Starting cell index
 //-------------------------------------------------------------------------------------------------------
-__device__ void ComputeDefect( const real *Sol, const real *RHS, real *Def, const real dh, const uint NGrid,
+GPU_DEVICE void ComputeDefect( const real *Sol, const real *RHS, real *Def, const real dh, const uint NGrid,
                                const uint Idx0 )
 {
 
@@ -656,7 +676,7 @@ __device__ void ComputeDefect( const real *Sol, const real *RHS, real *Def, cons
 //                Poi_Coeff   : Coefficient in front of density in the Poisson equation (4*Pi*Newton_G*a)
 //                g_Idx0      : Starting read index from the global memory
 //-------------------------------------------------------------------------------------------------------
-__device__ void LoadRho( const real *g_Rho, real *s_Rho, const real Poi_Coeff, const uint g_Idx0 )
+GPU_DEVICE void LoadRho( const real *g_Rho, real *s_Rho, const real Poi_Coeff, const uint g_Idx0 )
 {
 
    uint  s_Idx, g_Idx = g_Idx0;
@@ -697,7 +717,7 @@ __device__ void LoadRho( const real *g_Rho, real *s_Rho, const real Poi_Coeff, c
 //                NGrid_C  : Number of coarse-grid cells in each spatial direction
 //                CIdx0    : Starting coarse-grid index
 //-------------------------------------------------------------------------------------------------------
-__device__ void Restrict( const real *FData, real *CData, const uint NGrid_F, const uint NGrid_C,
+GPU_DEVICE void Restrict( const real *FData, real *CData, const uint NGrid_F, const uint NGrid_C,
                           const uint CIdx0 )
 {
 
@@ -808,7 +828,7 @@ __device__ void Restrict( const real *FData, real *CData, const uint NGrid_F, co
 //                NGrid_F  : Number of fine-grid cells in each spatial direction
 //                FIdx0    : Starting fine-grid index
 //-------------------------------------------------------------------------------------------------------
-__device__ void Prolongate_and_Correct( const real *CData, real *FData, const uint NGrid_C, const uint NGrid_F,
+GPU_DEVICE void Prolongate_and_Correct( const real *CData, real *FData, const uint NGrid_C, const uint NGrid_F,
                                         const uint FIdx0 )
 {
 
@@ -883,7 +903,7 @@ __device__ void Prolongate_and_Correct( const real *CData, real *FData, const ui
 //                s_SolSum : Shared-memory array to store the sum of solution
 //                tid      : Thread index
 //-------------------------------------------------------------------------------------------------------
-__device__ void EstimateError( const real *Sol, const real *RHS, const real dh, real *s_Error, real *s_SolSum,
+GPU_DEVICE void EstimateError( const real *Sol, const real *RHS, const real dh, real *s_Error, real *s_SolSum,
                                const uint tid )
 {
 
@@ -894,7 +914,11 @@ __device__ void EstimateError( const real *Sol, const real *RHS, const real dh, 
    const uint di        = 1U;
    const uint dj        = NGRID_LV0;
    const uint dk        = NGRID_LV0*NGRID_LV0;
+#ifdef SYCL_LANGUAGE_VERSION
+   const uint FloorPow2 = 1<<(31-__builtin_clz(POT_NTHREAD) ); // largest power-of-two value not greater than POT_NTHREAD
+#else
    const uint FloorPow2 = 1<<(31-__clz(POT_NTHREAD) ); // largest power-of-two value not greater than POT_NTHREAD
+#endif
    const uint Remain    = POT_NTHREAD - FloorPow2;
 
    uint i, j, k, ip, jp, kp, im, jm, km, ijk;

@@ -199,7 +199,7 @@ GPU_FILE    += GPU_MemAllocate_PoissonGravity.cpp  GPU_MemFree_PoissonGravity.cp
                GPU_SendExtPotTable2GPU.cpp
 
 GPU_FILE    += GPU_PoissonSolver_SOR.cpp \
-               CUPOT_PoissonSolver_MG.cu  CUPOT_ExtAcc_PointMass.cu  CUPOT_ExtPot_PointMass.cu \
+               GPU_PoissonSolver_MG.cpp  CUPOT_ExtAcc_PointMass.cu  CUPOT_ExtPot_PointMass.cu \
                CUPOT_ExtPotSolver.cu  CUPOT_ExtPot_Tabular.cu
 
 CPU_FILE    += CPU_PoissonGravitySolver.cpp  CPU_PoissonSolver_SOR.cpp  CPU_PoissonSolver_FFT.cpp \
