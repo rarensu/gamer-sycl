@@ -270,12 +270,6 @@ void Src_PassData2GPU_Deleptonization()
 // IV. Set initialization functions
 // ================================
 
-#ifdef SYCL_LANGUAGE_VERSION
-#  define FUNC_SPACE static
-#else
-#  define FUNC_SPACE            static
-#endif
-
 static dpct::global_memory<SrcFunc_t, 0> SrcFunc_Ptr(Src_Deleptonization);
 
 //-----------------------------------------------------------------------------------------
