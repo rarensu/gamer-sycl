@@ -167,7 +167,7 @@ endif # MHD
 # ELBDM source files (included only if "MODEL=ELBDM")
 # -------------------------------------------------------------------------------
 else ifeq "$(filter -DMODEL=ELBDM, $(SIMU_OPTION))" "-DMODEL=ELBDM"
-GPU_FILE    += CUFLU_ELBDMSolver_FD.cu  CUFLU_ELBDMSolver_GramFE_FFT.cu  CUFLU_ELBDMSolver_GramFE_MATMUL.cu  CUFLU_ELBDMSolver_HJ.cu \
+GPU_FILE    += GPU_ELBDMSolver_FD.cpp  CUFLU_ELBDMSolver_GramFE_FFT.cu  CUFLU_ELBDMSolver_GramFE_MATMUL.cu  CUFLU_ELBDMSolver_HJ.cu \
                GPU_SendGramFEMatrix2GPU.cpp
 
 CPU_FILE    += CPU_ELBDMSolver_FD.cpp  CPU_ELBDMSolver_FFT.cpp  CPU_ELBDMSolver_GramFE_FFT.cpp  CPU_ELBDMSolver_GramFE_MATMUL.cpp \
@@ -177,7 +177,7 @@ CPU_FILE    += CPU_ELBDMSolver_FD.cpp  CPU_ELBDMSolver_FFT.cpp  CPU_ELBDMSolver_
                ELBDM_GramFE_EvolutionMatrix.cpp  ELBDM_RemoveMotionCM.cpp  ELBDM_RescaleMassError.cpp  ELBDM_Aux_Record_Hybrid.cpp
 
 vpath %.cu     Model_ELBDM/GPU_ELBDM
-vpath %.cpp    Model_ELBDM/CPU_ELBDM  Model_ELBDM
+vpath %.cpp    Model_ELBDM/CPU_ELBDM  Model_ELBDM  Model_ELBDM/GPU_ELBDM
 
 ifeq "$(filter -DGRAVITY, $(SIMU_OPTION))" "-DGRAVITY"
 GPU_FILE    += CUPOT_ELBDMGravitySolver.cu  CUPOT_ELBDMGravitySolver_HJ.cu

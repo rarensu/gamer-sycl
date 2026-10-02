@@ -1,6 +1,11 @@
 #include "Macro.h"
 #include "FLU.h"
 
+#ifdef SYCL_LANGUAGE_VERSION
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
+#endif
+
 #if ( defined GPU  &&  MODEL == ELBDM  &&  WAVE_SCHEME == WAVE_FD )
 
 
@@ -37,26 +42,36 @@
 #endif // #ifdef LAPLACIAN_4TH ... else ...
 
 
-static __device__ void CUFLU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+#ifdef SYCL_LANGUAGE_VERSION
+static GPU_DEVICE void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                       real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
                                       real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                       const real dt, const real _dh, const real Eta, const bool StoreFlux,
                                       const real Taylor3_Coeff, const uint j_gap, const uint k_gap,
                                       real s_In[][FLU_BLOCK_SIZE_Y][FLU_NXT], real s_Half[][FLU_BLOCK_SIZE_Y][FLU_NXT],
                                       real s_Flux[][PS2+1], const bool FinalOut, const int XYZ, const real MinDens );
+#else
+static __device__ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+                                      real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
+                                      real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
+                                      const real dt, const real _dh, const real Eta, const bool StoreFlux,
+                                      const real Taylor3_Coeff, const uint j_gap, const uint k_gap,
+                                      real s_In[][FLU_BLOCK_SIZE_Y][FLU_NXT], real s_Half[][FLU_BLOCK_SIZE_Y][FLU_NXT],
+                                      real s_Flux[][PS2+1], const bool FinalOut, const int XYZ, const real MinDens );
+#endif
 
 
 
 
 //-------------------------------------------------------------------------------------------------------
-// Function    :  CUFLU_ELBDMSolver_FD
+// Function    :  GPU_ELBDMSolver_FD
 // Description :  GPU ELBDM kinematic solver based on expanding the propagator to 3rd order
 //
 // Note        :  1. The three-dimensional evolution is achieved by applying x, y, and z operators successively.
 //                   Since these operators commute, the order of applying them are irrelevant.
 //                   --> Input pamameter "XYZ" is actually useless
 //                   --> Nevertheless, the symmetry in different directions will be broken if CONSERVE_MASS is on
-//                2. The implementation is very similar to the function " CUFLU_FluidSolver_RTVD"
+//                2. The implementation is very similar to the function " GPU_FluidSolver_RTVD"
 //                4. Prefix "g" for pointers pointing to the "Global" memory space
 //                   Prefix "s" for pointers pointing to the "Shared" memory space
 //
@@ -77,11 +92,19 @@ static __device__ void CUFLU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT
 //                                     are broken ...
 //                MinDens        : Minimum allowed density
 //-------------------------------------------------------------------------------------------------------
-__global__ void CUFLU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL void GPU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                       real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
                                       real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                       const real dt, const real _dh, const real Eta, const bool StoreFlux,
                                       const real Taylor3_Coeff, const bool XYZ, const real MinDens )
+#else
+__global__ void GPU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+                                      real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
+                                      real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
+                                      const real dt, const real _dh, const real Eta, const bool StoreFlux,
+                                      const real Taylor3_Coeff, const bool XYZ, const real MinDens )
+#endif
 {
 
    __shared__ real s_In  [FLU_NIN][FLU_BLOCK_SIZE_Y][FLU_NXT];
@@ -95,30 +118,30 @@ __global__ void CUFLU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT
 
    if ( XYZ )
    {
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, Eta, StoreFlux, Taylor3_Coeff,
+      GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, Eta, StoreFlux, Taylor3_Coeff,
                                   0,              0, s_In, s_Half, s_Flux, false, 0, MinDens );
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, Eta, StoreFlux, Taylor3_Coeff,
+      GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, Eta, StoreFlux, Taylor3_Coeff,
                      FLU_GHOST_SIZE,              0, s_In, s_Half, s_Flux, false, 3, MinDens );
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, Eta, StoreFlux, Taylor3_Coeff,
+      GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, Eta, StoreFlux, Taylor3_Coeff,
                      FLU_GHOST_SIZE, FLU_GHOST_SIZE, s_In, s_Half, s_Flux,  true, 6, MinDens );
    }
 
    else
    {
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, Eta, StoreFlux, Taylor3_Coeff,
+      GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, Eta, StoreFlux, Taylor3_Coeff,
                                   0,              0, s_In, s_Half, s_Flux, false, 6, MinDens );
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, Eta, StoreFlux, Taylor3_Coeff,
+      GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, Eta, StoreFlux, Taylor3_Coeff,
                                   0, FLU_GHOST_SIZE, s_In, s_Half, s_Flux, false, 3, MinDens );
-      CUFLU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, Eta, StoreFlux, Taylor3_Coeff,
+      GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, Eta, StoreFlux, Taylor3_Coeff,
                      FLU_GHOST_SIZE, FLU_GHOST_SIZE, s_In, s_Half, s_Flux,  true, 0, MinDens );
    }
 
-} // FUNCTION : CUFLU_ELBDMSolver_FD
+} // FUNCTION : GPU_ELBDMSolver_FD
 
 
 
 //-------------------------------------------------------------------------------------------------------
-// Function    :  CUFLU_Advance
+// Function    :  GPU_Advance
 // Description :  Use GPU to advance solutions by one time-step
 //
 // Note        :  1. Based on expanding the kinematic propagator to 3rd order
@@ -147,13 +170,23 @@ __global__ void CUFLU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT
 //                                 --> This parameter is also used to determine the place to store the output fluxes
 //                MinDens        : Minimum allowed density
 //-------------------------------------------------------------------------------------------------------
-__device__ void CUFLU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+#ifdef SYCL_LANGUAGE_VERSION
+GPU_DEVICE void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
                                real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                const real dt, const real _dh, const real Eta, const bool StoreFlux, const real Taylor3_Coeff,
                                const uint j_gap, const uint k_gap, real s_In[][FLU_BLOCK_SIZE_Y][FLU_NXT],
                                real s_Half[][FLU_BLOCK_SIZE_Y][FLU_NXT], real s_Flux[][PS2+1], const bool FinalOut,
                                const int XYZ, const real MinDens )
+#else
+__device__ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+                               real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
+                               real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
+                               const real dt, const real _dh, const real Eta, const bool StoreFlux, const real Taylor3_Coeff,
+                               const uint j_gap, const uint k_gap, real s_In[][FLU_BLOCK_SIZE_Y][FLU_NXT],
+                               real s_Half[][FLU_BLOCK_SIZE_Y][FLU_NXT], real s_Flux[][PS2+1], const bool FinalOut,
+                               const int XYZ, const real MinDens )
+#endif
 {
 
    const real _Eta         = (real)1.0/Eta;
@@ -417,7 +450,7 @@ __device__ void CUFLU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
 
    } // while ( Column0 < NColumnTotal )
 
-} // FUNCTION : CUFLU_Advance
+} // FUNCTION : GPU_Advance
 
 
 
