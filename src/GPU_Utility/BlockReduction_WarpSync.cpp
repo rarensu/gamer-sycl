@@ -3,6 +3,7 @@
 #ifdef SYCL_LANGUAGE_VERSION
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
+#define __clz(x) __builtin_clz(x)
 #endif
 
 #ifndef GPU_DEVICE
@@ -51,12 +52,17 @@
 //                5. Must define either RED_SUM, RED_MAX, or RED_MIN in advance to determine the reduction operation
 //                6. Only thread 0 will hold the correct result after calling this function
 //
-// Parameter   :  val : Per-thread value for the reduction
+// Parameter   :  val          : Per-thread value for the reduction
+//                s_Reduction  : Shared-memory array for reduction (SYCL only; caller allocates)
 //
 // Return value:  Reduction of "val"
 //---------------------------------------------------------------------------------------------------
 __inline__ GPU_DEVICE
+#ifdef SYCL_LANGUAGE_VERSION
+real BlockReduction_WarpSync( real val, real *s_Reduction )
+#else
 real BlockReduction_WarpSync( real val )
+#endif
 {
 
 #ifdef SYCL_LANGUAGE_VERSION
@@ -77,17 +83,27 @@ real BlockReduction_WarpSync( real val )
    const uint FloorPow2 = 1 << ( 31-__clz(RED_NTHREAD) );   // largest power-of-two value not greater than RED_NTHREAD
    const uint Remain    = RED_NTHREAD - FloorPow2;
 
+#ifndef SYCL_LANGUAGE_VERSION
    __shared__ real s_Reduction[RED_NTHREAD];
+#endif
 
 
 // store values for the reduction to the shared memory
    s_Reduction[ID] = val;
+#ifdef SYCL_LANGUAGE_VERSION
+   item_ct1.barrier(sycl::access::fence_space::local_space);
+#else
    __syncthreads();
+#endif
 
 
 // perform reduction for the elements larger than FloorPow2 to ensure that the number of remaining elements is power-of-two
    if ( ID < Remain )   s_Reduction[ID] = RED( s_Reduction[ID], s_Reduction[ ID + FloorPow2 ] );
+#ifdef SYCL_LANGUAGE_VERSION
+   item_ct1.barrier(sycl::access::fence_space::local_space);
+#else
    __syncthreads();
+#endif
 
 
 // parallel reduction with the shared memory
@@ -96,20 +112,40 @@ real BlockReduction_WarpSync( real val )
 #  endif
 
 #  if ( RED_NTHREAD >= 1024 )
-   if ( ID < 512 )   s_Reduction[ID] = RED( s_Reduction[ID], s_Reduction[ ID + 512 ] );   __syncthreads();
+   if ( ID < 512 )   s_Reduction[ID] = RED( s_Reduction[ID], s_Reduction[ ID + 512 ] );
 #  endif
+#ifdef SYCL_LANGUAGE_VERSION
+   item_ct1.barrier(sycl::access::fence_space::local_space);
+#else
+   __syncthreads();
+#endif
 
 #  if ( RED_NTHREAD >= 512 )
-   if ( ID < 256 )   s_Reduction[ID] = RED( s_Reduction[ID], s_Reduction[ ID + 256 ] );   __syncthreads();
+   if ( ID < 256 )   s_Reduction[ID] = RED( s_Reduction[ID], s_Reduction[ ID + 256 ] );
 #  endif
+#ifdef SYCL_LANGUAGE_VERSION
+   item_ct1.barrier(sycl::access::fence_space::local_space);
+#else
+   __syncthreads();
+#endif
 
 #  if ( RED_NTHREAD >= 256 )
-   if ( ID < 128 )   s_Reduction[ID] = RED( s_Reduction[ID], s_Reduction[ ID + 128 ] );   __syncthreads();
+   if ( ID < 128 )   s_Reduction[ID] = RED( s_Reduction[ID], s_Reduction[ ID + 128 ] );
 #  endif
+#ifdef SYCL_LANGUAGE_VERSION
+   item_ct1.barrier(sycl::access::fence_space::local_space);
+#else
+   __syncthreads();
+#endif
 
 #  if ( RED_NTHREAD >= 128 )
-   if ( ID <  64 )   s_Reduction[ID] = RED( s_Reduction[ID], s_Reduction[ ID +  64 ] );   __syncthreads();
+   if ( ID <  64 )   s_Reduction[ID] = RED( s_Reduction[ID], s_Reduction[ ID +  64 ] );
 #  endif
+#ifdef SYCL_LANGUAGE_VERSION
+   item_ct1.barrier(sycl::access::fence_space::local_space);
+#else
+   __syncthreads();
+#endif
 
 
 // parallel reduction with the warp-synchronous mechanism (assuming warpSize == 32)
@@ -119,6 +155,20 @@ real BlockReduction_WarpSync( real val )
 
    if ( ID < WARP_SIZE )
    {
+#ifdef SYCL_LANGUAGE_VERSION
+      // Use explicit subgroup barriers instead of volatile pointer for ordering
+      s_Reduction[ID] = RED( s_Reduction[ID], s_Reduction[ID+32] );
+      sycl::group_barrier(sycl::ext::oneapi::this_work_item::get_sub_group());
+      s_Reduction[ID] = RED( s_Reduction[ID], s_Reduction[ID+16] );
+      sycl::group_barrier(sycl::ext::oneapi::this_work_item::get_sub_group());
+      s_Reduction[ID] = RED( s_Reduction[ID], s_Reduction[ID+ 8] );
+      sycl::group_barrier(sycl::ext::oneapi::this_work_item::get_sub_group());
+      s_Reduction[ID] = RED( s_Reduction[ID], s_Reduction[ID+ 4] );
+      sycl::group_barrier(sycl::ext::oneapi::this_work_item::get_sub_group());
+      s_Reduction[ID] = RED( s_Reduction[ID], s_Reduction[ID+ 2] );
+      sycl::group_barrier(sycl::ext::oneapi::this_work_item::get_sub_group());
+      s_Reduction[ID] = RED( s_Reduction[ID], s_Reduction[ID+ 1] );
+#else
 //    declare volatile pointer to ensure that the operations are not reordered
       volatile real *s_Reduction_Volatile = s_Reduction;
 
@@ -133,8 +183,13 @@ real BlockReduction_WarpSync( real val )
       s_Reduction_Volatile[ID] = RED( s_Reduction_Volatile[ID], s_Reduction_Volatile[ID+ 4] );
       s_Reduction_Volatile[ID] = RED( s_Reduction_Volatile[ID], s_Reduction_Volatile[ID+ 2] );
       s_Reduction_Volatile[ID] = RED( s_Reduction_Volatile[ID], s_Reduction_Volatile[ID+ 1] );
+#endif
    }
+#ifdef SYCL_LANGUAGE_VERSION
+   item_ct1.barrier(sycl::access::fence_space::local_space);
+#else
    __syncthreads();
+#endif
 
 
    return s_Reduction[0];

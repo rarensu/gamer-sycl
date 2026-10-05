@@ -30,9 +30,9 @@
 #define RED_SUM
 
 #ifdef SOR_USE_SHUFFLE
-#  include "../../GPU_Utility/CUUTI_BlockReduction_Shuffle.cu"
+#  include "../../GPU_Utility/BlockReduction_Shuffle.cpp"
 #else
-#  include "../../GPU_Utility/CUUTI_BlockReduction_WarpSync.cu"
+#  include "../../GPU_Utility/BlockReduction_WarpSync.cpp"
 #endif
 
 
@@ -183,6 +183,9 @@ __global__ void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO
 #  ifdef SOR_RHO_SHARED
    __shared__ real s_Rho_Array[ RHO_NXT*RHO_NXT*RHO_NXT ];
 #  endif
+
+   // shared-memory buffer for the BlockReduction_* helper functions (SYCL path passes this explicitly)
+   __shared__ real s_Reduction_Buf[RED_NTHREAD];
 
 
 // a1. load the fine-grid density into the shared memory
@@ -427,9 +430,17 @@ __global__ void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO
 //       (c2). perform parallel reduction to get the one-norm of residual
 //       ==============================================================================
 #        ifdef SOR_USE_SHUFFLE
+#          ifdef SYCL_LANGUAGE_VERSION
+         Residual_ThreadSum = BlockReduction_Shuffle ( Residual_ThreadSum, s_Reduction_Buf );
+#          else
          Residual_ThreadSum = BlockReduction_Shuffle ( Residual_ThreadSum );
+#          endif
 #        else
+#          ifdef SYCL_LANGUAGE_VERSION
+         Residual_ThreadSum = BlockReduction_WarpSync( Residual_ThreadSum, s_Reduction_Buf );
+#          else
          Residual_ThreadSum = BlockReduction_WarpSync( Residual_ThreadSum );
+#          endif
 #        endif
 
 //       broadcast to all threads

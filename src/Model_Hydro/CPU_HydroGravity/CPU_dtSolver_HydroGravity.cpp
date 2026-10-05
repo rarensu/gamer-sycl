@@ -16,9 +16,9 @@
 #define RED_MAX
 
 #ifdef DT_GRA_USE_SHUFFLE
-#  include "../../GPU_Utility/CUUTI_BlockReduction_Shuffle.cu"
+#  include "../../GPU_Utility/BlockReduction_Shuffle.cpp"
 #else
-#  include "../../GPU_Utility/CUUTI_BlockReduction_WarpSync.cu"
+#  include "../../GPU_Utility/BlockReduction_WarpSync.cpp"
 #endif
 
 #endif // #ifdef __CUDACC__

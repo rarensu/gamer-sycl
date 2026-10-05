@@ -106,7 +106,11 @@ real WarpReduction_Shuffle( real val )
 // Return value:  Reduction of "val" within each thread block
 //---------------------------------------------------------------------------------------------------
 __inline__ GPU_DEVICE
+#ifdef SYCL_LANGUAGE_VERSION
+real BlockReduction_Shuffle( real val, real *shared )
+#else
 real BlockReduction_Shuffle( real val )
+#endif
 {
 
 #ifdef SYCL_LANGUAGE_VERSION
@@ -131,9 +135,7 @@ real BlockReduction_Shuffle( real val )
    const int NWarp    = RED_NTHREAD/WARP_SIZE;  // actual number of warps (which must be <= WARP_SIZE since we apply the
                                                 // final reduction only to the first warp)
 
-#ifdef SYCL_LANGUAGE_VERSION
-   __shared__ real shared[MaxNWarp];
-#else
+#ifndef SYCL_LANGUAGE_VERSION
    static __shared__ real shared[MaxNWarp];     // maximum shared memory required for 32 partial sums (must be <= WARP_SIZE)
 #endif
 
@@ -144,7 +146,11 @@ real BlockReduction_Shuffle( real val )
    if ( lane == 0 )  shared[wid] = val;
 
 // wait for all partial reductions
+#ifdef SYCL_LANGUAGE_VERSION
+   item_ct1.barrier(sycl::access::fence_space::local_space);
+#else
    __syncthreads();
+#endif
 
 // here we have assumed that NWarp < WARP_SIZE
    if ( wid == 0 )
