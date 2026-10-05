@@ -1,12 +1,16 @@
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 #include "Macro.h"
 #else
 #include "GAMER.h"
 #endif
 #include "POT.h"
 
-#ifdef GRAVITY
+#ifdef SYCL_LANGUAGE_VERSION
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
+#endif
 
+#ifdef GRAVITY
 
 
 
@@ -14,7 +18,7 @@
 // Function    :  GPU_ExternalAcc / CPU_ExternlAcc
 // Description :  1. Cacalculate the external acceleration from the input coordinates and time
 //                2. This function will be invoked in both the CPU and GPU codes
-//                3. "__forceinline__" is required since this device function will be invoked by more than one kernel
+//                3. "GPU_DEVICE" is required since this device function will be invoked by more than one kernel
 //                   (e.g., GPU_HydroGravitySolver, GPU_ComputeFlux <-- which will be called by different fluid solvers)
 //
 // Parameter   :  Acc         : Array to store the output external acceleration
@@ -24,8 +28,8 @@
 //
 // Return      :  Acc
 //-----------------------------------------------------------------------------------------
-#ifdef __CUDACC__
-__forceinline__ __device__
+#ifdef SYCL_LANGUAGE_VERSION
+GPU_DEVICE
 void GPU_ExternalAcc( real Acc[], const double x, const double y, const double z, const double Time, const double UserArray[] )
 #else
 void   CPU_ExternalAcc( real Acc[], const double x, const double y, const double z, const double Time, const double UserArray[] )

@@ -33,8 +33,8 @@ src/SelfGravity/GPU_Poisson/CUPOT_ExtPotSolver.cu -> ../CPU_Poisson/CPU_ExtPotSo
 src/SelfGravity/GPU_Poisson/CUPOT_ExtPot_Tabular.cu -> ../CPU_Poisson/CPU_ExtPot_Tabular.cpp
 src/SelfGravity/GPU_Poisson/CUPOT_PoissonSolver_MG.cu
 src/SelfGravity/GPU_Poisson/CUPOT_PoissonSolver_SOR.cu
-test_problem_deprecated/Model_ParticleOnly/TwoParOrbit/CUPOT_ExternalAcc.1.1.0.cu
-test_problem_deprecated/Model_ParticleOnly/TwoParOrbit/CUPOT_ExternalPot.1.0.0.cu
+test_problem_deprecated/Model_ParticleOnly/TwoParOrbit/GPU_ExternalAcc.1.1.0.cpp
+test_problem_deprecated/Model_ParticleOnly/TwoParOrbit/GPU_ExternalPot.1.0.0.cpp
 
 # but not these! found in the same directory, not FLU/POT eligible
 src/Model_ELBDM/CPU_ELBDM/CPU_ELBDMSolver_FD.cpp

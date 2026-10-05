@@ -13,7 +13,7 @@ extern real TwoParOrbit_M;
 
 //-------------------------------------------------------------------------------------------------------
 // Function    :  Init_ExternalAcc
-// Description :  Initialize the external potential routines "CUPOT_ExternalAcc.cu / CPU_ExternalAcc.cpp"
+// Description :  Initialize the external potential routines "GPU_ExternalAcc.1.1.0.cpp / CPU_ExternalAcc.cpp"
 //
 // Note        :  Fill in the array "ExtAcc_AuxArray" here
 //

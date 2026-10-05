@@ -1,12 +1,16 @@
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 #include "Macro.h"
 #else
 #include "GAMER.h"
 #endif
 #include "POT.h"
 
-#ifdef GRAVITY
+#ifdef SYCL_LANGUAGE_VERSION
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
+#endif
 
+#ifdef GRAVITY
 
 
 
@@ -21,8 +25,8 @@
 //
 // Return      :  external potential
 //-----------------------------------------------------------------------------------------
-#ifdef __CUDACC__
-__device__
+#ifdef SYCL_LANGUAGE_VERSION
+GPU_DEVICE
 real GPU_ExternalPot( const double x, const double y, const double z, const double Time, const double UserArray[] )
 #else
 real   CPU_ExternalPot( const double x, const double y, const double z, const double Time, const double UserArray[] )

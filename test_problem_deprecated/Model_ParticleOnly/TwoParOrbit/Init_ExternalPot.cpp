@@ -13,7 +13,7 @@ extern real TwoParOrbit_M;
 
 //-------------------------------------------------------------------------------------------------------
 // Function    :  Init_ExternalPot
-// Description :  Initialize the external potential routines "CUPOT_ExternalPot.cu / CPU_ExternalPot.cpp"
+// Description :  Initialize the external potential routines "GPU_ExternalPot.1.0.0.cpp / CPU_ExternalPot.cpp"
 //
 // Note        :  Fill in the array "ExtPot_AuxArray" here
 //
