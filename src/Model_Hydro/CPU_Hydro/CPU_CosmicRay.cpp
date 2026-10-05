@@ -1,8 +1,10 @@
-#ifndef __CUFLU_COSMICRAY__
-#define __CUFLU_COSMICRAY__
+#ifndef __COSMICRAY__
+#define __COSMICRAY__
 
 
 
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
 
 #ifdef COSMIC_RAY
@@ -198,4 +200,4 @@ void CR_AdiabaticWork_FullStep( real &Ecr,
 
 
 
-#endif // #ifndef __CUFLU_COSMICRAY__
+#endif // #ifndef __COSMICRAY__

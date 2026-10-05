@@ -1,3 +1,5 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
 
 #if ( MODEL == HYDRO )
@@ -5,7 +7,7 @@
 
 
 // external functions and GPU-related set-up
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 
 #include "CPU_Shared_FluUtility.cpp"
 #include "ConstMemory.h"
@@ -20,7 +22,7 @@
 #  include "../../GPU_Utility/BlockReduction_WarpSync.cpp"
 #endif
 
-#endif // #ifdef __CUDACC__
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 
 
@@ -52,7 +54,7 @@
 //
 // Return      :  g_dt_Array
 //-----------------------------------------------------------------------------------------
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 __global__
 void GPU_dtSolver_HydroCFL( real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_T][ CUBE(PS1) ],
                               const real g_Mag_Array[][NCOMP_MAG][ PS1P1*SQR(PS1) ],
@@ -199,7 +201,7 @@ void CPU_dtSolver_HydroCFL  ( real g_dt_Array[], const real g_Flu_Array[][FLU_NI
       MaxCFL = BlockReduction_WarpSync( MaxCFL );
 #     endif
       if ( threadIdx.x == 0 )
-#     endif // #ifdef __CUDACC__
+#     endif // #ifdef SYCL_LANGUAGE_VERSION
 
 #     ifdef SRHD
       g_dt_Array[p] = dhSafety / ( MaxCFL / SQRT( (real)1.0 + MaxCFL*MaxCFL ) );
@@ -224,7 +226,7 @@ void CPU_dtSolver_HydroCFL  ( real g_dt_Array[], const real g_Flu_Array[][FLU_NI
       MaxCFL = BlockReduction_WarpSync( MaxCFL );
 #     endif
       if ( threadIdx.x == 0 )
-#     endif // #ifdef __CUDACC__
+#     endif // #ifdef SYCL_LANGUAGE_VERSION
       g_dt_Array[p] = ( dh2Safety/MaxCFL < g_dt_Array[p]) ? dh2Safety/MaxCFL : g_dt_Array[p];
 
 #     endif // #ifdef CR_DIFFUSION

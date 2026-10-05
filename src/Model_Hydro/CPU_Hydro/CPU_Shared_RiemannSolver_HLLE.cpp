@@ -1,8 +1,10 @@
-#ifndef __CUFLU_RIEMANNSOLVER_HLLE__
-#define __CUFLU_RIEMANNSOLVER_HLLE__
+#ifndef __RIEMANNSOLVER_HLLE__
+#define __RIEMANNSOLVER_HLLE__
 
 
 
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
 
 #if ( MODEL == HYDRO )
@@ -10,18 +12,18 @@
 
 
 // external functions
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 
 #include "CPU_Shared_FluUtility.cpp"
 
-#else // #ifdef __CUDACC__
+#else // #ifdef SYCL_LANGUAGE_VERSION
 
 void Hydro_Rotate3D( real InOut[], const int XYZ, const bool Forward, const int Mag_Offset );
 void Hydro_Con2Flux( const int XYZ, real Flux[], const real In[], const real MinPres, const long PassiveFloor,
                      const EoS_DE2P_t EoS_DensEint2Pres, const double EoS_AuxArray_Flt[], const int EoS_AuxArray_Int[],
                      const real *const EoS_Table[EOS_NTABLE_MAX], const real* const PresIn );
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
 
 
@@ -704,4 +706,4 @@ void Hydro_RiemannSolver_HLLE( const int XYZ, real Flux_Out[], const real L_In[]
 
 
 
-#endif // #ifndef __CUFLU_RIEMANNSOLVER_HLLE__
+#endif // #ifndef __RIEMANNSOLVER_HLLE__

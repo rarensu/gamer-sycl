@@ -1,8 +1,10 @@
-#ifndef __CUFLU_RIEMANNSOLVER_EXACT__
-#define __CUFLU_RIEMANNSOLVER_EXACT__
+#ifndef __RIEMANNSOLVER_EXACT__
+#define __RIEMANNSOLVER_EXACT__
 
 
 
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
 
 #if (  MODEL == HYDRO  &&  !defined SRHD  &&  \
@@ -12,11 +14,11 @@
 
 
 // external functions
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 
 #include "CPU_Shared_FluUtility.cpp"
 
-#else // #ifdef __CUDACC__
+#else // #ifdef SYCL_LANGUAGE_VERSION
 
 void Hydro_Con2Pri( const real In[], real Out[], const real MinPres, const long PassiveFloor,
                     const bool FracPassive, const int NFrac, const int FracIdx[],
@@ -27,7 +29,7 @@ void Hydro_Con2Pri( const real In[], real Out[], const real MinPres, const long 
                     const real *const EoS_Table[EOS_NTABLE_MAX], real* const EintOut, real* LorentzFactorPtr );
 void Hydro_Rotate3D( real InOut[], const int XYZ, const bool Forward, const int Mag_Offset );
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
 
 // internal functions (GPU_DEVICE is defined in FLU.h)
@@ -429,4 +431,4 @@ void Set_Flux( real flux[], const real val[], const real Gamma )
 
 
 
-#endif // #ifndef __CUFLU_RIEMANNSOLVER_EXACT__
+#endif // #ifndef __RIEMANNSOLVER_EXACT__

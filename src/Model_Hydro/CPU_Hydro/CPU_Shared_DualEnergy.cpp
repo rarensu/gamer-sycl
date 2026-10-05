@@ -1,8 +1,10 @@
-#ifndef __CUFLU_DUALENERGY__
-#define __CUFLU_DUALENERGY__
+#ifndef __DUALENERGY__
+#define __DUALENERGY__
 
 
 
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
 
 #if ( MODEL == HYDRO  &&  defined DUAL_ENERGY  &&  !defined SRHD )
@@ -10,7 +12,7 @@
 
 
 // internal functions
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 GPU_DEVICE
 static real Hydro_DensPres2Dual( const real Dens, const real Pres, const real Gamma_m1 );
 GPU_DEVICE
@@ -144,7 +146,7 @@ void Hydro_DualEnergyFix( const real Dens, const real MomX, const real MomY, con
 
 
 // Hydro_Con2Dual() is used by CPU only
-#ifndef __CUDACC__
+#ifndef SYCL_LANGUAGE_VERSION
 //-------------------------------------------------------------------------------------------------------
 // Function    :  Hydro_Con2Dual
 // Description :  Evaluate the dual-energy variable from the input fluid variables
@@ -204,7 +206,7 @@ real Hydro_Con2Dual( const real Dens, const real MomX, const real MomY, const re
    return Dual;
 
 } // FUNCTION : Hydro_Con2Dual
-#endif // ifndef __CUDACC__
+#endif // ifndef SYCL_LANGUAGE_VERSION
 
 
 
@@ -291,4 +293,4 @@ real Hydro_DensDual2Pres( const real Dens, const real Dual, const real Gamma_m1,
 
 
 
-#endif // #ifndef __CUFLU_DUALENERGY__
+#endif // #ifndef __DUALENERGY__

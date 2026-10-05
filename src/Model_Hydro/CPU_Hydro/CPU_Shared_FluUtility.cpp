@@ -1,8 +1,10 @@
-#ifndef __CUFLU_FLUUTILITY__
-#define __CUFLU_FLUUTILITY__
+#ifndef __FLUUTILITY__
+#define __FLUUTILITY__
 
 
 
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
 
 #if ( MODEL == HYDRO )
@@ -11,7 +13,7 @@
 
 // internal function prototypes
 // --> only necessary for GPU since they are included in Prototype.h for the CPU codes
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 GPU_DEVICE
 static real Hydro_Con2Pres( const real Dens, const real MomX, const real MomY, const real MomZ, const real Engy,
                             const real Passive[], const bool CheckMinPres, const real MinPres, const long PassiveFloor, const real Emag,
@@ -52,7 +54,7 @@ static real Hydro_Con2HTilde( const real Con[], const EoS_GUESS_t EoS_GuessHTild
                               const double EoS_AuxArray_Flt[], const int EoS_AuxArray_Int[],
                               const real *const EoS_Table[EOS_NTABLE_MAX] );
 #endif
-#endif // #ifdef __CUDACC__
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 GPU_DEVICE
 void NewtonRaphsonSolver( void (*FuncPtr)( real, void*, real*, real* ), void * params, const real guess,
@@ -967,7 +969,7 @@ bool Hydro_IsUnphysical( const IsUnphyMode_t Mode, const real Fields[],
 #        endif
 
 //       print out the unphysical values
-#        if ( !defined __CUDACC__  ||  defined CHECK_UNPHYSICAL_IN_FLUID )
+#        if ( !defined SYCL_LANGUAGE_VERSION  ||  defined CHECK_UNPHYSICAL_IN_FLUID )
          if ( UnphyCell  &&  Verbose )
          {
             printf( "ERROR : unphysical conserved variables at file <%s>, line <%d>, function <%s> !!\n",
@@ -1045,7 +1047,7 @@ bool Hydro_IsUnphysical( const IsUnphyMode_t Mode, const real Fields[],
 #        endif
 
 //       print out the unphysical values
-#        if ( !defined __CUDACC__  ||  defined CHECK_UNPHYSICAL_IN_FLUID )
+#        if ( !defined SYCL_LANGUAGE_VERSION  ||  defined CHECK_UNPHYSICAL_IN_FLUID )
          if ( UnphyCell  &&  Verbose )
          {
             printf( "ERROR : unphysical primitive variables at file <%s>, line <%d>, function <%s> !!\n",
@@ -1086,7 +1088,7 @@ bool Hydro_IsUnphysical( const IsUnphyMode_t Mode, const real Fields[],
          }
 
 //       print out the unphysical values
-#        if ( !defined __CUDACC__  ||  defined CHECK_UNPHYSICAL_IN_FLUID )
+#        if ( !defined SYCL_LANGUAGE_VERSION  ||  defined CHECK_UNPHYSICAL_IN_FLUID )
          if ( UnphyCell  &&  Verbose )
          {
             printf( "ERROR : unphysical passive scalars at file <%s>, line <%d>, function <%s> !!\n",
@@ -1104,7 +1106,7 @@ bool Hydro_IsUnphysical( const IsUnphyMode_t Mode, const real Fields[],
 
       default:
       {
-#        if ( !defined __CUDACC__  ||  defined CHECK_UNPHYSICAL_IN_FLUID )
+#        if ( !defined SYCL_LANGUAGE_VERSION  ||  defined CHECK_UNPHYSICAL_IN_FLUID )
          printf( "ERROR : unsupported mode (%d) at file <%s>, line <%d>, function <%s> !!\n",
                  Mode, File, Line, Function );
 #        endif
@@ -1148,7 +1150,7 @@ bool Hydro_IsUnphysical_Single( const real Field, const char SingleFieldName[], 
       UnphyCell = true;
 
 // print out the unphysical value
-#  if ( !defined __CUDACC__  ||  defined CHECK_UNPHYSICAL_IN_FLUID )
+#  if ( !defined SYCL_LANGUAGE_VERSION  ||  defined CHECK_UNPHYSICAL_IN_FLUID )
    if ( UnphyCell  &&  Verbose )
       printf( "ERROR : invalid %s = %14.7e (min %14.7e, max %14.7e) at file <%s>, line <%d>, function <%s> !!\n",
                (SingleFieldName==NULL)?"unknown field":SingleFieldName, Field, Min, Max,
@@ -1352,7 +1354,7 @@ real Hydro_ConEint2Etot( const real Dens, const real MomX, const real MomY, cons
 {
 
 #  if ( defined SRHD  &&  defined GAMER_DEBUG )
-#  ifdef __CUDACC__
+#  ifdef SYCL_LANGUAGE_VERSION
    printf( "ERROR :  SRHD does not support Hydro_ConEint2Etot at file <%s>, line <%d>, function <%s> !!\n",
            ERROR_INFO );
 #  else
@@ -1413,7 +1415,7 @@ real Hydro_Con2Temp( const real Dens, const real MomX, const real MomY, const re
 #  ifdef SRHD
    if ( EoS_GuessHTilde == NULL  ||  EoS_HTilde2Temp == NULL )
    {
-#     ifdef __CUDACC__
+#     ifdef SYCL_LANGUAGE_VERSION
       printf( "ERROR :  EoS_GuessHTilde == NULL || EoS_HTilde2Temp == NULL at file <%s>, line <%d>, function <%s> !!\n",
                ERROR_INFO );
 #     else
@@ -1425,7 +1427,7 @@ real Hydro_Con2Temp( const real Dens, const real MomX, const real MomY, const re
 
    if ( EoS_DensEint2Temp == NULL )
    {
-#     ifdef __CUDACC__
+#     ifdef SYCL_LANGUAGE_VERSION
       printf( "ERROR : EoS_DensEint2Temp == NULL at file <%s>, line <%d>, function <%s> !!\n",
                ERROR_INFO );
 #     else
@@ -1509,7 +1511,7 @@ real Hydro_Con2Entr( const real Dens, const real MomX, const real MomY, const re
 // check
 #  ifdef GAMER_DEBUG
 #  ifdef SRHD
-#  ifdef __CUDACC__
+#  ifdef SYCL_LANGUAGE_VERSION
    printf( "ERROR : SRHD does not support entropy evaluation at file <%s>, line <%d>, function <%s> !!\n",
            ERROR_INFO );
 #  else
@@ -1519,7 +1521,7 @@ real Hydro_Con2Entr( const real Dens, const real MomX, const real MomY, const re
 
    if ( EoS_DensEint2Entr == NULL )
    {
-#     ifdef __CUDACC__
+#     ifdef SYCL_LANGUAGE_VERSION
       printf( "ERROR : EoS_DensEint2Entr == NULL at file <%s>, line <%d>, function <%s> !!\n",
               __FILE__, __LINE__, __FUNCTION__ );
 #     else
@@ -1737,4 +1739,4 @@ real MHD_GetCellCenteredBEnergy( const real Bx_FC[], const real By_FC[], const r
 
 
 
-#endif // #ifndef __CUFLU_FLUUTILITY__
+#endif // #ifndef __FLUUTILITY__

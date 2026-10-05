@@ -1,8 +1,8 @@
-#ifndef __CUFLU_DATARECONSTRUCTION__
-#define __CUFLU_DATARECONSTRUCTION__
+#ifndef __DATARECONSTRUCTION__
+#define __DATARECONSTRUCTION__
 
-
-
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
 
 #if (  MODEL == HYDRO  &&  ( FLU_SCHEME == MHM || FLU_SCHEME == MHM_RP || FLU_SCHEME == CTU )  )
@@ -10,7 +10,7 @@
 
 
 // external functions
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 
 #include "CPU_Shared_FluUtility.cpp"
 
@@ -53,7 +53,9 @@ void MHD_UpdateMagnetic_Half(       real fc[][NCOMP_LR],
 #endif // #ifdef MHD
 #endif // #if ( FLU_SCHEME == MHM )
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
+
+// Note: SYCL migration - the GPU code path now uses SYCL_LANGUAGE_VERSION instead of __CUDACC__
 
 
 // internal functions (GPU_DEVICE is defined in FLU.h)
@@ -339,8 +341,8 @@ void Hydro_DataReconstruction( const real g_ConVar   [][ CUBE(FLU_NXT) ],
 #        endif
       } // CGPU_LOOP( idx, CUBE(NIn) )
 
-#     ifdef __CUDACC__
-      __syncthreads();
+#     ifdef SYCL_LANGUAGE_VERSION
+      sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #     endif
    } // if ( Con2Pri )
 
@@ -680,8 +682,8 @@ void Hydro_DataReconstruction( const real g_ConVar   [][ CUBE(FLU_NXT) ],
    } // CGPU_LOOP( idx_fc, CUBE(N_FC_VAR) )
 
 
-#  ifdef __CUDACC__
-   __syncthreads();
+#  ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 
 
@@ -869,8 +871,8 @@ void Hydro_DataReconstruction( const real g_ConVar   [][ CUBE(FLU_NXT) ],
 #        endif
       } // CGPU_LOOP( idx, CUBE(NIn) )
 
-#     ifdef __CUDACC__
-      __syncthreads();
+#     ifdef SYCL_LANGUAGE_VERSION
+      sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #     endif
    } // if ( Con2Pri )
 
@@ -916,8 +918,8 @@ void Hydro_DataReconstruction( const real g_ConVar   [][ CUBE(FLU_NXT) ],
          } // for (int d=0; d<3; d++)
       } // CGPU_LOOP( idx_slope, CUBE(N_SLOPE_PPM) )
 
-#     ifdef __CUDACC__
-      __syncthreads();
+#     ifdef SYCL_LANGUAGE_VERSION
+      sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #     endif
    } // if ( LR_Limiter != LR_LIMITER_ATHENA )
 
@@ -1388,8 +1390,8 @@ void Hydro_DataReconstruction( const real g_ConVar   [][ CUBE(FLU_NXT) ],
 
    } // CGPU_LOOP( idx_fc, CUBE(N_FC_VAR) )
 
-#  ifdef __CUDACC__
-   __syncthreads();
+#  ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 
 #  if ( FLU_SCHEME == MHM  &&  defined MHD )
@@ -2251,8 +2253,8 @@ void Hydro_ConFC2PriCC_MHM(       real g_PriVar[][ CUBE(FLU_NXT) ],
       for (int v=0; v<NCOMP_TOTAL_PLUS_MAG; v++)   g_PriVar[v][idx_fc] = PriCC[v];
    } // CGPU_LOOP( idx_fc, CUBE(N_FC_VAR) )
 
-#  ifdef __CUDACC__
-   __syncthreads();
+#  ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 
 } // FUNCTION : Hydro_ConFC2PriCC_MHM
@@ -2273,4 +2275,4 @@ void Hydro_ConFC2PriCC_MHM(       real g_PriVar[][ CUBE(FLU_NXT) ],
 
 
 
-#endif // #ifndef __CUFLU_DATARECONSTRUCTION__
+#endif // #ifndef __DATARECONSTRUCTION__

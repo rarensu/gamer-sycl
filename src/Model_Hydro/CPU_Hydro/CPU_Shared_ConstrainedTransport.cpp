@@ -1,8 +1,10 @@
-#ifndef __CUFLU_CONSTRAINEDTRANSPORT__
-#define __CUFLU_CONSTRAINEDTRANSPORT__
+#ifndef __CONSTRAINEDTRANSPORT__
+#define __CONSTRAINEDTRANSPORT__
 
 
 
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
 
 #if ( MODEL == HYDRO  &&  defined MHD )
@@ -10,7 +12,7 @@
 
 
 // external functions
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 #include "CPU_Shared_FluUtility.cpp"
 #endif
 
@@ -371,8 +373,8 @@ void MHD_ComputeElectric(       real g_EC_Ele[][ CUBE(N_EC_ELE) ],
    } // for ( int d=0; d<3; d++)
 
 
-#  ifdef __CUDACC__
-   __syncthreads();
+#  ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 
 } // FUNCTION : MHD_ComputeElectric
@@ -583,8 +585,8 @@ void MHD_UpdateMagnetic( real *g_FC_Bx_Out, real *g_FC_By_Out, real *g_FC_Bz_Out
    } // for (int d=0; d<3; d++)
 
 
-#  ifdef __CUDACC__
-   __syncthreads();
+#  ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 
 } // FUNCTION : MHD_UpdateMagnetic
@@ -693,8 +695,8 @@ void MHD_HalfStepPrimitive( const real g_Flu_In[][ CUBE(FLU_NXT) ],
    } // CGPU_LOOP( idx_out, CUBE(N_HF_VAR) )
 
 
-#  ifdef __CUDACC__
-   __syncthreads();
+#  ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 
 } // FUNCTION : MHD_HalfStepPrimitive
@@ -828,8 +830,8 @@ void MHD_ComputeElectric_Half(       real g_EC_Ele[][ CUBE(N_EC_ELE) ],
       } // CGPU_LOOP( idx, NEleM1*SQR(NEle) )
    } // for ( int d=0; d<3; d++)
 
-#  ifdef __CUDACC__
-   __syncthreads();
+#  ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 
 } // FUNCTION : MHD_ComputeElectric_Half
@@ -918,4 +920,4 @@ void MHD_UpdateMagnetic_Half(       real fc[][NCOMP_LR],
 
 
 
-#endif // #ifndef __CUFLU_CONSTRAINEDTRANSPORT__
+#endif // #ifndef __CONSTRAINEDTRANSPORT__

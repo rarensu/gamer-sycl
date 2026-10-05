@@ -1,3 +1,5 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
 
 #if ( MODEL == HYDRO  &&  FLU_SCHEME == CTU  &&  !defined SRHD )
@@ -5,7 +7,7 @@
 
 
 // external functions
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 
 #include "CPU_Shared_FluUtility.cpp"
 #include "CPU_Shared_DataReconstruction.cpp"
@@ -17,7 +19,7 @@
 
 #include "ConstMemory.h"
 
-#else // #ifdef __CUDACC__
+#else // #ifdef SYCL_LANGUAGE_VERSION
 
 void Hydro_Rotate3D( real InOut[], const int XYZ, const bool Forward, const int Mag_Offset );
 void Hydro_DataReconstruction( const real g_ConVar   [][ CUBE(FLU_NXT) ],
@@ -71,7 +73,7 @@ void MHD_HalfStepPrimitive( const real g_Flu_In[][ CUBE(FLU_NXT) ],
                             const real dt, const real dh, const real MinDens );
 #endif // #ifdef MHD
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
 
 // internal functions
@@ -155,7 +157,7 @@ void Hydro_TGradientCorrection(       real g_FC_Var   [][NCOMP_TOTAL_PLUS_MAG][ 
 //                JeansMinPres_Coeff : Coefficient used by JeansMinPres = G*(Jeans_NCell*Jeans_dh)^2/(Gamma*pi);
 //                EoS                : EoS object
 //-------------------------------------------------------------------------------------------------------
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 __global__
 void GPU_FluidSolver_CTU(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
@@ -214,7 +216,7 @@ void CPU_FluidSolver_CTU(
    const bool FracPassive, const int NFrac, const int c_FracIdx[],
    const bool JeansMinPres, const real JeansMinPres_Coeff,
    const EoS_t EoS )
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 {
 
 #  ifdef UNSPLIT_GRAVITY
@@ -597,7 +599,7 @@ void Hydro_TGradientCorrection(       real g_FC_Var   [][NCOMP_TOTAL_PLUS_MAG][ 
 
 
 #  ifdef __CUDACC__
-   __syncthreads();
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 
 } // FUNCTION : Hydro_TGradientCorrection

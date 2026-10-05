@@ -1,8 +1,10 @@
-#ifndef __CUFLU_FULLSTEPUPDATE__
-#define __CUFLU_FULLSTEPUPDATE__
+#ifndef __FULLSTEPUPDATE__
+#define __FULLSTEPUPDATE__
 
 
 
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
 
 #if (  MODEL == HYDRO  &&  ( FLU_SCHEME == MHM || FLU_SCHEME == MHM_RP || FLU_SCHEME == CTU )  )
@@ -10,7 +12,7 @@
 
 
 // external functions
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 
 #if ( NCOMP_PASSIVE > 0 )
 # include "CPU_Shared_FluUtility.cpp"
@@ -24,7 +26,7 @@
 # include "CPU_CosmicRay.cpp"
 #endif
 
-#else // #ifdef __CUDACC__
+#else // #ifdef SYCL_LANGUAGE_VERSION
 
 #ifdef COSMIC_RAY
 void CR_AdiabaticWork_FullStep( real &Ecr,
@@ -34,7 +36,9 @@ void CR_AdiabaticWork_FullStep( real &Ecr,
                                 const real dt, const real dh, const EoS_t *EoS, const int idx_out );
 #endif // #ifdef COSMIC_RAY
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
+
+// Note: SYCL migration - the GPU code path now uses SYCL_LANGUAGE_VERSION instead of SYCL_LANGUAGE_VERSION
 
 
 
@@ -253,7 +257,7 @@ void Hydro_FullStepUpdate( const real g_Input[][ CUBE(FLU_NXT) ], real g_Output[
                                    EoS->AuxArrayDevPtr_Flt, EoS->AuxArrayDevPtr_Int, EoS->Table,
                                    PassiveFloor, ERROR_INFO, UNPHY_SILENCE, CK_UNPHY_RND_YES )  )
          {
-#           ifdef __CUDACC__  // GPU
+#           ifdef SYCL_LANGUAGE_VERSION  // GPU
 //          use atomicExch_block() on Pascal (or later) GPUs to avoid inter-block synchronization for better performance
 //          --> calculation results should be the same since different blocks have different s_FullStepFailure[]
 //              (since it is a shared memory array)
@@ -296,8 +300,8 @@ void Hydro_FullStepUpdate( const real g_Input[][ CUBE(FLU_NXT) ], real g_Output[
 
 
 // 7. synchronize s_FullStepFailure for all threads within a GPU thread block
-#  ifdef __CUDACC__
-   __syncthreads();
+#  ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 
 } // FUNCTION : Hydro_FullStepUpdate
@@ -308,4 +312,4 @@ void Hydro_FullStepUpdate( const real g_Input[][ CUBE(FLU_NXT) ], real g_Output[
 
 
 
-#endif // #ifndef __CUFLU_FULLSTEPUPDATE__
+#endif // #ifndef __FULLSTEPUPDATE__

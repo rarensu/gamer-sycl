@@ -1,8 +1,8 @@
-#ifndef __CUFLU_COMPUTEFLUX__
-#define __CUFLU_COMPUTEFLUX__
+#ifndef __COMPUTEFLUX__
+#define __COMPUTEFLUX__
 
-
-
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
 
 #if ( MODEL == HYDRO  &&  (FLU_SCHEME == MHM || FLU_SCHEME == MHM_RP || FLU_SCHEME == CTU) )
@@ -10,7 +10,7 @@
 
 
 // external functions
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 
 #if ( RSOLVER == EXACT  ||  RSOLVER_RESCUE == EXACT )
 # include "CPU_Shared_RiemannSolver_Exact.cpp"
@@ -19,16 +19,16 @@
 # include "CPU_Shared_RiemannSolver_Roe.cpp"
 #endif
 #if ( RSOLVER == HLLE   ||  RSOLVER_RESCUE == HLLE  )
-# include "CPU_Shared_RiemannSolver_HLLE.cpp"
+#include "CPU_Shared_RiemannSolver_HLLE.cpp"
 #endif
 #if ( RSOLVER == HLLC   ||  RSOLVER_RESCUE == HLLC  )
-# include "CPU_Shared_RiemannSolver_HLLC.cpp"
+#include "CPU_Shared_RiemannSolver_HLLC.cpp"
 #endif
 #if ( RSOLVER == HLLD   ||  RSOLVER_RESCUE == HLLD  )
 # include "CPU_Shared_RiemannSolver_HLLD.cpp"
 #endif
 
-#else // #ifdef __CUDACC__
+#else // #ifdef SYCL_LANGUAGE_VERSION
 
 #if ( RSOLVER == EXACT  ||  RSOLVER_RESCUE == EXACT )
 void Hydro_RiemannSolver_Exact( const int XYZ, real Flux_Out[], const real L_In[], const real R_In[],
@@ -65,7 +65,9 @@ void Hydro_RiemannSolver_HLLD( const int XYZ, real Flux_Out[], const real L_In[]
                                const int EoS_AuxArray_Int[], const real* const EoS_Table[EOS_NTABLE_MAX] );
 #endif
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
+
+// Note: SYCL migration - the GPU code path now uses SYCL_LANGUAGE_VERSION instead of __CUDACC__
 
 
 
@@ -365,12 +367,12 @@ void Hydro_ComputeFlux( const real g_FC_Var [][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_
 //       4. store the fluxes of all cells in g_FC_Flux[]
 //       --> including the magnetic components since they are required for CT
          for (int v=0; v<NCOMP_TOTAL_PLUS_MAG; v++)   g_FC_Flux[d][v][idx_flux] = Flux_1Face[v];
-      } // i,j,k
+            } // i,j,k
    } // for (int d=0; d<3; d++)
 
 
-#  ifdef __CUDACC__
-   __syncthreads();
+#ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 
 } // FUNCTION : Hydro_ComputeFlux
@@ -443,8 +445,8 @@ void Hydro_StoreIntFlux( const real g_FC_Flux[][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC
       }
    } // CGPU_LOOP( idx_out, SQR(PS2) )
 
-#  ifdef __CUDACC__
-   __syncthreads();
+#ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 
 } // FUNCTION : Hydro_StoreIntFlux
@@ -455,4 +457,4 @@ void Hydro_StoreIntFlux( const real g_FC_Flux[][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC
 
 
 
-#endif // #ifndef __CUFLU_COMPUTEFLUX__
+#endif // #ifndef __COMPUTEFLUX__

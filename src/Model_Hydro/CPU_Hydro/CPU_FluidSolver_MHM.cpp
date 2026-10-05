@@ -1,3 +1,5 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
 
 #if (  MODEL == HYDRO  &&  ( FLU_SCHEME == MHM || FLU_SCHEME == MHM_RP )  )
@@ -5,7 +7,7 @@
 
 
 // external functions
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 
 #include "CPU_Shared_FluUtility.cpp"
 #include "CPU_Shared_DataReconstruction.cpp"
@@ -40,7 +42,7 @@
 #endif
 #endif // #ifdef COSMIC_RAY
 
-#else // #ifdef __CUDACC__
+#else // #ifdef SYCL_LANGUAGE_VERSION
 
 void Hydro_DataReconstruction( const real g_ConVar   [][ CUBE(FLU_NXT) ],
                                const real g_FC_B     [][ SQR(FLU_NXT)*FLU_NXT_P1 ],
@@ -151,7 +153,7 @@ void CR_AddDiffuseFlux_FullStep( const real g_PriVar_Half[][ CUBE(FLU_NXT) ],
 #endif // #ifdef CR_DIFFUSION
 #endif // #ifdef COSMIC_RAY
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
 
 // internal functions
@@ -259,7 +261,7 @@ static void Hydro_RiemannPredict( const real g_ConVar_In[][ CUBE(FLU_NXT) ],
 //                EoS                : EoS object
 //                MicroPhy           : Microphysics object
 //-------------------------------------------------------------------------------------------------------
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 __global__
 void GPU_FluidSolver_MHM(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
@@ -318,7 +320,7 @@ void CPU_FluidSolver_MHM(
    const bool FracPassive, const int NFrac, const int c_FracIdx[],
    const bool JeansMinPres, const real JeansMinPres_Coeff,
    const EoS_t EoS, const MicroPhy_t MicroPhy )
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 {
 
 #  ifdef UNSPLIT_GRAVITY
@@ -429,7 +431,7 @@ void CPU_FluidSolver_MHM(
          }
 
 #        ifdef __CUDACC__
-         __syncthreads();
+         sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #        endif
 #        endif // #ifdef MHD
 
@@ -467,11 +469,11 @@ void CPU_FluidSolver_MHM(
          do {
 
 #           ifdef __CUDACC__
-            __syncthreads();
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #           endif
             s_FullStepFailure = 0;
 #           ifdef __CUDACC__
-            __syncthreads();
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #           endif
 
             real AdaptiveMinModCoeff = ( MinMod_MaxIter == 0 ) ? MinMod_Coeff :
@@ -496,11 +498,11 @@ void CPU_FluidSolver_MHM(
          do {
 
 #           ifdef __CUDACC__
-            __syncthreads();
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #           endif
             s_FullStepFailure = 0;
 #           ifdef __CUDACC__
-            __syncthreads();
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #           endif
 
             real AdaptiveMinModCoeff = ( MinMod_MaxIter == 0 ) ? MinMod_Coeff :
@@ -787,7 +789,7 @@ void Hydro_RiemannPredict_Flux( const real g_ConVar[][ CUBE(FLU_NXT) ],
 
 
 #  ifdef __CUDACC__
-   __syncthreads();
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 
 } // FUNCTION : Hydro_RiemannPredict_Flux
@@ -950,7 +952,7 @@ void Hydro_RiemannPredict( const real g_ConVar_In[][ CUBE(FLU_NXT) ],
 
 
 #  ifdef __CUDACC__
-   __syncthreads();
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 
 } // FUNCTION : Hydro_RiemannPredict

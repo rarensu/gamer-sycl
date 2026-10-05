@@ -1,3 +1,5 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
 
 #if ( !defined GPU  &&  MODEL == HYDRO  &&  FLU_SCHEME == RTVD  &&  !defined SRHD )
