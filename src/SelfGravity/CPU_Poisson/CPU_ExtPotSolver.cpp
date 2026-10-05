@@ -1,11 +1,12 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "POT.h"
 
 #ifdef GRAVITY
 
 
-
 // include c_ExtPot_AuxArray_Flt/Int[]
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 #  include "ConstMemory.h"
 #endif
 
@@ -38,6 +39,14 @@
 //
 // Return      :  g_Pot_Array[]
 //-----------------------------------------------------------------------------------------
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL void GPU_ExtPotSolver( real g_Pot_Array[][ CUBE(GRA_NXT) ],
+                                     const double g_Corner_Array[][3],
+                                     const real g_ExtPotTable[],
+                                     void **g_ExtPotGenePtr,
+                                     const real dh, const ExtPot_t ExtPot_Func,
+                                     const double Time, const bool PotIsInit )
+#else
 #ifdef __CUDACC__
 __global__
 void GPU_ExtPotSolver( real g_Pot_Array[][ CUBE(GRA_NXT) ],
@@ -57,12 +66,16 @@ void CPU_ExtPotSolver  ( real g_Pot_Array[][ CUBE(GRA_NXT) ],
                          const int    c_ExtPot_AuxArray_Int[],
                          const double Time, const bool PotIsInit )
 #endif
+#endif
 {
 
 // loop over all patches
 // --> CPU/GPU solver: use different (OpenMP threads) / (CUDA thread blocks)
 //     to work on different patches
-#  ifdef __CUDACC__
+#  ifdef SYCL_LANGUAGE_VERSION
+   auto item_ct1 = sycl::ext::oneapi::this_work_item::get_nd_item<3>();
+   const int P = item_ct1.get_group(2);
+#  elif defined(__CUDACC__)
    const int P = blockIdx.x;
 #  else
 #  pragma omp parallel for schedule( runtime )

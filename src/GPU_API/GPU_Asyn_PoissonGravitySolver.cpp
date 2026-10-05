@@ -24,6 +24,14 @@ __global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_
                                         const IntScheme_t IntScheme );
 #endif // POT_SCHEME
 
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL void GPU_ExtPotSolver( real g_Pot_Array[][ CUBE(GRA_NXT) ],
+                                     const double g_Corner_Array[][3],
+                                     const real g_ExtPotTable[],
+                                     void **g_ExtPotGenePtr,
+                                     const real dh, const ExtPot_t ExtPot_Func,
+                                     const double Time, const bool PotIsInit );
+#else
 __global__
 void GPU_ExtPotSolver( real g_Pot_Array[][ CUBE(GRA_NXT) ],
                          const double g_Corner_Array[][3],
@@ -31,6 +39,7 @@ void GPU_ExtPotSolver( real g_Pot_Array[][ CUBE(GRA_NXT) ],
                          void **g_ExtPotGenePtr,
                          const real dh, const ExtPot_t ExtPot_Func,
                          const double Time, const bool PotIsInit );
+#endif
 
 
 // Gravity solver prototypes

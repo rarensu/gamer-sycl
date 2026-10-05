@@ -228,7 +228,11 @@
 
 // unified CPU/GPU loop
 #ifdef SYCL_LANGUAGE_VERSION
-# define CGPU_LOOP( var, niter )    for (int (var)=get_local_id(0); (var)<(niter); (var)+=get_local_size(0))
+# define CGPU_LOOP( var, niter )                                                           \
+   for (int(var) = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(       \
+              2);                                                                          \
+        (var) < (niter);                                                                  \
+        (var) += sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_range(2))
 #else
 # define CGPU_LOOP( var, niter )    for (int (var)=0;           (var)<(niter); (var)++          )
 #endif
