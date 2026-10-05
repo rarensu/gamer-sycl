@@ -1,8 +1,10 @@
-#ifndef __CUFLU_CR_ADDDIFFUSEFLUX__
-#define __CUFLU_CR_ADDDIFFUSEFLUX__
+#ifndef __CR_ADDDIFFUSEFLUX__
+#define __CR_ADDDIFFUSEFLUX__
 
 
 
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
 
 #ifdef CR_DIFFUSION
@@ -10,15 +12,15 @@
 
 
 // external functions
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 
 # include "CPU_CR_ComputeDiffusivity.cpp"
 
-#else // #ifdef __CUDACC__
+#else // #ifdef SYCL_LANGUAGE_VERSION
 
 void CR_ComputeDiffusivity( real &diff_cr_para, real &diff_cr_perp, const MicroPhy_t *MicroPhy );
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
 
 // internal functions
@@ -36,7 +38,7 @@ static real minmod( const real a, const real b );
 // Description : Compute the half-step cosmic-ray diffusive fluxes
 //
 // Note        : 1. Must enable MHD, COSMIC_RAY, and CR_DIFFUSION
-//               2. Invoked by CPU/CUFLU_FluidSolver_MHM()
+//               2. Invoked by CPU/GPU_FluidSolver_MHM()
 //
 // Reference   : Yang et al., ApJ 761, 185 (2012); doi:10.1088/0004-637X/761/2/185
 //
@@ -203,8 +205,8 @@ void CR_AddDiffuseFlux_HalfStep( const real g_ConVar[][ CUBE(FLU_NXT) ],
       } // CGPU_LOOP( idx, size_i*size_j*size_k )
    } // for (int d=0; d<3; d++)
 
-#  ifdef __CUDACC__
-   __syncthreads();
+#ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 
 } // FUNCTION : CR_AddDiffuseFlux_HalfStep
@@ -217,7 +219,7 @@ void CR_AddDiffuseFlux_HalfStep( const real g_ConVar[][ CUBE(FLU_NXT) ],
 // Description : Compute the full-step cosmic-ray diffusive fluxes
 //
 // Note        : 1. Must enable MHD, COSMIC_RAY, and CR_DIFFUSION
-//               2. Invoked by CPU/CUFLU_FluidSolver_MHM()
+//               2. Invoked by CPU/GPU_FluidSolver_MHM()
 //
 // Reference   : Yang et al., ApJ 761, 185 (2012); doi:10.1088/0004-637X/761/2/185
 //
@@ -400,8 +402,8 @@ void CR_AddDiffuseFlux_FullStep( const real g_PriVar_Half[][ CUBE(FLU_NXT) ],
       } // CGPU_LOOP( idx, size_i*size_j*size_k )
    } // for (int d=0; d<3; d++)
 
-#  ifdef __CUDACC__
-   __syncthreads();
+#ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 
 } // FUNCTION : CR_AddDiffuseFlux_FullStep
@@ -450,4 +452,4 @@ static real minmod( const real a, const real b )
 
 
 
-#endif // #ifndef __CUFLU_CR_ADDDIFFUSEFLUX__
+#endif // #ifndef __CR_ADDDIFFUSEFLUX__

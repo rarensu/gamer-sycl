@@ -1,16 +1,18 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "FLU.h"
 
 
 
 // external functions and GPU-related set-up
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 
 #if ( MODEL == HYDRO )
 #include "CPU_Shared_FluUtility.cpp"
 #endif
 #include "ConstMemory.h"
 
-#endif // #ifdef __CUDACC__
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 
 
@@ -39,8 +41,8 @@
 //
 // Return      : fluid[] in all patches
 //-------------------------------------------------------------------------------------------------------
-#ifdef __CUDACC__
-__global__
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
 void GPU_SrcSolver_IterateAllCells(
    const real g_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)           ],
          real g_Flu_Array_Out[][FLU_NOUT_S][ CUBE(PS1)               ],
@@ -62,10 +64,11 @@ void CPU_SrcSolver_IterateAllCells(
 {
 
 // loop over all patches
-// --> CPU/GPU solver: use different (OpenMP threads) / (CUDA thread blocks)
+// --> CPU/GPU solver: use different (OpenMP threads) / (SYCL work-groups)
 //     to work on different patches
-#  ifdef __CUDACC__
-   const int p = blockIdx.x;
+#ifdef SYCL_LANGUAGE_VERSION
+   const int p =
+       sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_group(2);
 #  else
 #  pragma omp parallel for schedule( runtime )
    for (int p=0; p<8*NPatchGroup; p++)
