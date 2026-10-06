@@ -1,5 +1,7 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "POT.h"
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 #include "CheckError.h"
 #endif
 
@@ -120,6 +122,12 @@ __host__
 void SetGPUExtAcc_Plummer( ExtAcc_t &GPUExtAcc_Ptr )
 {
    DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &GPUExtAcc_Ptr, ExtAcc_Ptr, sizeof(ExtAcc_t) )  );
+}
+
+#elif defined(SYCL_LANGUAGE_VERSION)
+void SetGPUExtAcc_Plummer( ExtAcc_t &GPUExtAcc_Ptr )
+{
+   GPUExtAcc_Ptr = ExtAcc_Ptr;
 }
 
 #else // #ifdef __CUDACC__
