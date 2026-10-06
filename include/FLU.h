@@ -543,7 +543,7 @@
 
 
 // set number of threads and blocks used in GRAMFE_FFT GPU scheme
-#  if ( defined(__CUDACC__)  &&  WAVE_SCHEME == WAVE_GRAMFE  &&  GRAMFE_SCHEME == GRAMFE_FFT )
+#  if ( defined(SYCL_LANGUAGE_VERSION)  &&  WAVE_SCHEME == WAVE_GRAMFE  &&  GRAMFE_SCHEME == GRAMFE_FFT )
 
 // cuFFTdx supports the following GPU architectures at the time of writing (23.05.23)
 //
@@ -557,6 +557,11 @@
 //
 //    Hopper: 900 (sm_90).
 //
+// TODO(SYCL migration): The Thor GPU check below uses __CUDACC_VER_MAJOR__ which is CUDA-specific.
+// In SYCL mode this macro is not defined, so __CUDACC_VER_MAJOR__ defaults to 0,
+// which would trigger the error for unsupported GPUs. The check is guarded to
+// only apply when __CUDACC_VER_MAJOR__ is actually defined (CUDA compilation).
+#  ifdef __CUDACC_VER_MAJOR__
 //    Blackwell: 1000, 1010 (Thor GPUs with CUDA12.X or below), 1030, 1100 (Thor GPUs with CUDA13.X or above), 1200 and 1210 (sm_100, sm 101, sm_103, sm_110, sm_1200 and sm_121)
 #  if   ( GPU_COMPUTE_CAPABILITY != 700  && GPU_COMPUTE_CAPABILITY != 720  && GPU_COMPUTE_CAPABILITY != 750  \
       &&  GPU_COMPUTE_CAPABILITY != 800  && GPU_COMPUTE_CAPABILITY != 860  && GPU_COMPUTE_CAPABILITY != 870  \
@@ -568,6 +573,7 @@
 #     error : ERROR : GPU_COMPUTE_CAPABILITY unsupported by cuFFTdx (please visit cuFFTdx website to check whether your GPU is supported and update FLU.h accordingly if it is) !!
 #  endif
 
+#  endif  // #ifdef __CUDACC_VER_MAJOR__
 
 // number of blocks suggested by cufftdx disabled by default
 // profiling the code showed that a different number of blocks provides better performance
@@ -592,7 +598,7 @@ using IFFT         = decltype( inverse_fft() + cufftdx::ElementsPerThread<elemen
 
 using complex_type = typename FFT::value_type;
 
-#  endif // # if ( defined(__CUDACC__)  &&  WAVE_SCHEME == WAVE_GRAMFE  &&  GRAMFE_SCHEME == GRAMFE_FFT )
+#  endif // # if ( defined(SYCL_LANGUAGE_VERSION)  &&  WAVE_SCHEME == WAVE_GRAMFE  &&  GRAMFE_SCHEME == GRAMFE_FFT )
 
 #else
 #  error : ERROR : Unsupported model in FLU.h
@@ -630,7 +636,7 @@ using complex_type = typename FFT::value_type;
 #elif defined GPU
 #  error : UNKNOWN GPU_ARCH !!
 #endif
-#endif // #ifdef __CUDACC__
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 
 

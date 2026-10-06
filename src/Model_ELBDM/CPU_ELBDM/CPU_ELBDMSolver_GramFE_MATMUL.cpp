@@ -1,12 +1,17 @@
-#include "GAMER.h"
+#include "Macro.h"
 #include "FLU.h"
 
-#if (  ( !defined(__CUDACC__) && defined(SUPPORT_GSL) )  ||  defined(__CUDACC__)  )
+#ifdef SYCL_LANGUAGE_VERSION
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
+#endif
+
+#if (  ( !defined(SYCL_LANGUAGE_VERSION) && defined(SUPPORT_GSL) )  ||  defined(SYCL_LANGUAGE_VERSION)  )
 
 #if ( GRAMFE_SCHEME == GRAMFE_MATMUL )
 
 
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 
 // implement a complex type with the required operations for matrix multiplication
 template <typename T>
@@ -16,29 +21,29 @@ public:
    T im;
 
 // unfortunately, we cannot defined custom constructors here
-// otherwise, CUDA will complain about unsupported dynamic initialisation of shared arrays
+// otherwise, the device compiler may complain about unsupported dynamic initialisation of shared arrays
 
-   __device__ complex<T> operator+(const complex<T>& other) const {
+   GPU_DEVICE complex<T> operator+(const complex<T>& other) const {
       return complex<T>(re + other.re, im + other.im);
    }
 
-   __device__ complex<T> operator*(const complex<T>& other) const {
+   GPU_DEVICE complex<T> operator*(const complex<T>& other) const {
       complex<T> out;
       out.real(re * other.re - im * other.im);
       out.imag(re * other.im + im * other.re);
       return out;
    }
 
-   __device__ complex<T>& operator+=(const complex<T>& other) {
+   GPU_DEVICE complex<T>& operator+=(const complex<T>& other) {
       re += other.re;
       im += other.im;
       return *this;
    }
 
-   __device__ T real() const {return re;}
-   __device__ T imag() const {return im;}
-   __device__ void real(T r) {re = r;}
-   __device__ void imag(T i) {im = i;}
+   GPU_DEVICE T real() const {return re;}
+   GPU_DEVICE T imag() const {return im;}
+   GPU_DEVICE void real(T r) {re = r;}
+   GPU_DEVICE void imag(T i) {im = i;}
 };
 
 using gramfe_matmul_complex_type = complex<gramfe_matmul_float>;
@@ -46,7 +51,7 @@ using gramfe_matmul_complex_type = complex<gramfe_matmul_float>;
 // therefore the types of the input vector (gramfe_input_complex_type) and the matrix (gramfe_matmul_complex_type) can be different
 using gramfe_input_complex_type  = complex<real>;
 
-#else // #ifdef __CUDACC__
+#else // #ifdef SYCL_LANGUAGE_VERSION
 
 #include <complex.h>
 #include "GSL.h"
@@ -64,9 +69,9 @@ namespace gramfe_matmul_gsl = gsl_double_precision;
 namespace gramfe_matmul_gsl = gsl_single_precision;
 #endif
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 # define CGPU_FLU_BLOCK_SIZE_X FLU_BLOCK_SIZE_X
 # define CGPU_FLU_BLOCK_SIZE_Y FLU_BLOCK_SIZE_Y
 #else
@@ -146,8 +151,8 @@ static void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
 //                                  commute
 //                MinDens     : Minimum allowed density
 //-------------------------------------------------------------------------------------------------------
-#ifdef __CUDACC__
-__global__
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
 void GPU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                       real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
                                       real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
@@ -164,10 +169,10 @@ void CPU_ELBDMSolver_GramFE_MATMUL(   real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT
 #endif
 {
 
-#  ifdef __CUDACC__
+#  ifdef SYCL_LANGUAGE_VERSION
 // create memories for columns of input field
-   __shared__ gramfe_input_complex_type s_In [FLU_BLOCK_SIZE_Y][FLU_NXT];
-   __shared__ gramfe_input_complex_type s_Out[FLU_BLOCK_SIZE_Y][PS2];
+   sycl::local gramfe_input_complex_type s_In [FLU_BLOCK_SIZE_Y][FLU_NXT];
+   sycl::local gramfe_input_complex_type s_Out[FLU_BLOCK_SIZE_Y][PS2];
 
    const int NPatchGroup = NULL_INT;
 
@@ -181,15 +186,15 @@ void CPU_ELBDMSolver_GramFE_MATMUL(   real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT
 // time evolution matrix
 // GPU: transpose input evolution matrix from PS2 x FLU_NXT to FLU_NXT x PS2 for it to be in row-major order
 // CPU: no transposition since matrix already is in column-major order
-#  ifdef __CUDACC__
-   __shared__ gramfe_matmul_complex_type s_TimeEvo[PS2 * FLU_NXT];
+#  ifdef SYCL_LANGUAGE_VERSION
+   sycl::local gramfe_matmul_complex_type s_TimeEvo[PS2 * FLU_NXT];
 
    gramfe_matmul_complex_type* s_LinEvolve = (gramfe_matmul_complex_type *) s_TimeEvo;
    gramfe_matmul_complex_type* g_LinEvolve = (gramfe_matmul_complex_type *) g_TimeEvo;
    uint row, col;
 
-   const uint tx      = threadIdx.x;
-   const uint ty      = threadIdx.y;
+   const uint tx      = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(2);
+   const uint ty      = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(1);
    const uint tid     = ty * CGPU_FLU_BLOCK_SIZE_X + tx;                // thread ID within block
    const uint NThread = CGPU_FLU_BLOCK_SIZE_X * CGPU_FLU_BLOCK_SIZE_Y;  // total number of threads within block
 
@@ -199,11 +204,11 @@ void CPU_ELBDMSolver_GramFE_MATMUL(   real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT
       s_LinEvolve[ col*PS2 + row ] = g_LinEvolve[i];
    }
 
-   __syncthreads();
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
 
-#  else // #ifdef __CUDACC__
+#  else // #ifdef SYCL_LANGUAGE_VERSION
    gramfe_matmul_complex_type* s_TimeEvo = (gramfe_matmul_complex_type *) g_TimeEvo;
-#  endif // #ifdef __CUDACC__ ... else ...
+#  endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
 
    if ( XYZ )
@@ -269,12 +274,12 @@ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
    const uint NColumnTotal = size_j * size_k;      // total number of data columns to be updated
 
 // openmp pragma for the CPU solver
-#  ifndef __CUDACC__
+#  ifndef SYCL_LANGUAGE_VERSION
 #  pragma omp parallel
 #  endif
    {
-#     ifdef __CUDACC__
-      const int bx = blockIdx.x;
+#     ifdef SYCL_LANGUAGE_VERSION
+      const int bx = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_group(2);
 #     else
 //    create arrays for columns of various intermediate fields on the heap
       gramfe_matmul_complex_type* s_In_1PG  = (gramfe_matmul_complex_type*) malloc( FLU_NXT * sizeof(gramfe_matmul_complex_type) );
@@ -290,15 +295,15 @@ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
 #     endif
       {
 
-#        ifdef __CUDACC__
+#        ifdef SYCL_LANGUAGE_VERSION
 //       use two-dimensional thread blocks in GPU mode
-         const uint tx = threadIdx.x;
-         const uint ty = threadIdx.y;
+         const uint tx = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(2);
+         const uint ty = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(1);
 
          // define register variables for conversion of complex types
          gramfe_matmul_complex_type Psi_In, Psi_New;
 
-#        else  // # ifdef __CUDACC__
+#        else  // # ifdef SYCL_LANGUAGE_VERSION
 //       every block just has a single thread with temporary memory on the stack in CPU mode
          const uint tx = 0;
          const uint ty = 0;
@@ -307,7 +312,7 @@ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
          s_In  = (gramfe_input_complex_type (*)[FLU_NXT]) s_In_1PG;
          s_Out = (gramfe_input_complex_type (*)[PS2])    s_Out_1PG;
 
-#        endif // # ifdef __CUDACC__ ... else ...
+#        endif // # ifdef SYCL_LANGUAGE_VERSION ... else ...
 
          const uint tid     = ty * CGPU_FLU_BLOCK_SIZE_X + tx;                // thread ID within block
          const uint NThread = CGPU_FLU_BLOCK_SIZE_X * CGPU_FLU_BLOCK_SIZE_Y;  // total number of threads within block
@@ -343,8 +348,8 @@ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
 
 
 //          2. evolve wave function via matrix multiplication
-#           ifdef __CUDACC__
-            __syncthreads();
+#           ifdef SYCL_LANGUAGE_VERSION
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
 
             CELL_LOOP(FLU_NXT, FLU_GHOST_SIZE, FLU_GHOST_SIZE)
             {
@@ -358,7 +363,7 @@ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                s_Out[sj][si - FLU_GHOST_SIZE] = {(real) Psi_New.real(), (real) Psi_New.imag()};
             }
 
-            __syncthreads();
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
 #           else
             gramfe_matmul_gsl::blas_cgemv(CblasNoTrans, {1.0, 0.0}, &Evo_view.matrix, &Input_view.vector, {0.0, 0.0}, &Output_view.vector);
 #           endif
@@ -408,8 +413,8 @@ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                } // CELL_LOOP(FLU_NXT, FLU_GHOST_SIZE, FLU_GHOST_SIZE)
             } // if ( FinalOut ) ... else ...
 
-#           ifdef  __CUDACC__
-            __syncthreads();
+#           ifdef  SYCL_LANGUAGE_VERSION
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
 #           endif
 
 //          3.2 update remaining number of columns
@@ -418,7 +423,7 @@ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
 
          } // while ( Column0 < NColumnTotal )
       } // #pragma for (int bx=0; bx<NPatchGroup; bx++)
-#     ifndef __CUDACC__
+#     ifndef SYCL_LANGUAGE_VERSION
       free(s_In_1PG);
       free(s_Out_1PG);
 #     endif
@@ -428,4 +433,4 @@ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
 
 
 #endif // #if ( GRAMFE_SCHEME == GRAMFE_MATMUL )
-#endif // #if (  ( !defined(__CUDACC__) && defined(SUPPORT_GSL) )  ||  defined(__CUDACC__)  )
+#endif // #if (  ( !defined(SYCL_LANGUAGE_VERSION) && defined(SUPPORT_GSL) )  ||  defined(SYCL_LANGUAGE_VERSION)  )

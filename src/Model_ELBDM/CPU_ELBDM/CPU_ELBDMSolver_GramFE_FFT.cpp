@@ -1,7 +1,12 @@
-#include "GAMER.h"
+#include "Macro.h"
 #include "FLU.h"
 
-#if (  ( !defined(__CUDACC__) && defined(SUPPORT_FFTW) )  ||  defined(__CUDACC__)  )
+#ifdef SYCL_LANGUAGE_VERSION
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
+#endif
+
+#if (  ( !defined(SYCL_LANGUAGE_VERSION) && defined(SUPPORT_FFTW) )  ||  defined(SYCL_LANGUAGE_VERSION)  )
 
 #if ( GRAMFE_SCHEME == GRAMFE_FFT )
 
@@ -16,7 +21,7 @@
 # define to1D2(z,y,x) (  ((z)-FLU_GHOST_SIZE) * PS2     * PS2     + ((y)-FLU_GHOST_SIZE) * PS2     + ((x)-FLU_GHOST_SIZE)  )
 
 // use cufftdx library for FFTs on GPU
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 
 using forward_workspace_type = typename FFT::workspace_type;
 using inverse_workspace_type = typename IFFT::workspace_type;
@@ -25,7 +30,7 @@ using inverse_workspace_type = typename IFFT::workspace_type;
 
 // multiplication of complex and real
 template<class OtherType>
-__device__ __forceinline__ complex_type operator*(const complex_type& a, const OtherType& other) {
+GPU_DEVICE complex_type operator*(const complex_type& a, const OtherType& other) {
       complex_type result(a);
       result *= other;
       return result;
@@ -33,32 +38,32 @@ __device__ __forceinline__ complex_type operator*(const complex_type& a, const O
 
 // multiplication of real and complex
 template<class OtherType>
-__device__ __forceinline__ complex_type operator*(const OtherType& other, const complex_type& a) {
+GPU_DEVICE complex_type operator*(const OtherType& other, const complex_type& a) {
       return a * other;
 }
 
 // multiplication of complex and complex
-__device__ __forceinline__ complex_type operator*(const complex_type& a, const complex_type& b) {
+GPU_DEVICE complex_type operator*(const complex_type& a, const complex_type& b) {
       complex_type result(a);
       result *= b;
       return result;
 }
 
 // addition of complex and complex
-__device__ __forceinline__ complex_type operator+(const complex_type& a, const complex_type& b) {
+GPU_DEVICE complex_type operator+(const complex_type& a, const complex_type& b) {
       complex_type result(a);
       result += b;
       return result;
 }
 
 // subtraction of complex and complex
-__device__ __forceinline__ complex_type operator-(const complex_type& a, const complex_type& b) {
+GPU_DEVICE complex_type operator-(const complex_type& a, const complex_type& b) {
       complex_type result(a);
       result -= b;
       return result;
 }
 
-#else   // #ifdef __CUDACC__
+#else   // #ifdef SYCL_LANGUAGE_VERSION
 
 extern gramfe_fftw::complex_plan_1d FFTW_Plan_ExtPsi, FFTW_Plan_ExtPsi_Inv;
 
@@ -142,11 +147,11 @@ complex_type operator*(const OtherType& other, const complex_type& a) {
 // no workspaces required in CPU solver
 using forward_workspace_type = bool;
 using inverse_workspace_type = bool;
-#endif // #ifdef __CUDACC__
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 
 
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 # define CGPU_FLU_BLOCK_SIZE_X FFT::block_dim.x
 # define CGPU_FLU_BLOCK_SIZE_Y FFT::block_dim.y
 #else
@@ -283,9 +288,8 @@ gramfe_fft_float SineTaylorExpansion(gramfe_fft_float x, int Nterms) {
 //                Workspace     : Workspace for forward GPU FFT
 //                WorkspaceInv  : Workspace for inverse GPU FFT
 //-------------------------------------------------------------------------------------------------------
-#ifdef __CUDACC__
-__launch_bounds__(FFT::max_threads_per_block)
-__global__
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
 void GPU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                    real g_Fluid_Out[][FLU_NOUT ][ CUBE(PS2) ],
                                    real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
@@ -302,9 +306,12 @@ void CPU_ELBDMSolver_GramFE_FFT(   real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ]
 #endif
 {
 
-#  ifdef __CUDACC__
-// shared memory array for cufftdx
-   extern __shared__ complex_type shared_mem[];
+#  ifdef SYCL_LANGUAGE_VERSION
+// TODO(SYCL migration): cuFFTDx shared memory - 'extern __shared__' is CUDA-specific.
+// In SYCL, sycl::local with FFT::shared_memory_size is used, but the actual required
+// size may be larger (std::max of FFT::shared_memory_size and data size in GPU_Asyn_FluidSolver.cpp).
+// Revisit when cuFFTDx SYCL shared memory API is finalized.
+   sycl::local complex_type shared_mem[FFT::shared_memory_size];
 
 // create memories for columns of various intermediate fields in shared GPU memory
    complex_type (*s_In)[GRAMFE_FLU_NXT]    = (complex_type (*)[GRAMFE_FLU_NXT]) (shared_mem);
@@ -314,7 +321,7 @@ void CPU_ELBDMSolver_GramFE_FFT(   real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ]
    complex_type (*s_Ao)[GRAMFE_NDELTA]     = (complex_type (*)[GRAMFE_NDELTA])  (shared_mem + CGPU_FLU_BLOCK_SIZE_Y * (GRAMFE_FLU_NXT + GRAMFE_NDELTA));
    const int NPatchGroup                   = NULL_INT;
 
-#  else // #ifdef __CUDACC__
+#  else // #ifdef SYCL_LANGUAGE_VERSION
 // allocate memory on heap within loop for CPU run
    complex_type (*s_In)   [GRAMFE_FLU_NXT] = NULL;
    complex_type (*s_Ae)   [GRAMFE_NDELTA]  = NULL;
@@ -322,7 +329,7 @@ void CPU_ELBDMSolver_GramFE_FFT(   real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ]
    const gramfe_fft_float _dh              = gramfe_fft_float(1.0)/dh;
    bool Workspace                          = NULL_BOOL;
    bool WorkspaceInv                       = NULL_BOOL;
-#  endif // #ifdef __CUDACC__ ... else ...
+#  endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
 
 // set up time evolution operator and filter
@@ -425,12 +432,12 @@ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
    const uint NColumnTotal = size_j * size_k;      // total number of data columns to be updated
 
 // openmp pragma for the CPU solver
-#  ifndef __CUDACC__
+#  ifndef SYCL_LANGUAGE_VERSION
 #  pragma omp parallel
 #  endif
    {
-#     ifdef __CUDACC__
-      const int bx = blockIdx.x;
+#     ifdef SYCL_LANGUAGE_VERSION
+      const int bx = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_group(2);
 #     else
 
 //    create arrays for columns of various intermediate fields on the stack
@@ -445,10 +452,10 @@ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
 #     endif
       {
 
-#        ifdef __CUDACC__
+#        ifdef SYCL_LANGUAGE_VERSION
 //       use two-dimensional thread blocks in GPU mode
-         const uint tx = threadIdx.x;
-         const uint ty = threadIdx.y;
+         const uint tx = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(2);
+         const uint ty = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(1);
 #        else
 //       every block just has a single thread with temporary memory on the stack in CPU mode
          const uint tx = 0;
@@ -495,8 +502,8 @@ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
             }
 
 //          1.4 sync data read into S_In
-#           ifdef __CUDACC__
-            __syncthreads();
+#           ifdef SYCL_LANGUAGE_VERSION
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
 #           endif
 
 //          2.1 compute Gram-Polynomial expansion coefficients via semi-discrete scalar products on boundary
@@ -515,8 +522,8 @@ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                s_Ao[sj][si] = (gramfe_fft_float) 0.5 * (Ar - Al);
             }
 
-#           ifdef __CUDACC__
-            __syncthreads();
+#           ifdef SYCL_LANGUAGE_VERSION
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
 #           endif
 
 //          2.2 function values in extension domain given as linear combinations of extended Gram polynomials
@@ -533,19 +540,19 @@ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                s_In[sj][si] = Psi_Ext;
             }
 
-#           ifdef __CUDACC__
-            __syncthreads();
+#           ifdef SYCL_LANGUAGE_VERSION
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
 #           endif
 
 //          3.1 forward FFT
-#           ifdef __CUDACC__
+#           ifdef SYCL_LANGUAGE_VERSION
             FFT().execute(reinterpret_cast<void*>(s_In), Workspace);
 #           else
             gramfe_fftw_c2c( FFTW_Plan_ExtPsi, s_In );
 #           endif
 
-#           ifdef __CUDACC__
-            __syncthreads();
+#           ifdef SYCL_LANGUAGE_VERSION
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
 #           endif
 
 //          3.2 evolve wave function via time evolution operator with filter
@@ -554,20 +561,20 @@ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                s_In[sj][si] *= ExpCoeff[si];
             }
 
-#           ifdef __CUDACC__
-            __syncthreads();
+#           ifdef SYCL_LANGUAGE_VERSION
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
 #           endif
 
 
 //          3.3 backward FFT
-#           ifdef __CUDACC__
+#           ifdef SYCL_LANGUAGE_VERSION
             IFFT().execute(reinterpret_cast<void*>(s_In), WorkspaceInv);
 #           else
             gramfe_fftw_c2c( FFTW_Plan_ExtPsi_Inv, s_In );
 #           endif
 
-#           ifdef  __CUDACC__
-            __syncthreads();
+#           ifdef  SYCL_LANGUAGE_VERSION
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
 #           endif
 
 //          4.1 write FFT array back to output array
@@ -609,8 +616,8 @@ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                }  // CELL_LOOP(FLU_NXT, FLU_GHOST_SIZE, FLU_GHOST_SIZE)
             } // if ( FinalOut ) ... else
 
-#           ifdef  __CUDACC__
-            __syncthreads();
+#           ifdef  SYCL_LANGUAGE_VERSION
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
 #           endif
 
 //          4.2 update remaining number of columns
@@ -619,7 +626,7 @@ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
 
          } // while ( Column0 < NColumnTotal )
       } // #pragma for (int bx=0; bx<NPatchGroup; bx++)
-#     ifndef __CUDACC__
+#     ifndef SYCL_LANGUAGE_VERSION
       gramfe_fftw::fft_free(s_In_1PG);
 #     endif
    } // #pragma omp parallel
@@ -629,4 +636,4 @@ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
 
 
 #endif // #if ( GRAMFE_SCHEME == GRAMFE_FFT )
-#endif // #if (  ( !defined(__CUDACC__) && defined(SUPPORT_FFTW) )  ||  defined(__CUDACC__)  )
+#endif // #if (  ( !defined(SYCL_LANGUAGE_VERSION) && defined(SUPPORT_FFTW) )  ||  defined(SYCL_LANGUAGE_VERSION)  )

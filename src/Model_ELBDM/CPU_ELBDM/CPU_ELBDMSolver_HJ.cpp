@@ -1,5 +1,10 @@
-#include "FLU.h"
 #include "Macro.h"
+#include "FLU.h"
+
+#ifdef SYCL_LANGUAGE_VERSION
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
+#endif
 
 #if ( ELBDM_SCHEME == ELBDM_HYBRID )
 
@@ -11,7 +16,7 @@
 
 # define to1D3(z,y,x) (  (z) * PS2     * PS2                     +  (y) * PS2                     +  (x)                  )
 
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 # define CGPU_FLU_BLOCK_SIZE_X   FLU_BLOCK_SIZE_X
 # define CGPU_FLU_BLOCK_SIZE_Y   FLU_HJ_BLOCK_SIZE_Y
 #else
@@ -19,8 +24,8 @@
 # define CGPU_FLU_BLOCK_SIZE_Y   1
 #endif
 
-#ifdef __CUDACC__
-#define CGPU_SHARED __shared__
+#ifdef SYCL_LANGUAGE_VERSION
+#define CGPU_SHARED sycl::local
 #else
 #define CGPU_SHARED
 #endif
@@ -193,8 +198,8 @@ static void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
 //                                  are broken ...
 //                MinDens     : Minimum allowed density
 //-------------------------------------------------------------------------------------------------------
-#ifdef __CUDACC__
-__global__
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
 void GPU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
 #                                      ifdef GAMER_DEBUG
                                        real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
@@ -222,7 +227,7 @@ void CPU_ELBDMSolver_HamiltonJacobi(   real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NX
 #endif
 {
 
-#  ifdef __CUDACC__
+#  ifdef SYCL_LANGUAGE_VERSION
 // parameter useless when GPU is used
    const int NPatchGroup = NULL_INT;
 #  else
@@ -311,7 +316,7 @@ void GPU_Advance(  real g_Fluid_In [][FLU_NIN  ][ CUBE(HYB_NXT) ],
 
 
 // openmp pragma for the CPU solver
-#  ifndef __CUDACC__
+#  ifndef SYCL_LANGUAGE_VERSION
 #  pragma omp parallel
 #  endif
    {
@@ -324,12 +329,12 @@ void GPU_Advance(  real g_Fluid_In [][FLU_NIN  ][ CUBE(HYB_NXT) ],
       CGPU_SHARED real s_Flux              [CGPU_FLU_BLOCK_SIZE_Y]                              [HYB_NXT];  // the average density fluxes
 #     endif
 
-#     ifdef __CUDACC__
+#     ifdef SYCL_LANGUAGE_VERSION
 //    use two-dimensional thread blocks in GPU mode
-      const uint tx            = threadIdx.x;
-      const uint ty            = threadIdx.y;
+      const uint tx            = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(2);
+      const uint ty            = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(1);
       const uint tid           = ty * CGPU_FLU_BLOCK_SIZE_X + tx;    // thread ID within block
-      const int  bx            = blockIdx.x;
+      const int  bx            = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_group(2);
 #     else
 //    every block just has a single thread with temporary memory on the stack in CPU mode
       const uint tx            = 0;
@@ -338,7 +343,7 @@ void GPU_Advance(  real g_Fluid_In [][FLU_NIN  ][ CUBE(HYB_NXT) ],
 //    in CPU mode, every thread works on one patch group at a time and corresponds to one block in the grid of the GPU solver
 #     pragma omp for schedule( runtime )
       for (int bx=0; bx<NPatchGroup; bx++)
-#     endif // #ifdef __CUDACC__ ... else ...
+#     endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
       {
 
          uint Idx, Idx1, Idx2;            // temporary indices used for indexing column updates, writing data to g_Fluid_In, g_Fluid_Out
@@ -376,8 +381,8 @@ void GPU_Advance(  real g_Fluid_In [][FLU_NIN  ][ CUBE(HYB_NXT) ],
             }
 
 //          1.4 sync data read into S_In
-#           ifdef __CUDACC__
-            __syncthreads();
+#           ifdef SYCL_LANGUAGE_VERSION
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
 #           endif
 
 //          first-order (in time and space) upwind update in completely refine patches
@@ -422,8 +427,8 @@ void GPU_Advance(  real g_Fluid_In [][FLU_NIN  ][ CUBE(HYB_NXT) ],
                   s_In[sj][ELBDM_HJ_RK_ORDER][DENS][si] = s_In[sj][0][DENS][si] + Coeff1 * ( fm - fp );
                   s_In[sj][ELBDM_HJ_RK_ORDER][PHAS][si] = s_In[sj][0][PHAS][si] + Coeff2 * ( - SQR(MIN(vp, 0)) - SQR(MAX(vm, 0)) + QP );
                }
-#              ifdef  __CUDACC__
-               __syncthreads();
+#              ifdef  SYCL_LANGUAGE_VERSION
+               sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
 #              endif
 
             } else { // if ( IsCompletelyRefined )
@@ -495,8 +500,8 @@ void GPU_Advance(  real g_Fluid_In [][FLU_NIN  ][ CUBE(HYB_NXT) ],
                      s_In[sj][time_level + 1][PHAS][si] = Ph_New;
                   } // CELL_LOOP(HYB_NXT, ghost, ghost)
 
-#                 ifdef  __CUDACC__
-                  __syncthreads();
+#                 ifdef  SYCL_LANGUAGE_VERSION
+                  sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
 #                 endif
 
                } // for (uint time_level=0; time_level<ELBDM_HJ_RK_ORDER; ++time_level)
@@ -566,8 +571,8 @@ void GPU_Advance(  real g_Fluid_In [][FLU_NIN  ][ CUBE(HYB_NXT) ],
 
             } // CELL_LOOP(HYB_NXT, HYB_GHOST_SIZE, HYB_GHOST_SIZE)
 
-#           ifdef  __CUDACC__
-            __syncthreads();
+#           ifdef  SYCL_LANGUAGE_VERSION
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
 #           endif
 
 //          4.2 write shared memory flux arrays back to global memory
@@ -586,8 +591,8 @@ void GPU_Advance(  real g_Fluid_In [][FLU_NIN  ][ CUBE(HYB_NXT) ],
                }
             }
 
-#           ifdef  __CUDACC__
-            __syncthreads();
+#           ifdef  SYCL_LANGUAGE_VERSION
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
 #           endif
 #           endif // # ifdef CONSERVE_MASS
 
