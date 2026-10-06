@@ -1,5 +1,7 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "POT.h"
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 #include "CheckError.h"
 #endif
 
@@ -146,6 +148,12 @@ __host__
 void SetGPUExtPot_ELBDM_HaloMerger( ExtPot_t &GPUExtPot_Ptr )
 {
    DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &GPUExtPot_Ptr, ExtPot_Ptr, sizeof(ExtPot_t) )  );
+}
+
+#elif defined(SYCL_LANGUAGE_VERSION)
+void SetGPUExtPot_ELBDM_HaloMerger( ExtPot_t &GPUExtPot_Ptr )
+{
+   GPUExtPot_Ptr = ExtPot_Ptr;
 }
 
 #else // #ifdef __CUDACC__
