@@ -17,12 +17,12 @@
 #define RED_MAX
 
 #ifdef DT_FLU_USE_SHUFFLE
-#include "../../GPU_Utility/BlockReduction_Shuffle.dp.cpp"
+#include "../../GPU_Utility/BlockReduction_Shuffle.cpp"
 #else
 #  include "../../GPU_Utility/BlockReduction_WarpSync.cpp"
 #endif
 
-#endif // #ifdef __CUDACC__
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 
 
@@ -82,7 +82,7 @@ void CPU_dtSolver_HydroCFL  ( real g_dt_Array[], const real g_Flu_Array[][FLU_NI
 #  endif
 
 // loop over all patches
-// --> CPU/GPU solver: use different (OpenMP threads) / (CUDA thread blocks)
+// --> CPU/GPU solver: use different (OpenMP threads) / (SYCL work-groups)
 //                     to work on different patches
 #ifdef SYCL_LANGUAGE_VERSION
    const int p = item_ct1.get_group(2);
@@ -203,10 +203,10 @@ void CPU_dtSolver_HydroCFL  ( real g_dt_Array[], const real g_Flu_Array[][FLU_NI
 #     ifdef DT_FLU_USE_SHUFFLE
       MaxCFL = BlockReduction_Shuffle(MaxCFL, shared);
 #     else
-      MaxCFL = BlockReduction_WarpSync( MaxCFL );
+      MaxCFL = BlockReduction_WarpSync( MaxCFL, shared );
 #     endif
       if (item_ct1.get_local_id(2) == 0)
-#     endif // #ifdef __CUDACC__
+#     endif // #ifdef SYCL_LANGUAGE_VERSION
 
 #     ifdef SRHD
       g_dt_Array[p] = dhSafety / ( MaxCFL / SQRT( (real)1.0 + MaxCFL*MaxCFL ) );
@@ -224,14 +224,14 @@ void CPU_dtSolver_HydroCFL  ( real g_dt_Array[], const real g_Flu_Array[][FLU_NI
         MaxCFL = FMAX( MicroPhy.CR_diff_coeff_perp, MaxCFL );
       } // CGPU_LOOP( t, CUBE(PS1) )
 
-#     ifdef __CUDACC__
+#     ifdef SYCL_LANGUAGE_VERSION
 #     ifdef DT_FLU_USE_SHUFFLE
-      MaxCFL = BlockReduction_Shuffle ( MaxCFL );
+      MaxCFL = BlockReduction_Shuffle ( MaxCFL, shared );
 #     else
-      MaxCFL = BlockReduction_WarpSync( MaxCFL );
+      MaxCFL = BlockReduction_WarpSync( MaxCFL, shared );
 #     endif
-      if ( threadIdx.x == 0 )
-#     endif // #ifdef __CUDACC__
+      if ( sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(2) == 0 )
+#     endif // #ifdef SYCL_LANGUAGE_VERSION
       g_dt_Array[p] = ( dh2Safety/MaxCFL < g_dt_Array[p]) ? dh2Safety/MaxCFL : g_dt_Array[p];
 
 #     endif // #ifdef CR_DIFFUSION

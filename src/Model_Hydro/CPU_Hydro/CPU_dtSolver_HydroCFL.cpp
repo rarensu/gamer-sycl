@@ -55,11 +55,12 @@
 // Return      :  g_dt_Array
 //-----------------------------------------------------------------------------------------
 #ifdef SYCL_LANGUAGE_VERSION
-__global__
+SYCL_EXTERNAL
 void GPU_dtSolver_HydroCFL( real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_T][ CUBE(PS1) ],
                               const real g_Mag_Array[][NCOMP_MAG][ PS1P1*SQR(PS1) ],
                               const real dh, const real Safety, const real MinPres,
-                              const long PassiveFloor, const EoS_t EoS, const MicroPhy_t MicroPhy )
+                              const long PassiveFloor, const EoS_t EoS, const MicroPhy_t MicroPhy,
+                              real *shared )
 #else
 void CPU_dtSolver_HydroCFL  ( real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_T][ CUBE(PS1) ],
                               const real g_Mag_Array[][NCOMP_MAG][ PS1P1*SQR(PS1) ], const int NPG,
@@ -77,10 +78,10 @@ void CPU_dtSolver_HydroCFL  ( real g_dt_Array[], const real g_Flu_Array[][FLU_NI
 #  endif
 
 // loop over all patches
-// --> CPU/GPU solver: use different (OpenMP threads) / (CUDA thread blocks)
+// --> CPU/GPU solver: use different (OpenMP threads) / (SYCL work-groups)
 //                     to work on different patches
-#  ifdef __CUDACC__
-   const int p = blockIdx.x;
+#  ifdef SYCL_LANGUAGE_VERSION
+   const int p = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_group(2);
 #  else
 #  pragma omp parallel for schedule( runtime )
    for (int p=0; p<8*NPG; p++)
@@ -194,13 +195,13 @@ void CPU_dtSolver_HydroCFL  ( real g_dt_Array[], const real g_Flu_Array[][FLU_NI
 
 //    perform parallel reduction to get the maximum CFL speed in each thread block
 //    --> store in the thread 0
-#     ifdef __CUDACC__
+#     ifdef SYCL_LANGUAGE_VERSION
 #     ifdef DT_FLU_USE_SHUFFLE
-      MaxCFL = BlockReduction_Shuffle ( MaxCFL );
+      MaxCFL = BlockReduction_Shuffle ( MaxCFL, shared );
 #     else
-      MaxCFL = BlockReduction_WarpSync( MaxCFL );
+      MaxCFL = BlockReduction_WarpSync( MaxCFL, shared );
 #     endif
-      if ( threadIdx.x == 0 )
+      if ( sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(2) == 0 )
 #     endif // #ifdef SYCL_LANGUAGE_VERSION
 
 #     ifdef SRHD
@@ -219,13 +220,13 @@ void CPU_dtSolver_HydroCFL  ( real g_dt_Array[], const real g_Flu_Array[][FLU_NI
         MaxCFL = FMAX( MicroPhy.CR_diff_coeff_perp, MaxCFL );
       } // CGPU_LOOP( t, CUBE(PS1) )
 
-#     ifdef __CUDACC__
+#     ifdef SYCL_LANGUAGE_VERSION
 #     ifdef DT_FLU_USE_SHUFFLE
-      MaxCFL = BlockReduction_Shuffle ( MaxCFL );
+      MaxCFL = BlockReduction_Shuffle ( MaxCFL, shared );
 #     else
-      MaxCFL = BlockReduction_WarpSync( MaxCFL );
+      MaxCFL = BlockReduction_WarpSync( MaxCFL, shared );
 #     endif
-      if ( threadIdx.x == 0 )
+      if ( sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(2) == 0 )
 #     endif // #ifdef SYCL_LANGUAGE_VERSION
       g_dt_Array[p] = ( dh2Safety/MaxCFL < g_dt_Array[p]) ? dh2Safety/MaxCFL : g_dt_Array[p];
 

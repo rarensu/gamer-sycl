@@ -12,6 +12,7 @@
 
 #if   ( MODEL == HYDRO )
 #ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
 void GPU_dtSolver_HydroCFL( real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_T][ CUBE(PS1) ],
                             const real g_Mag_Array[][NCOMP_MAG][ PS1P1*SQR(PS1) ],
                             const real dh, const real Safety, const real MinPres,

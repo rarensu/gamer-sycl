@@ -158,7 +158,7 @@ void Hydro_TGradientCorrection(       real g_FC_Var   [][NCOMP_TOTAL_PLUS_MAG][ 
 //                EoS                : EoS object
 //-------------------------------------------------------------------------------------------------------
 #ifdef SYCL_LANGUAGE_VERSION
-__global__
+SYCL_EXTERNAL
 void GPU_FluidSolver_CTU(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
          real   g_Flu_Array_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
@@ -229,28 +229,28 @@ void CPU_FluidSolver_CTU(
 #  ifdef MHD
    const bool StoreElectric_No     = false;
 #  endif
-#  if ( defined __CUDACC__  &&  !defined GRAVITY )
+#  if ( defined SYCL_LANGUAGE_VERSION  &&  !defined GRAVITY )
    const double *c_ExtAcc_AuxArray = NULL;
 #  endif
 
 
 // openmp pragma for the CPU solver
-#  ifndef __CUDACC__
+#  ifndef SYCL_LANGUAGE_VERSION
 #  pragma omp parallel
 #  endif
    {
 //    loop over all patch groups
-//    --> CPU/GPU solver: use different (OpenMP threads) / (CUDA thread blocks)
+//    --> CPU/GPU solver: use different (OpenMP threads) / (SYCL work-groups)
 //        to work on different patch groups
-#     ifdef __CUDACC__
-      const int P = blockIdx.x;
+#     ifdef SYCL_LANGUAGE_VERSION
+      const int P = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_group(2);
 #     else
 #     pragma omp for schedule( runtime )
       for (int P=0; P<NPatchGroup; P++)
 #     endif
       {
 //       0. point to the arrays associated with different patch groups
-//          --> necessary because different patch groups are computed by different OpenMP threads or CUDA blocks in parallel
+//          --> necessary because different patch groups are computed by different OpenMP threads or SYCL work-groups in parallel
          real (*const g_FC_Var_1PG   )[NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR)    ] = g_FC_Var   [P];
          real (*const g_FC_Flux_1PG  )[NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX)   ] = g_FC_Flux  [P];
          real (*const g_PriVar_1PG   )                      [ CUBE(FLU_NXT)     ] = g_PriVar   [P];
@@ -598,7 +598,7 @@ void Hydro_TGradientCorrection(       real g_FC_Var   [][NCOMP_TOTAL_PLUS_MAG][ 
    } // for (int d=0; d<3; d++)
 
 
-#  ifdef __CUDACC__
+#  ifdef SYCL_LANGUAGE_VERSION
    sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 

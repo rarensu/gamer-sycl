@@ -14,12 +14,12 @@
 #include "CPU_Shared_ComputeFlux.cpp"
 #include "CPU_Shared_FullStepUpdate.cpp"
 #ifdef MHD
-#include "CUFLU_Shared_ConstrainedTransport.cu"
+#include "CPU_Shared_ConstrainedTransport.cpp"
 #endif
 
 #include "ConstMemory.h"
 
-#else // #ifdef __CUDACC__
+#else // #ifdef SYCL_LANGUAGE_VERSION
 
 void Hydro_Rotate3D( real InOut[], const int XYZ, const bool Forward, const int Mag_Offset );
 void Hydro_DataReconstruction( const real g_ConVar   [][ CUBE(FLU_NXT) ],
@@ -70,7 +70,7 @@ void MHD_HalfStepPrimitive( const real g_Flu_In[][ CUBE(FLU_NXT) ],
                             const real dt, const real dh, const real MinDens );
 #endif // #ifdef MHD
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
 
 // internal functions
@@ -222,7 +222,7 @@ void CPU_FluidSolver_CTU(
    const bool FracPassive, const int NFrac, const int c_FracIdx[],
    const bool JeansMinPres, const real JeansMinPres_Coeff,
    const EoS_t EoS )
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 {
 
 #  ifdef UNSPLIT_GRAVITY
@@ -246,7 +246,7 @@ void CPU_FluidSolver_CTU(
 #  endif
    {
 //    loop over all patch groups
-//    --> CPU/GPU solver: use different (OpenMP threads) / (CUDA thread blocks)
+//    --> CPU/GPU solver: use different (OpenMP threads) / (SYCL work-groups)
 //        to work on different patch groups
 #ifdef SYCL_LANGUAGE_VERSION
       const int P =
@@ -257,7 +257,7 @@ void CPU_FluidSolver_CTU(
 #     endif
       {
 //       0. point to the arrays associated with different patch groups
-//          --> necessary because different patch groups are computed by different OpenMP threads or CUDA blocks in parallel
+//          --> necessary because different patch groups are computed by different OpenMP threads or SYCL work-groups in parallel
          real (*const g_FC_Var_1PG   )[NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR)    ] = g_FC_Var   [P];
          real (*const g_FC_Flux_1PG  )[NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX)   ] = g_FC_Flux  [P];
          real (*const g_PriVar_1PG   )                      [ CUBE(FLU_NXT)     ] = g_PriVar   [P];

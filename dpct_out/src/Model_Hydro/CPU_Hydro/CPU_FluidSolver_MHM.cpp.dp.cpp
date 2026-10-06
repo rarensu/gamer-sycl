@@ -7,42 +7,42 @@
 
 
 // external functions
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 
-#include "CUFLU_Shared_FluUtility.cu"
-#include "CUFLU_Shared_DataReconstruction.cu"
-#include "CUFLU_Shared_ComputeFlux.cu"
-#include "CUFLU_Shared_FullStepUpdate.cu"
+#include "CPU_Shared_FluUtility.cpp"
+#include "CPU_Shared_DataReconstruction.cpp"
+#include "CPU_Shared_ComputeFlux.cpp"
+#include "CPU_Shared_FullStepUpdate.cpp"
 #ifdef MHD
-#include "CUFLU_Shared_ConstrainedTransport.cu"
+#include "CPU_Shared_ConstrainedTransport.cpp"
 #endif
 
 #if ( RSOLVER == EXACT  ||  RSOLVER_RESCUE == EXACT )
-# include "CUFLU_Shared_RiemannSolver_Exact.cu"
+# include "CPU_Shared_RiemannSolver_Exact.cpp"
 #endif
 #if ( RSOLVER == ROE    ||  RSOLVER_RESCUE == ROE   )
-# include "CUFLU_Shared_RiemannSolver_Roe.cu"
+# include "CPU_Shared_RiemannSolver_Roe.cpp"
 #endif
 #if ( RSOLVER == HLLE   ||  RSOLVER_RESCUE == HLLE  )
-# include "CUFLU_Shared_RiemannSolver_HLLE.cu"
+# include "CPU_Shared_RiemannSolver_HLLE.cpp"
 #endif
 #if ( RSOLVER == HLLC   ||  RSOLVER_RESCUE == HLLC  )
-# include "CUFLU_Shared_RiemannSolver_HLLC.cu"
+# include "CPU_Shared_RiemannSolver_HLLC.cpp"
 #endif
 #if ( RSOLVER == HLLD   ||  RSOLVER_RESCUE == HLLD  )
-# include "CUFLU_Shared_RiemannSolver_HLLD.cu"
+# include "CPU_Shared_RiemannSolver_HLLD.cpp"
 #endif
 
 #include "ConstMemory.h"
 
 #ifdef COSMIC_RAY
-# include "CUFLU_CosmicRay.cu"
+# include "CPU_CosmicRay.cpp"
 #ifdef CR_DIFFUSION
-# include "../../Microphysics/CosmicRayDiffusion/FLU_CR_AddDiffuseFlux.cu"
+# include "../../Microphysics/CosmicRayDiffusion/CPU_CR_AddDiffuseFlux.cpp"
 #endif
 #endif // #ifdef COSMIC_RAY
 
-#else // #ifdef __CUDACC__
+#else // #ifdef SYCL_LANGUAGE_VERSION
 
 void Hydro_DataReconstruction( const real g_ConVar   [][ CUBE(FLU_NXT) ],
                                const real g_FC_B     [][ SQR(FLU_NXT)*FLU_NXT_P1 ],
@@ -155,7 +155,7 @@ void CR_AddDiffuseFlux_FullStep( const real g_PriVar_Half[][ CUBE(FLU_NXT) ],
 #endif // #ifdef CR_DIFFUSION
 #endif // #ifdef COSMIC_RAY
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
 
 // internal functions
@@ -262,8 +262,8 @@ static void Hydro_RiemannPredict( const real g_ConVar_In[][ CUBE(FLU_NXT) ],
 //                EoS                : EoS object
 //                MicroPhy           : Microphysics object
 //-------------------------------------------------------------------------------------------------------
-#ifdef __CUDACC__
-__global__
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
 void GPU_FluidSolver_MHM(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
          real   g_Flu_Array_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
@@ -321,7 +321,7 @@ void CPU_FluidSolver_MHM(
    const bool FracPassive, const int NFrac, const int c_FracIdx[],
    const bool JeansMinPres, const real JeansMinPres_Coeff,
    const EoS_t EoS, const MicroPhy_t MicroPhy )
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 {
 
 #  ifdef UNSPLIT_GRAVITY
@@ -338,28 +338,28 @@ void CPU_FluidSolver_MHM(
    const bool CorrHalfVel_No       = false;
    const bool StoreElectric_No     = false;
 #  endif
-#  if ( defined __CUDACC__  &&  !defined GRAVITY )
+#  if ( defined SYCL_LANGUAGE_VERSION  &&  !defined GRAVITY )
    const double *c_ExtAcc_AuxArray = NULL;
 #  endif
 
    int Iteration;
-#  ifdef __CUDACC__
-   __shared__ int s_FullStepFailure;
+#  ifdef SYCL_LANGUAGE_VERSION
+   int s_FullStepFailure;
 #  else
    int s_FullStepFailure;
 #  endif
 
 
 // openmp pragma for the CPU solver
-#  ifndef __CUDACC__
+#  ifndef SYCL_LANGUAGE_VERSION
 #  pragma omp parallel
 #  endif
    {
 //    loop over all patch groups
-//    --> CPU/GPU solver: use different (OpenMP threads) / (CUDA thread blocks)
+//    --> CPU/GPU solver: use different (OpenMP threads) / (SYCL work-groups)
 //        to work on different patch groups
-#     ifdef __CUDACC__
-      const int P = blockIdx.x;
+#     ifdef SYCL_LANGUAGE_VERSION
+      const int P = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_group(2);
 #     else
 #     pragma omp for schedule( runtime ) private ( Iteration, s_FullStepFailure )
       for (int P=0; P<NPatchGroup; P++)
@@ -368,7 +368,7 @@ void CPU_FluidSolver_MHM(
          Iteration = 0;
 
 //       0. point to the arrays associated with different patch groups
-//          --> necessary because different patch groups are computed by different OpenMP threads or CUDA blocks in parallel
+//          --> necessary because different patch groups are computed by different OpenMP threads or SYCL work-groups in parallel
          real (*const g_FC_Var_1PG   )[NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR)    ] = g_FC_Var   [P];
          real (*const g_FC_Flux_1PG  )[NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX)   ] = g_FC_Flux  [P];
          real (*const g_PriVar_1PG   )                      [ CUBE(FLU_NXT)     ] = g_PriVar   [P];
@@ -431,8 +431,8 @@ void CPU_FluidSolver_MHM(
             for (int v=0; v<NCOMP_MAG; v++)  g_PriVar_1PG[ MAG_OFFSET + v ][idx] = CC_B[v];
          }
 
-#        ifdef __CUDACC__
-         __syncthreads();
+#        ifdef SYCL_LANGUAGE_VERSION
+         sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #        endif
 #        endif // #ifdef MHD
 
@@ -468,12 +468,12 @@ void CPU_FluidSolver_MHM(
 
          do {
 
-#           ifdef __CUDACC__
-            __syncthreads();
+#           ifdef SYCL_LANGUAGE_VERSION
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #           endif
             s_FullStepFailure = 0;
-#           ifdef __CUDACC__
-            __syncthreads();
+#           ifdef SYCL_LANGUAGE_VERSION
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #           endif
 
             real AdaptiveMinModCoeff = ( MinMod_MaxIter == 0 ) ? MinMod_Coeff :
@@ -497,12 +497,12 @@ void CPU_FluidSolver_MHM(
 
          do {
 
-#           ifdef __CUDACC__
-            __syncthreads();
+#           ifdef SYCL_LANGUAGE_VERSION
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #           endif
             s_FullStepFailure = 0;
-#           ifdef __CUDACC__
-            __syncthreads();
+#           ifdef SYCL_LANGUAGE_VERSION
+            sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #           endif
 
             real AdaptiveMinModCoeff = ( MinMod_MaxIter == 0 ) ? MinMod_Coeff :
@@ -793,8 +793,8 @@ void Hydro_RiemannPredict_Flux( const real g_ConVar[][ CUBE(FLU_NXT) ],
    } // for (int d=0; d<3; d++)
 
 
-#  ifdef __CUDACC__
-   __syncthreads();
+#  ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 
 } // FUNCTION : Hydro_RiemannPredict_Flux
@@ -944,8 +944,8 @@ void Hydro_RiemannPredict( const real g_ConVar_In[][ CUBE(FLU_NXT) ],
    } // i,j,k
 
 
-#  ifdef __CUDACC__
-   __syncthreads();
+#  ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 
 } // FUNCTION : Hydro_RiemannPredict

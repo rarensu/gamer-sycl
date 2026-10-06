@@ -262,7 +262,7 @@ static void Hydro_RiemannPredict( const real g_ConVar_In[][ CUBE(FLU_NXT) ],
 //                MicroPhy           : Microphysics object
 //-------------------------------------------------------------------------------------------------------
 #ifdef SYCL_LANGUAGE_VERSION
-__global__
+SYCL_EXTERNAL
 void GPU_FluidSolver_MHM(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
          real   g_Flu_Array_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
@@ -337,28 +337,31 @@ void CPU_FluidSolver_MHM(
    const bool CorrHalfVel_No       = false;
    const bool StoreElectric_No     = false;
 #  endif
-#  if ( defined __CUDACC__  &&  !defined GRAVITY )
+#  if ( defined SYCL_LANGUAGE_VERSION  &&  !defined GRAVITY )
    const double *c_ExtAcc_AuxArray = NULL;
 #  endif
 
    int Iteration;
-#  ifdef __CUDACC__
-   __shared__ int s_FullStepFailure;
-#  else
+   // TODO: __shared__ migration — original code used "__shared__ int s_FullStepFailure;"
+   // for CUDA shared memory across threads in a block.  In SYCL this should be
+   // "sycl::local int s_FullStepFailure;" to maintain work-group-wide visibility,
+   // but Hydro_FullStepUpdate() still calls CUDA atomics (atomicExch) under its
+   // SYCL_LANGUAGE_VERSION path (see CPU_Shared_FullStepUpdate.cpp lines ~260-271).
+   // Using a plain int for now to unblock compilation; revisit when the
+   // atomicExch / __CUDA_ARCH__ issue in FullStepUpdate is resolved.
    int s_FullStepFailure;
-#  endif
 
 
 // openmp pragma for the CPU solver
-#  ifndef __CUDACC__
+#  ifndef SYCL_LANGUAGE_VERSION
 #  pragma omp parallel
 #  endif
    {
 //    loop over all patch groups
-//    --> CPU/GPU solver: use different (OpenMP threads) / (CUDA thread blocks)
+//    --> CPU/GPU solver: use different (OpenMP threads) / (SYCL work-groups)
 //        to work on different patch groups
-#     ifdef __CUDACC__
-      const int P = blockIdx.x;
+#     ifdef SYCL_LANGUAGE_VERSION
+      const int P = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_group(2);
 #     else
 #     pragma omp for schedule( runtime ) private ( Iteration, s_FullStepFailure )
       for (int P=0; P<NPatchGroup; P++)
@@ -367,7 +370,7 @@ void CPU_FluidSolver_MHM(
          Iteration = 0;
 
 //       0. point to the arrays associated with different patch groups
-//          --> necessary because different patch groups are computed by different OpenMP threads or CUDA blocks in parallel
+//          --> necessary because different patch groups are computed by different OpenMP threads or SYCL work-groups in parallel
          real (*const g_FC_Var_1PG   )[NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR)    ] = g_FC_Var   [P];
          real (*const g_FC_Flux_1PG  )[NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX)   ] = g_FC_Flux  [P];
          real (*const g_PriVar_1PG   )                      [ CUBE(FLU_NXT)     ] = g_PriVar   [P];
@@ -430,7 +433,7 @@ void CPU_FluidSolver_MHM(
             for (int v=0; v<NCOMP_MAG; v++)  g_PriVar_1PG[ MAG_OFFSET + v ][idx] = CC_B[v];
          }
 
-#        ifdef __CUDACC__
+#        ifdef SYCL_LANGUAGE_VERSION
          sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #        endif
 #        endif // #ifdef MHD
@@ -468,11 +471,11 @@ void CPU_FluidSolver_MHM(
 
          do {
 
-#           ifdef __CUDACC__
+#           ifdef SYCL_LANGUAGE_VERSION
             sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #           endif
             s_FullStepFailure = 0;
-#           ifdef __CUDACC__
+#           ifdef SYCL_LANGUAGE_VERSION
             sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #           endif
 
@@ -497,11 +500,11 @@ void CPU_FluidSolver_MHM(
 
          do {
 
-#           ifdef __CUDACC__
+#           ifdef SYCL_LANGUAGE_VERSION
             sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #           endif
             s_FullStepFailure = 0;
-#           ifdef __CUDACC__
+#           ifdef SYCL_LANGUAGE_VERSION
             sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #           endif
 
@@ -788,7 +791,7 @@ void Hydro_RiemannPredict_Flux( const real g_ConVar[][ CUBE(FLU_NXT) ],
    } // for (int d=0; d<3; d++)
 
 
-#  ifdef __CUDACC__
+#  ifdef SYCL_LANGUAGE_VERSION
    sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 
@@ -951,7 +954,7 @@ void Hydro_RiemannPredict( const real g_ConVar_In[][ CUBE(FLU_NXT) ],
    } // i,j,k
 
 
-#  ifdef __CUDACC__
+#  ifdef SYCL_LANGUAGE_VERSION
    sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
 
