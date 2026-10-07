@@ -5,7 +5,7 @@
 
 
 // include c_ExtAcc_AuxArray[]
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 #include "ConstMemory.h"
 #endif
 
@@ -49,8 +49,8 @@
 //
 // Return      :  g_Flu_Array_New, g_DE_Array
 //-----------------------------------------------------------------------------------------
-#ifdef __CUDACC__
-__global__
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
 void GPU_HydroGravitySolver(
          real   g_Flu_Array_New[][GRA_NIN][ CUBE(PS1) ],
    const real   g_Pot_Array_New[][ CUBE(GRA_NXT) ],
@@ -61,7 +61,12 @@ void GPU_HydroGravitySolver(
    const real   g_Emag_Array   [][ CUBE(PS1) ],
    const real dt, const real dh, const bool P5_Gradient,
    const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,
-   const double TimeNew, const double TimeOld, const real MinEint )
+      const double TimeNew, const double TimeOld, const real MinEint,
+   real *s_pot_new
+#  ifdef UNSPLIT_GRAVITY
+   , real *s_pot_old
+#  endif
+   )
 #else
 void CPU_HydroGravitySolver(
          real   g_Flu_Array_New[][GRA_NIN][ CUBE(PS1) ],
@@ -116,49 +121,48 @@ void CPU_HydroGravitySolver(
 
 
 // load potential from global to shared memory to improve the GPU performance
-#  ifdef __CUDACC__
-   __shared__ real s_pot_new[ CUBE(GRA_NXT) ];
-#  ifdef UNSPLIT_GRAVITY
-   __shared__ real s_pot_old[ CUBE(USG_NXT_G) ];
-#  endif
+#  ifdef SYCL_LANGUAGE_VERSION
+   auto item_ct1 = sycl::ext::oneapi::this_work_item::get_nd_item<3>();
+   const int bid   = item_ct1.get_group(2);
+   const int tid_x = item_ct1.get_local_id(2);
 
    if ( UsePot )
    {
-      for (int t=threadIdx.x; t<CUBE(GRA_NXT); t+=GRA_BLOCK_SIZE)
-         s_pot_new[t] = g_Pot_Array_New[blockIdx.x][t];
+      for (int t=tid_x; t<CUBE(GRA_NXT); t+=GRA_BLOCK_SIZE)
+         s_pot_new[t] = g_Pot_Array_New[bid][t];
 
 #     ifdef UNSPLIT_GRAVITY
-      for (int t=threadIdx.x; t<CUBE(USG_NXT_G); t+=GRA_BLOCK_SIZE)
-         s_pot_old[t] = g_Pot_Array_USG[blockIdx.x][t];
+      for (int t=tid_x; t<CUBE(USG_NXT_G); t+=GRA_BLOCK_SIZE)
+         s_pot_old[t] = g_Pot_Array_USG[bid][t];
 #     endif
    }
 
-   __syncthreads();
-#  endif // #ifdef __CUDACC__
+   item_ct1.barrier(sycl::access::fence_space::local_space);
+#  endif // #ifdef SYCL_LANGUAGE_VERSION
 
 
 // loop over all patches
 // --> CPU/GPU solver: use different (OpenMP threads) / (CUDA thread blocks)
 //     to work on different patches
-#  ifdef __CUDACC__
-   const int P = blockIdx.x;
+#  ifdef SYCL_LANGUAGE_VERSION
+   const int P = bid;
 #  else
 #  pragma omp parallel for schedule( runtime )
    for (int P=0; P<NPatchGroup*8; P++)
 #  endif
    {
 //    point to the potential array of the target patch
-#     ifdef __CUDACC__
+#     ifdef SYCL_LANGUAGE_VERSION
       const real *const pot_new = s_pot_new;
 #     ifdef UNSPLIT_GRAVITY
       const real *const pot_old = s_pot_old;
 #     endif
-#     else // #ifdef __CUDACC__
+#     else // #ifdef SYCL_LANGUAGE_VERSION
       const real *const pot_new = g_Pot_Array_New[P];
 #     ifdef UNSPLIT_GRAVITY
       const real *const pot_old = g_Pot_Array_USG[P];
 #     endif
-#     endif // #ifdef __CUDACC__ ... else ...
+#     endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
 
 //    loop over all cells of the target patch
