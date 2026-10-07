@@ -114,11 +114,12 @@ void GPU_dtSolver_HydroCFL( real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_
 #endif
 #ifdef GRAVITY
 #ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
 void GPU_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ CUBE(GRA_NXT) ],
                                   const double g_Corner_Array[][3],
                                   const real dh, const real Safety, const bool P5_Gradient,
                                   const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,
-                                  const double ExtAcc_Time );
+                                  const double ExtAcc_Time, real *shared );
 #else
 __global__
 void GPU_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ CUBE(GRA_NXT) ],

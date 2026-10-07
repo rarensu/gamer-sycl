@@ -27,11 +27,12 @@ void GPU_dtSolver_HydroCFL( real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_
 #endif
 #ifdef GRAVITY
 #ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
 void GPU_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ CUBE(GRA_NXT) ],
                                   const double g_Corner_Array[][3],
                                   const real dh, const real Safety, const bool P5_Gradient,
                                   const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,
-                                  const double ExtAcc_Time );
+                                  const double ExtAcc_Time, real *shared );
 #else
 __global__
 void GPU_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ CUBE(GRA_NXT) ],
@@ -293,6 +294,7 @@ void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_
 #        ifdef GRAVITY
          case DT_GRA_SOLVER:
             Stream[s]->submit([&](sycl::handler &cgh) {
+                sycl::local_accessor<real, 1> shared_acc_ct1(sycl::range<1>(32 /*MaxNWarp*/), cgh);
                auto d_dt_Array_T_UsedPatch_s_ct0 = d_dt_Array_T + UsedPatch[s];
                auto d_Pot_Array_T_UsedPatch_s_ct1 = d_Pot_Array_T + UsedPatch[s];
                auto d_Corner_Array_PGT_UsedPatch_s_ct2 = d_Corner_Array_PGT + UsedPatch[s];
@@ -300,12 +302,13 @@ void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_
                cgh.parallel_for(
                    sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * BlockDim_dtSolver,
                                      BlockDim_dtSolver),
-                   [=](sycl::nd_item<3> item_ct1) {
+                    [=](sycl::nd_item<3> item_ct1) [[sycl::reqd_sub_group_size(32)]] {
                       GPU_dtSolver_HydroGravity(
                           d_dt_Array_T_UsedPatch_s_ct0,
                           d_Pot_Array_T_UsedPatch_s_ct1,
                           d_Corner_Array_PGT_UsedPatch_s_ct2,
-                          dh, Safety, P5_Gradient, UsePot, ExtAcc, GPUExtAcc_Ptr, TargetTime );
+                           dh, Safety, P5_Gradient, UsePot, ExtAcc, GPUExtAcc_Ptr, TargetTime,
+                           shared_acc_ct1.get_multi_ptr<sycl::access::decorated::no>().get());
                    });
             });
          break;

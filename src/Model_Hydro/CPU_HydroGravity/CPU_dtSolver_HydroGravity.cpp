@@ -1,3 +1,5 @@
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 #include "POT.h"
 
 #if ( MODEL == HYDRO  &&  defined GRAVITY )
@@ -5,7 +7,7 @@
 
 
 // GPU set-up
-#ifdef __CUDACC__
+#ifdef SYCL_LANGUAGE_VERSION
 
 // include c_ExtAcc_AuxArray[]
 #include "ConstMemory.h"
@@ -21,7 +23,7 @@
 #  include "../../GPU_Utility/BlockReduction_WarpSync.cpp"
 #endif
 
-#endif // #ifdef __CUDACC__
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 
 
@@ -56,13 +58,13 @@
 //
 // Return      :  g_dt_Array
 //-----------------------------------------------------------------------------------------
-#ifdef __CUDACC__
-__global__
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
 void GPU_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ CUBE(GRA_NXT) ],
                                   const double g_Corner_Array[][3],
                                   const real dh, const real Safety, const bool P5_Gradient,
                                   const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,
-                                  const double ExtAcc_Time )
+                                  const double ExtAcc_Time, real *shared );
 #else
 void CPU_dtSolver_HydroGravity  ( real g_dt_Array[], const real g_Pot_Array[][ CUBE(GRA_NXT) ],
                                   const double g_Corner_Array[][3], const int NPatchGroup,
@@ -87,32 +89,34 @@ void CPU_dtSolver_HydroGravity  ( real g_dt_Array[], const real g_Pot_Array[][ C
 
 
 // load potential from global to shared memory to improve the GPU performance
-#  ifdef __CUDACC__
-   __shared__ real s_Pot[ CUBE(GRA_NXT) ];
+#  ifdef SYCL_LANGUAGE_VERSION
+   sycl::local real s_Pot[ CUBE(GRA_NXT) ];
 
    if ( UsePot )
    {
-      for (int t=threadIdx.x; t<CUBE(GRA_NXT); t+=DT_GRA_BLOCK_SIZE)
-         s_Pot[t] = g_Pot_Array[blockIdx.x][t];
+      for (int t=sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(2);
+           t<CUBE(GRA_NXT); t+=DT_GRA_BLOCK_SIZE)
+         s_Pot[t] = g_Pot_Array[sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_group(2)][t];
    }
 
-   __syncthreads();
-#  endif // #ifdef __CUDACC__
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(
+        sycl::access::fence_space::local_space);
+#  endif // #ifdef SYCL_LANGUAGE_VERSION
 
 
 // loop over all patches
-// --> CPU/GPU solver: use different (OpenMP threads) / (CUDA thread blocks)
+// --> CPU/GPU solver: use different (OpenMP threads) / (SYCL work-groups)
 //     to work on different patches
-#  ifdef __CUDACC__
-   const int P = blockIdx.x;
+#  ifdef SYCL_LANGUAGE_VERSION
+   const int P = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_group(2);
 #  else
 #  pragma omp parallel for schedule( runtime )
    for (int P=0; P<NPatchGroup*8; P++)
 #  endif
    {
 //    point to the potential array of the target patch
-#     ifdef __CUDACC__
-      const real *const Pot = s_Pot;
+#     ifdef SYCL_LANGUAGE_VERSION
+      const real *const Pot = &s_Pot[0];
 #     else
       const real *const Pot = g_Pot_Array[P];
 #     endif
@@ -188,14 +192,14 @@ void CPU_dtSolver_HydroGravity  ( real g_dt_Array[], const real g_Pot_Array[][ C
 //    get the minimum dt
 //    perform parallel reduction to get the maximum acceleration in each thread block
 //    --> store in the thread 0
-#     ifdef __CUDACC__
+#     ifdef SYCL_LANGUAGE_VERSION
 #     ifdef DT_GRA_USE_SHUFFLE
-      AccMax = BlockReduction_Shuffle ( AccMax );
+      AccMax = BlockReduction_Shuffle ( AccMax, shared );
 #     else
-      AccMax = BlockReduction_WarpSync( AccMax );
+      AccMax = BlockReduction_WarpSync( AccMax, shared );
 #     endif
-      if ( threadIdx.x == 0 )
-#     endif // #ifdef __CUDACC__
+      if ( sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(2) == 0 )
+#     endif // #ifdef SYCL_LANGUAGE_VERSION
       g_dt_Array[P] = Safety*SQRT( dh2/AccMax );
 
    } // for (int P=0; P<NPatchGroup*8; P++)
