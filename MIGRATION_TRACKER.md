@@ -62,6 +62,8 @@ is preserved verbatim.
 
 | Status | Original file | DPCT suggestion file | Notes |
 | --- | --- | --- | --- |
+| DONE | `src/Makefile_base` | None (no DPCT suggestion file) | `cleanup`: Removed all `.cu` compile rules (CUFLU_%.cu, CUPOT_%.cu, CUSRC_%.cu, %.cu) and NVCC-based GPU compile/link rules. GPU `.cpp` files now compiled with `$(CXX) $(CXXFLAG) $(SYCLFLAG)`. Added `SYCLFLAG = @@@SYCLFLAG@@@`. Updated GPU_FILE lists to use `.cpp` filenames (`.cu` files renamed or merged into CPU_*.cpp). Removed CUDA_PATH, CUFFTDX_PATH, NVCCFLAG_*, and `-lcudart` library linking. Removed GPU `-dlink` linker step. Removed `vpath %.cu` declarations. Fixed OBJ_GPU patsubst from `%.cu` to `%.cpp`. Updated TestProblem wildcard to filter GPU `.cpp` files (ExtAcc_*/ExtPot_*) from CPU files. |
+| DONE | `src/configure.py` | None (no DPCT suggestion file) | Aligned with Makefile_base SYCL migration: removed NVCCFLAG_COM/FLU/POT from flags dict, removed NVCCFLAG_ARCH and MAXRREGCOUNT_FLU from set_gpu(), added SYCLFLAG (`-fsycl`); removed CUDA_PATH/CUFFTDX_PATH warnings; removed `--gpu_regcount_flu` argument; updated `--gpu` help text to reference SYCL. |
 | DONE | `include/CheckError.h` | `dpct_out/include/CheckError.h` | `DEVICE_*` naming; neutral helper kept in main tree & `dpct_out/`. |
 | DONE | `include/ConstMemory.h` | `dpct_out/include/ConstMemory.h` | `renamed` to neutral `ConstMemory.h`; use this name going forward. |
 | DONE | `include/FLU.h` | `dpct_out/include/FLU.h` | `DPCT→SYCL` fluid-header migration; `C→S` in cuFFTDx section; replaced `cuFFTDx-TODO` — `#include "SyclFFT.h"` replaces cuFFTDx include & typedefs; guarded `__CUDACC_VER_MAJOR__` for CUDA-only path. |

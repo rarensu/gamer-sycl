@@ -840,14 +840,9 @@ def load_arguments( sys_setting : SystemSetting ):
 
     parser.add_argument( "--gpu", type=str2bool, metavar="BOOLEAN", gamer_name="GPU",
                          default=False,
-                         help="Enable GPU. Must set <GPU_COMPUTE_CAPABILITY> in your machine *.config file as well.\n"
+                         help="Enable GPU acceleration via SYCL. Must set <GPU_COMPUTE_CAPABILITY> in your machine *.config file as well. Use a SYCL-enabled compiler (e.g., icpx or dpcpp) and add -fsycl to CXXFLAG.\n"
                        )
 
-    parser.add_argument( "--gpu_regcount_flu", type=int, metavar="INTEGER",
-                         default=None,
-                         depend={"gpu":True},
-                         help="Set the maximum amount of registers that GPU fluid solvers can use.\n"
-                       )
 
     args, name_table, depends, constraints, prefix_table, suffix_table = parser.parse_args()
     args = vars( args )
@@ -872,7 +867,7 @@ def load_config( config ):
         raise FileNotFoundError("The config file <%s> does not exist."%(config))
 
     paths, compilers = {}, {"CXX":"", "CXX_MPI":""}
-    flags = {"CXXFLAG":"", "OPENMPFLAG":"", "LIBFLAG":"", "NVCCFLAG_COM":"", "NVCCFLAG_FLU":"", "NVCCFLAG_POT":""}
+    flags = {"CXXFLAG":"", "OPENMPFLAG":"", "LIBFLAG":""}
     gpus  = {"GPU_COMPUTE_CAPABILITY":""}
 
     with open( config, "r" ) as f:
@@ -951,24 +946,9 @@ def set_gpu( gpus, flags, args ):
         raise ValueError("Incorrect GPU_COMPUTE_CAPABILITY range (>=200)")
     gpu_opts["GPU_COMPUTE_CAPABILITY"] = str(compute_capability)
 
-    # 2. Set NVCCFLAG_ARCH
-    flag_num = compute_capability // 10
-    gpu_opts["NVCCFLAG_ARCH"] = '-gencode arch=compute_%d,code=\\"compute_%d,sm_%d\\"'%(flag_num, flag_num, flag_num)
+    # 2. Set SYCL compile flag
+    gpu_opts["SYCLFLAG"] = "-fsycl"
 
-    # 3. Set MAXRREGCOUNT_FLU
-    if args["gpu_regcount_flu"] is not None:
-        gpu_opts["MAXRREGCOUNT_FLU"] = "--maxrregcount=%d"%(args["gpu_regcount_flu"])
-    else:
-        if 300 <= compute_capability and compute_capability <= 370:
-            if args["double"]:
-                gpu_opts["MAXRREGCOUNT_FLU"] = "--maxrregcount=128"
-            else:
-                gpu_opts["MAXRREGCOUNT_FLU"] = "--maxrregcount=70"
-        elif 500 <= compute_capability and compute_capability <= 1210:
-            if args["double"]:
-                gpu_opts["MAXRREGCOUNT_FLU"] = "--maxrregcount=192"
-            else:
-                gpu_opts["MAXRREGCOUNT_FLU"] = "--maxrregcount=128"
     return gpu_opts
 
 def set_sims( name_table, prefix_table, suffix_table, depends, **kwargs ):
@@ -1003,12 +983,8 @@ def set_compile( paths, compilers, flags, kwargs ):
     # 2. Set the OpenMP flags.
     if not kwargs["openmp"]: flags["OPENMPFLAG"] = ""
 
-    # 3. Set the nvcc common flags
-    # NOTE: `-G` may cause the GPU Poisson solver to fail
-    if kwargs["debug"]: flags["NVCCFLAG_COM"] += "-g -Xptxas -v"
-    # enable C++ 17 support for ELBDM GPU Gram-Fourier extension scheme
-    if kwargs["model"] == "ELBDM" and kwargs["wave_scheme"] == "GRAMFE" and kwargs["gramfe_scheme"] == "FFT":
-        flags["NVCCFLAG_COM"] += "-std=c++17"
+    # 3. Set GPU-specific compile flags
+    #     (NVCC-specific flags removed; SYCLFLAG handled by set_gpu)
 
     # 4. Write flags to compile option dictionary.
     for key, val in flags.items():
@@ -1112,9 +1088,7 @@ def validation( paths, depends, constraints, **kwargs ):
 
     # C. parallelization and flags
     if kwargs["gpu"]:
-        if kwargs["gpu_regcount_flu"] is not None and kwargs["gpu_regcount_flu"] <= 0:
-            LOGGER.error("<--gpu_regcount_flu> must be a positive integer. Current: %d"%kwargs["gpu_regcount_flu"])
-            success = False
+        pass
 
     if not success: raise BaseException( "The above vaildation failed." )
     return
@@ -1129,7 +1103,7 @@ def warning( paths, **kwargs ):
         LOGGER.warning("Not supported yet and can only be used as auxiliary fields.")
 
     # 3. Path
-    path_links = { "gpu":{True:"CUDA_PATH"}, "fftw":{"FFTW2":"FFTW2_PATH", "FFTW3":"FFTW3_PATH"},
+    path_links = { "fftw":{"FFTW2":"FFTW2_PATH", "FFTW3":"FFTW3_PATH"},
                    "mpi":{True:"MPI_PATH"}, "hdf5":{True:"HDF5_PATH"}, "grackle":{True:"GRACKLE_PATH"},
                    "gsl":{True:"GSL_PATH"}, "libyt":{True:"LIBYT_PATH"} }
 
@@ -1139,9 +1113,6 @@ def warning( paths, **kwargs ):
             if paths.setdefault(p_name, "") != "": continue
             LOGGER.warning("%-15s is not given in %s.config when setting <--%s=%s>"%(p_name, kwargs["machine"], arg, str(val)))
 
-    if kwargs["model"] == "ELBDM" and kwargs["gpu"] and kwargs["wave_scheme"] == "GRAMFE" and kwargs["gramfe_scheme"] == "FFT":
-        if paths.setdefault("CUFFTDX_PATH", "") == "":
-            LOGGER.warning("CUFFTDX_PATH is not given in %s.config when enabling <--gramfe_scheme=FFT>."%(kwargs["machine"]))
 
     return
 
@@ -1208,7 +1179,8 @@ if __name__ == "__main__":
     for key, val in paths.items():
         LOGGER.info("%-25s : %s"%(key, val))
         makefile, num = re.subn(r"@@@%s@@@"%(key), val, makefile)
-        if num == 0: raise BaseException("The string @@@%s@@@ is not replaced correctly."%key)
+        if num == 0:
+            LOGGER.warning("Path '%s' from the config file is not used in Makefile_base and will be ignored."%key)
 
     LOGGER.info("----------------------------------------")
     for key, val in compiles.items():

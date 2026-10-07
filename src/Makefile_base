@@ -38,13 +38,12 @@ CXX        = @@@CXX@@@
 CXXFLAG    = @@@CXXFLAG@@@
 LIB        = @@@LIBFLAG@@@
 OPENMPFLAG = @@@OPENMPFLAG@@@
-NVCC       = $(CUDA_PATH)/bin/nvcc
+SYCLFLAG   = @@@SYCLFLAG@@@
 
 
 
 # library paths
 #######################################################################################################
-CUDA_PATH    := @@@CUDA_PATH@@@
 FFTW2_PATH   := @@@FFTW2_PATH@@@
 FFTW3_PATH   := @@@FFTW3_PATH@@@
 MPI_PATH     := @@@MPI_PATH@@@
@@ -52,7 +51,6 @@ HDF5_PATH    := @@@HDF5_PATH@@@
 GRACKLE_PATH := @@@GRACKLE_PATH@@@
 GSL_PATH     := @@@GSL_PATH@@@
 LIBYT_PATH   := @@@LIBYT_PATH@@@
-CUFFTDX_PATH := @@@CUFFTDX_PATH@@@
 
 
 
@@ -61,7 +59,7 @@ CUFFTDX_PATH := @@@CUFFTDX_PATH@@@
 
 # common source files
 # -------------------------------------------------------------------------------
-# CUDA source files (compiled with nvcc)
+# GPU source files (compiled with the SYCL-enabled C++ compiler)
 GPU_FILE    := GPU_Asyn_FluidSolver.cpp  GPU_DiagnoseDevice.cpp  GPU_MemAllocate_Fluid.cpp \
                GPU_MemFree_Fluid.cpp  GPU_SetMemSize.cpp  GPU_SetCache.cpp  GPU_SetDevice.cpp \
                GPU_Synchronize.cpp  GPU_Asyn_dtSolver.cpp  GPU_SetConstMemory.cpp  GPU_SetConstMemory_EoS.cpp \
@@ -115,15 +113,14 @@ CPU_FILE    += Flag_Real.cpp  Refine.cpp   SiblingSearch.cpp  SiblingSearch_Base
 CPU_FILE    += Table_01.cpp  Table_02.cpp  Table_03.cpp  Table_04.cpp  Table_05.cpp  Table_06.cpp \
                Table_07.cpp  Table_SiblingSharingSameEdge.cpp  Table_SiblingPatch.cpp
 
-vpath %.cu     GPU_API
-vpath %.cpp    Main  Init  Refine  Fluid  Interpolation  Tables  Output  Miscellaneous  Auxiliary  GPU_API
+vpath %.cpp    Main  Init  Refine  Fluid  Interpolation  Tables  Output  Miscellaneous  Auxiliary  GPU_API  GPU_Utility
 
 
 # hydrodynamic source files (included only if "MODEL=HYDRO")
 # ------------------------------------------------------------------------------------
 ifeq "$(filter -DMODEL=HYDRO, $(SIMU_OPTION))" "-DMODEL=HYDRO"
-GPU_FILE    += CUFLU_dtSolver_HydroCFL.cu  CUFLU_FluidSolver_RTVD.cu  CUFLU_FluidSolver_MHM.cu  CUFLU_FluidSolver_CTU.cu \
-               GPU_EoS_Gamma.cu  GPU_EoS_User_Template.cu  GPU_EoS_Isothermal.cu  GPU_EoS_GammaCR.cu  GPU_EoS_TaubMathews.cu
+GPU_FILE    += GPU_FluidSolver_RTVD.cpp  CPU_FluidSolver_MHM.cpp  CPU_FluidSolver_CTU.cpp  CPU_dtSolver_HydroCFL.cpp \
+               CPU_EoS_Gamma.cpp  CPU_EoS_User_Template.cpp  CPU_EoS_Isothermal.cpp  CPU_EoS_GammaCR.cpp  CPU_EoS_TaubMathews.cpp
 
 CPU_FILE    += CPU_FluidSolver_RTVD.cpp  CPU_FluidSolver_MHM.cpp  CPU_FluidSolver_CTU.cpp \
                CPU_Shared_DataReconstruction.cpp  CPU_Shared_FluUtility.cpp  CPU_Shared_ComputeFlux.cpp \
@@ -136,15 +133,13 @@ CPU_FILE    += Hydro_Init_ByFunction_AssignData.cpp  Hydro_Aux_Check_Negative.cp
                Hydro_BoundaryCondition_Reflecting.cpp  Hydro_BoundaryCondition_Outflow.cpp \
                Hydro_BoundaryCondition_Diode.cpp  Hydro_RestoreEint.cpp  EoS_Init.cpp  EoS_End.cpp
 
-vpath %.cu     Model_Hydro/GPU_Hydro  EoS  EoS/Gamma  EoS/User_Template  EoS/Isothermal  EoS/GammaCR  EoS/TaubMathews
-vpath %.cpp    Model_Hydro/CPU_Hydro  Model_Hydro  EoS  EoS/Gamma  EoS/User_Template  EoS/Isothermal  EoS/GammaCR  EoS/TaubMathews
+vpath %.cpp    Model_Hydro/CPU_Hydro  Model_Hydro/GPU_Hydro  Model_Hydro  EoS  EoS/Gamma  EoS/User_Template  EoS/Isothermal  EoS/GammaCR  EoS/TaubMathews
 
 ifeq "$(filter -DGRAVITY, $(SIMU_OPTION))" "-DGRAVITY"
-GPU_FILE    += CUPOT_HydroGravitySolver.cu  CUPOT_dtSolver_HydroGravity.cu
+GPU_FILE    += CPU_HydroGravitySolver.cpp  CPU_dtSolver_HydroGravity.cpp
 
 CPU_FILE    += CPU_HydroGravitySolver.cpp  CPU_dtSolver_HydroGravity.cpp
 
-vpath %.cu     Model_Hydro/GPU_HydroGravity
 vpath %.cpp    Model_Hydro/CPU_HydroGravity
 endif
 
@@ -167,7 +162,7 @@ endif # MHD
 # ELBDM source files (included only if "MODEL=ELBDM")
 # -------------------------------------------------------------------------------
 else ifeq "$(filter -DMODEL=ELBDM, $(SIMU_OPTION))" "-DMODEL=ELBDM"
-GPU_FILE    += GPU_ELBDMSolver_FD.cpp  CUFLU_ELBDMSolver_GramFE_FFT.cu  CUFLU_ELBDMSolver_GramFE_MATMUL.cu  CUFLU_ELBDMSolver_HJ.cu \
+GPU_FILE    += GPU_ELBDMSolver_FD.cpp  CPU_ELBDMSolver_GramFE_FFT.cpp  CPU_ELBDMSolver_GramFE_MATMUL.cpp  CPU_ELBDMSolver_HJ.cpp \
                GPU_SendGramFEMatrix2GPU.cpp
 
 CPU_FILE    += CPU_ELBDMSolver_FD.cpp  CPU_ELBDMSolver_FFT.cpp  CPU_ELBDMSolver_GramFE_FFT.cpp  CPU_ELBDMSolver_GramFE_MATMUL.cpp \
@@ -176,15 +171,13 @@ CPU_FILE    += CPU_ELBDMSolver_FD.cpp  CPU_ELBDMSolver_FFT.cpp  CPU_ELBDMSolver_
                ELBDM_GetTimeStep_Phase.cpp  ELBDM_GetTimeStep_Hybrid_Velocity.cpp  ELBDM_HasWaveCounterpart.cpp  ELBDM_SetTaylor3Coeff.cpp \
                ELBDM_GramFE_EvolutionMatrix.cpp  ELBDM_RemoveMotionCM.cpp  ELBDM_RescaleMassError.cpp  ELBDM_Aux_Record_Hybrid.cpp
 
-vpath %.cu     Model_ELBDM/GPU_ELBDM
 vpath %.cpp    Model_ELBDM/CPU_ELBDM  Model_ELBDM  Model_ELBDM/GPU_ELBDM
 
 ifeq "$(filter -DGRAVITY, $(SIMU_OPTION))" "-DGRAVITY"
-GPU_FILE    += CUPOT_ELBDMGravitySolver.cu  CUPOT_ELBDMGravitySolver_HJ.cu
+GPU_FILE    += CPU_ELBDMGravitySolver.cpp  CPU_ELBDMGravitySolver_HJ.cpp
 
 CPU_FILE    += CPU_ELBDMGravitySolver.cpp  CPU_ELBDMGravitySolver_HJ.cpp  ELBDM_GetTimeStep_Gravity.cpp
 
-vpath %.cu     Model_ELBDM/GPU_ELBDMGravity
 vpath %.cpp    Model_ELBDM/CPU_ELBDMGravity
 endif
 
@@ -198,9 +191,9 @@ GPU_FILE    += GPU_MemAllocate_PoissonGravity.cpp  GPU_MemFree_PoissonGravity.cp
                GPU_Asyn_PoissonGravitySolver.cpp  GPU_SetConstMemory_ExtAccPot.cpp \
                GPU_SendExtPotTable2GPU.cpp
 
-GPU_FILE    += GPU_PoissonSolver_SOR.cpp \
-               GPU_PoissonSolver_MG.cpp  CUPOT_ExtAcc_PointMass.cu  CUPOT_ExtPot_PointMass.cu \
-               CUPOT_ExtPotSolver.cu  CUPOT_ExtPot_Tabular.cu
+GPU_FILE    += GPU_PoissonSolver_SOR.cpp  GPU_PoissonSolver_MG.cpp \
+               CPU_ExtAcc_PointMass.cpp  CPU_ExtPot_PointMass.cpp \
+               CPU_ExtPotSolver.cpp  CPU_ExtPot_Tabular.cpp
 
 CPU_FILE    += CPU_PoissonGravitySolver.cpp  CPU_PoissonSolver_SOR.cpp  CPU_PoissonSolver_FFT.cpp \
                CPU_PoissonSolver_MG.cpp  CPU_ExtPotSolver.cpp  CPU_ExtPotSolver_BaseLevel.cpp
@@ -214,7 +207,6 @@ CPU_FILE    += Gra_Close.cpp  Gra_Prepare_Flu.cpp  Gra_Prepare_Pot.cpp  Gra_Prep
                Init_ExtAccPot.cpp  End_ExtAccPot.cpp  CPU_ExtAcc_PointMass.cpp  CPU_ExtPot_PointMass.cpp \
                Poi_UserWorkBeforePoisson.cpp  Init_LoadExtPotTable.cpp  CPU_ExtPot_Tabular.cpp
 
-vpath %.cu     SelfGravity/GPU_Poisson  SelfGravity/GPU_Gravity
 vpath %.cpp    SelfGravity/CPU_Poisson  SelfGravity/GPU_Poisson  SelfGravity/CPU_Gravity  SelfGravity
 endif # GRAVITY
 
@@ -235,7 +227,6 @@ CPU_FILE    += Par_Init_ByFunction.cpp  Par_Output_TextFile.cpp  Par_Output_Bina
                Par_Init_Attribute_Mesh.cpp  Par_Output_TracerParticle_Mesh.cpp  Par_SetParUID.cpp \
                Par_SetFlag.cpp  Par_Flag_TargetParticle.cpp
 
-vpath %.cu     Particle/GPU
 vpath %.cpp    Particle/CPU  Particle
 
 ifeq "$(findstring -DLOAD_BALANCE, $(SIMU_OPTION))" "-DLOAD_BALANCE"
@@ -306,8 +297,8 @@ endif # SUPPORT_LIBYT
 
 # local source terms source files
 # ------------------------------------------------------------------------------------
-GPU_FILE    += GPU_Asyn_SrcSolver.cpp  CUSRC_SrcSolver_IterateAllCells.cu  CUSRC_Src_Deleptonization.cu \
-               CUSRC_Src_User_Template.cu  CUSRC_Src_ExactCooling.cu
+GPU_FILE    += GPU_Asyn_SrcSolver.cpp  CPU_SrcSolver_IterateAllCells.cpp  CPU_Src_Deleptonization.cpp \
+               CPU_Src_User_Template.cpp  CPU_Src_ExactCooling.cpp
 
 CPU_FILE    += CPU_SrcSolver.cpp  CPU_SrcSolver_IterateAllCells.cpp  CPU_Src_Deleptonization.cpp \
                CPU_Src_User_Template.cpp  CPU_Src_ExactCooling.cpp  dtSolver_ExactCooling.cpp
@@ -315,7 +306,6 @@ CPU_FILE    += CPU_SrcSolver.cpp  CPU_SrcSolver_IterateAllCells.cpp  CPU_Src_Del
 CPU_FILE    += Src_AdvanceDt.cpp  Src_Prepare.cpp  Src_Close.cpp  Src_Init.cpp  Src_End.cpp \
                Src_WorkBeforeMajorFunc.cpp
 
-vpath %.cu     SourceTerms  SourceTerms/User_Template  SourceTerms/Deleptonization  SourceTerms/ExactCooling
 vpath %.cpp    SourceTerms  SourceTerms/User_Template  SourceTerms/Deleptonization  SourceTerms/ExactCooling
 
 
@@ -355,7 +345,7 @@ endif # FEEDBACK
 ifeq "$(filter -DCOSMIC_RAY, $(SIMU_OPTION))" "-DCOSMIC_RAY"
 CPU_FILE    += CPU_CosmicRay.cpp
 
-GPU_FILE    += CUFLU_CosmicRay.cu
+GPU_FILE    += CPU_CosmicRay.cpp
 endif # COSMIC_RAY
 
 
@@ -364,29 +354,26 @@ endif # COSMIC_RAY
 CPU_FILE    += Microphysics_Init.cpp  Microphysics_End.cpp
 
 vpath %.cpp    Microphysics
-vpath %.cu     Microphysics
-
 
 # cosmic-ray diffusion source files (included only if "CR_DIFFUSION" is turned on)
 # ------------------------------------------------------------------------------------
 ifeq "$(filter -DCR_DIFFUSION, $(SIMU_OPTION))" "-DCR_DIFFUSION"
 CPU_FILE    += CPU_CR_AddDiffuseFlux.cpp  CPU_CR_ComputeDiffusivity.cpp
 
-GPU_FILE    += CUFLU_CR_AddDiffuseFlux.cu  CUFLU_CR_ComputeDiffusivity.cu
+GPU_FILE    += CPU_CR_AddDiffuseFlux.cpp  CPU_CR_ComputeDiffusivity.cpp
 
 vpath %.cpp    Microphysics/CosmicRayDiffusion
-vpath %.cu     Microphysics/CosmicRayDiffusion
 endif # CR_DIFFUSION
 
 
 # test problem source files
-# --> just compile all .cpp and .cu files under TestProblem/*/*/
+# --> compile GPU test-problem files (ExtAcc_* and ExtPot_*) with SYCL flags;
+#     all other TestProblem/*.cpp are CPU files
 # ------------------------------------------------------------------------------------
-CPU_FILE    += $(notdir $(wildcard TestProblem/*/*/*.cpp))
-GPU_FILE    += $(notdir $(wildcard TestProblem/*/*/*.cu))
+GPU_FILE    += $(filter ExtAcc_% ExtPot_%, $(notdir $(wildcard TestProblem/*/*/*.cpp)))
+CPU_FILE    += $(filter-out ExtAcc_% ExtPot_%, $(notdir $(wildcard TestProblem/*/*/*.cpp)))
 
 VPATH := $(dir $(wildcard TestProblem/*/*/))
-
 
 
 # rules and targets
@@ -400,19 +387,12 @@ PREFIX_GPU   := __gpu__
 OBJ_PATH     := Object
 OBJ_CPU      := $(patsubst %.cpp, $(OBJ_PATH)/$(PREFIX_CPU)%.o, $(CPU_FILE))
 ifeq "$(filter -DGPU, $(SIMU_OPTION))" "-DGPU"
-OBJ_GPU      := $(patsubst %.cu,  $(OBJ_PATH)/$(PREFIX_GPU)%.o, $(GPU_FILE))
-OBJ_GPU_LINK := $(OBJ_PATH)/gpu_link.o
+OBJ_GPU      := $(patsubst %.cpp, $(OBJ_PATH)/$(PREFIX_GPU)%.o, $(GPU_FILE))
 endif
 
 
 # libraries
 # -------------------------------------------------------------------------------
-ifeq "$(filter -DGPU, $(SIMU_OPTION))" "-DGPU"
-LIB += -L$(CUDA_PATH)/lib64
-LIB += -Wl,-rpath,$(CUDA_PATH)/lib64
-LIB += -lcudart
-endif
-
 ifeq "$(filter -DLAOHU, $(SIMU_OPTION))" "-DLAOHU"
 LIB += -L$(GPUID_PATH) -lgpudevmgr
 endif
@@ -506,13 +486,7 @@ ifeq "$(filter -DSUPPORT_LIBYT, $(SIMU_OPTION))" "-DSUPPORT_LIBYT"
 INCLUDE += -I$(LIBYT_PATH)/include
 endif
 
-ifeq "$(filter -DGPU, $(SIMU_OPTION))" "-DGPU"
-   ifeq "$(filter -DWAVE_SCHEME=WAVE_GRAMFE, $(SIMU_OPTION))" "-DWAVE_SCHEME=WAVE_GRAMFE"
-      ifeq "$(filter -DGRAMFE_SCHEME=GRAMFE_FFT, $(SIMU_OPTION))" "-DGRAMFE_SCHEME=GRAMFE_FFT"
-         INCLUDE += -I$(CUFFTDX_PATH)/include -I$(CUFFTDX_PATH)/external/cutlass/include
-      endif
-   endif
-endif
+
 
 # CXX flags
 # -------------------------------------------------------------------------------
@@ -540,35 +514,14 @@ else
    GIT_INFO += -DGIT_BRANCH="N/A"
 endif
 
-# NVCC flags
-# -------------------------------------------------------------------------------
-# common flags
-NVCCFLAG_COM := $(COMMONFLAG) @@@NVCCFLAG_COM@@@
-
-NVCCFLAG_ARCH += @@@NVCCFLAG_ARCH@@@
-
-NVCCFLAG_COM += $(NVCCFLAG_ARCH)
-
-# fluid solver flags
-NVCCFLAG_FLU += @@@NVCCFLAG_FLU@@@ @@@MAXRREGCOUNT_FLU@@@
-
-
-# Poisson/gravity solvers flags
-NVCCFLAG_POT += @@@NVCCFLAG_POT@@@
-
-
 # remove extra whitespaces
 # -------------------------------------------------------------------------------
 CXX          := $(strip $(CXX))
 CXXFLAG      := $(strip $(CXXFLAG))
 OPENMPFLAG   := $(strip $(OPENMPFLAG))
 LIB          := $(strip $(LIB))
-NVCC         := $(strip $(NVCC))
-NVCCFLAG_COM := $(strip $(NVCCFLAG_COM))
-NVCCFLAG_FLU := $(strip $(NVCCFLAG_FLU))
-NVCCFLAG_POT := $(strip $(NVCCFLAG_POT))
+SYCLFLAG     := $(strip $(SYCLFLAG))
 GIT_INFO     := $(strip $(GIT_INFO))
-CUDA_PATH    := $(strip $(CUDA_PATH))
 FFTW2_PATH   := $(strip $(FFTW2_PATH))
 FFTW3_PATH   := $(strip $(FFTW3_PATH))
 MPI_PATH     := $(strip $(MPI_PATH))
@@ -576,7 +529,6 @@ HDF5_PATH    := $(strip $(HDF5_PATH))
 GRACKLE_PATH := $(strip $(GRACKLE_PATH))
 GSL_PATH     := $(strip $(GSL_PATH))
 LIBYT_PATH   := $(strip $(LIBYT_PATH))
-CUFFTDX_PATH := $(strip $(CUFFTDX_PATH))
 
 
 # implicit rules (do NOT modify the order of the following rules)
@@ -588,27 +540,12 @@ else
 ECHO =
 endif
 
-# GPU codes
+# GPU codes (compiled with the SYCL-enabled C++ compiler)
+# -------------------------------------------------------------------------------
 ifeq "$(filter -DGPU, $(SIMU_OPTION))" "-DGPU"
-$(OBJ_PATH)/$(PREFIX_GPU)CUFLU_%.o : CUFLU_%.cu
+$(OBJ_PATH)/$(PREFIX_GPU)%.o : %.cpp
 	@echo "Compiling $<"
-	$(ECHO)$(NVCC) $(NVCCFLAG_COM) $(NVCCFLAG_FLU) -o $@ -dc $<
-
-$(OBJ_PATH)/$(PREFIX_GPU)CUPOT_%.o : CUPOT_%.cu
-	@echo "Compiling $<"
-	$(ECHO)$(NVCC) $(NVCCFLAG_COM) $(NVCCFLAG_POT) -o $@ -dc $<
-
-$(OBJ_PATH)/$(PREFIX_GPU)CUSRC_%.o : CUSRC_%.cu
-	@echo "Compiling $<"
-	$(ECHO)$(NVCC) $(NVCCFLAG_COM) -o $@ -dc $<
-
-$(OBJ_PATH)/$(PREFIX_GPU)GPU_%.o : GPU_%.cpp
-	@echo "Compiling $<"
-	$(ECHO)$(NVCC) $(NVCCFLAG_COM) -o $@ -dc $<
-
-$(OBJ_PATH)/$(PREFIX_GPU)%.o : %.cu
-	@echo "Compiling $<"
-	$(ECHO)$(NVCC) $(NVCCFLAG_COM) -o $@ -dc $<
+	$(ECHO)$(CXX) $(CXXFLAG) $(SYCLFLAG) $(GIT_INFO) -o $@ -c $<
 endif # GPU
 
 # CPU codes
@@ -620,20 +557,15 @@ $(OBJ_PATH)/$(PREFIX_CPU)%.o : %.cpp
 # linking
 # -------------------------------------------------------------------------------
 $(EXECUTABLE) : $(OBJ_CPU) $(OBJ_GPU)
-# GPU linker
-ifeq "$(filter -DGPU, $(SIMU_OPTION))" "-DGPU"
-	@echo "Linking GPU codes"
-	$(ECHO)$(NVCC) -o $(OBJ_GPU_LINK) $(OBJ_GPU) $(NVCCFLAG_ARCH) -dlink
-endif
 
 # CPU linker
 	@echo "Linking CPU codes"
 ifeq "$(COMPILE_VERBOSE)" "1"
-	$(CXX) -o $@ $^ $(OBJ_GPU_LINK) $(LIB) $(OPENMPFLAG)
+	$(CXX) -o $@ $^ $(LIB) $(OPENMPFLAG)
 	@printf "\nCompiling GAMER --> Successful!\n\n"; \
 	cp $(EXECUTABLE) ../bin/
 else
-	@$(CXX) -o $@ $^ $(OBJ_GPU_LINK) $(LIB) $(OPENMPFLAG); \
+	@$(CXX) -o $@ $^ $(LIB) $(OPENMPFLAG); \
 	(if [ -e $@ ]; then \
 		printf "\nCompiling GAMER --> Successful!\n\n"; \
 		cp $(EXECUTABLE) ../bin/; \
