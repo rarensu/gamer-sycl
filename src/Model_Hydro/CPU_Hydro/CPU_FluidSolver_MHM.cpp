@@ -342,13 +342,14 @@ void CPU_FluidSolver_MHM(
 #  endif
 
    int Iteration;
-   // TODO: __shared__ migration — original code used "__shared__ int s_FullStepFailure;"
-   // for CUDA shared memory across threads in a block.  In SYCL this should be
-   // "sycl::local int s_FullStepFailure;" to maintain work-group-wide visibility,
-   // but Hydro_FullStepUpdate() still calls CUDA atomics (atomicExch) under its
-   // SYCL_LANGUAGE_VERSION path (see CPU_Shared_FullStepUpdate.cpp lines ~260-271).
-   // Using a plain int for now to unblock compilation; revisit when the
-   // atomicExch / __CUDA_ARCH__ issue in FullStepUpdate is resolved.
+   // NOTE: __shared__ migration — original CUDA code used
+   // "__shared__ int s_FullStepFailure;" for work-group-wide shared memory.
+   // In SYCL this should become "sycl::local int s_FullStepFailure;" for
+   // work-group-wide visibility.  Hydro_FullStepUpdate() now uses
+   // sycl::atomic_ref (no more CUDA atomicExch/__CUDA_ARCH__), so the
+   // remaining task is to convert s_FullStepFailure to sycl::local.
+   // TODO: convert s_FullStepFailure to sycl::local (or the +shared parameter
+   // pattern used by GPU_dtSolver_HydroCFL) for proper work-group visibility.
    int s_FullStepFailure;
 
 

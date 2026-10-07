@@ -38,7 +38,7 @@ void CR_AdiabaticWork_FullStep( real &Ecr,
 
 #endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
-// Note: SYCL migration - the GPU code path now uses SYCL_LANGUAGE_VERSION instead of SYCL_LANGUAGE_VERSION
+// Note: SYCL migration - the GPU code path now uses SYCL_LANGUAGE_VERSION instead of __CUDACC__
 
 
 
@@ -256,16 +256,19 @@ void Hydro_FullStepUpdate( const real g_Input[][ CUBE(FLU_NXT) ], real g_Output[
                                    EoS->GuessHTilde_FuncPtr, EoS->HTilde2Temp_FuncPtr,
                                    EoS->AuxArrayDevPtr_Flt, EoS->AuxArrayDevPtr_Int, EoS->Table,
                                    PassiveFloor, ERROR_INFO, UNPHY_SILENCE, CK_UNPHY_RND_YES )  )
-         {
+          {
 #           ifdef SYCL_LANGUAGE_VERSION  // GPU
-//          use atomicExch_block() on Pascal (or later) GPUs to avoid inter-block synchronization for better performance
-//          --> calculation results should be the same since different blocks have different s_FullStepFailure[]
-//              (since it is a shared memory array)
-#           if ( __CUDA_ARCH__ >= 600 )
-            atomicExch_block( s_FullStepFailure, 1 );
-#           else
-            atomicExch      ( s_FullStepFailure, 1 );
-#           endif
+//          atomically set s_FullStepFailure to 1 so that all work-group threads
+//          observe the failure flag.  The caller should declare s_FullStepFailure
+//          in work-group (local) memory (replacing the original CUDA __shared__)
+//          so that the value is visible to all threads after the barrier below.
+//          (Old CUDA code used atomicExch_block() on Pascal+ GPUs; SYCL uses
+//           sycl::atomic_ref with work_group scope, which is the SYCL
+//           equivalent of the CUDA shared-memory atomic.)
+            sycl::atomic_ref<int, sycl::memory_order::relaxed,
+                             sycl::memory_scope::work_group>
+                s_FullStepFailure_atom(*s_FullStepFailure);
+            s_FullStepFailure_atom.store(1);
 #           else              // CPU
             *s_FullStepFailure = 1;
 #           endif
@@ -299,7 +302,7 @@ void Hydro_FullStepUpdate( const real g_Input[][ CUBE(FLU_NXT) ], real g_Output[
    } // CGPU_LOOP( idx_out, CUBE(PS2) )
 
 
-// 7. synchronize s_FullStepFailure for all threads within a GPU thread block
+// 7. synchronize s_FullStepFailure for all threads within a SYCL work-group
 #  ifdef SYCL_LANGUAGE_VERSION
    sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #  endif
