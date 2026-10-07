@@ -2,41 +2,46 @@
 
 ## Overview
 
-A SYCL-native block-level FFT to replace cuFFTDx in the GAMER ELBDM Gram-Fourier
-Extension (GramFE) solver. Must provide an in-place, batched, in-kernel
+A SYCL-native block-level FFT that replaces cuFFTDx in the GAMER ELBDM Gram-Fourier
+Extension (GramFE) solver. It provides an in-place, batched, in-kernel
 complex-to-complex FFT running entirely within a single SYCL work-group using
 `sycl::local` memory.
 
+The implementation lives in `include/SyclFFT.h` and is included by `include/FLU.h`
+when `SYCL_LANGUAGE_VERSION` is defined and `GRAMFE_SCHEME == GRAMFE_FFT`.
 
-## cuFFTDx API Surface (to be replaced)
 
-Defined in `include/FLU.h`, lines 546–599.
+## Replaced cuFFTDx API Surface
+
+The former cuFFTDx typedef section in `include/FLU.h` (lines 546–599) was removed.
+`SyclFFT.h` now defines all required symbols.
 
 ### Compile-time constants
 
 | Symbol | Values | Source |
 |---|---|---|
-| `GRAMME_FLU_NXT` | 64, 72, 108, 168, 300 | `Macro.h`: `FLU_NXT + GRAMME_ND` |
+| `GRAMFE_FLU_NXT` | 64, 72, 108, 168, 300 | `Macro.h`: `FLU_NXT + GRAMFE_ND` |
 | `gramfe_fft_float` | `float` or `double` | `Typedef.h` line 52 |
-| `GRAMME_NDELTA` | 14 | Gram polynomial extension |
-| `elements_per_thread` | 4 | `GRAMME_CUSTOM_ELEMENTS_PER_THREAD` |
-| `ffts_per_block` | 12 | `GRAMME_CUSTOM_FFTS_PER_BLOCK` |
+| `GRAMFE_NDELTA` | 14 | Gram polynomial extension |
+| `elements_per_thread` | 4 | `GRAMFE_CUSTOM_ELEMENTS_PER_THREAD` |
+| `ffts_per_block` | 12 | `GRAMFE_CUSTOM_FFTS_PER_BLOCK` |
 
-### Types to provide
+### Types provided
 
 | Type | Meaning |
 |---|---|
-| `complex_type` | Complex value type (`std::complex<gramfe_fft_float>`) |
-| `FFT::workspace_type` | Opaque workspace (can be empty struct) |
-| `IFFT::workspace_type` | Opaque workspace for inverse |
-| `FFT::block_dim` | `sycl::range<3>` for work-group size |
-| `FFT::max_threads_per_block` | Max threads per block |
-| `FFT::shared_memory_size` | Min shared memory (elements) |
-| `FFT::ffts_per_block` | = 12 |
-| `FFT::elements_per_thread` | = 4 |
-| `FFT::value_type` | = `complex_type` |
+| `complex_type` | `std::complex<gramfe_fft_float>` |
+| `FFT::workspace_type` | Empty struct (no data needed) |
+| `IFFT::workspace_type` | Same as `FFT::workspace_type` |
+| `FFT::block_dim` | `syclfft::dim3` work-group shape |
+| `FFT::max_threads_per_block` | Max threads per work-group |
+| `FFT::shared_memory_size` | Shared memory in bytes for the FFT data only (cuFFTDx convention) |
+| `FFT::ffts_per_block` | 12 |
+| `FFT::elements_per_thread` | 4 |
+| `FFT::value_type` | `std::complex<gramfe_fft_float>` |
+| `FFT::size` | `GRAMFE_FLU_NXT` (replaces `cufftdx::size_of<FFT>::value`) |
 
-### Methods to provide
+### Methods provided
 
 | Method | Signature |
 |---|---|
@@ -47,15 +52,15 @@ Defined in `include/FLU.h`, lines 546–599.
 
 ## FFT Sizes
 
-`GRAMME_FLU_NXT` is a `#define` macro computed at compile time:
+`GRAMFE_FLU_NXT` is a `#define` macro computed at compile time in `Macro.h`:
 
 ```cpp
-#define GRAMME_FLU_NXT  (FLU_NXT + GRAMME_ND)
+#define GRAMFE_FLU_NXT  ( FLU_NXT + GRAMFE_ND )
 ```
 
-Where `FLU_NXT = 2*PATCH_SIZE + 16` and `GRAMME_ND` is selected by `PATCH_SIZE`:
+Where `FLU_NXT = 2*PATCH_SIZE + 16` and `GRAMFE_ND` is selected by `PATCH_SIZE`:
 
-| PATCH_SIZE | FLU_NXT | GRAMME_ND | GRAMME_FLU_NXT | Factorization |
+| PATCH_SIZE | FLU_NXT | GRAMFE_ND | GRAMFE_FLU_NXT | Factorization |
 |---|---|---|---|---|
 | 8 | 32 | 32 | 64 | 2^6 |
 | 16 | 48 | 24 | 72 | 2^3 * 3^2 |
@@ -63,9 +68,9 @@ Where `FLU_NXT = 2*PATCH_SIZE + 16` and `GRAMME_ND` is selected by `PATCH_SIZE`:
 | 64 | 144 | 24 | 168 | 2^3 * 3 * 7 |
 | 128 | 272 | 28 | 300 | 2^2 * 3 * 5^2 |
 
-All sizes are composite with small prime factors (2, 3, 5, 7).
-A mixed-radix Cooley-Tukey implementation handles all cases.
-No Rader's or Bluestein's algorithm is needed.
+All sizes are composite with small prime factors (2, 3, 5, 7), so a mixed-radix
+Cooley-Tukey implementation handles all cases. No Rader's or Bluestein's algorithm
+is needed.
 
 ---
 
@@ -75,18 +80,18 @@ No Rader's or Bluestein's algorithm is needed.
 
 In `CPU_ELBDMSolver_GramFE_FFT.cpp`:
 
-**Forward FFT (line ~549):**
+**Forward FFT:**
 ```cpp
 FFT().execute(reinterpret_cast<void*>(s_In), Workspace);
 ```
 
-**Inverse FFT (line ~571):**
+**Inverse FFT:**
 ```cpp
 IFFT().execute(reinterpret_cast<void*>(s_In), WorkspaceInv);
 ```
 
-Both operate on `s_In`, a pointer to `complex_type[ffts_per_block][GRAMME_FLU_NXT]`
-in shared/local memory.
+Both operate on `s_In`, a pointer to `complex_type[ffts_per_block][GRAMFE_FLU_NXT]`
+in local memory.
 
 ### CPU reference path
 
@@ -99,11 +104,11 @@ gramfe_fftw_c2c(FFTW_Plan_ExtPsi_Inv, s_In);
 ```
 
 `FFTW_Plan_ExtPsi` is created in `Init_FFTW.cpp`:
-- Batch = `ffts_per_block` (12), Rank = 1, N = `GRAMME_FLU_NXT`
+- Batch = `ffts_per_block` (12), Rank = 1, N = `GRAMFE_FLU_NXT`
 - Sign = `FFTW_FORWARD`
 
 Normalization: FFTW forward = scale 1, backward = scale 1/N.
-The SYCL implementation must match this (or match cuFFTDx's convention).
+The SYCL implementation uses the same unnormalized convention.
 
 ---
 
@@ -111,29 +116,31 @@ The SYCL implementation must match this (or match cuFFTDx's convention).
 
 ### Layout
 
-In `CPU_ELBDMSolver_GramFE_FFT.cpp` (lines 309–321):
+In `CPU_ELBDMSolver_GramFE_FFT.cpp` (SYCL path):
 
 ```cpp
-__shared__ complex_type  s_In[ffts_per_block][GRAMME_FLU_NXT];
-__shared__ complex_type  s_Ae[CGPU_FLU_BLOCK_SIZE_Y][GRAMME_NDELTA];
-__shared__ complex_type  s_Ao[CGPU_FLU_BLOCK_SIZE_Y][GRAMME_NDELTA];
+sycl::local complex_type shared_mem[FFT::ffts_per_block * (GRAMFE_FLU_NXT + 2 * GRAMFE_NDELTA)];
+
+complex_type (*s_In)[GRAMFE_FLU_NXT] = (complex_type (*)[GRAMFE_FLU_NXT]) (shared_mem);
+complex_type (*s_Ae)[GRAMFE_NDELTA]  = (complex_type (*)[GRAMFE_NDELTA])  (shared_mem + CGPU_FLU_BLOCK_SIZE_Y * (GRAMFE_FLU_NXT));
+complex_type (*s_Ao)[GRAMFE_NDELTA]  = (complex_type (*)[GRAMFE_NDELTA])  (shared_mem + CGPU_FLU_BLOCK_SIZE_Y * (GRAMFE_FLU_NXT + GRAMFE_NDELTA));
 ```
 
-- `s_In`: FFT buffer — 12 rows of `GRAMME_FLU_NXT` complex values
+- `s_In`: FFT buffer — 12 rows of `GRAMFE_FLU_NXT` complex values
 - `s_Ae`: Even Gram polynomial extension coefficients
 - `s_Ao`: Odd Gram polynomial extension coefficients
 
+The local array is sized in elements (not bytes), covering all three sub-arrays.
+
 ### Required size
 
-In `GPU_Asyn_FluidSolver.cpp` (lines 495–501):
+In `GPU_Asyn_FluidSolver.cpp`:
 
 ```cpp
-auto size       = ffts_per_block * size_of<FFT>::value + 2 * ffts_per_block * GRAM_ME_NDELTA;
+auto size       = FFT::ffts_per_block * FFT::size + 2 * FFT::ffts_per_block * GRAMFE_NDELTA;
 auto size_bytes = size * sizeof(complex_type);
 shared_size     = std::max(FFT::shared_memory_size, size_bytes);
 ```
-
-The replacement must compute or hard-code `shared_memory_size` accordingly.
 
 ---
 
@@ -141,20 +148,13 @@ The replacement must compute or hard-code `shared_memory_size` accordingly.
 
 ### Creation
 
-In `GPU_Asyn_FluidSolver.cpp` (lines 840–846):
+Workspace objects are default-constructed as empty structs in
+`GPU_Asyn_FluidSolver.cpp` (no `cufftdx::make_workspace` call is needed since the
+FFT operates entirely in local memory):
 
 ```cpp
-FFT::workspace_type   workspace   = cufftdx::make_workspace<FFT>(error_code);
-IFFT::workspace_type  workspace_inv = cufftdx::make_workspace<IFFT>(error_code);
-```
-
-**Replacement:** `workspace_type` can be an empty struct since the FFT operates
-entirely in local memory:
-
-```cpp
-struct FFTWorkspace {};
-using FFT_workspace_type   = FFTWorkspace;
-using IFFT_workspace_type  = FFTWorkspace;
+FFT::workspace_type   workspace     = FFT::workspace_type{};
+IFFT::workspace_type  workspace_inv = IFFT::workspace_type{};
 ```
 
 ---
@@ -163,85 +163,80 @@ using IFFT_workspace_type  = FFTWorkspace;
 
 ### Kernel launch
 
-In `GPU_Asyn_FluidSolver.cpp` (lines 853–861):
+In `GPU_Asyn_FluidSolver.cpp`:
 
 ```cpp
-sycl::nd_range<3>(
-    sycl::range<3>(1, 1, NPatch_per_Stream[s]) * FFT::block_dim,  // global
-    FFT::block_dim                                                // local
-);
+cgh.parallel_for(
+    sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * FFT::block_dim,
+                      FFT::block_dim),
+    [=](sycl::nd_item<3> item_ct1) {
+       GPU_ELBDMSolver_GramFE_FFT(...);
+    });
 ```
 
 - Global range = `N_patches * block_dim` (each patch gets one work-group)
-- Local range = `FFT::block_dim` (e.g., `{32, 4, 1}` = 128 threads)
+- Local range = `FFT::block_dim`, shape `{ ceil(N / elements_per_thread), ffts_per_block, 1 }`
 
 ### Thread indexing
 
-In `CPU_ELBDMSolver_GramFE_FFT.cpp`:
-
 ```cpp
-const uint tx = get_nd_item<3>().get_local_id(2);   // [0, block_dim.x)
-const uint ty = get_nd_item<3>().get_local_id(1);   // [0, block_dim.y)
-const uint tid = ty * CGPU_FLU_BLOCK_SIZE_X + tx;   // 1D thread ID
+const uint tx  = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(2);
+const uint ty  = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(1);
+const uint tid = ty * CGPU_FLU_BLOCK_SIZE_X + tx;
 const uint NThread = CGPU_FLU_BLOCK_SIZE_X * CGPU_FLU_BLOCK_SIZE_Y;
 ```
+
+where `CGPU_FLU_BLOCK_SIZE_X = FFT::block_dim.x` and
+`CGPU_FLU_BLOCK_SIZE_Y = FFT::block_dim.y`.
 
 ### Data mapping
 
 - `ffts_per_block` (12) concurrent FFTs, one per row of `s_In`
-- Each thread handles `elements_per_thread` (4) elements per row via strided access:
-  ```
-  element_idx = tid * elements_per_thread + {0, 1, 2, 3}
-  ```
-- The `tid`-th thread with `elements_per_thread` elements must cover
-  `elements_per_thread * NThread >= ffts_per_block * GRAMME_FLU_NXT`.
+- Each thread handles `elements_per_thread` (4) elements per row via strided access
+- Constraint: `elements_per_thread * total_threads >= ffts_per_block * GRAMFE_FLU_NXT`
 
-### Required block_dim
-
-From cuFFTDx's algorithm configuration, the work-group must have enough threads
-to satisfy `elements_per_thread * total_threads >= ffts_per_block * FFT_size`.
-The exact `block_dim` should be extracted from cuFFTDx's `FFT::block_dim`
-(see FLU.h for the SM capability and resulting block dimensions).
+The `block_dim` is computed as `{ ceil(N / elements_per_thread), ffts_per_block, 1 }`,
+satisfying this constraint for all supported FFT sizes.
 
 ---
 
 ## GPU_Advance Function
 
-The kernel entry `GPU_Advance` (in `CPU_ELBDMSolver_GramFE_FFT.cpp`, lines 470–634)
-is shared between CPU and SYCL paths via `#ifdef SYCL_LANGUAGE_VERSION`.
-
-The `FFT().execute()` and `IFFT().execute()` calls must either:
-1. Slot into the existing call pattern, or
-2. Be refactored to a different calling convention.
+The kernel entry `GPU_Advance` in `CPU_ELBDMSolver_GramFE_FFT.cpp` is shared between
+CPU and SYCL paths via `#ifdef SYCL_LANGUAGE_VERSION`. The `FFT().execute()` and
+`IFFT().execute()` calls slot into the existing call pattern without refactoring.
 
 ---
 
-## Summary of Work Items
+## Migration Notes
 
-1. **Create `include/SyclFFT.h`** — Define `complex_type`, `FFTWorkspace`, constants,
-   `block_dim`, `shared_memory_size`, and `execute()` methods.
-2. **Implement the block FFT** — Batched, in-place, mixed-radix Cooley-Tukey FFT
-   operating on `sycl::local` memory within a single work-group.
-3. **Update `include/FLU.h`** — Replace the cuFFTDx typedef section (lines 546–599)
-   with `#include "SyclFFT.h"`.
-4. **Update `GPU_SetCache.cpp`** — Replace cuFFTDx shared-memory size queries
-   (line ~108).
-5. **Update `GPU_Asyn_FluidSolver.cpp`** — Remove cuFFTDx workspace creation
-   (lines ~840–846).
-6. **Compile and test** — Build under `SYCL_LANGUAGE_VERSION` and run.
+All work items from the original plan have been completed:
 
-## Issues to expect when wiring it in (work items 3–6, not done)
+1. **`include/SyclFFT.h`** created — defines `complex_type`, `workspace`, `dim3`,
+   `BlockFFT<T, N, Direction, FFTsPerBlock, ElementsPerThread>`, and GAMER aliases
+   (`FFT`, `IFFT`, `complex_type`).
+2. **Block FFT implemented** — batched, in-place, mixed-radix (4/2/3/5/7)
+   decimation-in-time Cooley-Tukey operating on `sycl::local` memory.
+3. **`include/FLU.h`** updated — `#include "SyclFFT.h"` replaces the cuFFTDx
+   typedef section (former lines 546–599).
+4. **`src/GPU_API/GPU_Asyn_FluidSolver.cpp`** updated — `cufftdx::make_workspace`
+   replaced by empty `FFT::workspace_type{}`, `cufftdx::size_of<FFT>::value` replaced
+   by `FFT::size`, `FFT::block_dim` used for launch.
+5. **`src/Model_ELBDM/CPU_ELBDM/CPU_ELBDMSolver_GramFE_FFT.cpp`** updated —
+   `sycl::local complex_type shared_mem[N]` with element-count sizing,
+   `FFT::workspace_type`/`IFFT::workspace_type` aliases, ambiguous `operator*`
+   overloads removed (std::complex operators used directly).
+6. **`src/GPU_API/GPU_SetCache.cpp`** updated — cuFFTDx shared-memory size queries
+   replaced with `PreferShared` TODO comments.
 
-1. __Ambiguous `operator*`:__ the template `operator*(const complex_type&, const OtherType&)` in `CPU_ELBDMSolver_GramFE_FFT.cpp` will probably clash with `std::complex`'s own operators. The fix is likely to delete those helper operators.
+All anticipated issues were resolved during implementation:
 
-2. __`std::complex` on the device:__ DPC++ supports it in kernels, but switching to `sycl::ext::oneapi::experimental::complex` may be needed on some backends.
+- **Ambiguous `operator*`**: The template helper operators were removed from the
+  SYCL path; `std::complex` built-in operators are used directly.
+- **`std::complex` on device**: DPC++ supports `std::complex` in kernels.
+- **Local memory sizing**: Changed from byte-count (`FFT::shared_memory_size`) to
+  element-count array declaration: `sycl::local complex_type shared_mem[ffts_per_block
+  * (GRAMFE_FLU_NXT + 2 * GRAMFE_NDELTA)]`.
+- **Cleanup**: `#include <cufftdx.hpp>` removed, `make_workspace` calls removed,
+  `__launch_bounds__` guarded by `#ifndef SYCL_LANGUAGE_VERSION`.
 
-3. __Local memory sizing:__ the kernel declares `sycl::local complex_type shared_mem[FFT::shared_memory_size]`, which mixes bytes and element counts and isn't valid SYCL. It should become a `local_accessor` (or `group_local_memory`) sized as `ffts_per_block*(GRAMFE_FLU_NXT + 2*GRAMFE_NDELTA)` elements.
-
-4. __Cleanup:__
-
-   - Remove `#include <cufftdx.hpp>`, lines 546–599 of `FLU.h` (keep `GRAMFE_CUSTOM_*`), the `make_workspace` calls, and `__launch_bounds__`.
-   - Put `#include "SyclFFT.h"` in their place.
-   - Replace `cufftdx::size_of<FFT>::value` with `FFT::size`.
-
-5. __Not optimized yet:__ speed hasn't been measured. A precomputed twiddle table and padding to avoid local-memory bank conflicts are possible later improvements.

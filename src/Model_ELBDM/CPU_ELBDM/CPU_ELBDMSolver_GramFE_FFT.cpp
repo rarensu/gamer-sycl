@@ -273,9 +273,9 @@ void CPU_ELBDMSolver_GramFE_FFT(   real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ]
 {
 
 #  ifdef SYCL_LANGUAGE_VERSION
-// shared memory must hold: s_In (ffts_per_block rows of GRAMME_FLU_NXT),
-// s_Ae (ffts_per_block rows of GRAMME_NDELTA), s_Ao (ffts_per_block rows of GRAMME_NDELTA)
-   sycl::local complex_type shared_mem[FFT::ffts_per_block * (GRAMME_FLU_NXT + 2 * GRAMME_NDELTA)];
+// shared memory must hold: s_In (ffts_per_block rows of GRAMFE_FLU_NXT),
+// s_Ae (ffts_per_block rows of GRAMFE_NDELTA), s_Ao (ffts_per_block rows of GRAMFE_NDELTA)
+   sycl::local complex_type shared_mem[FFT::ffts_per_block * (GRAMFE_FLU_NXT + 2 * GRAMFE_NDELTA)];
 
 // create memories for columns of various intermediate fields in shared GPU memory
    complex_type (*s_In)[GRAMFE_FLU_NXT]    = (complex_type (*)[GRAMFE_FLU_NXT]) (shared_mem);
