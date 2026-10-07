@@ -376,7 +376,7 @@ void CPU_ELBDMSolver_GramFE_FFT(   real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ]
 //                WorkspaceInv : Workspace for inverse GPU FFT (useless in CPU mode)
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE
-void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+static void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                     real g_Fluid_Out[][FLU_NOUT ][ CUBE(PS2) ],
                     int NPatchGroup,
                     const gramfe_fft_float dt, const gramfe_fft_float _dh, const gramfe_fft_float Eta,
@@ -417,7 +417,7 @@ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
       {
 
 #        ifdef SYCL_LANGUAGE_VERSION
-//       use two-dimensional thread blocks in GPU mode
+//       use two-dimensional work-groups in GPU mode
          const uint tx = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(2);
          const uint ty = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(1);
 #        else
