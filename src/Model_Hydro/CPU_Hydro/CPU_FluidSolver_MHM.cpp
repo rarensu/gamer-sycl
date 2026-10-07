@@ -341,16 +341,18 @@ void CPU_FluidSolver_MHM(
    const double *c_ExtAcc_AuxArray = NULL;
 #  endif
 
-   int Iteration;
-   // NOTE: __shared__ migration — original CUDA code used
-   // "__shared__ int s_FullStepFailure;" for work-group-wide shared memory.
-   // In SYCL this should become "sycl::local int s_FullStepFailure;" for
-   // work-group-wide visibility.  Hydro_FullStepUpdate() now uses
-   // sycl::atomic_ref (no more CUDA atomicExch/__CUDA_ARCH__), so the
-   // remaining task is to convert s_FullStepFailure to sycl::local.
-   // TODO: convert s_FullStepFailure to sycl::local (or the +shared parameter
-   // pattern used by GPU_dtSolver_HydroCFL) for proper work-group visibility.
-   int s_FullStepFailure;
+    int Iteration;
+#  ifdef SYCL_LANGUAGE_VERSION
+    // Work-group (local) shared memory for the full-step failure flag.
+    // Replaces the original CUDA "__shared__ int s_FullStepFailure;".
+    // All work-group threads share this variable: a thread that detects an
+    // unphysical cell in Hydro_FullStepUpdate() atomically sets it to 1 via
+    // sycl::atomic_ref (work_group scope), and the do...while loop in all
+    // threads reads the shared value to decide whether to retry.
+    sycl::local int s_FullStepFailure;
+#  else
+    int s_FullStepFailure;
+#  endif
 
 
 // openmp pragma for the CPU solver
