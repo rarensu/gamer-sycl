@@ -28,10 +28,9 @@
 #endif
 
 
-// include CUDA FFT library if GPU kinetic ELBDM Gram-Fourier extension solver is enabled
+// include SYCL-native block FFT library if GPU kinetic ELBDM Gram-Fourier extension solver is enabled
 #if (defined(SYCL_LANGUAGE_VERSION) && GRAMFE_SCHEME == GRAMFE_FFT)
-// TODO(SYCL migration): replace the remaining cuFFTDx dependency with the SYCL-compatible FFT implementation.
-#  include <cufftdx.hpp>
+#  include "SyclFFT.h"
 #endif
 
 // faster integer multiplication in Fermi
@@ -543,61 +542,11 @@
 
 
 // set number of threads and blocks used in GRAMFE_FFT GPU scheme
+//
+// The FFT, IFFT, complex_type, elements_per_thread, and ffts_per_block
+// aliases are now provided by SyclFFT.h (included above), which replaces
+// the former cuFFTDx typedefs.
 #  if ( defined(SYCL_LANGUAGE_VERSION)  &&  WAVE_SCHEME == WAVE_GRAMFE  &&  GRAMFE_SCHEME == GRAMFE_FFT )
-
-// cuFFTdx supports the following GPU architectures at the time of writing (23.05.23)
-//
-//    Volta: 700 and 720 (sm_70, sm_72),
-//
-//    Turing: 750 (sm_75).
-//
-//    Ampere: 800, 860 and 870 (sm_80, sm_86, sm_87).
-//
-//    Ada: 890 (sm_89).
-//
-//    Hopper: 900 (sm_90).
-//
-// TODO(SYCL migration): The Thor GPU check below uses __CUDACC_VER_MAJOR__ which is CUDA-specific.
-// In SYCL mode this macro is not defined, so __CUDACC_VER_MAJOR__ defaults to 0,
-// which would trigger the error for unsupported GPUs. The check is guarded to
-// only apply when __CUDACC_VER_MAJOR__ is actually defined (CUDA compilation).
-#  ifdef __CUDACC_VER_MAJOR__
-//    Blackwell: 1000, 1010 (Thor GPUs with CUDA12.X or below), 1030, 1100 (Thor GPUs with CUDA13.X or above), 1200 and 1210 (sm_100, sm 101, sm_103, sm_110, sm_1200 and sm_121)
-#  if   ( GPU_COMPUTE_CAPABILITY != 700  && GPU_COMPUTE_CAPABILITY != 720  && GPU_COMPUTE_CAPABILITY != 750  \
-      &&  GPU_COMPUTE_CAPABILITY != 800  && GPU_COMPUTE_CAPABILITY != 860  && GPU_COMPUTE_CAPABILITY != 870  \
-      &&  GPU_COMPUTE_CAPABILITY != 890 \
-      &&  GPU_COMPUTE_CAPABILITY != 900 \
-      &&  GPU_COMPUTE_CAPABILITY != 1000 && GPU_COMPUTE_CAPABILITY != 1030 \
-      &&  ( ( __CUDACC_VER_MAJOR__ < 13 && GPU_COMPUTE_CAPABILITY != 1010 ) || ( __CUDACC_VER_MAJOR__ >= 13 && GPU_COMPUTE_CAPABILITY != 1100 ) ) \
-      &&  GPU_COMPUTE_CAPABILITY != 1200 && GPU_COMPUTE_CAPABILITY != 1210 )
-#     error : ERROR : GPU_COMPUTE_CAPABILITY unsupported by cuFFTdx (please visit cuFFTdx website to check whether your GPU is supported and update FLU.h accordingly if it is) !!
-#  endif
-
-#  endif  // #ifdef __CUDACC_VER_MAJOR__
-
-// number of blocks suggested by cufftdx disabled by default
-// profiling the code showed that a different number of blocks provides better performance
-// this is because the code does not only compute the FFT, but also the Fourier extension
-#  define GRAMFE_USE_SUGGESTED_BLOCKS        0
-#  define GRAMFE_CUSTOM_ELEMENTS_PER_THREAD  4
-#  define GRAMFE_CUSTOM_FFTS_PER_BLOCK       12
-
-
-using CUFFTDX_ARCH = decltype(cufftdx::SM<GPU_COMPUTE_CAPABILITY>());
-
-using fft_base     = decltype(cufftdx::Block() + cufftdx::Size<GRAMFE_FLU_NXT>() + cufftdx::Type<cufftdx::fft_type::c2c>() + cufftdx::Precision<gramfe_fft_float>() + CUFFTDX_ARCH() );
-using forward_fft  = decltype(fft_base() + cufftdx::Direction<cufftdx::fft_direction::forward>());
-using inverse_fft  = decltype(fft_base() + cufftdx::Direction<cufftdx::fft_direction::inverse>());
-
-// complete FFT description
-static constexpr unsigned int elements_per_thread = GRAMFE_USE_SUGGESTED_BLOCKS ? forward_fft::elements_per_thread      : GRAMFE_CUSTOM_ELEMENTS_PER_THREAD;
-static constexpr unsigned int ffts_per_block      = GRAMFE_USE_SUGGESTED_BLOCKS ? inverse_fft::suggested_ffts_per_block : GRAMFE_CUSTOM_FFTS_PER_BLOCK;
-
-using FFT          = decltype( forward_fft() + cufftdx::ElementsPerThread<elements_per_thread>() + cufftdx::FFTsPerBlock<ffts_per_block>());
-using IFFT         = decltype( inverse_fft() + cufftdx::ElementsPerThread<elements_per_thread>() + cufftdx::FFTsPerBlock<ffts_per_block>());
-
-using complex_type = typename FFT::value_type;
-
 #  endif // # if ( defined(SYCL_LANGUAGE_VERSION)  &&  WAVE_SCHEME == WAVE_GRAMFE  &&  GRAMFE_SCHEME == GRAMFE_FFT )
 
 #else

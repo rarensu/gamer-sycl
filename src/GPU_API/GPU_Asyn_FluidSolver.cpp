@@ -477,7 +477,7 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 #  elif ( MODEL == ELBDM )
 
 #  if ( WAVE_SCHEME == WAVE_GRAMFE  &&  GRAMFE_SCHEME == GRAMFE_FFT )
-   uint cufftdx_shared_memory_size = NULL_INT;
+      uint fft_shared_memory_size = NULL_INT;
 #  endif
 
 #  if ( ELBDM_SCHEME == ELBDM_HYBRID )
@@ -494,16 +494,16 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 // set up GPU FFT if GPU is used for Gram Fourier extension FFT scheme
 #  if   ( GRAMFE_SCHEME == GRAMFE_FFT )
 // total size of shared memory required for storing FFT::ffts_per_block rows of data after Gram extension and the coefficients of the respective left and right extension polynomials
-   auto size       = FFT::ffts_per_block*cufftdx::size_of<FFT>::value + 2*FFT::ffts_per_block*GRAMFE_NDELTA;
+      auto size       = FFT::ffts_per_block*FFT::size + 2*FFT::ffts_per_block*GRAMFE_NDELTA;
    auto size_bytes = size*sizeof(complex_type);
 
 // shared memory must fit input data and must be big enough to run FFT
-   cufftdx_shared_memory_size = std::max( (unsigned int)FFT::shared_memory_size, (unsigned int)size_bytes );
+      fft_shared_memory_size = std::max( (unsigned int)FFT::shared_memory_size, (unsigned int)size_bytes );
 
 // increase max shared memory if needed
 #  ifndef SYCL_LANGUAGE_VERSION
    DEVICE_CHECK_ERROR(  cudaFuncSetAttribute( GPU_ELBDMSolver_GramFE_FFT, cudaFuncAttributeMaxDynamicSharedMemorySize,
-                                            cufftdx_shared_memory_size )  );
+                                            fft_shared_memory_size )  );
 #  endif
 
 #  elif ( GRAMFE_SCHEME == GRAMFE_MATMUL )
@@ -837,13 +837,9 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 
 #     if ( GRAMFE_SCHEME == GRAMFE_FFT )
 
-//       create forward and backward cufftx workspaces
-         cudaError_t error_code  = cudaSuccess;
-         FFT::workspace_type cufftdx_workspace  = cufftdx::make_workspace<FFT>( error_code );
-         DEVICE_CHECK_ERROR(error_code);
-         error_code              = cudaSuccess;
-         IFFT::workspace_type cufftdx_iworkspace = cufftdx::make_workspace<IFFT>( error_code );
-         DEVICE_CHECK_ERROR(error_code);
+//       no workspaces required for SyclFFT (empty struct)
+         FFT::workspace_type workspace{};
+         IFFT::workspace_type workspace_inv{};
 
          Stream[s]->submit([&](sycl::handler &cgh) {
             auto d_Flu_Array_F_In_ptr = d_Flu_Array_F_In + UsedPatch[s];
@@ -858,7 +854,7 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
                        d_Flu_Array_F_In_ptr,
                        d_Flu_Array_F_Out_ptr,
                        d_Flux_Array_ptr,
-                       dt, 1.0/dh, ELBDM_Eta, StoreFlux, XYZ, MinDens, cufftdx_workspace, cufftdx_iworkspace );
+                       dt, 1.0/dh, ELBDM_Eta, StoreFlux, XYZ, MinDens, workspace, workspace_inv );
                 });
          });
 

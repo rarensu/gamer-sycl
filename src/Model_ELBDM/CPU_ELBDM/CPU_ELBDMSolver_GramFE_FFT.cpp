@@ -20,49 +20,15 @@
 // convert to 1D index without ghost boundary
 # define to1D2(z,y,x) (  ((z)-FLU_GHOST_SIZE) * PS2     * PS2     + ((y)-FLU_GHOST_SIZE) * PS2     + ((x)-FLU_GHOST_SIZE)  )
 
-// use cufftdx library for FFTs on GPU
+// use SyclFFT for FFTs on GPU
 #ifdef SYCL_LANGUAGE_VERSION
 
 using forward_workspace_type = typename FFT::workspace_type;
 using inverse_workspace_type = typename IFFT::workspace_type;
 
-// overload cufftdx's complex_type to allow for multiplication, addition and subtraction of complex and real numbers
-
-// multiplication of complex and real
-template<class OtherType>
-GPU_DEVICE complex_type operator*(const complex_type& a, const OtherType& other) {
-      complex_type result(a);
-      result *= other;
-      return result;
-}
-
-// multiplication of real and complex
-template<class OtherType>
-GPU_DEVICE complex_type operator*(const OtherType& other, const complex_type& a) {
-      return a * other;
-}
-
-// multiplication of complex and complex
-GPU_DEVICE complex_type operator*(const complex_type& a, const complex_type& b) {
-      complex_type result(a);
-      result *= b;
-      return result;
-}
-
-// addition of complex and complex
-GPU_DEVICE complex_type operator+(const complex_type& a, const complex_type& b) {
-      complex_type result(a);
-      result += b;
-      return result;
-}
-
-// subtraction of complex and complex
-GPU_DEVICE complex_type operator-(const complex_type& a, const complex_type& b) {
-      complex_type result(a);
-      result -= b;
-      return result;
-}
-
+// complex_type is std::complex<gramfe_fft_float> (from SyclFFT.h), which
+// already provides operator*, operator+, and operator- for complex-real
+// and complex-complex arithmetic. No custom overloads are needed.
 #else   // #ifdef SYCL_LANGUAGE_VERSION
 
 extern gramfe_fftw::complex_plan_1d FFTW_Plan_ExtPsi, FFTW_Plan_ExtPsi_Inv;
@@ -307,11 +273,9 @@ void CPU_ELBDMSolver_GramFE_FFT(   real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ]
 {
 
 #  ifdef SYCL_LANGUAGE_VERSION
-// TODO(SYCL migration): cuFFTDx shared memory - 'extern __shared__' is CUDA-specific.
-// In SYCL, sycl::local with FFT::shared_memory_size is used, but the actual required
-// size may be larger (std::max of FFT::shared_memory_size and data size in GPU_Asyn_FluidSolver.cpp).
-// Revisit when cuFFTDx SYCL shared memory API is finalized.
-   sycl::local complex_type shared_mem[FFT::shared_memory_size];
+// shared memory must hold: s_In (ffts_per_block rows of GRAMME_FLU_NXT),
+// s_Ae (ffts_per_block rows of GRAMME_NDELTA), s_Ao (ffts_per_block rows of GRAMME_NDELTA)
+   sycl::local complex_type shared_mem[FFT::ffts_per_block * (GRAMME_FLU_NXT + 2 * GRAMME_NDELTA)];
 
 // create memories for columns of various intermediate fields in shared GPU memory
    complex_type (*s_In)[GRAMFE_FLU_NXT]    = (complex_type (*)[GRAMFE_FLU_NXT]) (shared_mem);
