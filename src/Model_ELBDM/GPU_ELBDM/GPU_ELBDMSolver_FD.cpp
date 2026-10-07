@@ -10,6 +10,13 @@
 
 
 
+// CGPU_SHARED macro for SYCL shared memory
+#ifdef SYCL_LANGUAGE_VERSION
+#  define CGPU_SHARED sycl::local
+#else
+#  define CGPU_SHARED
+#endif
+
 // useful macros
 #define to1D1(z,y,x) ( __umul24(z, FLU_NXT*FLU_NXT) + __umul24(y, FLU_NXT) + x )
 #define to1D2(z,y,x) ( __umul24(z-FLU_GHOST_SIZE, PS2*PS2) + __umul24(y-FLU_GHOST_SIZE, PS2) + x-FLU_GHOST_SIZE )
@@ -107,13 +114,13 @@ __global__ void GPU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) 
 #endif
 {
 
-   __shared__ real s_In  [FLU_NIN][FLU_BLOCK_SIZE_Y][FLU_NXT];
+       CGPU_SHARED real s_In  [FLU_NIN][FLU_BLOCK_SIZE_Y][FLU_NXT];
 #  ifdef CONSERVE_MASS
-   __shared__ real s_Half[FLU_NIN][FLU_BLOCK_SIZE_Y][FLU_NXT];
-   __shared__ real s_Flux[FLU_BLOCK_SIZE_Y][PS2+1];
+    CGPU_SHARED real s_Half[FLU_NIN][FLU_BLOCK_SIZE_Y][FLU_NXT];
+    CGPU_SHARED real s_Flux[FLU_BLOCK_SIZE_Y][PS2+1];
 #  else
-   real (*s_Half)[FLU_BLOCK_SIZE_Y][FLU_NXT] = NULL;  // useless if CONSERVE_MASS is off
-   real (*s_Flux)[PS2+1]                     = NULL;  // useless if CONSERVE_MASS is off
+    real (*s_Half)[FLU_BLOCK_SIZE_Y][FLU_NXT] = NULL;  // useless if CONSERVE_MASS is off
+    real (*s_Flux)[PS2+1]                     = NULL;  // useless if CONSERVE_MASS is off
 #  endif
 
    if ( XYZ )
@@ -200,10 +207,16 @@ __device__ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
    const real Coeff3       = Taylor3_Coeff*CUBE(Coeff1);
 #  endif
 
+#ifdef SYCL_LANGUAGE_VERSION
+   const uint bx           = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_group(2);
+   const uint tx           = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(2);
+   const uint ty           = sycl::ext::oneapi::this_work_item::get_nd_item(3).get_local_id(1);
+#else
    const uint bx           = blockIdx.x;
    const uint tx           = threadIdx.x;
    const uint ty           = threadIdx.y;
-   const uint tid          = __umul24(ty,FLU_BLOCK_SIZE_X) + tx;
+#endif
+   const uint tid          = ty*FLU_BLOCK_SIZE_X + tx;
    const uint size_j       = FLU_NXT - (j_gap<<1);
    const uint size_k       = FLU_NXT - (k_gap<<1);
    const uint NColumnTotal = __umul24( size_j, size_k );    // total number of data columns to be updated
@@ -287,7 +300,9 @@ __device__ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
          }
       } // if ( tid < NColumnOnce*PS2 )
 
-      __syncthreads();
+      #ifdef SYCL_LANGUAGE_VERSION
+         sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+      #endif
 
 
 #     ifdef CONSERVE_MASS
@@ -306,7 +321,9 @@ __device__ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
          Idx += NThread;
       } // while ( Idx < NColumnOnce*NHalf )
 
-      __syncthreads();
+      #ifdef SYCL_LANGUAGE_VERSION
+         sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+      #endif
 
 
 //    3. calculate the face-center fluxes (the coefficient _dh has been absorted into the constant dT_dh2)
@@ -340,7 +357,9 @@ __device__ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
          Idx += NThread;
       } // while ( Idx < NColumnOnce*(PS2+1) )
 
-      __syncthreads();
+      #ifdef SYCL_LANGUAGE_VERSION
+         sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+      #endif
 
 
 //    4a. full-step solution (equivalent to the 3rd-order Taylor expansion)
@@ -443,7 +462,9 @@ __device__ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
          }
       } // if ( tid < NColumnOnce*PS2 )
 
-      __syncthreads();
+      #ifdef SYCL_LANGUAGE_VERSION
+         sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+      #endif
 
       Column0     += NColumnOnce;
       NColumnOnce  = MIN( NColumnTotal - Column0, FLU_BLOCK_SIZE_Y );
