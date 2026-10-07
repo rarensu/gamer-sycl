@@ -229,3 +229,19 @@ The `FFT().execute()` and `IFFT().execute()` calls must either:
 5. **Update `GPU_Asyn_FluidSolver.cpp`** — Remove cuFFTDx workspace creation
    (lines ~840–846).
 6. **Compile and test** — Build under `SYCL_LANGUAGE_VERSION` and run.
+
+## Issues to expect when wiring it in (work items 3–6, not done)
+
+1. __Ambiguous `operator*`:__ the template `operator*(const complex_type&, const OtherType&)` in `CPU_ELBDMSolver_GramFE_FFT.cpp` will probably clash with `std::complex`'s own operators. The fix is likely to delete those helper operators.
+
+2. __`std::complex` on the device:__ DPC++ supports it in kernels, but switching to `sycl::ext::oneapi::experimental::complex` may be needed on some backends.
+
+3. __Local memory sizing:__ the kernel declares `sycl::local complex_type shared_mem[FFT::shared_memory_size]`, which mixes bytes and element counts and isn't valid SYCL. It should become a `local_accessor` (or `group_local_memory`) sized as `ffts_per_block*(GRAMFE_FLU_NXT + 2*GRAMFE_NDELTA)` elements.
+
+4. __Cleanup:__
+
+   - Remove `#include <cufftdx.hpp>`, lines 546–599 of `FLU.h` (keep `GRAMFE_CUSTOM_*`), the `make_workspace` calls, and `__launch_bounds__`.
+   - Put `#include "SyclFFT.h"` in their place.
+   - Replace `cufftdx::size_of<FFT>::value` with `FFT::size`.
+
+5. __Not optimized yet:__ speed hasn't been measured. A precomputed twiddle table and padding to avoid local-memory bank conflicts are possible later improvements.

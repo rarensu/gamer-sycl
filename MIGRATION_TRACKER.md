@@ -65,6 +65,7 @@ is preserved verbatim.
 | DONE | `include/CheckError.h` | `dpct_out/include/CheckError.h` | `DEVICE_*` naming; neutral helper kept in main tree & `dpct_out/`. |
 | DONE | `include/ConstMemory.h` | `dpct_out/include/ConstMemory.h` | `renamed` to neutral `ConstMemory.h`; use this name going forward. |
 | IN PROGRESS | `include/FLU.h` | `dpct_out/include/FLU.h` | `DPCT→SYCL` fluid-header migration; `C→S` in cuFFTDx section; guarded `__CUDACC_VER_MAJOR__` for CUDA-only path; `cuFFTDx-TODO` (GramFE FFT block needs SYCL-side replacement). |
+| IN PROGRESS | `include/SyclFFT.h` | None (new file, see `doc/SyclFFT/DESIGN.md`) | New SYCL-native block FFT replacing cuFFTDx (mixed-radix 4/2/3/5/7 DIT, batched, in-place, unnormalized). Validated on host against a direct DFT for N = 64/72/108/168/300 (float & double, fwd & inv). Not yet wired in: remaining design work items 3–6 (`FLU.h`, `GPU_SetCache.cpp`, `GPU_Asyn_FluidSolver.cpp`, SYCL build/test). |
 | DONE | `include/Global.h` | `dpct_out/include/Global.h` | SYCL-only guard rejecting `NCOMP_PASSIVE==0`; `C→S` in Grackle block. |
 | DONE | `include/GPUAPI.h` | `dpct_out/include/GPUAPI.h` | `renamed` to neutral `GPUAPI.h`; all includes updated; keep neutral name. |
 | DONE | `include/POT.h` | `dpct_out/include/POT.h` | `C→S`; device macros → `__dpct_inline__`/`__dpct_noinline__`; CGPU_LOOP updated (`tx→lid`, `.get_local_range(2)`, host+device); `umul`. |
