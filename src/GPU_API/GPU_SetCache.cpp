@@ -11,7 +11,12 @@
 // fluid solver prototypes in different models
 #if   ( MODEL == HYDRO )
 #if   ( FLU_SCHEME == RTVD )
-__global__ void GPU_FluidSolver_RTVD(
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
+#else
+__global__
+#endif
+void GPU_FluidSolver_RTVD(
    real g_Fluid_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
    real g_Fluid_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
    real g_Flux     [][9][NCOMP_TOTAL][ SQR(PS2) ],
@@ -21,7 +26,11 @@ __global__ void GPU_FluidSolver_RTVD(
    const bool XYZ, const real MinDens, const real MinPres, const real MinEint, const long PassiveFloor,
    const EoS_t EoS );
 #elif ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP )
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
+#else
 __global__
+#endif
 void GPU_FluidSolver_MHM(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
          real   g_Flu_Array_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
@@ -47,10 +56,17 @@ void GPU_FluidSolver_MHM(
    const long PassiveFloor,
    const bool NormPassive, const int NNorm,
    const bool FracPassive, const int NFrac,
-   const bool JeansMinPres, const real JeansMinPres_Coeff,
+   #ifdef SYCL_LANGUAGE_VERSION
+   const EoS_t EoS, const MicroPhy_t MicroPhy, int *const c_NormIdx, int *const c_FracIdx );
+#else
    const EoS_t EoS, const MicroPhy_t MicroPhy );
+#endif
 #elif ( FLU_SCHEME == CTU )
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
+#else
 __global__
+#endif
 void GPU_FluidSolver_CTU(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
          real   g_Flu_Array_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
@@ -76,14 +92,34 @@ void GPU_FluidSolver_CTU(
    const long PassiveFloor,
    const bool NormPassive, const int NNorm,
    const bool FracPassive, const int NFrac,
-   const bool JeansMinPres, const real JeansMinPres_Coeff,
+   #ifdef SYCL_LANGUAGE_VERSION
+   const EoS_t EoS, int *const c_NormIdx, int *const c_FracIdx );
+#else
    const EoS_t EoS );
+#endif
 #endif // FLU_SCHEME
-__global__ void GPU_dtSolver_HydroCFL( real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_T][ CUBE(PS1) ],
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
+void GPU_dtSolver_HydroCFL( real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_T][ CUBE(PS1) ],
+                                         const real g_Mag_Array[][NCOMP_MAG][ PS1P1*SQR(PS1) ],
+                                         const real dh, const real Safety, const real MinPres,
+                                         const long PassiveFloor, const EoS_t EoS, const MicroPhy_t MicroPhy,
+                                         real *shared );
+#else
+__global__
+void GPU_dtSolver_HydroCFL( real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_T][ CUBE(PS1) ],
                                          const real g_Mag_Array[][NCOMP_MAG][ PS1P1*SQR(PS1) ],
                                          const real dh, const real Safety, const real MinPres,
                                          const long PassiveFloor, const EoS_t EoS, const MicroPhy_t MicroPhy );
+#endif
 #ifdef GRAVITY
+#ifdef SYCL_LANGUAGE_VERSION
+void GPU_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ CUBE(GRA_NXT) ],
+                                  const double g_Corner_Array[][3],
+                                  const real dh, const real Safety, const bool P5_Gradient,
+                                  const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,
+                                  const double ExtAcc_Time );
+#else
 __global__
 void GPU_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ CUBE(GRA_NXT) ],
                                   const double g_Corner_Array[][3],
@@ -91,30 +127,64 @@ void GPU_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ CUB
                                   const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,
                                   const double ExtAcc_Time );
 #endif
+#endif
 
 #elif ( MODEL == ELBDM )
 # if   ( WAVE_SCHEME == WAVE_FD )
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
+void GPU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+                                      real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
+                                      real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
+                                      const real dt, const real _dh, const real Eta, const bool StoreFlux,
+                                      const real Taylor3_Coeff, const bool XYZ, const real MinDens );
+#else
 __global__ void GPU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                       real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
                                       real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                       const real dt, const real _dh, const real Eta, const bool StoreFlux,
                                       const real Taylor3_Coeff, const bool XYZ, const real MinDens );
+#endif
 # elif ( WAVE_SCHEME == WAVE_GRAMFE )
 #  if   ( GRAMFE_SCHEME == GRAMFE_FFT )
-__global__ void GPU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
+void GPU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                               real g_Fluid_Out[][FLU_NOUT ][ CUBE(PS2) ],
                                               real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                               const real dt, const real _dh, const real Eta, const bool StoreFlux,
                                               const bool XYZ, const real MinDens,
-                                              typename FFT::workspace_type  Workspace,
-                                              typename IFFT::workspace_type WorkspaceInv );
+                                              typename FFT::workspace_type workspace,
+                                              typename IFFT::workspace_type workspace_inverse );
+#else
+__launch_bounds__(FFT::max_threads_per_block)
+__global__
+void GPU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+                                              real g_Fluid_Out[][FLU_NOUT ][ CUBE(PS2) ],
+                                              real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
+                                              const real dt, const real _dh, const real Eta, const bool StoreFlux,
+                                              const bool XYZ, const real MinDens,
+                                              typename FFT::workspace_type workspace,
+                                              typename IFFT::workspace_type workspace_inverse );
+#endif
 #  elif ( GRAMFE_SCHEME == GRAMFE_MATMUL )
-__global__ void GPU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
+void GPU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                                  real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
                                                  real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
-                                                 gramfe_matmul_float g_TimeEvo[][ FLU_NXT*2 ],
-                                                 const real dt, const real dh, const real Eta, const bool StoreFlux,
+                                                 gramfe_matmul_float g_Evolve[][ FLU_NXT*2 ],
+                                                 const real dt, const real _dh, const real Eta, const bool StoreFlux,
                                                  const bool XYZ, const real MinDens );
+#else
+__global__
+void GPU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
+                                                 real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
+                                                 real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
+                                                 gramfe_matmul_float g_Evolve[][ FLU_NXT*2 ],
+                                                 const real dt, const real _dh, const real Eta, const bool StoreFlux,
+                                                 const bool XYZ, const real MinDens );
+#endif
 #  else // GRAMFE_SCHEME
 #     error : ERROR : unsupported GRAMFE_SCHEME !!
 #  endif // GRAMFE_SCHEME
@@ -123,6 +193,20 @@ __global__ void GPU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUB
 # endif // WAVE_SCHEME
 
 #if ( ELBDM_SCHEME == ELBDM_HYBRID )
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
+void GPU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
+                                                  #ifdef GAMER_DEBUG
+                                                  real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
+                                                  #else
+                                                  real g_Fluid_Out[][FLU_NIN ][ CUBE(PS2) ],
+                                                  #endif
+                                                  real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
+                                                  const bool g_IsCompletelyRefined[],
+                                                                                                    const bool g_HasWaveCounterpart[][ CUBE(HYB_NXT) ],
+                                                  const real dt, const real _dh, const real Eta, const bool StoreFlux,
+                                                  const bool XYZ, const real MinDens );
+#else
 __global__ void GPU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
                                                   #ifdef GAMER_DEBUG
                                                   real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
@@ -134,6 +218,7 @@ __global__ void GPU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CU
                                                   const bool g_HasWaveCounterpart[][ CUBE(HYB_NXT) ],
                                                   const real dt, const real _dh, const real Eta, const bool StoreFlux,
                                                   const bool XYZ, const real MinDens );
+#endif
 #endif // #if ( ELBDM_SCHEME == ELBDM_HYBRID )
 
 #else // MODEL
@@ -145,13 +230,23 @@ __global__ void GPU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CU
 
 // Poisson solver prototypes
 #if   ( POT_SCHEME == SOR )
-__global__ void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ CUBE(RHO_NXT) ],
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL void GPU_PoissonSolver_SOR(
+#else
+__global__ void GPU_PoissonSolver_SOR(
+#endif
+const real g_Rho_Array    [][ CUBE(RHO_NXT) ],
                                          const real g_Pot_Array_In [][ CUBE(POT_NXT) ],
                                                real g_Pot_Array_Out[][ CUBE(GRA_NXT) ],
                                          const int Min_Iter, const int Max_Iter, const real Omega_6,
                                          const real Const, const IntScheme_t IntScheme );
 #elif ( POT_SCHEME == MG )
-__global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ CUBE(RHO_NXT) ],
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL void GPU_PoissonSolver_MG(
+#else
+__global__ void GPU_PoissonSolver_MG(
+#endif
+const real g_Rho_Array    [][ CUBE(RHO_NXT) ],
                                         const real g_Pot_Array_In [][ CUBE(POT_NXT) ],
                                               real g_Pot_Array_Out[][ CUBE(GRA_NXT) ],
                                         const real dh_Min, const int Max_Iter, const int NPre_Smooth,
@@ -162,7 +257,11 @@ __global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ CUBE(RHO_NXT
 
 // Gravity solver prototypes in different models
 #if   ( MODEL == HYDRO )
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
+#else
 __global__
+#endif
 void GPU_HydroGravitySolver(
          real   g_Flu_Array_New[][GRA_NIN][ CUBE(PS1) ],
    const real   g_Pot_Array_New[][ CUBE(GRA_NXT) ],
@@ -172,15 +271,42 @@ void GPU_HydroGravitySolver(
          char   g_DE_Array     [][ CUBE(PS1) ],
    const real   g_Emag_Array   [][ CUBE(PS1) ],
    const real dt, const real dh, const bool P5_Gradient,
-   const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,
+      const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,
+#ifdef SYCL_LANGUAGE_VERSION
+   const double TimeNew, const double TimeOld, const real MinEint,
+   real *s_pot_new
+#ifdef UNSPLIT_GRAVITY
+   , real *s_pot_old
+#endif
+   );
+#else
    const double TimeNew, const double TimeOld, const real MinEint );
+#endif
 
 #elif ( MODEL == ELBDM )
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
+void GPU_ELBDMGravitySolver(
+#else
 __global__
-void GPU_ELBDMGravitySolver(       real g_Flu_Array[][GRA_NIN][ CUBE(PS1) ],
+void GPU_ELBDMGravitySolver(
+#endif
+       real g_Flu_Array[][GRA_NIN][ CUBE(PS1) ],
                                const real g_Pot_Array[][ CUBE(GRA_NXT) ],
                                const real EtaDt, const real dh, const real Lambda );
 
+#if ( ELBDM_SCHEME == ELBDM_HYBRID )
+#ifdef SYCL_LANGUAGE_VERSION
+SYCL_EXTERNAL
+void GPU_ELBDMGravitySolver_HamiltonJacobi(
+#else
+__global__
+void GPU_ELBDMGravitySolver_HamiltonJacobi(
+#endif
+       real g_Flu_Array[][GRA_NIN][ CUBE(PS1) ],
+                                              const real g_Pot_Array[][ CUBE(GRA_NXT) ],
+                                              const real EtaDt, const real dh, const real Lambda );
+#endif
 #else
 #error : ERROR : unsupported MODEL !!
 #endif // MODEL
@@ -189,8 +315,12 @@ void GPU_ELBDMGravitySolver(       real g_Flu_Array[][GRA_NIN][ CUBE(PS1) ],
 
 
 // source-term solver prototype
+#ifdef SYCL_LANGUAGE_VERSION
+void GPU_SrcSolver_IterateAllCells(
+#else
 __global__
 void GPU_SrcSolver_IterateAllCells(
+#endif
    const real g_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)           ],
          real g_Flu_Array_Out[][FLU_NOUT_S][ CUBE(PS1)               ],
    const real g_Mag_Array_In [][NCOMP_MAG ][ SRC_NXT_P1*SQR(SRC_NXT) ],
