@@ -217,14 +217,7 @@
 // ## CPU/GPU integration ##
 // #########################
 
-// GPU device function specifier
-#ifdef SYCL_LANGUAGE_VERSION
-# define GPU_DEVICE          __dpct_inline__
-# define GPU_DEVICE_NOINLINE __dpct_noinline__
-#else
-# define GPU_DEVICE
-# define GPU_DEVICE_NOINLINE
-#endif
+// GPU device-function specifier (defined in Macro.h)
 
 // unified CPU/GPU loop
 #ifdef SYCL_LANGUAGE_VERSION

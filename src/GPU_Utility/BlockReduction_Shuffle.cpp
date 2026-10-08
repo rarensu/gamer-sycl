@@ -5,13 +5,7 @@
 #include <dpct/dpct.hpp>
 #endif
 
-#ifndef GPU_DEVICE
-#  ifdef SYCL_LANGUAGE_VERSION
-#    define GPU_DEVICE __dpct_inline__
-#  else
-#    define GPU_DEVICE __forceinline__ __device__
-#  endif
-#endif
+// GPU_DEVICE / GPU_DEVICE_NOINLINE (defined in Macro.h)
 
 #ifdef GPU
 
