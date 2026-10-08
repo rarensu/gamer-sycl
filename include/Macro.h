@@ -1354,4 +1354,12 @@
 
 
 
+// GPU shared-memory keyword: maps to sycl::local in SYCL mode, empty in CUDA mode
+#ifdef SYCL_LANGUAGE_VERSION
+#  define CGPU_SHARED sycl::local
+#else
+#  define CGPU_SHARED
+#endif
+
+
 #endif  // #ifndef __MACRO_H__

@@ -84,10 +84,10 @@ __global__ void GPU_FluidSolver_RTVD(
    const EoS_t EoS )
 {
 
-   __shared__ real s_cu    [FLU_BLOCK_SIZE_Y][5][FLU_NXT];
-   __shared__ real s_cw    [FLU_BLOCK_SIZE_Y][5][FLU_NXT];
-   __shared__ real s_flux  [FLU_BLOCK_SIZE_Y][5][FLU_NXT];
-   __shared__ real s_RLflux[FLU_BLOCK_SIZE_Y][5][FLU_NXT];
+   CGPU_SHARED real s_cu    [FLU_BLOCK_SIZE_Y][5][FLU_NXT];
+   CGPU_SHARED real s_cw    [FLU_BLOCK_SIZE_Y][5][FLU_NXT];
+   CGPU_SHARED real s_flux  [FLU_BLOCK_SIZE_Y][5][FLU_NXT];
+   CGPU_SHARED real s_RLflux[FLU_BLOCK_SIZE_Y][5][FLU_NXT];
 
    if ( XYZ )
    {
@@ -170,10 +170,17 @@ __device__ void GPU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
 #endif
 {
 
+   #ifdef SYCL_LANGUAGE_VERSION
+   const uint bx               = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_group(2);
+   const uint tx               = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(2);
+   const uint ty               = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(1);
+   const uint dj               = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_range(1);
+#else
    const uint bx               = blockIdx.x;
    const uint tx               = threadIdx.x;
    const uint ty               = threadIdx.y;
    const uint dj               = blockDim.y;
+#endif
    const uint size_j           = FLU_NXT - (j_gap<<1);
    const uint size_k           = FLU_NXT - (k_gap<<1);
    const uint NColumn          = __umul24( size_j, size_k );
@@ -248,8 +255,10 @@ __device__ void GPU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
       s_cu[ty][2][i] = c*Fluid[2];
       s_cu[ty][3][i] = c*Fluid[3];
       s_cu[ty][4][i] = c*Fluid[4];
+#ifdef SYCL_LANGUAGE_VERSION
 
-      __syncthreads();
+      sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
 
 //    (a2). set flux defined in the right-hand surface of cell by the upwind scheme
@@ -259,8 +268,10 @@ __device__ void GPU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
             s_flux[ty][v][i] = (real)0.5*(  ( s_cu[ty][v][i ]+s_cw[ty][v][i ] ) -
                                             ( s_cu[ty][v][ip]-s_cw[ty][v][ip] )  );
       }
+#ifdef SYCL_LANGUAGE_VERSION
 
-      __syncthreads();
+      sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
 
 //    (a3). evaluate the intermidiate values (u_half)
@@ -316,8 +327,10 @@ __device__ void GPU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
       {
          for (int v=0; v<5; v++)    s_RLflux[ty][v][i] = (real)0.5*( s_cu[ty][v][i] + s_cw[ty][v][i] );
       }
+#ifdef SYCL_LANGUAGE_VERSION
 
-      __syncthreads();
+      sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
 
       if ( i > 1  &&  i < FLU_NXT-3 )
@@ -333,8 +346,10 @@ __device__ void GPU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
                s_flux[ty][v][i] += Temp / ( s_RLflux[ty][v][ip]-s_RLflux[ty][v][im] );
          }
       }
+#ifdef SYCL_LANGUAGE_VERSION
 
-      __syncthreads();
+      sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
 
 //    (b3). set the left-moving flux defined in the left-hand surface by the TVD scheme, get the total flux
@@ -343,8 +358,10 @@ __device__ void GPU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
       {
          for (int v=0; v<5; v++)    s_RLflux[ty][v][i] = (real)0.5*( s_cu[ty][v][ip] - s_cw[ty][v][ip] );
       }
+#ifdef SYCL_LANGUAGE_VERSION
 
-      __syncthreads();
+      sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
 
       if ( i > 1  &&  i < FLU_NXT-3 )
@@ -360,8 +377,10 @@ __device__ void GPU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
                s_flux[ty][v][i] -= Temp / ( s_RLflux[ty][v][im]-s_RLflux[ty][v][ip] );
          }
       }
+#ifdef SYCL_LANGUAGE_VERSION
 
-      __syncthreads();
+      sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
 
 //    (b4). advance fluid by one full time-step
@@ -433,16 +452,18 @@ __device__ void GPU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
 
 
 //    if the index k exceeds the maximum allowed value --> reset (j,k) to harmless values and wait for other
-//    threads (all threads must exist the while loop "at the same time", otherwise __syncthreads will fail !!)
+//    threads (all threads must exist the while loop "at the same time", otherwise the group barrier will fail !!)
       if ( k >= k_end )
       {
          j       = 0;
          k       = 0;
          RuleOut = true;
       }
+#ifdef SYCL_LANGUAGE_VERSION
 
 
-      __syncthreads();
+      sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
    }
    while ( Column0 < NColumn );

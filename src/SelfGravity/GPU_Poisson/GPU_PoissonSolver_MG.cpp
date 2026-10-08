@@ -144,22 +144,24 @@ __global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_
 
 
 // allocate shared memory
-   __shared__ real s_Sol_Lv0[ NGRID_LV0*NGRID_LV0*NGRID_LV0 ];
+   CGPU_SHARED real s_Sol_Lv0[ NGRID_LV0*NGRID_LV0*NGRID_LV0 ];
 #  ifndef FLOAT8
-   __shared__ real s_RHS_Lv0[ NGRID_LV0*NGRID_LV0*NGRID_LV0 ];
-   __shared__ real s_SolSum[POT_NTHREAD];
-   __shared__ real s_Error [POT_NTHREAD];
+   CGPU_SHARED real s_RHS_Lv0[ NGRID_LV0*NGRID_LV0*NGRID_LV0 ];
+   CGPU_SHARED real s_SolSum[POT_NTHREAD];
+   CGPU_SHARED real s_Error [POT_NTHREAD];
 #  else // shared memory is too small for double precision --> use global memory instead
-   __shared__ real *s_RHS_Lv0;
-   __shared__ real *s_SolSum;
-   __shared__ real *s_Error;
+   CGPU_SHARED real *s_RHS_Lv0;
+   CGPU_SHARED real *s_SolSum;
+   CGPU_SHARED real *s_Error;
    if ( tid == 0 )
    {
       s_RHS_Lv0 = (real*)malloc( sizeof(real*)*NGRID_LV0*NGRID_LV0*NGRID_LV0 );
       s_SolSum  = (real*)malloc( sizeof(real*)*POT_NTHREAD );
       s_Error   = (real*)malloc( sizeof(real*)*POT_NTHREAD );
    }
-   __syncthreads();
+#ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 #  ifdef GAMER_DEBUG
    if ( tid == 0 )
    {
@@ -199,9 +201,11 @@ __global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_
    real *s_Def_Lv3 = s_Def_Lv2 + NGRID_LV2*NGRID_LV2*NGRID_LV2;
 
 // use global memory for s_RHS_Lv1 because s_RHS_Lv1 and s_Def_Lv0 cannot share the same memory space
-   __shared__ real *s_RHS_Lv1;
+   CGPU_SHARED real *s_RHS_Lv1;
    if ( tid == 0 )   s_RHS_Lv1 = (real*) malloc( sizeof(real)*NGRID_LV1*NGRID_LV1*NGRID_LV1 );
-   __syncthreads();
+#ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 #  ifdef GAMER_DEBUG
    if ( tid == 0  &&  s_RHS_Lv1 == NULL )
    {
@@ -211,16 +215,16 @@ __global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_
    }
 #  endif
 #  else // #ifdef REUSE_SHARED ... else ...
-   __shared__ real s_Sol_Lv1[ NGRID_LV1*NGRID_LV1*NGRID_LV1 ];
-   __shared__ real s_Sol_Lv2[ NGRID_LV2*NGRID_LV2*NGRID_LV2 ];
-   __shared__ real s_RHS_Lv1[ NGRID_LV1*NGRID_LV1*NGRID_LV1 ];
-   __shared__ real s_RHS_Lv2[ NGRID_LV2*NGRID_LV2*NGRID_LV2 ];
-   __shared__ real s_Def_Lv1[ NGRID_LV1*NGRID_LV1*NGRID_LV1 ];
-   __shared__ real s_Def_Lv2[ NGRID_LV2*NGRID_LV2*NGRID_LV2 ];
+   CGPU_SHARED real s_Sol_Lv1[ NGRID_LV1*NGRID_LV1*NGRID_LV1 ];
+   CGPU_SHARED real s_Sol_Lv2[ NGRID_LV2*NGRID_LV2*NGRID_LV2 ];
+   CGPU_SHARED real s_RHS_Lv1[ NGRID_LV1*NGRID_LV1*NGRID_LV1 ];
+   CGPU_SHARED real s_RHS_Lv2[ NGRID_LV2*NGRID_LV2*NGRID_LV2 ];
+   CGPU_SHARED real s_Def_Lv1[ NGRID_LV1*NGRID_LV1*NGRID_LV1 ];
+   CGPU_SHARED real s_Def_Lv2[ NGRID_LV2*NGRID_LV2*NGRID_LV2 ];
 #  if ( MAX_NLV == 4 )
-   __shared__ real s_Sol_Lv3[ NGRID_LV3*NGRID_LV3*NGRID_LV3 ];
-   __shared__ real s_RHS_Lv3[ NGRID_LV3*NGRID_LV3*NGRID_LV3 ];
-   __shared__ real s_Def_Lv3[ NGRID_LV3*NGRID_LV3*NGRID_LV3 ];
+   CGPU_SHARED real s_Sol_Lv3[ NGRID_LV3*NGRID_LV3*NGRID_LV3 ];
+   CGPU_SHARED real s_RHS_Lv3[ NGRID_LV3*NGRID_LV3*NGRID_LV3 ];
+   CGPU_SHARED real s_Def_Lv3[ NGRID_LV3*NGRID_LV3*NGRID_LV3 ];
 #  endif
 #  endif // #ifdef REUSE_SHARED ... else ...
 
@@ -246,7 +250,9 @@ __global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_
       s_CPot[t] = g_Pot_Array_In[bid][t];
       t += POT_NTHREAD;
    }
-   __syncthreads();
+#ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
 
 
@@ -403,7 +409,9 @@ __global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_
 
       } // for (int z=CIDz; z<POT_NXT-1; z+=N_CSlice)
    } // if ( tid < N_CSlice*(POT_NXT-2)*(POT_NXT-2) )
-   __syncthreads();
+#ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
 
 
@@ -417,7 +425,9 @@ __global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_
 #  if ( MAX_NLV == 4 )
    t = tid;    while ( t < NGRID_LV3*NGRID_LV3*NGRID_LV3 )  {  s_Def_Lv3[t] = (real)0.0;  t += POT_NTHREAD; }
 #  endif
-   __syncthreads();
+#ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 #  endif
 
 // c2 load density into shared memory
@@ -447,7 +457,9 @@ __global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_
 //       initialize the correction at the next level to zero
          t = tid;
          while ( t < NGrid[Lv+1]*NGrid[Lv+1]*NGrid[Lv+1] )  {  s_Sol[Lv+1][t] = (real)0.0;  t += POT_NTHREAD; }
-         __syncthreads();
+#ifdef SYCL_LANGUAGE_VERSION
+         sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
       }
 
 
@@ -516,7 +528,7 @@ __global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_
 // Description :  Use Gauss-Seidel method for smoothing
 //
 // Note        :  1. B.C. should be stored in the input array "Sol"
-//                2. "__syncthreads" is invoked in the end of this function
+//                2. "sycl::group_barrier" is invoked in the end of this function
 //
 // Parameter   :  Sol   : 1D array to store the output solution to the Poisson equation
 //                RHS   : 1D array storing the RHS of the Poisson equation
@@ -575,8 +587,10 @@ GPU_DEVICE void Smoothing( real *Sol, const real *RHS, const real dh, const uint
 
          Idx += POT_NTHREAD;
       } // while ( Idx < NInner_2 )
+#ifdef SYCL_LANGUAGE_VERSION
 
-      __syncthreads();
+      sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
    } // for (int pass=0; pass<2; pass++)
 
@@ -591,7 +605,7 @@ GPU_DEVICE void Smoothing( real *Sol, const real *RHS, const real dh, const uint
 // Note        :  1. B.C. should be stored in the input array "Sol"
 //                2. It is assumed that the boundary values of Def have already been initialized as zero
 //                   (unless REUSE_SHARED is defined)
-//                3. "__syncthreads" is invoked in the end of this function
+//                3. "sycl::group_barrier" is invoked in the end of this function
 //
 // Parameter   :  Sol            : 1D array storing the input solution to the Poisson equation
 //                RHS            : 1D array storing the RHS of the Poisson equation
@@ -655,8 +669,10 @@ GPU_DEVICE void ComputeDefect( const real *Sol, const real *RHS, real *Def, cons
       Idx += POT_NTHREAD;
    }
 #  endif
+#ifdef SYCL_LANGUAGE_VERSION
 
-   __syncthreads();
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
 } // FUNCTION : ComputeDefect
 
@@ -666,7 +682,7 @@ GPU_DEVICE void ComputeDefect( const real *Sol, const real *RHS, real *Def, cons
 // Function    :  LoadRho
 // Description :  Load density field from the global memory to the shared memory
 //
-// Note        :  1. "__syncthreads" is invoked in the end of this function
+// Note        :  1. "sycl::group_barrier" is invoked in the end of this function
 //                2. Loaded data will be multiplied by "Poi_Coeff"
 //                3. The size of the shared-memory array "s_Rho" is "RHO_NXT+2" (padded with one zero on each
 //                   side in each direction)
@@ -693,8 +709,10 @@ GPU_DEVICE void LoadRho( const real *g_Rho, real *s_Rho, const real Poi_Coeff, c
 
       g_Idx += POT_NTHREAD;
    }
+#ifdef SYCL_LANGUAGE_VERSION
 
-   __syncthreads();
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
 } // LoadRho
 
@@ -709,7 +727,7 @@ GPU_DEVICE void LoadRho( const real *g_Rho, real *s_Rho, const real Poi_Coeff, c
 //                   --> N^3 cells define a 3D grid with the size equal to (N-1)^3
 //                2. Fine-grid and coarse-grid data at boundaries are assumed to be zero (because defect at
 //                   boundaries are always zero)
-//                3. "__syncthreads" is invoked in the end of this function
+//                3. "sycl::group_barrier" is invoked in the end of this function
 //
 // Parameter   :  FData    : 1D array storing the input fine-grid data
 //                CData    : 1D array to store the output coarse-grid data
@@ -805,8 +823,10 @@ GPU_DEVICE void Restrict( const real *FData, real *CData, const uint NGrid_F, co
       CIdx += POT_NTHREAD;
 
    } // while ( CIdx < NGrid_Cm2_3 )
+#ifdef SYCL_LANGUAGE_VERSION
 
-   __syncthreads();
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
 } // FUNCTION : Restrict
 
@@ -882,8 +902,10 @@ GPU_DEVICE void Prolongate_and_Correct( const real *CData, real *FData, const ui
       FIdx += POT_NTHREAD;
 
    } // while ( FIdx < NGrid_Fm2_3 )
+#ifdef SYCL_LANGUAGE_VERSION
 
-   __syncthreads();
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
 } // FUNCTION : Prolongate_and_Correct
 
@@ -893,7 +915,7 @@ GPU_DEVICE void Prolongate_and_Correct( const real *CData, real *FData, const ui
 // Function    :  EstimateError
 // Description :  Estimate the L1 error
 //
-// Note        :  1. "__syncthreads" is invoked in the end of this function
+// Note        :  1. "sycl::group_barrier" is invoked in the end of this function
 //                2. Shared-memory arrays "s_Error" and "s_SolSum" are used for GPU reduction
 //
 // Parameter   :  Sol      : 1D array storing the input solution to the Poisson equation
@@ -948,8 +970,10 @@ GPU_DEVICE void EstimateError( const real *Sol, const real *RHS, const real dh, 
 
       Idx += POT_NTHREAD;
    } // while ( Idx < NGRID_M2*NGRID_M2*NGRID_M2 )
+#ifdef SYCL_LANGUAGE_VERSION
 
-   __syncthreads();
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
 
 // 2. perform the reduction operation to get the L1 error
@@ -972,7 +996,9 @@ GPU_DEVICE void EstimateError( const real *Sol, const real *RHS, const real dh, 
       s_Error [tid] += s_Error [ tid + 256 ];
       s_SolSum[tid] += s_SolSum[ tid + 256 ];
    }
-   __syncthreads();
+#ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 #  endif
 
 #  if ( POT_NTHREAD >= 256 )
@@ -981,7 +1007,9 @@ GPU_DEVICE void EstimateError( const real *Sol, const real *RHS, const real dh, 
       s_Error [tid] += s_Error [ tid + 128 ];
       s_SolSum[tid] += s_SolSum[ tid + 128 ];
    }
-   __syncthreads();
+#ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 #  endif
 
 #  if ( POT_NTHREAD >= 128 )
@@ -990,7 +1018,9 @@ GPU_DEVICE void EstimateError( const real *Sol, const real *RHS, const real dh, 
       s_Error [tid] += s_Error [ tid + 64 ];
       s_SolSum[tid] += s_SolSum[ tid + 64 ];
    }
-   __syncthreads();
+#ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 #  endif
 
 // adopting warp-synchronous mechanism
@@ -1016,7 +1046,9 @@ GPU_DEVICE void EstimateError( const real *Sol, const real *RHS, const real dh, 
 
       s_vErr[tid] = dh2*s_vErr[tid]/s_vSol[tid];
    }
-   __syncthreads();
+#ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
 #  undef NGRID_M2
 

@@ -168,24 +168,24 @@ __global__ void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO
    uint PotID, RhoID, DispPotID, DispRhoID, Disp;
    real Residual, Residual_Total_Old, Residual_ThreadSum;
 
-   __shared__ real s_Residual_Total;
+   CGPU_SHARED real s_Residual_Total;
 
 #  ifdef SOR_USE_PADDING
-   __shared__ real s_FPot[ POT_NXT_F*POT_NXT_F*POT_NXT_F + POT_PAD*4*POT_NXT_F ];
+   CGPU_SHARED real s_FPot[ POT_NXT_F*POT_NXT_F*POT_NXT_F + POT_PAD*4*POT_NXT_F ];
 #  else
-   __shared__ real s_FPot[ POT_NXT_F*POT_NXT_F*POT_NXT_F ];
+   CGPU_SHARED real s_FPot[ POT_NXT_F*POT_NXT_F*POT_NXT_F ];
 #  endif
 
 #  ifdef SOR_CPOT_SHARED
-   __shared__ real s_CPot[ POT_NXT  *POT_NXT  *POT_NXT   ];
+   CGPU_SHARED real s_CPot[ POT_NXT  *POT_NXT  *POT_NXT   ];
 #  endif
 
 #  ifdef SOR_RHO_SHARED
-   __shared__ real s_Rho_Array[ RHO_NXT*RHO_NXT*RHO_NXT ];
+   CGPU_SHARED real s_Rho_Array[ RHO_NXT*RHO_NXT*RHO_NXT ];
 #  endif
 
    // shared-memory buffer for the BlockReduction_* helper functions (SYCL path passes this explicitly)
-   __shared__ real s_Reduction_Buf[RED_NTHREAD];
+   CGPU_SHARED real s_Reduction_Buf[RED_NTHREAD];
 
 
 // a1. load the fine-grid density into the shared memory
@@ -193,7 +193,9 @@ __global__ void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO
 #  ifdef SOR_RHO_SHARED
    t = ID;
    do {  s_Rho_Array[t] = g_Rho_Array[bid][t];  t += (POT_NTHREAD);}     while ( t < RHO_NXT*RHO_NXT*RHO_NXT);
-   __syncthreads();
+#ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 #  else
    const real *s_Rho_Array = g_Rho_Array[bid];
 #  endif
@@ -204,7 +206,9 @@ __global__ void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO
 #  ifdef SOR_CPOT_SHARED
    t = ID;
    do {  s_CPot[t] = g_Pot_Array_In[bid][t];    t += POT_NTHREAD; }     while ( t < POT_NXT*POT_NXT*POT_NXT );
-   __syncthreads();
+#ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 #  else
    const real *s_CPot = g_Pot_Array_In[bid];
 #  endif
@@ -369,7 +373,9 @@ __global__ void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO
 
       } // for (int z=CIDz; z<POT_NXT-1; z+=N_CSlice)
    } // if ( ID < N_CSlice*(POT_NXT-2)*(POT_NXT-2) )
-   __syncthreads();
+#ifdef SYCL_LANGUAGE_VERSION
+   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
 
 
@@ -419,8 +425,10 @@ __global__ void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO
          } // for (int ZLoop=0; ZLoop<RHO_NXT; ZLoop+=bdim_z)
 
          Disp = DispOdd;
+#ifdef SYCL_LANGUAGE_VERSION
 
-         __syncthreads();
+         sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
       } // for (int pass=0; pass<2; pass++)
 
@@ -445,7 +453,9 @@ __global__ void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO
 
 //       broadcast to all threads
          if ( ID == 0 )    s_Residual_Total = Residual_ThreadSum;
-         __syncthreads();
+#ifdef SYCL_LANGUAGE_VERSION
+         sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
 
 //       (c3). termination criterion
@@ -455,8 +465,10 @@ __global__ void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO
          Residual_Total_Old = s_Residual_Total;
 
       } // if ( Iter+1 >= Min_Iter  &&  Iter % SOR_MOD_REDUCTION == 0 )
+#ifdef SYCL_LANGUAGE_VERSION
 
-      __syncthreads();
+      sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
+#endif
 
    } // for (uint Iter=0; Iter<Max_Iter; Iter++)
 

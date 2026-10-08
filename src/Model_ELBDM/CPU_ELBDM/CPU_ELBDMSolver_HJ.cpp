@@ -24,12 +24,6 @@
 # define CGPU_FLU_BLOCK_SIZE_Y   1
 #endif
 
-#ifdef SYCL_LANGUAGE_VERSION
-#define CGPU_SHARED sycl::local
-#else
-#define CGPU_SHARED
-#endif
-
 GPU_DEVICE
 static uint get1D1(uint k, uint j, uint i, int XYZ) {
    switch ( XYZ )
