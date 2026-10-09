@@ -3,8 +3,6 @@
 
 
 
-#include <sycl/sycl.hpp>
-#include <dpct/dpct.hpp>
 #include "FLU.h"
 
 #if ( MODEL == HYDRO  &&  defined MHD  &&  !defined SRHD )

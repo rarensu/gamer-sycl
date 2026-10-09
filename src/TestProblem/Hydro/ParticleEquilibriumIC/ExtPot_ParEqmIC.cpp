@@ -1,6 +1,4 @@
 
-#include <sycl/sycl.hpp>
-#include <dpct/dpct.hpp>
 #include "POT.h"
 #ifdef SYCL_LANGUAGE_VERSION
 #include "CheckError.h"

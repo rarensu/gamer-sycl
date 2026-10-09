@@ -3,8 +3,6 @@
 
 
 
-#include <sycl/sycl.hpp>
-#include <dpct/dpct.hpp>
 #include "FLU.h"
 
 #ifdef COSMIC_RAY
