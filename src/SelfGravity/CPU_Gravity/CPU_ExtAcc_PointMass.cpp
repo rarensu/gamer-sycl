@@ -145,11 +145,7 @@ static void ExtAcc_PointMass( real Acc[], const double x, const double y, const 
 // III. Set initialization functions
 // =================================
 
-#ifdef __CUDACC__
-#  define FUNC_SPACE __device__ static
-#else
-#  define FUNC_SPACE            static
-#endif
+#  define FUNC_SPACE static
 
 FUNC_SPACE ExtAcc_t ExtAcc_Ptr = ExtAcc_PointMass;
 
@@ -168,27 +164,20 @@ FUNC_SPACE ExtAcc_t ExtAcc_Ptr = ExtAcc_PointMass;
 //
 // Return      :  CPU/GPUExtAcc_Ptr
 //-----------------------------------------------------------------------------------------
-#ifdef __CUDACC__
-__host__
-void SetGPUExtAcc_PointMass( ExtAcc_t &GPUExtAcc_Ptr )
-{
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &GPUExtAcc_Ptr, ExtAcc_Ptr, sizeof(ExtAcc_t) )  );
-}
-
-#elif defined(SYCL_LANGUAGE_VERSION)
+#ifdef SYCL_LANGUAGE_VERSION
 void SetGPUExtAcc_PointMass( ExtAcc_t &GPUExtAcc_Ptr )
 {
    GPUExtAcc_Ptr = ExtAcc_Ptr;
 }
 
-#else // #ifdef __CUDACC__
+#else // !SYCL_LANGUAGE_VERSION
 
 void SetCPUExtAcc_PointMass( ExtAcc_t &CPUExtAcc_Ptr )
 {
    CPUExtAcc_Ptr = ExtAcc_Ptr;
 }
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
 
 

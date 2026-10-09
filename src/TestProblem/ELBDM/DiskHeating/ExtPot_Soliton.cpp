@@ -132,11 +132,7 @@ static real ExtPot_Soliton( const double x, const double y, const double z, cons
 // III. Set initialization functions
 // =================================
 
-#ifdef __CUDACC__
-#  define FUNC_SPACE __device__ static
-#else
-#  define FUNC_SPACE            static
-#endif
+#  define FUNC_SPACE static
 
 FUNC_SPACE ExtPot_t ExtPot_Ptr = ExtPot_Soliton;
 
@@ -155,27 +151,20 @@ FUNC_SPACE ExtPot_t ExtPot_Ptr = ExtPot_Soliton;
 //
 // Return      :  CPU/GPUExtPot_Ptr
 //-----------------------------------------------------------------------------------------
-#ifdef __CUDACC__
-__host__
-void SetGPUExtPot_Soliton( ExtPot_t &GPUExtPot_Ptr )
-{
-   DEVICE_CHECK_ERROR(  cudaMemcpyFromSymbol( &GPUExtPot_Ptr, ExtPot_Ptr, sizeof(ExtPot_t) )  );
-}
-
-#elif defined(SYCL_LANGUAGE_VERSION)
+#ifdef SYCL_LANGUAGE_VERSION
 void SetGPUExtPot_Soliton( ExtPot_t &GPUExtPot_Ptr )
 {
    GPUExtPot_Ptr = ExtPot_Ptr;
 }
 
-#else // #ifdef __CUDACC__
+#else // !SYCL_LANGUAGE_VERSION
 
 void SetCPUExtPot_Soliton( ExtPot_t &CPUExtPot_Ptr )
 {
    CPUExtPot_Ptr = ExtPot_Ptr;
 }
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
 
 
