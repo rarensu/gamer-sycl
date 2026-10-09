@@ -1,5 +1,7 @@
+#ifdef SYCL_LANGUAGE_VERSION
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
+#endif
 #include "POT.h"
 
 #ifdef GRAVITY

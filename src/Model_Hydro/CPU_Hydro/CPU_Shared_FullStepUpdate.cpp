@@ -3,8 +3,10 @@
 
 
 
+#ifdef SYCL_LANGUAGE_VERSION
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
+#endif
 #include "FLU.h"
 
 #if (  MODEL == HYDRO  &&  ( FLU_SCHEME == MHM || FLU_SCHEME == MHM_RP || FLU_SCHEME == CTU )  )

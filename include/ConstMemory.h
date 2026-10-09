@@ -1,10 +1,15 @@
 #ifndef __CONSTMEMORY_H__
 #define __CONSTMEMORY_H__
 
-#include <sycl/sycl.hpp>
-#include <dpct/dpct.hpp>
 #include "Macro.h"
 #include "Typedef.h"
+
+#ifdef SYCL_LANGUAGE_VERSION
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
+
+
+
 
 
 
@@ -41,5 +46,7 @@ inline dpct::constant_memory<int, 1> c_Src_EC_AuxArray_Int(SRC_NAUX_EC);
 #endif
 inline dpct::constant_memory<double, 1> c_Src_User_AuxArray_Flt(SRC_NAUX_USER);
 inline dpct::constant_memory<int, 1> c_Src_User_AuxArray_Int(SRC_NAUX_USER);
+
+#endif // SYCL_LANGUAGE_VERSION
 
 #endif // #ifndef __CONSTMEMORY_H__

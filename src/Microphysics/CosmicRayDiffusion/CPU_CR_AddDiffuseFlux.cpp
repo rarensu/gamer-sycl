@@ -3,8 +3,10 @@
 
 
 
+#ifdef SYCL_LANGUAGE_VERSION
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
+#endif
 #include "FLU.h"
 
 #ifdef CR_DIFFUSION

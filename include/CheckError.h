@@ -3,12 +3,13 @@
 
 
 
-#include <sycl/sycl.hpp>
-#include <dpct/dpct.hpp>
 #include "Macro.h"
 
-
 void Aux_Error( const char *File, const int Line, const char *Func, const char *Format, ... );
+
+#ifdef SYCL_LANGUAGE_VERSION
+#include <sycl/sycl.hpp>
+#include <dpct/dpct.hpp>
 
 
 // CUDA error check
@@ -36,6 +37,6 @@ inline void DEVICE_Check_Error( dpct::err0 Return, const char *File, const int L
       Aux_Error( ERROR_INFO, "CUDA ERROR in memory allocation : %s !!\n", dpct::get_error_string_dummy(Return) );  \
 }
 
-
+#endif // SYCL_LANGUAGE_VERSION
 
 #endif // #ifndef __CHECK_ERROR_H__

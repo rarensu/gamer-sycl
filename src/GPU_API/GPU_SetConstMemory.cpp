@@ -1,8 +1,10 @@
 // define DEFINE_GLOBAL to declare all constant variables here
 // --> must define it BEFORE including GPUAPI.h since the latter will include "Macro.h" to set SET_GLOBAL()
 #define DEFINE_GLOBAL
+#ifdef SYCL_LANGUAGE_VERSION
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
+#endif
 #include "GPUAPI.h"
 #include "ConstMemory.h"
 #undef DEFINE_GLOBAL
