@@ -302,7 +302,11 @@ void Src_PassData2GPU_ExactCooling()
 // IV. Set initialization functions
 // ================================
 
+#ifdef SYCL_LANGUAGE_VERSION
 static dpct::global_memory<SrcFunc_t, 0> SrcFunc_Ptr(Src_ExactCooling);
+#else
+static SrcFunc_t SrcFunc_Ptr = Src_ExactCooling;
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 //-----------------------------------------------------------------------------------------
 // Function    :  Src_SetCPU/GPUFunc_ExactCooling

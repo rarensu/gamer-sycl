@@ -272,7 +272,11 @@ void Src_PassData2GPU_Deleptonization()
 // IV. Set initialization functions
 // ================================
 
+#ifdef SYCL_LANGUAGE_VERSION
 static dpct::global_memory<SrcFunc_t, 0> SrcFunc_Ptr(Src_Deleptonization);
+#else
+static SrcFunc_t SrcFunc_Ptr = Src_Deleptonization;
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 //-----------------------------------------------------------------------------------------
 // Function    :  Src_SetCPU/GPUFunc_Deleptonization

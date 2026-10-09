@@ -263,6 +263,7 @@ static real EoS_DensPres2CSqr_TaubMathews( const real Dens, const real Pres, con
 #  define FUNC_SPACE            static
 #endif
 
+#ifdef SYCL_LANGUAGE_VERSION
 static dpct::global_memory<EoS_GUESS_t, 0>
     EoS_GuessHTilde_Ptr(EoS_GuessHTilde_TaubMathews);
 static dpct::global_memory<EoS_H2TEM_t, 0>
@@ -271,6 +272,12 @@ static dpct::global_memory<EoS_TEM2H_t, 0>
     EoS_Temp2HTilde_Ptr(EoS_Temp2HTilde_TaubMathews);
 static dpct::global_memory<EoS_DP2C_t, 0>
     EoS_DensPres2CSqr_Ptr(EoS_DensPres2CSqr_TaubMathews);
+#else
+static EoS_GUESS_t EoS_GuessHTilde_Ptr  = EoS_GuessHTilde_TaubMathews;
+static EoS_H2TEM_t EoS_HTilde2Temp_Ptr  = EoS_HTilde2Temp_TaubMathews;
+static EoS_TEM2H_t EoS_Temp2HTilde_Ptr  = EoS_Temp2HTilde_TaubMathews;
+static EoS_DP2C_t  EoS_DensPres2CSqr_Ptr = EoS_DensPres2CSqr_TaubMathews;
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 //-----------------------------------------------------------------------------------------
 // Function    :  EoS_SetCPU/GPUFunc_TaubMathews

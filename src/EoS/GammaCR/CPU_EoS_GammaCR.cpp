@@ -535,6 +535,7 @@ static real EoS_GasEint2GasPres_GammaCR( const real Eint_Gas,
 #  define FUNC_SPACE            static
 #endif
 
+#ifdef SYCL_LANGUAGE_VERSION
 static dpct::global_memory<EoS_DE2P_t, 0>
     EoS_DensEint2Pres_Ptr(EoS_DensEint2Pres_GammaCR);
 static dpct::global_memory<EoS_DP2E_t, 0>
@@ -554,6 +555,18 @@ static dpct::global_memory<EoS_GP2GE_t, 0>
     EoS_GasPres2GasEint_Ptr(EoS_GasPres2GasEint_GammaCR);
 static dpct::global_memory<EoS_GE2GP_t, 0>
     EoS_GasEint2GasPres_Ptr(EoS_GasEint2GasPres_GammaCR);
+#else
+static EoS_DE2P_t     EoS_DensEint2Pres_Ptr      = EoS_DensEint2Pres_GammaCR;
+static EoS_DP2E_t     EoS_DensPres2Eint_Ptr      = EoS_DensPres2Eint_GammaCR;
+static EoS_DP2C_t     EoS_DensPres2CSqr_Ptr      = EoS_DensPres2CSqr_GammaCR;
+static EoS_DE2T_t     EoS_DensEint2Temp_Ptr      = EoS_DensEint2Temp_GammaCR;
+static EoS_DT2P_t     EoS_DensTemp2Pres_Ptr      = EoS_DensTemp2Pres_GammaCR;
+static EoS_DE2S_t     EoS_DensEint2Entr_Ptr      = EoS_DensEint2Entr_GammaCR;
+static EoS_GENE_t     EoS_General_Ptr            = EoS_General_GammaCR;
+static EoS_CRE2CRP_t  EoS_CREint2CRPres_Ptr      = EoS_CREint2CRPres_GammaCR;
+static EoS_GP2GE_t    EoS_GasPres2GasEint_Ptr    = EoS_GasPres2GasEint_GammaCR;
+static EoS_GE2GP_t    EoS_GasEint2GasPres_Ptr    = EoS_GasEint2GasPres_GammaCR;
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 //-----------------------------------------------------------------------------------------
 // Function    :  EoS_SetCPU/GPUFunc_GammaCR

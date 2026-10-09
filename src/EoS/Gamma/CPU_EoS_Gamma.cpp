@@ -368,6 +368,7 @@ static void EoS_General_Gamma( const int Mode, real Out[], const real In_Flt[], 
 #  define FUNC_SPACE            static
 #endif
 
+#ifdef SYCL_LANGUAGE_VERSION
 static dpct::global_memory<EoS_DE2P_t, 0>
     EoS_DensEint2Pres_Ptr(EoS_DensEint2Pres_Gamma);
 static dpct::global_memory<EoS_DP2E_t, 0>
@@ -381,6 +382,15 @@ static dpct::global_memory<EoS_DT2P_t, 0>
 static dpct::global_memory<EoS_DE2S_t, 0>
     EoS_DensEint2Entr_Ptr(EoS_DensEint2Entr_Gamma);
 static dpct::global_memory<EoS_GENE_t, 0> EoS_General_Ptr(EoS_General_Gamma);
+#else
+static EoS_DE2P_t EoS_DensEint2Pres_Ptr  = EoS_DensEint2Pres_Gamma;
+static EoS_DP2E_t EoS_DensPres2Eint_Ptr  = EoS_DensPres2Eint_Gamma;
+static EoS_DP2C_t EoS_DensPres2CSqr_Ptr  = EoS_DensPres2CSqr_Gamma;
+static EoS_DE2T_t EoS_DensEint2Temp_Ptr  = EoS_DensEint2Temp_Gamma;
+static EoS_DT2P_t EoS_DensTemp2Pres_Ptr  = EoS_DensTemp2Pres_Gamma;
+static EoS_DE2S_t EoS_DensEint2Entr_Ptr  = EoS_DensEint2Entr_Gamma;
+static EoS_GENE_t EoS_General_Ptr        = EoS_General_Gamma;
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 //-----------------------------------------------------------------------------------------
 // Function    :  EoS_SetCPU/GPUFunc_Gamma

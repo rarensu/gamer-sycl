@@ -211,7 +211,11 @@ void Src_WorkBeforeMajorFunc_User_Template( const int lv, const double TimeNew, 
 #  define FUNC_SPACE            static
 #endif
 
+#ifdef SYCL_LANGUAGE_VERSION
 static dpct::global_memory<SrcFunc_t, 0> SrcFunc_Ptr(Src_User_Template);
+#else
+static SrcFunc_t SrcFunc_Ptr = Src_User_Template;
+#endif // #ifdef SYCL_LANGUAGE_VERSION
 
 //-----------------------------------------------------------------------------------------
 // Function    :  Src_SetCPU/GPUFunc_User_Template
