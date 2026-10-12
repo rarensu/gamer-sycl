@@ -561,11 +561,11 @@ $(EXECUTABLE) : $(OBJ_CPU) $(OBJ_GPU)
 # CPU linker
 	@echo "Linking CPU codes"
 ifeq "$(COMPILE_VERBOSE)" "1"
-	$(CXX) -o $@ $^ $(LIB) $(OPENMPFLAG)
+	$(CXX) -o $@ $^ $(LIB) $(OPENMPFLAG) $(SYCLFLAG)
 	@printf "\nCompiling GAMER --> Successful!\n\n"; \
 	cp $(EXECUTABLE) ../bin/
 else
-	@$(CXX) -o $@ $^ $(LIB) $(OPENMPFLAG); \
+	@$(CXX) -o $@ $^ $(LIB) $(OPENMPFLAG) $(SYCLFLAG); \
 	(if [ -e $@ ]; then \
 		printf "\nCompiling GAMER --> Successful!\n\n"; \
 		cp $(EXECUTABLE) ../bin/; \
