@@ -44,7 +44,7 @@ extern real (*d_FC_Var)   [6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR)    ];
 extern real (*d_FC_Flux)  [3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX)   ];
 #ifdef MHD
 extern real (*d_FC_Mag_Half)[NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ];
-extern real (*d_EC_Ele     )[NCOMP_MAG][ CUBE(N_EC_ELE)          ];
+extern real (*d_EC_Ele     )[NCOMP_MAG][ CUBE(N_EC_ELE_MAX1)          ];
 #endif
 #endif // FLU_SCHEME
 
@@ -130,7 +130,7 @@ int GPU_MemAllocate_Fluid( const int Flu_NPG, const int Pot_NPG, const int Src_N
 #  endif
 #  ifdef MHD
    const long FC_Mag_Half_MemSize   = sizeof(real  )*Flu_NPG  *NCOMP_MAG*FLU_NXT_P1*SQR(FLU_NXT);
-   const long EC_Ele_MemSize        = sizeof(real  )*Flu_NPG  *NCOMP_MAG*CUBE(N_EC_ELE);
+   const long EC_Ele_MemSize        = sizeof(real  )*Flu_NPG  *NCOMP_MAG*CUBE(N_EC_ELE_MAX1);
 #  endif
 #  endif // FLU_SCHEME
 
@@ -264,7 +264,7 @@ int GPU_MemAllocate_Fluid( const int Flu_NPG, const int Pot_NPG, const int Src_N
 #  endif
 #  ifdef MHD
    DEVICE_CHECK_MALLOC(  d_FC_Mag_Half = (real(*)[NCOMP_MAG][FLU_NXT_P1*SQR(FLU_NXT)])sycl::malloc_device( FC_Mag_Half_MemSize, dpct::get_in_order_queue() )  );
-   DEVICE_CHECK_MALLOC(  d_EC_Ele = (real(*)[NCOMP_MAG][CUBE(N_EC_ELE)])sycl::malloc_device( EC_Ele_MemSize, dpct::get_in_order_queue() )  );
+   DEVICE_CHECK_MALLOC(  d_EC_Ele = (real(*)[NCOMP_MAG][CUBE(N_EC_ELE_MAX1)])sycl::malloc_device( EC_Ele_MemSize, dpct::get_in_order_queue() )  );
 #  endif
 #  endif // #if ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP  ||  FLU_SCHEME == CTU )
 

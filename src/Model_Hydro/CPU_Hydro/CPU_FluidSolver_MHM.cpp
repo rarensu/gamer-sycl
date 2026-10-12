@@ -51,7 +51,7 @@ void Hydro_DataReconstruction( const real g_ConVar   [][ CUBE(FLU_NXT) ],
                                      real g_PriVar   [][ CUBE(FLU_NXT) ],
                                      real g_FC_Var   [][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR) ],
                                      real g_Slope_PPM[][NCOMP_LR            ][ CUBE(N_SLOPE_PPM) ],
-                                     real g_EC_Ele   [][ CUBE(N_EC_ELE) ],
+                                     real g_EC_Ele   [][ CUBE(N_EC_ELE_MAX1) ],
                                const bool Con2Pri, const LR_Limiter_t LR_Limiter, const real MinMod_Coeff,
                                const real dt, const real dh,
                                const real MinDens, const real MinPres, const real MinEint,
@@ -120,7 +120,7 @@ void Hydro_Con2Pri( const real In[], real Out[], const real MinPres, const long 
                     const real *const EoS_Table[EOS_NTABLE_MAX], real* const EintOut, real* LorentzFactorPtr );
 #endif // #if ( FLU_SCHEME == MHM_RP )
 #ifdef MHD
-void MHD_ComputeElectric(       real g_EC_Ele[][ CUBE(N_EC_ELE) ],
+void MHD_ComputeElectric(       real g_EC_Ele[][ CUBE(N_EC_ELE_MAX1) ],
                           const real g_FC_Flux[][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX) ],
                           const real g_PriVar[][ CUBE(FLU_NXT) ],
                           const int NEle, const int NFlux, const int NPri, const int OffsetPri,
@@ -131,7 +131,7 @@ void MHD_ComputeElectric(       real g_EC_Ele[][ CUBE(N_EC_ELE) ],
                           const double ExtAcc_AuxArray[] );
 void MHD_UpdateMagnetic( real *g_FC_Bx_Out, real *g_FC_By_Out, real *g_FC_Bz_Out,
                          const real g_FC_B_In[][ FLU_NXT_P1*SQR(FLU_NXT) ],
-                         const real g_EC_Ele[][ CUBE(N_EC_ELE) ],
+                         const real g_EC_Ele[][ CUBE(N_EC_ELE_MAX1) ],
                          const real dt, const real dh, const int NOut, const int NEle, const int Offset_B_In );
 #endif // #ifdef MHD
 
@@ -195,7 +195,7 @@ static void Hydro_RiemannPredict( const real g_ConVar_In[][ CUBE(FLU_NXT) ],
 //                   MHM    : "Riemann Solvers and Numerical Methods for Fluid Dynamics
 //                             - A Practical Introduction ~ by Eleuterio F. Toro"
 //                   MHM_RP : Stone & Gardiner, NewA, 14, 139 (2009)
-//                4. See include/CUFLU.h for the values and description of different symbolic constants
+//                4. See include/FLU.h for the values and description of different symbolic constants
 //                   such as N_FC_VAR, N_FC_FLUX, N_SLOPE_PPM, N_FL_FLUX, N_HF_VAR
 //                5. Arrays with a prefix "g_" are stored in the global memory of GPU
 //                6. If an unphysical result occurs in the full-step update, we redo data reconstruction by
@@ -280,7 +280,7 @@ void GPU_FluidSolver_MHM(
          real   g_FC_Var       [][6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR) ],
          real   g_FC_Flux      [][3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX) ],
          real   g_FC_Mag_Half  [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-         real   g_EC_Ele       [][NCOMP_MAG][ CUBE(N_EC_ELE) ],
+         real   g_EC_Ele       [][NCOMP_MAG][ CUBE(N_EC_ELE_MAX1) ],
    const real dt, const real dh,
    const bool StoreFlux, const bool StoreElectric,
    const LR_Limiter_t LR_Limiter, const real MinMod_Coeff, const int MinMod_MaxIter, const double Time,
@@ -291,7 +291,7 @@ void GPU_FluidSolver_MHM(
    const bool NormPassive, const int NNorm,
    const bool FracPassive, const int NFrac,
    const bool JeansMinPres, const real JeansMinPres_Coeff,
-   const EoS_t EoS, const MicroPhy_t MicroPhy )
+       const EoS_t EoS, const MicroPhy_t MicroPhy, int *const c_NormIdx, int *const c_FracIdx )
 #else
 void CPU_FluidSolver_MHM(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
@@ -308,7 +308,7 @@ void CPU_FluidSolver_MHM(
          real   g_FC_Var       [][6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR) ],
          real   g_FC_Flux      [][3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX) ],
          real   g_FC_Mag_Half  [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-         real   g_EC_Ele       [][NCOMP_MAG][ CUBE(N_EC_ELE) ],
+         real   g_EC_Ele       [][NCOMP_MAG][ CUBE(N_EC_ELE_MAX1) ],
    const int NPatchGroup,
    const real dt, const real dh,
    const bool StoreFlux, const bool StoreElectric,
@@ -387,7 +387,7 @@ void CPU_FluidSolver_MHM(
 
 #        ifdef MHD
          real (*const g_FC_Mag_Half_1PG)[ FLU_NXT_P1*SQR(FLU_NXT) ] = g_FC_Mag_Half[P];
-         real (*const g_EC_Ele_1PG     )[ CUBE(N_EC_ELE)          ] = g_EC_Ele     [P];
+         real (*const g_EC_Ele_1PG     )[ CUBE(N_EC_ELE_MAX1)          ] = g_EC_Ele     [P];
 #        else
          real (*const g_FC_Mag_Half_1PG)[ FLU_NXT_P1*SQR(FLU_NXT) ] = NULL;
 #        endif
@@ -399,9 +399,9 @@ void CPU_FluidSolver_MHM(
 //           changing the MHM_RP full-step MHD_ComputeElectric()
          real (*const g_PriVar_Half_1PG )[ CUBE(FLU_NXT)  ] = g_PriVar_1PG;
 #        ifdef MHD
-         real (*const g_EC_Ele_1PG      )[ CUBE(N_EC_ELE) ] = g_EC_Ele[P];
+         real (*const g_EC_Ele_1PG      )[ CUBE(N_EC_ELE_MAX1) ] = g_EC_Ele[P];
 #        else
-         real (*const g_EC_Ele_1PG      )[ CUBE(N_EC_ELE) ] = NULL;
+         real (*const g_EC_Ele_1PG      )[ CUBE(N_EC_ELE_MAX1) ] = NULL;
 #        endif
 #        endif // #if ( FLU_SCHEME == MHM )
 

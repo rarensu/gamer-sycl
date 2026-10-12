@@ -11,7 +11,7 @@ extern real (*h_FC_Var)   [6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR)    ];
 extern real (*h_FC_Flux)  [3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX)   ];
 #ifdef MHD
 extern real (*h_FC_Mag_Half)[NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ];
-extern real (*h_EC_Ele     )[NCOMP_MAG][ CUBE(N_EC_ELE)          ];
+extern real (*h_EC_Ele     )[NCOMP_MAG][ CUBE(N_EC_ELE_MAX1)          ];
 #endif
 #endif // FLU_SCHEME
 
@@ -96,7 +96,7 @@ void Init_MemAllocate_Fluid( const int Flu_NPatchGroup, const int Pot_NPatchGrou
 #  endif
 #  ifdef MHD
    h_FC_Mag_Half    = new real [Flu_NPatchGroup][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ];
-   h_EC_Ele         = new real [Flu_NPatchGroup][NCOMP_MAG][ CUBE(N_EC_ELE)          ];
+   h_EC_Ele         = new real [Flu_NPatchGroup][NCOMP_MAG][ CUBE(N_EC_ELE_MAX1)          ];
 #  endif
 #  endif // FLU_SCHEME
 #  if ( GRAMFE_SCHEME == GRAMFE_MATMUL )

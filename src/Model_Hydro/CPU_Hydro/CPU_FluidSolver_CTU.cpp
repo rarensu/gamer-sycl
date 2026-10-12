@@ -29,7 +29,7 @@ void Hydro_DataReconstruction( const real g_ConVar   [][ CUBE(FLU_NXT) ],
                                      real g_PriVar   [][ CUBE(FLU_NXT) ],
                                      real g_FC_Var   [][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR) ],
                                      real g_Slope_PPM[][NCOMP_LR            ][ CUBE(N_SLOPE_PPM) ],
-                                     real g_EC_Ele   [][ CUBE(N_EC_ELE) ],
+                                     real g_EC_Ele   [][ CUBE(N_EC_ELE_MAX1) ],
                                const bool Con2Pri, const LR_Limiter_t LR_Limiter, const real MinMod_Coeff,
                                const real dt, const real dh,
                                const real MinDens, const real MinPres, const real MinEint,
@@ -55,7 +55,7 @@ void Hydro_FullStepUpdate( const real g_Input[][ CUBE(FLU_NXT) ], real g_Output[
                            const long PassiveFloor, const bool NormPassive, const int NNorm, const int NormIdx[],
                            const EoS_t *EoS, int *s_FullStepFailure, const int Iteration, const int MinMod_MaxIter );
 #ifdef MHD
-void MHD_ComputeElectric(       real g_EC_Ele[][ CUBE(N_EC_ELE) ],
+void MHD_ComputeElectric(       real g_EC_Ele[][ CUBE(N_EC_ELE_MAX1) ],
                           const real g_FC_Flux[][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX) ],
                           const real g_PriVar[][ CUBE(FLU_NXT) ],
                           const int NEle, const int NFlux, const int NPri, const int OffsetPri,
@@ -66,7 +66,7 @@ void MHD_ComputeElectric(       real g_EC_Ele[][ CUBE(N_EC_ELE) ],
                           const double ExtAcc_AuxArray[] );
 void MHD_UpdateMagnetic( real *g_FC_Bx_Out, real *g_FC_By_Out, real *g_FC_Bz_Out,
                          const real g_FC_B_In[][ FLU_NXT_P1*SQR(FLU_NXT) ],
-                         const real g_EC_Ele[][ CUBE(N_EC_ELE) ],
+                         const real g_EC_Ele[][ CUBE(N_EC_ELE_MAX1) ],
                          const real dt, const real dh, const int NOut, const int NEle, const int Offset_B_In );
 void MHD_HalfStepPrimitive( const real g_Flu_In[][ CUBE(FLU_NXT) ],
                             const real g_FC_B_Half[][ FLU_NXT_P1*SQR(FLU_NXT) ],
@@ -84,7 +84,7 @@ void Hydro_TGradientCorrection(       real g_FC_Var   [][NCOMP_TOTAL_PLUS_MAG][ 
                                 const real g_FC_Flux  [][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX) ],
                                 const real g_FC_B_In  [][ FLU_NXT_P1*SQR(FLU_NXT) ],
                                 const real g_FC_B_Half[][ FLU_NXT_P1*SQR(FLU_NXT) ],
-                                const real g_EC_Ele   [][ CUBE(N_EC_ELE) ],
+                                const real g_EC_Ele   [][ CUBE(N_EC_ELE_MAX1) ],
                                 const real g_PriVar   [][ CUBE(FLU_NXT) ],
                                 const real dt, const real dh, const real MinDens, const real MinEint,
                                 const long PassiveFloor );
@@ -176,7 +176,7 @@ void GPU_FluidSolver_CTU(
          real   g_FC_Var       [][6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR) ],
          real   g_FC_Flux      [][3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX) ],
          real   g_FC_Mag_Half  [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-         real   g_EC_Ele       [][NCOMP_MAG][ CUBE(N_EC_ELE) ],
+         real   g_EC_Ele       [][NCOMP_MAG][ CUBE(N_EC_ELE_MAX1) ],
    const real dt, const real dh,
    const bool StoreFlux, const bool StoreElectric,
    const LR_Limiter_t LR_Limiter, const real MinMod_Coeff, const double Time,
@@ -187,7 +187,7 @@ void GPU_FluidSolver_CTU(
    const bool NormPassive, const int NNorm,
    const bool FracPassive, const int NFrac,
    const bool JeansMinPres, const real JeansMinPres_Coeff,
-   const EoS_t EoS )
+       const EoS_t EoS, int *const c_NormIdx, int *const c_FracIdx )
 #else
 void CPU_FluidSolver_CTU(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
@@ -204,7 +204,7 @@ void CPU_FluidSolver_CTU(
          real   g_FC_Var       [][6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR) ],
          real   g_FC_Flux      [][3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX) ],
          real   g_FC_Mag_Half  [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-         real   g_EC_Ele       [][NCOMP_MAG][ CUBE(N_EC_ELE) ],
+         real   g_EC_Ele       [][NCOMP_MAG][ CUBE(N_EC_ELE_MAX1) ],
    const int NPatchGroup,
    const real dt, const real dh,
    const bool StoreFlux, const bool StoreElectric,
@@ -260,11 +260,11 @@ void CPU_FluidSolver_CTU(
 
 #        ifdef MHD
          real (*const g_FC_Mag_Half_1PG)[ FLU_NXT_P1*SQR(FLU_NXT) ] = g_FC_Mag_Half[P];
-         real (*const g_EC_Ele_1PG     )[ CUBE(N_EC_ELE)          ] = g_EC_Ele     [P];
+         real (*const g_EC_Ele_1PG     )[ CUBE(N_EC_ELE_MAX1)          ] = g_EC_Ele     [P];
          real (*const g_PriVar_Half_1PG)[ CUBE(FLU_NXT) ]           = g_PriVar_1PG;
 #        else
          real (*const g_FC_Mag_Half_1PG)[ FLU_NXT_P1*SQR(FLU_NXT) ] = NULL;
-         real (*const g_EC_Ele_1PG     )[ CUBE(N_EC_ELE)          ] = NULL;
+         real (*const g_EC_Ele_1PG     )[ CUBE(N_EC_ELE_MAX1)          ] = NULL;
 #        endif
 
 
@@ -377,7 +377,7 @@ void Hydro_TGradientCorrection(       real g_FC_Var   [][NCOMP_TOTAL_PLUS_MAG][ 
                                 const real g_FC_Flux  [][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX) ],
                                 const real g_FC_B_In  [][ FLU_NXT_P1*SQR(FLU_NXT) ],
                                 const real g_FC_B_Half[][ FLU_NXT_P1*SQR(FLU_NXT) ],
-                                const real g_EC_Ele   [][ CUBE(N_EC_ELE) ],
+                                const real g_EC_Ele   [][ CUBE(N_EC_ELE_MAX1) ],
                                 const real g_PriVar   [][ CUBE(FLU_NXT) ],
                                 const real dt, const real dh, const real MinDens, const real MinEint,
                                 const long PassiveFloor )

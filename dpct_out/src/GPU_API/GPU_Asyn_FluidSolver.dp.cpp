@@ -33,7 +33,7 @@ void GPU_FluidSolver_MHM(
          real   g_FC_Var       [][6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR) ],
          real   g_FC_Flux      [][3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX) ],
          real   g_FC_Mag_Half  [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-         real   g_EC_Ele       [][NCOMP_MAG][ CUBE(N_EC_ELE) ],
+         real   g_EC_Ele       [][NCOMP_MAG][ CUBE(N_EC_ELE_MAX1) ],
    const real dt, const real dh,
    const bool StoreFlux, const bool StoreElectric,
    const LR_Limiter_t LR_Limiter, const real MinMod_Coeff, const int MinMod_MaxIter, const double Time,
@@ -74,7 +74,7 @@ void GPU_FluidSolver_CTU(
     /*
     DPCT1102:24: Zero-length arrays are not permitted in SYCL device code.
     */
-    real g_EC_Ele[][NCOMP_MAG][CUBE(N_EC_ELE)], const real dt, const real dh,
+    real g_EC_Ele[][NCOMP_MAG][CUBE(N_EC_ELE_MAX1)], const real dt, const real dh,
     const bool StoreFlux, const bool StoreElectric,
     const LR_Limiter_t LR_Limiter, const real MinMod_Coeff, const double Time,
     const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,
@@ -177,7 +177,7 @@ extern real (*d_FC_Var)   [6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR)    ];
 extern real (*d_FC_Flux)  [3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX)   ];
 #ifdef MHD
 extern real (*d_FC_Mag_Half)[NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ];
-extern real (*d_EC_Ele     )[NCOMP_MAG][ CUBE(N_EC_ELE)          ];
+extern real (*d_EC_Ele     )[NCOMP_MAG][ CUBE(N_EC_ELE_MAX1)          ];
 #else
 /*
 DPCT1102:27: Zero-length arrays are not permitted in SYCL device code.
@@ -186,7 +186,7 @@ static real (*d_FC_Mag_Half)[NCOMP_MAG][FLU_NXT_P1 * SQR(FLU_NXT)] = NULL;
 /*
 DPCT1102:28: Zero-length arrays are not permitted in SYCL device code.
 */
-static real (*d_EC_Ele)[NCOMP_MAG][CUBE(N_EC_ELE)] = NULL;
+static real (*d_EC_Ele)[NCOMP_MAG][CUBE(N_EC_ELE_MAX1)] = NULL;
 #endif // MHD
 #endif // FLU_SCHEME
 #endif // #if ( MODEL == HYDRO )
@@ -612,15 +612,22 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
          needed.
          */
       {
-         extern dpct::constant_memory<int *, 0> c_NormIdx;
-         extern dpct::constant_memory<int *, 0> c_FracIdx;
+#if ( NCOMP_PASSIVE > 0 )
+         extern dpct::constant_memory<int, 1> c_NormIdx;
+         extern dpct::constant_memory<int, 1> c_FracIdx;
 
          c_NormIdx.init(*Stream[s]);
          c_FracIdx.init(*Stream[s]);
+#endif
 
          Stream[s]->submit([&](sycl::handler &cgh) {
+#if ( NCOMP_PASSIVE > 0 )
             auto c_NormIdx_ptr_ct1 = c_NormIdx.get_ptr();
             auto c_FracIdx_ptr_ct1 = c_FracIdx.get_ptr();
+#else
+            int *const c_NormIdx_ptr_ct1 = NULL;
+            int *const c_FracIdx_ptr_ct1 = NULL;
+#endif
 
             const float (*)[5][10648] d_Flu_Array_F_In_UsedPatch_s_ct0 =
                 d_Flu_Array_F_In + UsedPatch[s];
@@ -669,7 +676,7 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
                        ExtAcc, GPUExtAcc_Ptr_ct24, MinDens, MinPres, MinEint,
                        DualEnergySwitch, PassiveFloor, NormPassive, NNorm,
                        FracPassive, NFrac, JeansMinPres, JeansMinPres_Coeff,
-                       EoS, *c_NormIdx_ptr_ct1, *c_FracIdx_ptr_ct1);
+                       EoS, c_NormIdx_ptr_ct1, c_FracIdx_ptr_ct1);
                 });
          });
       }

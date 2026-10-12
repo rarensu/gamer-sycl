@@ -39,7 +39,7 @@ void GPU_FluidSolver_MHM(
          real   g_FC_Var       [][6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR) ],
          real   g_FC_Flux      [][3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX) ],
          real   g_FC_Mag_Half  [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-         real   g_EC_Ele       [][NCOMP_MAG][ CUBE(N_EC_ELE) ],
+         real   g_EC_Ele       [][NCOMP_MAG][ CUBE(N_EC_ELE_MAX1) ],
    const real dt, const real dh,
    const bool StoreFlux, const bool StoreElectric,
    const LR_Limiter_t LR_Limiter, const real MinMod_Coeff, const int MinMod_MaxIter, const double Time,
@@ -80,7 +80,7 @@ void GPU_FluidSolver_CTU(
     /*
     DPCT1102:73: Zero-length arrays are not permitted in SYCL device code.
     */
-    real g_EC_Ele[][NCOMP_MAG][CUBE(N_EC_ELE)], const real dt, const real dh,
+    real g_EC_Ele[][NCOMP_MAG][CUBE(N_EC_ELE_MAX1)], const real dt, const real dh,
     const bool StoreFlux, const bool StoreElectric,
     const LR_Limiter_t LR_Limiter, const real MinMod_Coeff, const double Time,
     const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,

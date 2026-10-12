@@ -419,7 +419,7 @@ real (*h_FC_Var)   [6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR)    ]    = NULL;
 real (*h_FC_Flux)  [3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX)   ]    = NULL;
 #ifdef MHD
 real (*h_FC_Mag_Half)[NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ]          = NULL;
-real (*h_EC_Ele     )[NCOMP_MAG][ CUBE(N_EC_ELE)          ]          = NULL;
+real (*h_EC_Ele     )[NCOMP_MAG][ CUBE(N_EC_ELE_MAX1)          ]          = NULL;
 #endif
 #endif // FLU_SCHEME
 #if ( MODEL == ELBDM )
@@ -520,7 +520,7 @@ real (*d_FC_Var)   [6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR)    ]    = NULL;
 real (*d_FC_Flux)  [3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX)   ]    = NULL;
 #ifdef MHD
 real (*d_FC_Mag_Half)[NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ]          = NULL;
-real (*d_EC_Ele     )[NCOMP_MAG][ CUBE(N_EC_ELE)          ]          = NULL;
+real (*d_EC_Ele     )[NCOMP_MAG][ CUBE(N_EC_ELE_MAX1)          ]          = NULL;
 #endif
 #endif // FLU_SCHEME
 #if ( MODEL == ELBDM )

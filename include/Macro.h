@@ -1283,8 +1283,8 @@
 
 // SET_GLOBAL will invoke either SET_GLOBAL_INIT or SET_GLOBAL_NOINIT depending on the number of arguments
 // ==> http://stackoverflow.com/questions/11761703/overloading-macro-on-number-of-arguments
-#define GET_MACRO( _1, _2, TARGET_MACRO, ... )  TARGET_MACRO
-#define SET_GLOBAL( ... )   GET_MACRO( __VA_ARGS__, SET_GLOBAL_INIT, SET_GLOBAL_NOINIT ) ( __VA_ARGS__ )
+#define GAMER_GET_MACRO( _1, _2, TARGET_MACRO, ... )  TARGET_MACRO
+#define SET_GLOBAL( ... )   GAMER_GET_MACRO( __VA_ARGS__, SET_GLOBAL_INIT, SET_GLOBAL_NOINIT ) ( __VA_ARGS__ )
 
 // SET_GLOBAL_INIT/NOINIT are for global variables with/without initialization
 #ifdef DEFINE_GLOBAL

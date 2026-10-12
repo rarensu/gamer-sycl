@@ -132,6 +132,10 @@
 #   define N_EC_ELE              0
 #   define N_HF_ELE              0
 #  endif
+// Workaround for SYCL: zero-length arrays (N_EC_ELE==0 when MHD is off) are not
+// allowed in standard C++/SYCL, so use at least 1 for array dimension safety
+#  define N_EC_ELE_MAX1  ( MAX(N_EC_ELE, 1) )
+
 
 #endif // #if ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP  ||  FLU_SCHEME == CTU )
 
