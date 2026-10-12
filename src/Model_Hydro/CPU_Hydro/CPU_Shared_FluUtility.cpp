@@ -195,8 +195,8 @@ void Hydro_Rotate3D( real InOut[], const int XYZ, const bool Forward, const int 
 //                EoS_DensPres2Eint  : EoS routine to compute the gas internal energy
 //                EoS_GuessHTilde    : EoS routine to compute guessed reduced enthalpy
 //                EoS_HTilde2Temp    : EoS routine to compute temperature
-//                EoS_AuxArray_*     : Auxiliary arrays for EoS_DensEint2Pres()
-//                EoS_Table          : EoS tables for EoS_DensEint2Pres()
+//                EoS_AuxArray_*     : Auxiliary arrays for DensEint2Pres()
+//                EoS_Table          : EoS tables for DensEint2Pres()
 //                EintOut            : Pointer to store the output internal energy
 //                                     --> Do nothing if it is NULL
 //                                     --> Internal energy floor is not applied
@@ -241,7 +241,7 @@ void Hydro_Con2Pri( const real In[], real Out[], const real MinPres, const long 
    const real _LorentzFactor = real(1.0) / LorentzFactor;
    Out[0] = In[0]*_LorentzFactor;
 
-   EoS_HTilde2Temp( HTilde, &Temp, NULL, NULL, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
+   CALL_EoS_HTilde2Temp( HTilde, &Temp, NULL, NULL, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
 
    Out[4] = Out[0]*Temp;
    Out[4] = Hydro_CheckMinPres( Out[4], MinPres );
@@ -280,7 +280,7 @@ void Hydro_Con2Pri( const real In[], real Out[], const real MinPres, const long 
 
 //    recompute internal energy to be consistent with the updated pressure
       if ( EintOut != NULL  &&  Out[4] != Pres0 )
-         *EintOut = EoS_DensPres2Eint( Out[0], Out[4], In+NCOMP_FLUID, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
+         *EintOut = CALL_EoS_DensPres2Eint( Out[0], Out[4], In+NCOMP_FLUID, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
    }
 #  endif // #ifdef SRHD ... else ...
 
@@ -334,8 +334,8 @@ void Hydro_Con2Pri( const real In[], real Out[], const real MinPres, const long 
 //                EoS_DensPres2Eint : EoS routine to compute the gas internal energy
 //                EoS_Temp2HTilde   : EoS routine to compute reduced enthalpy
 //                EoS_HTilde2Temp   : EoS routine to compute temperature
-//                EoS_AuxArray_*    : Auxiliary arrays for EoS_DensPres2Eint()
-//                EoS_Table         : EoS tables for EoS_DensPres2Eint()
+//                EoS_AuxArray_*    : Auxiliary arrays for DensPres2Eint()
+//                EoS_Table         : EoS tables for DensPres2Eint()
 //                EintIn            : Pointer storing the input internal energy (see the note above)
 //                                    --> Do nothing if it is NULL
 //
@@ -355,7 +355,7 @@ void Hydro_Pri2Con( const real In[], real Out[], const bool FracPassive,
 
    LorentzFactor = SQRT( (real)1.0 + SQR(In[1]) + SQR(In[2]) + SQR(In[3]) );
    Temperature   = In[4]/In[0];
-   HTilde        = EoS_Temp2HTilde( Temperature, NULL, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
+   HTilde        = CALL_EoS_Temp2HTilde( Temperature, NULL, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
    Out[0]        = In[0]*LorentzFactor;
    Factor        = Out[0]*HTilde + Out[0];
    Out[1]        = In[1]*Factor;
@@ -389,7 +389,7 @@ void Hydro_Pri2Con( const real In[], real Out[], const bool FracPassive,
 
 
 // passive scalars
-// --> do it before invoking EoS_DensPres2Eint() since the latter requires the mass density
+// --> do it before invoking DensPres2Eint() since the latter requires the mass density
 //     instead of mass fraction of passive scalars
 #  if ( NCOMP_PASSIVE > 0 )
 // copy all passive scalars
@@ -414,7 +414,7 @@ void Hydro_Pri2Con( const real In[], real Out[], const bool FracPassive,
    const real Bz = In[ MAG_OFFSET + 2 ];
    Emag   = (real)0.5*( SQR(Bx) + SQR(By) + SQR(Bz) );
 #  endif
-   Eint   = ( EintIn == NULL ) ? EoS_DensPres2Eint( In[0], In[4], Out+NCOMP_FLUID, EoS_AuxArray_Flt,
+   Eint   = ( EintIn == NULL ) ? CALL_EoS_DensPres2Eint( In[0], In[4], Out+NCOMP_FLUID, EoS_AuxArray_Flt,
                                                     EoS_AuxArray_Int, EoS_Table )
                                : *EintIn;
    Out[4] = Hydro_ConEint2Etot( Out[0], Out[1], Out[2], Out[3], Eint, Emag );
@@ -447,8 +447,8 @@ void Hydro_Pri2Con( const real In[], real Out[], const bool FracPassive,
 //                MinPres           : Minimum allowed pressure
 //                PassiveFloor      : Bitwise flag to specify the passive scalars to be floored
 //                EoS_DensEint2Pres : EoS routine to compute the gas pressure
-//                EoS_AuxArray_*    : Auxiliary arrays for EoS_DensEint2Pres()
-//                EoS_Table         : EoS tables for EoS_DensEint2Pres()
+//                EoS_AuxArray_*    : Auxiliary arrays for DensEint2Pres()
+//                EoS_Table         : EoS tables for DensEint2Pres()
 //                AuxArray          : Array storing
 //                                    (1) the input pressure in non-SRHD (see the note above)
 //                                        --> Do nothing if it is NULL
@@ -577,7 +577,7 @@ real Hydro_Con2HTilde( const real Con[], const EoS_GUESS_t EoS_GuessHTilde, cons
    MSqr_DSqr  = SQR(Con[1]) + SQR(Con[2]) + SQR(Con[3]);
    MSqr_DSqr /= SQR(Con[0]);
 
-   GuessHTilde = EoS_GuessHTilde( Con, &Constant, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
+   GuessHTilde = CALL_EoS_GuessHTilde( Con, &Constant, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
 
    void (*FuncPtr)( real HTilde, void *params, real *Func, real *DiffFunc ) = &Hydro_HTildeFunction;
 
@@ -610,8 +610,8 @@ real Hydro_Con2HTilde( const real Con[], const EoS_GUESS_t EoS_GuessHTilde, cons
 //               Params         : Pointer to the structure `Hydro_HTildeFunction_params_s`
 //               Func           : Eq. 15 in "Tseng et al. 2021, MNRAS, 504, 3298"
 //               DiffFunc       : Eq. A1 in "Tseng et al. 2021, MNRAS, 504, 3298"
-//               EoS_AuxArray_* : Auxiliary arrays for EoS_DensEint2Pres()
-//               EoS_Table      : EoS tables for EoS_DensEint2Pres()
+//               EoS_AuxArray_* : Auxiliary arrays for DensEint2Pres()
+//               EoS_Table      : EoS tables for DensEint2Pres()
 //
 // Return      : Func, DiffFunc
 //-------------------------------------------------------------------------------------------------------
@@ -639,7 +639,7 @@ void Hydro_HTildeFunction( real HTilde, void *Params, real *Func, real *DiffFunc
 
 // recompute temperature only when the input Temp is NAN, which is used in Hydro_Con2HTilde()
    if ( Temp != Temp )
-      EoS_HTilde2Temp( HTilde, &Temp, &DiffTemp, NULL, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
+      CALL_EoS_HTilde2Temp( HTilde, &Temp, &DiffTemp, NULL, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
 
 // Eq. 15
    const real H =  HTilde + (real)1.0;
@@ -947,7 +947,7 @@ bool Hydro_IsUnphysical( const IsUnphyMode_t Mode, const real Fields[],
          {
 //          add machine-precision-level perturbations to the internal energy relative to the total energy
             const real Eint_Check = Eint + Fields[ENGY]*(real)i*CHECK_UNPHY_ROUNDING_FACTOR*MACHINE_EPSILON;
-            Pres = EoS_DensEint2Pres( Fields[DENS], Eint_Check, Fields+NCOMP_FLUID,
+            Pres = CALL_EoS_DensEint2Pres( Fields[DENS], Eint_Check, Fields+NCOMP_FLUID,
                                       EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
 
             if ( Pres < (real)0.0  ||  Pres > HUGE_NUMBER  ||  Pres != Pres )
@@ -1165,7 +1165,7 @@ bool Hydro_IsUnphysical_Single( const real Field, const char SingleFieldName[], 
 // Function    :  Hydro_Con2Pres
 // Description :  Evaluate the fluid pressure
 //
-// Note        :  1. Invoke the EoS routine EoS_DensEint2Pres() to support different EoS
+// Note        :  1. Invoke the EoS routine DensEint2Pres() to support different EoS
 //                2. For MHD, Engy is the total energy density including the magnetic energy Emag=0.5*B^2
 //                   and thus one must provide Emag to subtract it
 //
@@ -1183,8 +1183,8 @@ bool Hydro_IsUnphysical_Single( const real Field, const char SingleFieldName[], 
 //                EoS_DensEint2Pres : EoS routine to compute the gas pressure
 //                EoS_GuessHTilde   : EoS routine to compute guessed reduced enthalpy
 //                EoS_HTilde2Temp   : EoS routine to compute temperature
-//                EoS_AuxArray_*    : Auxiliary arrays for EoS_DensEint2Pres()
-//                EoS_Table         : EoS tables for EoS_DensEint2Pres()
+//                EoS_AuxArray_*    : Auxiliary arrays for DensEint2Pres()
+//                EoS_Table         : EoS tables for DensEint2Pres()
 //                EintOut           : Pointer to store the output internal energy
 //                                    --> Do nothing if it is NULL
 //                                    --> Internal energy floor is not applied
@@ -1222,7 +1222,7 @@ real Hydro_Con2Pres( const real Dens, const real MomX, const real MomY, const re
 
    Eint = Hydro_Con2Eint( Dens, MomX, MomY, MomZ, Engy, CheckMinEint_No, NULL_REAL, PassiveFloor, Emag,
                           NULL, NULL, NULL, NULL, NULL );
-   Pres = EoS_DensEint2Pres( Dens, Eint, Passive, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
+   Pres = CALL_EoS_DensEint2Pres( Dens, Eint, Passive, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
 
    if ( CheckMinPres )   Pres = Hydro_CheckMinPres( Pres, MinPres );
 
@@ -1280,8 +1280,8 @@ real Hydro_Con2Pres( const real Dens, const real MomX, const real MomY, const re
 //                Emag            : Magnetic energy density (0.5*B^2) --> For MHD only
 //                EoS_GuessHTilde : EoS routine to compute guessed reduced enthalpy
 //                EoS_HTilde2Temp : EoS routine to compute temperature
-//                EoS_AuxArray_*  : Auxiliary arrays for EoS_DensEint2Pres()
-//                EoS_Table       : EoS tables for EoS_DensEint2Pres()
+//                EoS_AuxArray_*  : Auxiliary arrays for DensEint2Pres()
+//                EoS_Table       : EoS tables for DensEint2Pres()
 //
 // Return      :  Gas internal energy density (Eint)
 //-------------------------------------------------------------------------------------------------------
@@ -1379,7 +1379,7 @@ real Hydro_ConEint2Etot( const real Dens, const real MomX, const real MomY, cons
 // Function    :  Hydro_Con2Temp
 // Description :  Evaluate the fluid temperature
 //
-// Note        :  1. Invoke the EoS routine EoS_DensEint2Temp() to support different EoS
+// Note        :  1. Invoke the EoS routine DensEint2Temp() to support different EoS
 //                2. Temperature is in kelvin
 //
 // Parameter   :  Dens              : Mass density
@@ -1395,8 +1395,8 @@ real Hydro_ConEint2Etot( const real Dens, const real MomX, const real MomY, cons
 //                EoS_DensEint2Temp : EoS routine to compute the gas temperature
 //                EoS_GuessHTilde   : EoS routine to compute guessed reduced enthalpy
 //                EoS_HTilde2Temp   : EoS routine to compute temperature
-//                EoS_AuxArray_*    : Auxiliary arrays for EoS_DensEint2Temp()
-//                EoS_Table         : EoS tables for EoS_DensEint2Temp()
+//                EoS_AuxArray_*    : Auxiliary arrays for DensEint2Temp()
+//                EoS_Table         : EoS tables for DensEint2Temp()
 //
 // Return      :  Gas temperature in kelvin
 //-------------------------------------------------------------------------------------------------------
@@ -1460,7 +1460,7 @@ real Hydro_Con2Temp( const real Dens, const real MomX, const real MomY, const re
 
    Eint = Hydro_Con2Eint( Dens, MomX, MomY, MomZ, Engy, CheckMinEint_No, NULL_REAL, PassiveFloor, Emag,
                           NULL, NULL, NULL, NULL, NULL );
-   Temp = EoS_DensEint2Temp( Dens, Eint, Passive, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
+   Temp = CALL_EoS_DensEint2Temp( Dens, Eint, Passive, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
 #  endif // #ifdef SRHD ... else ...
 
    if ( CheckMinTemp )   Temp = Hydro_CheckMinTemp( Temp, MinTemp );
@@ -1476,7 +1476,7 @@ real Hydro_Con2Temp( const real Dens, const real MomX, const real MomY, const re
 // Function    :  Hydro_Con2Entr
 // Description :  Evaluate the fluid entropy
 //
-// Note        :  1. Invoke the EoS routine EoS_DensEint2Entr() to support different EoS
+// Note        :  1. Invoke the EoS routine DensEint2Entr() to support different EoS
 //                2. We regard the entropy used in the EoS routines and that used in the dual-energy formalism
 //                   as two completely separate fields
 //                   --> The former is referred to as Entr/ENTR and manipulated by the EoS API, while the latter is
@@ -1494,8 +1494,8 @@ real Hydro_Con2Temp( const real Dens, const real MomX, const real MomY, const re
 //                PassiveFloor      : Bitwise flag to specify the passive scalars to be floored
 //                Emag              : Magnetic energy density (0.5*B^2) --> For MHD only
 //                EoS_DensEint2Entr : EoS routine to compute the gas entropy
-//                EoS_AuxArray_*    : Auxiliary arrays for EoS_DensEint2Entr()
-//                EoS_Table         : EoS tables for EoS_DensEint2Entr()
+//                EoS_AuxArray_*    : Auxiliary arrays for DensEint2Entr()
+//                EoS_Table         : EoS tables for DensEint2Entr()
 //
 // Return      :  Gas entropy
 //-------------------------------------------------------------------------------------------------------
@@ -1534,7 +1534,7 @@ real Hydro_Con2Entr( const real Dens, const real MomX, const real MomY, const re
 
    Eint = Hydro_Con2Eint( Dens, MomX, MomY, MomZ, Engy, CheckMinEint_No, NULL_REAL, PassiveFloor, Emag,
                           NULL, NULL, NULL, NULL, NULL );
-   Entr = EoS_DensEint2Entr( Dens, Eint, Passive, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
+   Entr = CALL_EoS_DensEint2Entr( Dens, Eint, Passive, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
 
    if ( CheckMinEntr )   Entr = Hydro_CheckMinEntr( Entr, MinEntr );
 
@@ -1638,7 +1638,13 @@ void NewtonRaphsonSolver( void (*FuncPtr)( real Unknown, void *Params, real *Fun
    {
       Iter++;
 
-      FuncPtr( *Root, Params, &Func, &DiffFunc );
+             // SYCL cannot call through function pointers in kernels.
+       // Since FuncPtr is always &Hydro_HTildeFunction in practice, call it directly.
+#if defined(SYCL_LANGUAGE_VERSION) && defined(SRHD)
+       Hydro_HTildeFunction( *Root, Params, &Func, &DiffFunc );
+#else
+       FuncPtr( *Root, Params, &Func, &DiffFunc );
+#endif
 
 #     ifdef GAMER_DEBUG
       if ( DiffFunc == (real)0.0 )

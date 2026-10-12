@@ -41,7 +41,7 @@
 //
 // Note        :  1. Invoked by EoS_Init_Isothermal()
 //                2. AuxArray_Flt/Int[] have the size of EOS_NAUX_MAX defined in Macro.h (default = 20)
-//                3. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+//                3. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //                4. Physical constants such as Const_amu/Const_kB should be set to unity when disabling OPT__UNIT
 //
 // Parameter   :  AuxArray_Flt/Int : Floating-point/Integer arrays to be filled up
@@ -73,7 +73,7 @@ void EoS_SetAuxArray_Isothermal( double AuxArray_Flt[], int AuxArray_Int[] )
 #  endif
 
 } // FUNCTION : EoS_SetAuxArray_Isothermal
-#endif // #ifndef __CUDACC__
+#endif // #ifndef SYCL_LANGUAGE_VERSION
 
 
 
@@ -104,7 +104,7 @@ void EoS_SetAuxArray_Isothermal( double AuxArray_Flt[], int AuxArray_Int[] )
 // Return      :  Gas pressure
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_DensEint2Pres_Isothermal( const real Dens, const real Eint, const real Passive[],
+EoSExternDecl real EoS_DensEint2Pres_Isothermal( const real Dens, const real Eint, const real Passive[],
                                           const double AuxArray_Flt[], const int AuxArray_Int[],
                                           const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -141,7 +141,7 @@ static real EoS_DensEint2Pres_Isothermal( const real Dens, const real Eint, cons
 // Return      :  Gas internal energy density
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_DensPres2Eint_Isothermal( const real Dens, const real Pres, const real Passive[],
+EoSExternDecl real EoS_DensPres2Eint_Isothermal( const real Dens, const real Pres, const real Passive[],
                                           const double AuxArray_Flt[], const int AuxArray_Int[],
                                           const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -177,7 +177,7 @@ static real EoS_DensPres2Eint_Isothermal( const real Dens, const real Pres, cons
 // Return      :  Sound speed squared
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_DensPres2CSqr_Isothermal( const real Dens, const real Pres, const real Passive[],
+EoSExternDecl real EoS_DensPres2CSqr_Isothermal( const real Dens, const real Pres, const real Passive[],
                                           const double AuxArray_Flt[], const int AuxArray_Int[],
                                           const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -213,7 +213,7 @@ static real EoS_DensPres2CSqr_Isothermal( const real Dens, const real Pres, cons
 // Return      :  Gas temperature in kelvin
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_DensEint2Temp_Isothermal( const real Dens, const real Eint, const real Passive[],
+EoSExternDecl real EoS_DensEint2Temp_Isothermal( const real Dens, const real Eint, const real Passive[],
                                           const double AuxArray_Flt[], const int AuxArray_Int[],
                                           const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -248,7 +248,7 @@ static real EoS_DensEint2Temp_Isothermal( const real Dens, const real Eint, cons
 // Return      :  Gas pressure
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_DensTemp2Pres_Isothermal( const real Dens, const real Temp, const real Passive[],
+EoSExternDecl real EoS_DensTemp2Pres_Isothermal( const real Dens, const real Temp, const real Passive[],
                                           const double AuxArray_Flt[], const int AuxArray_Int[],
                                           const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -285,7 +285,7 @@ static real EoS_DensTemp2Pres_Isothermal( const real Dens, const real Temp, cons
 // Return      :  Gas entropy
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_DensEint2Entr_Isothermal( const real Dens, const real Eint, const real Passive[],
+EoSExternDecl real EoS_DensEint2Entr_Isothermal( const real Dens, const real Eint, const real Passive[],
                                           const double AuxArray_Flt[], const int AuxArray_Int[],
                                           const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -314,7 +314,7 @@ static real EoS_DensEint2Entr_Isothermal( const real Dens, const real Eint, cons
 // Return      :  Out[]
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static void EoS_General_Isothermal( const int Mode, real Out[], const real In_Flt[], const int In_Int[],
+EoSExternDecl void EoS_General_Isothermal( const int Mode, real Out[], const real In_Flt[], const int In_Int[],
                                     const double AuxArray_Flt[], const int AuxArray_Int[],
                                     const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -396,44 +396,18 @@ void EoS_SetGPUFunc_Isothermal( EoS_DE2P_t &EoS_DensEint2Pres_GPUPtr,
                                 EoS_DE2S_t &EoS_DensEint2Entr_GPUPtr,
                                 EoS_GENE_t &EoS_General_GPUPtr )
 {
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_DensEint2Pres_GPUPtr, EoS_DensEint2Pres_Ptr.get_ptr(),
-                   sizeof(EoS_DE2P_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_DensPres2Eint_GPUPtr, EoS_DensPres2Eint_Ptr.get_ptr(),
-                   sizeof(EoS_DP2E_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_DensPres2CSqr_GPUPtr, EoS_DensPres2CSqr_Ptr.get_ptr(),
-                   sizeof(EoS_DP2C_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_DensEint2Temp_GPUPtr, EoS_DensEint2Temp_Ptr.get_ptr(),
-                   sizeof(EoS_DE2T_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_DensTemp2Pres_GPUPtr, EoS_DensTemp2Pres_Ptr.get_ptr(),
-                   sizeof(EoS_DT2P_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_DensEint2Entr_GPUPtr, EoS_DensEint2Entr_Ptr.get_ptr(),
-                   sizeof(EoS_DE2S_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(dpct::get_in_order_queue()
-                                         .memcpy(&EoS_General_GPUPtr,
-                                                 EoS_General_Ptr.get_ptr(),
-                                                 sizeof(EoS_GENE_t))
-                                         .wait()));
+   // EoS function pointers are dispatched at compile time via EoS_Dispatch.h
+   // No dpct::global_memory / queue memcpy is needed for SYCL device dispatch
+   EoS_DensEint2Pres_GPUPtr = EoS_DensEint2Pres_Isothermal;
+   EoS_DensPres2Eint_GPUPtr = EoS_DensPres2Eint_Isothermal;
+   EoS_DensPres2CSqr_GPUPtr = EoS_DensPres2CSqr_Isothermal;
+   EoS_DensEint2Temp_GPUPtr = EoS_DensEint2Temp_Isothermal;
+   EoS_DensTemp2Pres_GPUPtr = EoS_DensTemp2Pres_Isothermal;
+   EoS_DensEint2Entr_GPUPtr = EoS_DensEint2Entr_Isothermal;
+   EoS_General_GPUPtr       = EoS_General_Isothermal;
 }
 
-#else // #ifdef __CUDACC__
+#else // #ifdef SYCL_LANGUAGE_VERSION
 
 void EoS_SetCPUFunc_Isothermal( EoS_DE2P_t &EoS_DensEint2Pres_CPUPtr,
                                 EoS_DP2E_t &EoS_DensPres2Eint_CPUPtr,
@@ -452,7 +426,7 @@ void EoS_SetCPUFunc_Isothermal( EoS_DE2P_t &EoS_DensEint2Pres_CPUPtr,
    EoS_General_CPUPtr       = EoS_General_Ptr;
 }
 
-#endif // #ifdef __CUDACC__ ... else ...
+#endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
 
 
@@ -474,7 +448,7 @@ void EoS_SetGPUFunc_Isothermal( EoS_DE2P_t &, EoS_DP2E_t &, EoS_DP2C_t &, EoS_DE
 //                2. Set the CPU/GPU EoS routines by invoking EoS_SetCPU/GPUFunc_*()
 //                3. Invoked by EoS_Init()
 //                   --> Enable it by linking to the function pointer "EoS_Init_Ptr"
-//                4. Add "#ifndef __CUDACC__" since this routine is only useful on CPU
+//                4. Add "#ifndef SYCL_LANGUAGE_VERSION" since this routine is only useful on CPU
 //
 // Parameter   :  None
 //
@@ -502,7 +476,7 @@ void EoS_Init_Isothermal()
 
 } // FUNCTION : EoS_Init_Isothermal
 
-#endif // #ifndef __CUDACC__
+#endif // #ifndef SYCL_LANGUAGE_VERSION
 
 
 

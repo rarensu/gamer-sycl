@@ -135,8 +135,8 @@ void Hydro_RiemannSolver_HLLC( const int XYZ, real Flux_Out[], const real L_In[]
 
 
 // 4. compute the max and min wave speeds used in Mignone
-   cslsq = EoS_DensPres2CSqr( PL[0], PL[4], NULL, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
-   csrsq = EoS_DensPres2CSqr( PR[0], PR[4], NULL, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
+   cslsq = CALL_EoS_DensPres2CSqr( PL[0], PL[4], NULL, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
+   csrsq = CALL_EoS_DensPres2CSqr( PR[0], PR[4], NULL, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table );
 
 #  ifdef CHECK_UNPHYSICAL_IN_FLUID
    if ( cslsq >= (real)1.0  ||  csrsq >= (real)1.0  ||  cslsq < (real)0.0  ||  csrsq < (real)0.0 )
@@ -437,8 +437,8 @@ void Hydro_RiemannSolver_HLLC( const int XYZ, real Flux_Out[], const real L_In[]
    P_R   = Hydro_Con2Pres( R[0], R[1], R[2], R[3], R[4], R+NCOMP_FLUID, CheckMinPres_Yes, MinPres, PassiveFloor, Emag,
                            EoS_DensEint2Pres, EoS_GuessHTilde, EoS_HTilde2Temp,
                            EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table, NULL );
-   Cs_L  = SQRT(  EoS_DensPres2CSqr( L[0], P_L, L+NCOMP_FLUID, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table )  );
-   Cs_R  = SQRT(  EoS_DensPres2CSqr( R[0], P_R, R+NCOMP_FLUID, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table )  );
+   Cs_L  = SQRT(  CALL_EoS_DensPres2CSqr( L[0], P_L, L+NCOMP_FLUID, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table )  );
+   Cs_R  = SQRT(  CALL_EoS_DensPres2CSqr( R[0], P_R, R+NCOMP_FLUID, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table )  );
 
 #  ifdef CHECK_UNPHYSICAL_IN_FLUID
    Hydro_IsUnphysical_Single( P_R, "pressure", (real)0.0, HUGE_NUMBER, ERROR_INFO, UNPHY_VERBOSE );
@@ -529,8 +529,8 @@ void Hydro_RiemannSolver_HLLC( const int XYZ, real Flux_Out[], const real L_In[]
    Rho_SR      = FMAX( Rho_SR, MinDens );
    _P          = ONE / P_PVRS;
 // see Eq. [9.8] in Toro 1999 for passive scalars
-   Gamma_SL    = EoS_DensPres2CSqr( Rho_SL, P_PVRS, L+NCOMP_FLUID, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table )*Rho_SL*_P;
-   Gamma_SR    = EoS_DensPres2CSqr( Rho_SR, P_PVRS, R+NCOMP_FLUID, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table )*Rho_SR*_P;
+   Gamma_SL    = CALL_EoS_DensPres2CSqr( Rho_SL, P_PVRS, L+NCOMP_FLUID, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table )*Rho_SL*_P;
+   Gamma_SR    = CALL_EoS_DensPres2CSqr( Rho_SR, P_PVRS, R+NCOMP_FLUID, EoS_AuxArray_Flt, EoS_AuxArray_Int, EoS_Table )*Rho_SR*_P;
 #  endif // EOS
 
    q_L = ( P_PVRS <= P_L ) ? ONE : SQRT(  ONE + _TWO*( Gamma_SL + ONE )/Gamma_SL*( P_PVRS/P_L - ONE )  );

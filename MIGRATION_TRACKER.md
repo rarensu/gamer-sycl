@@ -60,6 +60,7 @@ is preserved verbatim.
 | `cleanup` | cleaned up CUDA references in comments |
 | `gm-guard` | wrapped `dpct::global_memory` declarations in `#ifdef SYCL_LANGUAGE_VERSION` with plain `static` function pointer fallback for CPU-only builds |
 | `umul` | restored `__umul24`/`__mul24` via DPCT compat guard |
+| `eos-dispatch` | replaced runtime EoS function-pointer indirection with compile-time dispatch via `EoS_Dispatch.h`; `static`→`EoSExternDecl` (`SYCL_EXTERNAL`) on concrete EoS functions; stubbed DPCT `memcpy`/queue in `EoS_SetGPUFunc_*` (direct assignment) |
 
 ## Tracker entries
 
@@ -148,4 +149,29 @@ is preserved verbatim.
 | DONE | `test_problem_deprecated/Model_ParticleOnly/TwoParOrbit/GPU_ExternalPot.1.0.0.cpp` | None (no DPCT suggestion file) | `renamed` from `CUPOT_ExternalPot.1.0.0.cu`; `C→S` guards; `d→DEV`; `+hdrs`; updated `Copy_ExtPot.sh` & `Init_ExternalPot.cpp`. |
 | DONE | `src/Model_Hydro/CPU_HydroGravity/CPU_HydroGravitySolver.cpp` | None (no DPCT suggestion file) | CUDA→SYCL: `C→S` (ConstMemory.h + all dispatch guards `__CUDACC`→`SYCL_LANGUAGE_VERSION`); `g→EXT` (`__global__`→`SYCL_EXTERNAL void GPU_HydroGravitySolver`); `tx→lid`/`bx→grp(2)` (`threadIdx.x`→`get_local_id(2)`, `blockIdx.x`→`get_group(2)`); `sh→loc` (`__shared__` → `sycl::local_accessor` passed as `real *s_pot_new`/`s_pot_old` params from the `GPU_Asyn_PoissonGravitySolver.cpp` HYDRO launch site); `syn→bar` (`__syncthreads()`→`item_ct1.barrier(sycl::access::fence_space::local_space)`); CPU OpenMP path preserved. No residual CUDA-isms; signature matches the forward declaration in `GPU_Asyn_PoissonGravitySolver.cpp`. NOT compile-verified (no dpcpp on node). |
 | DONE | `src/Model_Hydro/CPU_HydroGravity/CPU_dtSolver_HydroGravity.cpp` | None (no DPCT suggestion file) | CUDA→SYCL: `C→S` (`__CUDACC__`→`SYCL_LANGUAGE_VERSION` for GPU setup, kernel declaration, shared-mem load, patch loop, reduction); `g→EXT` (`__global__`→`SYCL_EXTERNAL`); `sh→loc` (`__shared__ real s_Pot`→`sycl::local real s_Pot`); `syn→bar` (`__syncthreads()`→`item_ct1.barrier(...)`); `tx→lid` (`threadIdx.x`→`get_local_id(2)`); `bx→grp(2)` (`blockIdx.x`→`get_group(2)`); `+shared` (added `real *shared` param for BlockReduction, allocated via `sycl::local_accessor` in dispatch); `t2w`. CPU OpenMP path preserved. Forward declarations in `GPU_Asyn_dtSolver.cpp` and `GPU_SetCache.cpp` updated to match. NOT compile-verified (no dpcpp on node). |
+
+### SYCL function-pointer indirect-call elimination (EoS compile-time dispatch)
+
+The following changes replace runtime function-pointer indirection (which SYCL does not
+support in kernels) with compile-time dispatch via `EoS_Dispatch.h`.  See the `eos-dispatch`
+shorthand in the legend above.
+
+| Status | Original file | DPCT suggestion file | Notes |
+| --- | --- | --- | --- |
+| DONE | `include/EoS_Dispatch.h` | None (new file) | New header: `EoSExternDecl` macro (`SYCL_EXTERNAL` under SYCL, empty under CPU); `SYCL_EXTERNAL` extern declarations for all concrete EoS functions (selected by `#if (EOS == ...)`); `static inline` dispatch wrappers `GPU_EoS_*` that compile-time dispatch; `CALL_EoS_*` macros that map to `GPU_EoS_*` under SYCL and direct function-pointer calls under CPU. |
+| DONE | `include/FLU.h` | — (update to existing entry) | Added `#include "EoS_Dispatch.h"` unconditionally (after the SYCL/non-SYCL `#ifdef` block). `eos-dispatch`. |
+| DONE | `src/EoS/Gamma/CPU_EoS_Gamma.cpp` | — (update to existing entry) | `eos-dispatch`: removed `static` from 7 EoS functions, added `EoSExternDecl`; `EoS_SetGPUFunc_Gamma` now direct-assigns `*_GPUPtr = EoS_*_Gamma` instead of `dpct::get_in_order_queue().memcpy()`. |
+| DONE | `src/EoS/Isothermal/CPU_EoS_Isothermal.cpp` | — (update to existing entry) | `eos-dispatch`: same as Gamma; also fixed `__CUDACC__`→`SYCL_LANGUAGE_VERSION` in comments/guards. |
+| DONE | `src/EoS/TaubMathews/CPU_EoS_TaubMathews.cpp` | — (update to existing entry) | `eos-dispatch`: removed `static` from 4 EoS functions (incl. `void EoS_HTilde2Temp_TaubMathews`), added `EoSExternDecl`; `EoS_SetGPUFunc_TaubMathews` now direct assignment. |
+| DONE | `src/EoS/GammaCR/CPU_EoS_GammaCR.cpp` | — (update to existing entry) | `eos-dispatch`: removed `static` from 10 EoS functions (incl. forward decl), added `EoSExternDecl`; `EoS_SetGPUFunc_GammaCR` now direct assignment. |
+| DONE | `src/EoS/User_Template/CPU_EoS_User_Template.cpp` | — (update to existing entry) | `eos-dispatch`: same pattern. |
+| DONE | `src/Model_Hydro/CPU_Hydro/CPU_Shared_FluUtility.cpp` | — (update to existing entry) | `eos-dispatch`: replaced 10 indirect EoS calls (function-pointer parameters) with `CALL_EoS_*` macros; `NewtonRaphsonSolver` now calls `Hydro_HTildeFunction` directly under `#if defined(SYCL_LANGUAGE_VERSION) && defined(SRHD)`. |
+| DONE | `src/Model_Hydro/CPU_Hydro/CPU_Shared_RiemannSolver_HLLC.cpp` | — (update to existing entry) | `eos-dispatch`: 6 `EoS_DensPres2CSqr(...)` calls → `CALL_EoS_DensPres2CSqr(...)`; SRHD-only. |
+| DONE | `src/Model_Hydro/CPU_Hydro/CPU_Shared_RiemannSolver_HLLE.cpp` | — (update to existing entry) | `eos-dispatch`: 6 `EoS_DensPres2CSqr(...)` calls → `CALL_EoS_DensPres2CSqr(...)`; SRHD-only. |
+| DONE | `src/Model_Hydro/CPU_Hydro/CPU_Shared_RiemannSolver_HLLD.cpp` | — (update to existing entry) | `eos-dispatch`: 2 `EoS_DensPres2CSqr(...)` calls → `CALL_EoS_DensPres2CSqr(...)`; MHD-only. |
+| DONE | `src/Model_Hydro/CPU_Hydro/CPU_Shared_DataReconstruction.cpp` | — (update to existing entry) | `eos-dispatch`: 3 struct-member `EoS->DensPres2CSqr_FuncPtr(...)` calls replaced with `#ifdef SYCL_LANGUAGE_VERSION` guards calling `GPU_EoS_DensPres2CSqr(...)` directly. |
+| DONE | `src/Model_Hydro/CPU_Hydro/CPU_FluidSolver_RTVD.cpp` | None (new file entry) | `eos-dispatch`: 2 struct-member `EoS->DensPres2CSqr_FuncPtr(...)` calls replaced with `#ifdef SYCL_LANGUAGE_VERSION` guards. |
+| DONE | `src/Model_Hydro/GPU_Hydro/GPU_FluidSolver_RTVD.cpp` | — (update to existing entry) | `eos-dispatch`: 2 struct-member `EoS->DensPres2CSqr_FuncPtr(...)` calls replaced with direct `GPU_EoS_DensPres2CSqr(...)` (SYCL-only file, no guards needed). |
+| DONE | `src/Model_Hydro/CPU_Hydro/CPU_dtSolver_HydroCFL.cpp` | — (update to existing entry) | `eos-dispatch`: 2 struct-member `EoS.DensPres2CSqr_FuncPtr(...)` calls replaced with `#ifdef SYCL_LANGUAGE_VERSION` guards. |
+| DONE | `src/Model_Hydro/CPU_Hydro/CPU_CosmicRay.cpp` | None (new file entry) | `eos-dispatch`: 2 struct-member `EoS->CREint2CRPres_FuncPtr(...)` calls replaced with `#ifdef SYCL_LANGUAGE_VERSION` guards calling `GPU_EoS_CREint2CRPres(...)`. |
 

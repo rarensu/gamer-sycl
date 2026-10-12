@@ -96,7 +96,7 @@ void EoS_SetAuxArray_User_Template( double AuxArray_Flt[], int AuxArray_Int[] )
 // Return      :  Gas pressure
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_DensEint2Pres_User_Template( const real Dens, const real Eint, const real Passive[],
+EoSExternDecl real EoS_DensEint2Pres_User_Template( const real Dens, const real Eint, const real Passive[],
                                              const double AuxArray_Flt[], const int AuxArray_Int[],
                                              const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -157,7 +157,7 @@ static real EoS_DensEint2Pres_User_Template( const real Dens, const real Eint, c
 // Return      :  Gas internal energy density
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_DensPres2Eint_User_Template( const real Dens, const real Pres, const real Passive[],
+EoSExternDecl real EoS_DensPres2Eint_User_Template( const real Dens, const real Pres, const real Passive[],
                                              const double AuxArray_Flt[], const int AuxArray_Int[],
                                              const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -218,7 +218,7 @@ static real EoS_DensPres2Eint_User_Template( const real Dens, const real Pres, c
 // Return      :  Sound speed squared
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_DensPres2CSqr_User_Template( const real Dens, const real Pres, const real Passive[],
+EoSExternDecl real EoS_DensPres2CSqr_User_Template( const real Dens, const real Pres, const real Passive[],
                                              const double AuxArray_Flt[], const int AuxArray_Int[],
                                              const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -280,7 +280,7 @@ static real EoS_DensPres2CSqr_User_Template( const real Dens, const real Pres, c
 // Return      :  Gas temperature in kelvin
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_DensEint2Temp_User_Template( const real Dens, const real Eint, const real Passive[],
+EoSExternDecl real EoS_DensEint2Temp_User_Template( const real Dens, const real Eint, const real Passive[],
                                              const double AuxArray_Flt[], const int AuxArray_Int[],
                                              const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -338,7 +338,7 @@ static real EoS_DensEint2Temp_User_Template( const real Dens, const real Eint, c
 // Return      :  Gas pressure
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_DensTemp2Pres_User_Template( const real Dens, const real Temp, const real Passive[],
+EoSExternDecl real EoS_DensTemp2Pres_User_Template( const real Dens, const real Temp, const real Passive[],
                                              const double AuxArray_Flt[], const int AuxArray_Int[],
                                              const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -394,7 +394,7 @@ static real EoS_DensTemp2Pres_User_Template( const real Dens, const real Temp, c
 // Return      :  Gas entropy
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_DensEint2Entr_User_Template( const real Dens, const real Eint, const real Passive[],
+EoSExternDecl real EoS_DensEint2Entr_User_Template( const real Dens, const real Eint, const real Passive[],
                                              const double AuxArray_Flt[], const int AuxArray_Int[],
                                              const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -452,7 +452,7 @@ static real EoS_DensEint2Entr_User_Template( const real Dens, const real Eint, c
 // Return      :  Out[]
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static void EoS_General_User_Template( const int Mode, real Out[], const real In_Flt[], const int In_Int[],
+EoSExternDecl void EoS_General_User_Template( const int Mode, real Out[], const real In_Flt[], const int In_Int[],
                                        const double AuxArray_Flt[], const int AuxArray_Int[],
                                        const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -545,41 +545,15 @@ void EoS_SetGPUFunc_User_Template( EoS_DE2P_t &EoS_DensEint2Pres_GPUPtr,
                                    EoS_DE2S_t &EoS_DensEint2Entr_GPUPtr,
                                    EoS_GENE_t &EoS_General_GPUPtr )
 {
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_DensEint2Pres_GPUPtr, EoS_DensEint2Pres_Ptr.get_ptr(),
-                   sizeof(EoS_DE2P_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_DensPres2Eint_GPUPtr, EoS_DensPres2Eint_Ptr.get_ptr(),
-                   sizeof(EoS_DP2E_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_DensPres2CSqr_GPUPtr, EoS_DensPres2CSqr_Ptr.get_ptr(),
-                   sizeof(EoS_DP2C_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_DensEint2Temp_GPUPtr, EoS_DensEint2Temp_Ptr.get_ptr(),
-                   sizeof(EoS_DE2T_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_DensTemp2Pres_GPUPtr, EoS_DensTemp2Pres_Ptr.get_ptr(),
-                   sizeof(EoS_DT2P_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_DensEint2Entr_GPUPtr, EoS_DensEint2Entr_Ptr.get_ptr(),
-                   sizeof(EoS_DE2S_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(dpct::get_in_order_queue()
-                                         .memcpy(&EoS_General_GPUPtr,
-                                                 EoS_General_Ptr.get_ptr(),
-                                                 sizeof(EoS_GENE_t))
-                                         .wait()));
+    // EoS function pointers are dispatched at compile time via EoS_Dispatch.h
+    // No dpct::global_memory / queue memcpy is needed for SYCL device dispatch
+    EoS_DensEint2Pres_GPUPtr = EoS_DensEint2Pres_User_Template;
+    EoS_DensPres2Eint_GPUPtr = EoS_DensPres2Eint_User_Template;
+    EoS_DensPres2CSqr_GPUPtr = EoS_DensPres2CSqr_User_Template;
+    EoS_DensEint2Temp_GPUPtr = EoS_DensEint2Temp_User_Template;
+    EoS_DensTemp2Pres_GPUPtr = EoS_DensTemp2Pres_User_Template;
+    EoS_DensEint2Entr_GPUPtr = EoS_DensEint2Entr_User_Template;
+    EoS_General_GPUPtr       = EoS_General_User_Template;
 }
 
 #else // #ifdef SYCL_LANGUAGE_VERSION

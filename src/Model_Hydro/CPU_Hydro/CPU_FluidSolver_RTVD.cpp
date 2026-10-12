@@ -237,8 +237,13 @@ void CPU_AdvanceX( real u[][ CUBE(FLU_NXT) ], const real dt, const real dx,
          Hydro_IsUnphysical_Single( ux[0][i], "density",  TINY_NUMBER, HUGE_NUMBER, ERROR_INFO, UNPHY_VERBOSE );
 #        endif
 
+#ifdef SYCL_LANGUAGE_VERSION
+         c    = FABS( vx ) + SQRT(  GPU_EoS_DensPres2CSqr( ux[0][i], p, Passive, EoS->AuxArrayDevPtr_Flt,
+                                                                EoS->AuxArrayDevPtr_Int, EoS->Table )  );
+#else
          c    = FABS( vx ) + SQRT(  EoS->DensPres2CSqr_FuncPtr( ux[0][i], p, Passive, EoS->AuxArrayDevPtr_Flt,
                                                                 EoS->AuxArrayDevPtr_Int, EoS->Table )  );
+#endif
 
          cw[0][i] = ux[1][i];
          cw[1][i] = ux[1][i] * vx + p;
@@ -299,8 +304,13 @@ void CPU_AdvanceX( real u[][ CUBE(FLU_NXT) ], const real dt, const real dx,
          Hydro_IsUnphysical_Single( u_half[0][i], "density",  TINY_NUMBER, HUGE_NUMBER, ERROR_INFO, UNPHY_VERBOSE );
 #        endif
 
+#ifdef SYCL_LANGUAGE_VERSION
+         c    = FABS( vx ) + SQRT(  GPU_EoS_DensPres2CSqr( u_half[0][i], p, Passive, EoS->AuxArrayDevPtr_Flt,
+                                                                EoS->AuxArrayDevPtr_Int, EoS->Table )  );
+#else
          c    = FABS( vx ) + SQRT(  EoS->DensPres2CSqr_FuncPtr( u_half[0][i], p, Passive, EoS->AuxArrayDevPtr_Flt,
                                                                 EoS->AuxArrayDevPtr_Int, EoS->Table )  );
+#endif
 
          cw[0][i] = u_half[1][i];
          cw[1][i] = u_half[1][i] * vx + p;

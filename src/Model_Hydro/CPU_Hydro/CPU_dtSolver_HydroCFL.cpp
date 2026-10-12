@@ -106,7 +106,11 @@ void CPU_dtSolver_HydroCFL  ( real g_dt_Array[], const real g_Flu_Array[][FLU_NI
                         EoS.AuxArrayDevPtr_Flt, EoS.AuxArrayDevPtr_Int, EoS.Table, NULL, &LorentzFactor );
          Rho   = Pri[0];
          Pres  = Pri[4];
+#ifdef SYCL_LANGUAGE_VERSION
+         a2    = GPU_EoS_DensPres2CSqr( Rho, Pres, fluid+NCOMP_FLUID, EoS.AuxArrayDevPtr_Flt, EoS.AuxArrayDevPtr_Int, EoS.Table ); // sound speed squared
+#else
          a2    = EoS.DensPres2CSqr_FuncPtr( Rho, Pres, fluid+NCOMP_FLUID, EoS.AuxArrayDevPtr_Flt, EoS.AuxArrayDevPtr_Int, EoS.Table ); // sound speed squared
+#endif
 
 #        else // #ifdef SRHD
 
@@ -138,8 +142,13 @@ void CPU_dtSolver_HydroCFL  ( real g_dt_Array[], const real g_Flu_Array[][FLU_NI
                                 CheckMinPres_Yes, MinPres, PassiveFloor, Emag,
                                 EoS.DensEint2Pres_FuncPtr, EoS.GuessHTilde_FuncPtr, EoS.HTilde2Temp_FuncPtr,
                                 EoS.AuxArrayDevPtr_Flt, EoS.AuxArrayDevPtr_Int, EoS.Table, NULL );
+#ifdef SYCL_LANGUAGE_VERSION
+         a2   = GPU_EoS_DensPres2CSqr( fluid[DENS], Pres, fluid+NCOMP_FLUID, EoS.AuxArrayDevPtr_Flt, EoS.AuxArrayDevPtr_Int,
+                                           EoS.Table ); // sound speed squared
+#else
          a2   = EoS.DensPres2CSqr_FuncPtr( fluid[DENS], Pres, fluid+NCOMP_FLUID, EoS.AuxArrayDevPtr_Flt, EoS.AuxArrayDevPtr_Int,
                                            EoS.Table ); // sound speed squared
+#endif
 #        endif // #ifdef SRHD ... else ...
 
 //       compute the maximum information propagating speed

@@ -98,7 +98,7 @@ void EoS_SetAuxArray_Gamma( double AuxArray_Flt[], int AuxArray_Int[] )
 // Return      :  Gas pressure
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_DensEint2Pres_Gamma( const real Dens, const real Eint, const real Passive[],
+EoSExternDecl real EoS_DensEint2Pres_Gamma( const real Dens, const real Eint, const real Passive[],
                                      const double AuxArray_Flt[], const int AuxArray_Int[],
                                      const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -138,7 +138,7 @@ static real EoS_DensEint2Pres_Gamma( const real Dens, const real Eint, const rea
 // Return      :  Gas internal energy density
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_DensPres2Eint_Gamma( const real Dens, const real Pres, const real Passive[],
+EoSExternDecl real EoS_DensPres2Eint_Gamma( const real Dens, const real Pres, const real Passive[],
                                      const double AuxArray_Flt[], const int AuxArray_Int[],
                                      const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -178,7 +178,7 @@ static real EoS_DensPres2Eint_Gamma( const real Dens, const real Pres, const rea
 // Return      :  Sound speed squared
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_DensPres2CSqr_Gamma( const real Dens, const real Pres, const real Passive[],
+EoSExternDecl real EoS_DensPres2CSqr_Gamma( const real Dens, const real Pres, const real Passive[],
                                      const double AuxArray_Flt[], const int AuxArray_Int[],
                                      const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -220,7 +220,7 @@ static real EoS_DensPres2CSqr_Gamma( const real Dens, const real Pres, const rea
 // Return      :  Gas temperature in kelvin
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_DensEint2Temp_Gamma( const real Dens, const real Eint, const real Passive[],
+EoSExternDecl real EoS_DensEint2Temp_Gamma( const real Dens, const real Eint, const real Passive[],
                                      const double AuxArray_Flt[], const int AuxArray_Int[],
                                      const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -263,7 +263,7 @@ static real EoS_DensEint2Temp_Gamma( const real Dens, const real Eint, const rea
 // Return      :  Gas pressure
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_DensTemp2Pres_Gamma( const real Dens, const real Temp, const real Passive[],
+EoSExternDecl real EoS_DensTemp2Pres_Gamma( const real Dens, const real Temp, const real Passive[],
                                      const double AuxArray_Flt[], const int AuxArray_Int[],
                                      const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -304,7 +304,7 @@ static real EoS_DensTemp2Pres_Gamma( const real Dens, const real Temp, const rea
 // Return      :  Gas entropy
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_DensEint2Entr_Gamma( const real Dens, const real Eint, const real Passive[],
+EoSExternDecl real EoS_DensEint2Entr_Gamma( const real Dens, const real Eint, const real Passive[],
                                      const double AuxArray_Flt[], const int AuxArray_Int[],
                                      const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -347,7 +347,7 @@ static real EoS_DensEint2Entr_Gamma( const real Dens, const real Eint, const rea
 // Return      :  Out[]
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static void EoS_General_Gamma( const int Mode, real Out[], const real In_Flt[], const int In_Int[],
+EoSExternDecl void EoS_General_Gamma( const int Mode, real Out[], const real In_Flt[], const int In_Int[],
                                const double AuxArray_Flt[], const int AuxArray_Int[],
                                const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -428,41 +428,15 @@ void EoS_SetGPUFunc_Gamma( EoS_DE2P_t &EoS_DensEint2Pres_GPUPtr,
                            EoS_DE2S_t &EoS_DensEint2Entr_GPUPtr,
                            EoS_GENE_t &EoS_General_GPUPtr )
 {
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_DensEint2Pres_GPUPtr, EoS_DensEint2Pres_Ptr.get_ptr(),
-                   sizeof(EoS_DE2P_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_DensPres2Eint_GPUPtr, EoS_DensPres2Eint_Ptr.get_ptr(),
-                   sizeof(EoS_DP2E_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_DensPres2CSqr_GPUPtr, EoS_DensPres2CSqr_Ptr.get_ptr(),
-                   sizeof(EoS_DP2C_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_DensEint2Temp_GPUPtr, EoS_DensEint2Temp_Ptr.get_ptr(),
-                   sizeof(EoS_DE2T_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_DensTemp2Pres_GPUPtr, EoS_DensTemp2Pres_Ptr.get_ptr(),
-                   sizeof(EoS_DT2P_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_DensEint2Entr_GPUPtr, EoS_DensEint2Entr_Ptr.get_ptr(),
-                   sizeof(EoS_DE2S_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(dpct::get_in_order_queue()
-                                         .memcpy(&EoS_General_GPUPtr,
-                                                 EoS_General_Ptr.get_ptr(),
-                                                 sizeof(EoS_GENE_t))
-                                         .wait()));
+   // EoS function pointers are dispatched at compile time via EoS_Dispatch.h
+   // No dpct::global_memory / queue memcpy is needed for SYCL device dispatch
+   EoS_DensEint2Pres_GPUPtr = EoS_DensEint2Pres_Gamma;
+   EoS_DensPres2Eint_GPUPtr = EoS_DensPres2Eint_Gamma;
+   EoS_DensPres2CSqr_GPUPtr = EoS_DensPres2CSqr_Gamma;
+   EoS_DensEint2Temp_GPUPtr = EoS_DensEint2Temp_Gamma;
+   EoS_DensTemp2Pres_GPUPtr = EoS_DensTemp2Pres_Gamma;
+   EoS_DensEint2Entr_GPUPtr = EoS_DensEint2Entr_Gamma;
+   EoS_General_GPUPtr       = EoS_General_Gamma;
 }
 
 #else // #ifdef SYCL_LANGUAGE_VERSION

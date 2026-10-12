@@ -45,8 +45,13 @@ void CR_AdiabaticWork_HalfStep_MHM_RP( real OneCell[NCOMP_TOTAL_PLUS_MAG],
 {
 
 // 1. calculate the cosmic-ray pressure
+#ifdef SYCL_LANGUAGE_VERSION
+   const real pCR_old = GPU_EoS_CREint2CRPres( g_ConVar_In[CRAY][idx_in], EoS->AuxArrayDevPtr_Flt,
+                                                    EoS->AuxArrayDevPtr_Int, EoS->Table );
+#else
    const real pCR_old = EoS->CREint2CRPres_FuncPtr( g_ConVar_In[CRAY][idx_in], EoS->AuxArrayDevPtr_Flt,
                                                     EoS->AuxArrayDevPtr_Int, EoS->Table );
+#endif
 
 
 // 2. compute \div V using the upwind data; reference: [2]
@@ -155,8 +160,13 @@ void CR_AdiabaticWork_FullStep( real &Ecr,
 
 
 //    1. calculate the cosmic-ray pressure
+#ifdef SYCL_LANGUAGE_VERSION
+      const real pCR_half = GPU_EoS_CREint2CRPres( g_PriVar_Half[CRAY][idx_hf], EoS->AuxArrayDevPtr_Flt,
+                                                        EoS->AuxArrayDevPtr_Int, EoS->Table );
+#else
       const real pCR_half = EoS->CREint2CRPres_FuncPtr( g_PriVar_Half[CRAY][idx_hf], EoS->AuxArrayDevPtr_Flt,
                                                         EoS->AuxArrayDevPtr_Int, EoS->Table );
+#endif
 
 
 //    2. compute \div V using the upwind data; reference: [2]

@@ -241,7 +241,7 @@ __device__ void GPU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
       Hydro_IsUnphysical_Single( p,        "pressure", (real)0.0,   HUGE_NUMBER, ERROR_INFO, UNPHY_VERBOSE );
       Hydro_IsUnphysical_Single( Fluid[0], "density",  TINY_NUMBER, HUGE_NUMBER, ERROR_INFO, UNPHY_VERBOSE );
 #     endif
-      c    = FABS( vx ) + SQRT(  EoS->DensPres2CSqr_FuncPtr( Fluid[0], p, Passive, EoS->AuxArrayDevPtr_Flt,
+      c    = FABS( vx ) + SQRT(  GPU_EoS_DensPres2CSqr( Fluid[0], p, Passive, EoS->AuxArrayDevPtr_Flt,
                                                              EoS->AuxArrayDevPtr_Int, EoS->Table )  );
 
       s_cw[ty][0][i] = Fluid[1];
@@ -305,7 +305,7 @@ __device__ void GPU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
          Hydro_IsUnphysical_Single( Fluid_half[0], "density",  TINY_NUMBER, HUGE_NUMBER, ERROR_INFO, UNPHY_VERBOSE );
 #        endif
 
-         c    = FABS( vx ) + SQRT(  EoS->DensPres2CSqr_FuncPtr( Fluid_half[0], p, Passive, EoS->AuxArrayDevPtr_Flt,
+         c    = FABS( vx ) + SQRT(  GPU_EoS_DensPres2CSqr( Fluid_half[0], p, Passive, EoS->AuxArrayDevPtr_Flt,
                                                                 EoS->AuxArrayDevPtr_Int, EoS->Table )  );
 
          s_cw[ty][0][i] = Fluid_half[1];

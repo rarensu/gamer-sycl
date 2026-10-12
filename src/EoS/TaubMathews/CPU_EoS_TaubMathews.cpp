@@ -90,7 +90,7 @@ void EoS_SetAuxArray_TaubMathews( double AuxArray_Flt[], int AuxArray_Int[] )
 // Return      :  GuessHTilde : Guessed reduced enthalpy
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_GuessHTilde_TaubMathews( const real Con[], real* const Constant, const double AuxArray_Flt[],
+EoSExternDecl real EoS_GuessHTilde_TaubMathews( const real Con[], real* const Constant, const double AuxArray_Flt[],
                                          const int AuxArray_Int[], const real *const Table[EOS_NTABLE_MAX] )
 {
 
@@ -160,7 +160,7 @@ static real EoS_GuessHTilde_TaubMathews( const real Con[], real* const Constant,
 // Return      :  Temp, DiffTemp
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static void EoS_HTilde2Temp_TaubMathews( const real HTilde, real* const Temp, real* const DiffTemp,
+EoSExternDecl void EoS_HTilde2Temp_TaubMathews( const real HTilde, real* const Temp, real* const DiffTemp,
                                          const real Passive[], const double AuxArray_Flt[],
                                          const int AuxArray_Int[], const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -195,7 +195,7 @@ static void EoS_HTilde2Temp_TaubMathews( const real HTilde, real* const Temp, re
 // Return      :  Reduced energy density
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_Temp2HTilde_TaubMathews( const real Temp, const real Passive[], const double AuxArray_Flt[],
+EoSExternDecl real EoS_Temp2HTilde_TaubMathews( const real Temp, const real Passive[], const double AuxArray_Flt[],
                                          const int AuxArray_Int[], const real *const Table[EOS_NTABLE_MAX] )
 {
 
@@ -229,7 +229,7 @@ static real EoS_Temp2HTilde_TaubMathews( const real Temp, const real Passive[], 
 // Return      :  Sound speed squared
 //-------------------------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static real EoS_DensPres2CSqr_TaubMathews( const real Dens, const real Pres, const real Passive[],
+EoSExternDecl real EoS_DensPres2CSqr_TaubMathews( const real Dens, const real Pres, const real Passive[],
                                            const double AuxArray_Flt[], const int AuxArray_Int[],
                                            const real *const Table[EOS_NTABLE_MAX] )
 {
@@ -305,26 +305,12 @@ void EoS_SetGPUFunc_TaubMathews( EoS_GUESS_t &EoS_GuessHTilde_GPUPtr,
                                  EoS_TEM2H_t &EoS_Temp2HTilde_GPUPtr,
                                  EoS_DP2C_t  &EoS_DensPres2CSqr_GPUPtr )
 {
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_GuessHTilde_GPUPtr, EoS_GuessHTilde_Ptr.get_ptr(),
-                   sizeof(EoS_GUESS_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_HTilde2Temp_GPUPtr, EoS_HTilde2Temp_Ptr.get_ptr(),
-                   sizeof(EoS_H2TEM_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_Temp2HTilde_GPUPtr, EoS_Temp2HTilde_Ptr.get_ptr(),
-                   sizeof(EoS_TEM2H_t))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&EoS_DensPres2CSqr_GPUPtr, EoS_DensPres2CSqr_Ptr.get_ptr(),
-                   sizeof(EoS_DP2C_t))
-           .wait()));
+   // EoS function pointers are dispatched at compile time via EoS_Dispatch.h
+   // No dpct::global_memory / queue memcpy is needed for SYCL device dispatch
+   EoS_GuessHTilde_GPUPtr   = EoS_GuessHTilde_TaubMathews;
+   EoS_HTilde2Temp_GPUPtr   = EoS_HTilde2Temp_TaubMathews;
+   EoS_Temp2HTilde_GPUPtr   = EoS_Temp2HTilde_TaubMathews;
+   EoS_DensPres2CSqr_GPUPtr = EoS_DensPres2CSqr_TaubMathews;
 }
 
 #else // #ifdef SYCL_LANGUAGE_VERSION
