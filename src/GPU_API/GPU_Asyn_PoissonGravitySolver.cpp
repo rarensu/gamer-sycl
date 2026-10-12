@@ -438,15 +438,18 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
 #           if ( POT_SCHEME == SOR )
 
             Stream[s]->submit([&](sycl::handler &cgh) {
+                auto d_Rho_Array_P_ptr     = d_Rho_Array_P     + UsedPatch[s];
+                auto d_Pot_Array_P_In_ptr  = d_Pot_Array_P_In  + UsedPatch[s];
+                auto d_Pot_Array_P_Out_ptr = d_Pot_Array_P_Out + UsedPatch[s];
                cgh.parallel_for(
                    sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) *
                                          Poi_Block_Dim,
                                      Poi_Block_Dim),
                    [=](sycl::nd_item<3> item_ct1) {
                       GPU_PoissonSolver_SOR(
-                          d_Rho_Array_P     + UsedPatch[s],
-                          d_Pot_Array_P_In  + UsedPatch[s],
-                          d_Pot_Array_P_Out + UsedPatch[s],
+                          d_Rho_Array_P_ptr,
+                          d_Pot_Array_P_In_ptr,
+                          d_Pot_Array_P_Out_ptr,
                           SOR_Min_Iter, SOR_Max_Iter, SOR_Omega_6, Poi_Const, IntScheme );
                    });
             });
@@ -454,15 +457,18 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
 #           elif ( POT_SCHEME == MG  )
 
             Stream[s]->submit([&](sycl::handler &cgh) {
+                auto d_Rho_Array_P_ptr     = d_Rho_Array_P     + UsedPatch[s];
+                auto d_Pot_Array_P_In_ptr  = d_Pot_Array_P_In  + UsedPatch[s];
+                auto d_Pot_Array_P_Out_ptr = d_Pot_Array_P_Out + UsedPatch[s];
                cgh.parallel_for(
                    sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) *
                                          Poi_Block_Dim,
                                      Poi_Block_Dim),
                    [=](sycl::nd_item<3> item_ct1) {
                       GPU_PoissonSolver_MG(
-                          d_Rho_Array_P     + UsedPatch[s],
-                          d_Pot_Array_P_In  + UsedPatch[s],
-                          d_Pot_Array_P_Out + UsedPatch[s],
+                          d_Rho_Array_P_ptr,
+                          d_Pot_Array_P_In_ptr,
+                          d_Pot_Array_P_Out_ptr,
                           dh, MG_Max_Iter, MG_NPre_Smooth, MG_NPost_Smooth, MG_Tolerated_Error,
                           Poi_Coeff, IntScheme );
                    });
@@ -479,16 +485,21 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
          if ( ExtPot )
          {
             Stream[s]->submit([&](sycl::handler &cgh) {
+                auto GPUExtPot_Ptr_ct = GPUExtPot_Ptr;
+                auto d_Pot_Array_P_Out_ptr  = d_Pot_Array_P_Out  + UsedPatch[s];
+                auto d_Corner_Array_PGT_ptr = d_Corner_Array_PGT + UsedPatch[s];
+                auto d_ExtPotTable_ct       = d_ExtPotTable;
+                auto d_ExtPotGenePtr_ct     = d_ExtPotGenePtr;
                cgh.parallel_for(
                    sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) *
                                          ExtPot_Block_Dim,
                                      ExtPot_Block_Dim),
                    [=](sycl::nd_item<3> item_ct1) {
                       GPU_ExtPotSolver(
-                          d_Pot_Array_P_Out  + UsedPatch[s],
-                          d_Corner_Array_PGT + UsedPatch[s],
-                          d_ExtPotTable, d_ExtPotGenePtr,
-                          dh, GPUExtPot_Ptr, TimeNew, SelfGravity );
+                          d_Pot_Array_P_Out_ptr,
+                          d_Corner_Array_PGT_ptr,
+                          d_ExtPotTable_ct, d_ExtPotGenePtr_ct,
+                          dh, GPUExtPot_Ptr_ct, TimeNew, SelfGravity );
                    });
             });
          }
@@ -500,6 +511,14 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
       {
 #        if   ( MODEL == HYDRO )
          Stream[s]->submit([&](sycl::handler &cgh) {
+             auto GPUExtAcc_Ptr_ct = GPUExtAcc_Ptr;
+                auto d_Flu_Array_G_ptr      = d_Flu_Array_G      + UsedPatch[s];
+                auto d_Pot_Array_P_Out_ptr  = d_Pot_Array_P_Out  + UsedPatch[s];
+                auto d_Corner_Array_PGT_ptr = d_Corner_Array_PGT + UsedPatch[s];
+                auto d_Pot_Array_USG_G_ptr  = d_Pot_Array_USG_G  + UsedPatch[s];
+                auto d_Flu_Array_USG_G_ptr  = d_Flu_Array_USG_G  + UsedPatch[s];
+                auto d_DE_Array_G_ptr       = d_DE_Array_G       + UsedPatch[s];
+                auto d_Emag_Array_G_ptr     = d_Emag_Array_G     + UsedPatch[s];
             sycl::local_accessor<real, 1> s_pot_new_acc(sycl::range<1>( CUBE(GRA_NXT) ), cgh);
             #ifdef UNSPLIT_GRAVITY
             sycl::local_accessor<real, 1> s_pot_old_acc(sycl::range<1>( CUBE(USG_NXT_G) ), cgh);
@@ -510,15 +529,15 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
                                   Gra_Block_Dim),
                 [=](sycl::nd_item<3> item_ct1) {
                    GPU_HydroGravitySolver(
-                       d_Flu_Array_G      + UsedPatch[s],
-                       d_Pot_Array_P_Out  + UsedPatch[s],
-                       d_Corner_Array_PGT + UsedPatch[s],
-                       d_Pot_Array_USG_G  + UsedPatch[s],
-                       d_Flu_Array_USG_G  + UsedPatch[s],
-                       d_DE_Array_G       + UsedPatch[s],
-                       d_Emag_Array_G     + UsedPatch[s],
+                       d_Flu_Array_G_ptr,
+                       d_Pot_Array_P_Out_ptr,
+                       d_Corner_Array_PGT_ptr,
+                       d_Pot_Array_USG_G_ptr,
+                       d_Flu_Array_USG_G_ptr,
+                       d_DE_Array_G_ptr,
+                       d_Emag_Array_G_ptr,
                        dt, dh, P5_Gradient,
-                       (SelfGravity || ExtPot), ExtAcc, GPUExtAcc_Ptr,
+                       (SelfGravity || ExtPot), ExtAcc, GPUExtAcc_Ptr_ct,
                        TimeNew, TimeOld, MinEint,
                        s_pot_new_acc.get_multi_ptr<sycl::access::decorated::no>().get()
                        #ifdef UNSPLIT_GRAVITY

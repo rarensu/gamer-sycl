@@ -171,6 +171,7 @@ void GPU_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)
       if ( NPatch_per_Stream[s] == 0 )    continue;
 
       Stream[s]->submit([&](sycl::handler &cgh) {
+         const EoS_t EoS_ct = EoS;
          auto d_Flu_Array_S_In_UsedPatch_s_ct0 = d_Flu_Array_S_In + UsedPatch[s];
          auto d_Flu_Array_S_Out_UsedPatch_s_ct1 = d_Flu_Array_S_Out + UsedPatch[s];
          auto d_Mag_Array_S_In_UsedPatch_s_ct2 = d_Mag_Array_S_In + UsedPatch[s];
@@ -186,7 +187,7 @@ void GPU_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)
                     d_Mag_Array_S_In_UsedPatch_s_ct2,
                     d_Corner_Array_S_UsedPatch_s_ct3,
                     SrcTerms, NPatchGroup, dt, dh, TimeNew, TimeOld,
-                    MinDens, MinPres, MinEint, PassiveFloor, EoS );
+                    MinDens, MinPres, MinEint, PassiveFloor, EoS_ct );
              });
       });
 

@@ -273,6 +273,7 @@ void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_
       {
          case DT_FLU_SOLVER:
             Stream[s]->submit([&](sycl::handler &cgh) {
+               const EoS_t EoS_ct = EoS;
                sycl::local_accessor<real, 1> shared_acc_ct1(sycl::range<1>(32 /*MaxNWarp*/), cgh);
 
                auto d_dt_Array_T_UsedPatch_s_ct0 = d_dt_Array_T  + UsedPatch[s];
@@ -287,7 +288,7 @@ void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_
                           d_dt_Array_T_UsedPatch_s_ct0,
                           d_Flu_Array_T_UsedPatch_s_ct1,
                           d_Mag_Array_T_UsedPatch_s_ct2, dh, Safety, MinPres,
-                          PassiveFloor, EoS, MicroPhy,
+                          PassiveFloor, EoS_ct, MicroPhy,
                           shared_acc_ct1.get_multi_ptr<sycl::access::decorated::no>().get());
                    });
             });
@@ -296,6 +297,7 @@ void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_
 #        ifdef GRAVITY
          case DT_GRA_SOLVER:
             Stream[s]->submit([&](sycl::handler &cgh) {
+                auto GPUExtAcc_Ptr_ct = GPUExtAcc_Ptr;
                 sycl::local_accessor<real, 1> shared_acc_ct1(sycl::range<1>(32 /*MaxNWarp*/), cgh);
                auto d_dt_Array_T_UsedPatch_s_ct0 = d_dt_Array_T + UsedPatch[s];
                auto d_Pot_Array_T_UsedPatch_s_ct1 = d_Pot_Array_T + UsedPatch[s];
@@ -309,7 +311,7 @@ void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_
                           d_dt_Array_T_UsedPatch_s_ct0,
                           d_Pot_Array_T_UsedPatch_s_ct1,
                           d_Corner_Array_PGT_UsedPatch_s_ct2,
-                           dh, Safety, P5_Gradient, UsePot, ExtAcc, GPUExtAcc_Ptr, TargetTime,
+                           dh, Safety, P5_Gradient, UsePot, ExtAcc, GPUExtAcc_Ptr_ct, TargetTime,
                            shared_acc_ct1.get_multi_ptr<sycl::access::decorated::no>().get());
                    });
             });

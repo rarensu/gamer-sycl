@@ -668,6 +668,7 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 #        if   ( FLU_SCHEME == RTVD )
 
          Stream[s]->submit([&](sycl::handler &cgh) {
+            const EoS_t EoS_ct = EoS;
             auto d_Flu_Array_F_In_ptr = d_Flu_Array_F_In + UsedPatch[s];
             auto d_Flu_Array_F_Out_ptr = d_Flu_Array_F_Out + UsedPatch[s];
             auto d_Flux_Array_ptr = d_Flux_Array + UsedPatch[s];
@@ -684,7 +685,7 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
                        d_Flux_Array_ptr,
                        d_Corner_Array_F_ptr,
                        d_Pot_Array_USG_F_ptr,
-                       dt, 1.0/dh, StoreFlux, XYZ, MinDens, MinPres, MinEint, PassiveFloor, EoS );
+                       dt, 1.0/dh, StoreFlux, XYZ, MinDens, MinPres, MinEint, PassiveFloor, EoS_ct );
                 });
          });
 
@@ -700,6 +701,7 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 #endif
 
             Stream[s]->submit([&](sycl::handler &cgh) {
+               const EoS_t EoS_ct = EoS;
 #if ( NCOMP_PASSIVE > 0 )
                auto c_NormIdx_ptr = c_NormIdx.get_ptr();
                auto c_FracIdx_ptr = c_FracIdx.get_ptr();
@@ -748,7 +750,7 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
                           dt, dh, StoreFlux, StoreElectric, LR_Limiter, MinMod_Coeff, MinMod_MaxIter,
                           Time, UsePot, ExtAcc, GPUExtAcc_Ptr_ct, MinDens, MinPres, MinEint,
                           DualEnergySwitch, PassiveFloor, NormPassive, NNorm, FracPassive, NFrac,
-                          JeansMinPres, JeansMinPres_Coeff, EoS, MicroPhy, c_NormIdx_ptr, c_FracIdx_ptr );
+                          JeansMinPres, JeansMinPres_Coeff, EoS_ct, MicroPhy, c_NormIdx_ptr, c_FracIdx_ptr );
                    });
             });
          }
@@ -765,6 +767,7 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 #endif
 
             Stream[s]->submit([&](sycl::handler &cgh) {
+               const EoS_t EoS_ct = EoS;
 #if ( NCOMP_PASSIVE > 0 )
                auto c_NormIdx_ptr = c_NormIdx.get_ptr();
                auto c_FracIdx_ptr = c_FracIdx.get_ptr();
@@ -813,7 +816,7 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
                           dt, dh, StoreFlux, StoreElectric, LR_Limiter, MinMod_Coeff,
                           Time, UsePot, ExtAcc, GPUExtAcc_Ptr_ct, MinDens, MinPres, MinEint,
                           DualEnergySwitch, PassiveFloor, NormPassive, NNorm, FracPassive, NFrac,
-                          JeansMinPres, JeansMinPres_Coeff, EoS, c_NormIdx_ptr, c_FracIdx_ptr );
+                          JeansMinPres, JeansMinPres_Coeff, EoS_ct, c_NormIdx_ptr, c_FracIdx_ptr );
                    });
             });
          }
