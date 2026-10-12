@@ -159,7 +159,7 @@ void Src_SetAuxArray_ExactCooling( double AuxArray_Flt[], int AuxArray_Int[] )
 // Return      :  fluid[]
 //-----------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static void Src_ExactCooling( real fluid[], const real B[], const SrcTerms_t *SrcTerms, const real dt,
+SrcExternDecl void Src_ExactCooling( real fluid[], const real B[], const SrcTerms_t *SrcTerms, const real dt,
                               const real dh, const double x, const double y, const double z,
                               const double TimeNew, const double TimeOld, const real MinDens,
                               const real MinPres, const real MinEint, const long PassiveFloor, const EoS_t *EoS,
@@ -302,11 +302,9 @@ void Src_PassData2GPU_ExactCooling()
 // IV. Set initialization functions
 // ================================
 
-#ifdef SYCL_LANGUAGE_VERSION
-static dpct::global_memory<SrcFunc_t, 0> SrcFunc_Ptr(Src_ExactCooling);
-#else
+#ifndef SYCL_LANGUAGE_VERSION
 static SrcFunc_t SrcFunc_Ptr = Src_ExactCooling;
-#endif // #ifdef SYCL_LANGUAGE_VERSION
+#endif // #ifndef SYCL_LANGUAGE_VERSION
 
 //-----------------------------------------------------------------------------------------
 // Function    :  Src_SetCPU/GPUFunc_ExactCooling
@@ -323,10 +321,9 @@ static SrcFunc_t SrcFunc_Ptr = Src_ExactCooling;
 
 void Src_SetGPUFunc_ExactCooling( SrcFunc_t &SrcFunc_GPUPtr )
 {
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&SrcFunc_GPUPtr, SrcFunc_Ptr.get_ptr(), sizeof(SrcFunc_t))
-           .wait()));
+   // Source-term functions are dispatched at compile time via Src_Dispatch.h
+   // No dpct::global_memory / queue memcpy is needed for SYCL device dispatch
+   SrcFunc_GPUPtr = Src_ExactCooling;
 }
 
 #else

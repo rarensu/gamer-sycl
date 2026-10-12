@@ -119,7 +119,7 @@ void Src_SetAuxArray_User_Template( double AuxArray_Flt[], int AuxArray_Int[] )
 // Return      :  fluid[]
 //-----------------------------------------------------------------------------------------
 GPU_DEVICE_NOINLINE
-static void Src_User_Template( real fluid[], const real B[],
+SrcExternDecl void Src_User_Template( real fluid[], const real B[],
                                const SrcTerms_t *SrcTerms, const real dt, const real dh,
                                const double x, const double y, const double z,
                                const double TimeNew, const double TimeOld,
@@ -205,17 +205,9 @@ void Src_WorkBeforeMajorFunc_User_Template( const int lv, const double TimeNew, 
 // IV. Set initialization functions
 // ================================
 
-#ifdef SYCL_LANGUAGE_VERSION
-#  define FUNC_SPACE static
-#else
-#  define FUNC_SPACE            static
-#endif
-
-#ifdef SYCL_LANGUAGE_VERSION
-static dpct::global_memory<SrcFunc_t, 0> SrcFunc_Ptr(Src_User_Template);
-#else
+#ifndef SYCL_LANGUAGE_VERSION
 static SrcFunc_t SrcFunc_Ptr = Src_User_Template;
-#endif // #ifdef SYCL_LANGUAGE_VERSION
+#endif // #ifndef SYCL_LANGUAGE_VERSION
 
 //-----------------------------------------------------------------------------------------
 // Function    :  Src_SetCPU/GPUFunc_User_Template
@@ -232,10 +224,9 @@ static SrcFunc_t SrcFunc_Ptr = Src_User_Template;
 
 void Src_SetGPUFunc_User_Template( SrcFunc_t &SrcFunc_GPUPtr )
 {
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_in_order_queue()
-           .memcpy(&SrcFunc_GPUPtr, SrcFunc_Ptr.get_ptr(), sizeof(SrcFunc_t))
-           .wait()));
+   // Source-term functions are dispatched at compile time via Src_Dispatch.h
+   // No dpct::global_memory / queue memcpy is needed for SYCL device dispatch
+   SrcFunc_GPUPtr = Src_User_Template;
 }
 
 #else

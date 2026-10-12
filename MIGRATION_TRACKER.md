@@ -62,6 +62,7 @@ is preserved verbatim.
 | `umul` | restored `__umul24`/`__mul24` via DPCT compat guard |
 | `zero-len` | wrapped zero-risk array dimensions (`NCOMP_MAG`, `NCOMP_ELE`, `CUBE(N_EC_ELE)`) in `MAX(1, x)` to avoid zero-length-array errors in SYCL device code; compile-time no-op when constant > 0 |
 | `eos-dispatch` | replaced runtime EoS function-pointer indirection with compile-time dispatch via `EoS_Dispatch.h`; `static`→`EoSExternDecl` (`SYCL_EXTERNAL`) on concrete EoS functions; stubbed DPCT `memcpy`/queue in `EoS_SetGPUFunc_*` (direct assignment) |
+| `src-dispatch` | replaced runtime source-term function-pointer indirection with compile-time dispatch via `Src_Dispatch.h`; same pattern as `eos-dispatch` |
 
 ## Tracker entries
 
@@ -177,3 +178,18 @@ shorthand in the legend above.
 | DONE | `src/Model_Hydro/CPU_Hydro/CPU_CosmicRay.cpp` | None (new file entry) | `eos-dispatch`: 2 struct-member `EoS->CREint2CRPres_FuncPtr(...)` calls replaced with `#ifdef SYCL_LANGUAGE_VERSION` guards calling `GPU_EoS_CREint2CRPres(...)`. |
 | DONE | (cross-cutting) | — | `zero-len`: applied `MAX(1, x)` to all `[NCOMP_MAG]`, `[NCOMP_ELE]`, `[CUBE(N_EC_ELE)]` array dimensions across src/ and include/ (290 replacement sites in ~40 files, including `CPU_FluidSolver_CTU.cpp`, `CPU_FluidSolver_MHM.cpp`, `CPU_Shared_DataReconstruction.cpp`, `GPU_Asyn_FluidSolver.cpp`, `GPU_MemAllocate_Fluid.cpp`, `CPU_FluidSolver.cpp`, `CPU_dtSolver_HydroCFL.cpp`, `Global.h`, `FLU.h`, `Macro.h`, `Prototype.h`). Fixes "zero-length arrays are not permitted in SYCL device code" when `MHD` is disabled. |
 
+
+### SYCL source-term dispatch (compile-time elimination of source-term function-pointer calls)
+
+The following changes replace runtime source-term function-pointer indirection (which SYCL does
+not support in kernels) with compile-time dispatch via `Src_Dispatch.h`.  See the `src-dispatch`
+shorthand in the legend above.
+
+| Status | Original file | DPCT suggestion file | Notes |
+| --- | --- | --- | --- |
+| DONE | `include/Src_Dispatch.h` | None (new file) | New header mirroring `EoS_Dispatch.h`: `SrcExternDecl` macro (`SYCL_EXTERNAL` under SYCL, empty under CPU); `SYCL_EXTERNAL` extern declarations for `Src_Deleptonization` (`MODEL == HYDRO`), `Src_ExactCooling` (`EXACT_COOLING`), and `Src_User_Template` (always); `CALL_SRC_*` macros that map to direct concrete-function calls under SYCL and to struct-member function-pointer calls under CPU. |
+| DONE | `include/FLU.h` | — (update to existing entry) | Added `#include "Src_Dispatch.h"` unconditionally (after `EoS_Dispatch.h`). `src-dispatch`. |
+| DONE | `src/SourceTerms/CPU_SrcSolver_IterateAllCells.cpp` | — (update to existing entry) | `src-dispatch`: replaced 3 struct-member function-pointer calls (`SrcTerms.Dlep_FuncPtr`, `EC_FuncPtr`, `User_FuncPtr`) with `CALL_SRC_Deleptonization`, `CALL_SRC_ExactCooling`, `CALL_SRC_User` macros. |
+| DONE | `src/SourceTerms/Deleptonization/CPU_Src_Deleptonization.cpp` | — (update to existing entry) | `src-dispatch`: changed `static void Src_Deleptonization` to `SrcExternDecl void Src_Deleptonization`; removed `dpct::global_memory` device wrapper; `Src_SetGPUFunc_Deleptonization` now direct-assigns `SrcFunc_GPUPtr = Src_Deleptonization` (no memcpy/queue). |
+| DONE | `src/SourceTerms/ExactCooling/CPU_Src_ExactCooling.cpp` | — (update to existing entry) | `src-dispatch`: same pattern as Deleptonization. |
+| DONE | `src/SourceTerms/User_Template/CPU_Src_User_Template.cpp` | — (update to existing entry) | `src-dispatch`: same pattern; also removed unused `FUNC_SPACE` macro (DPCT artifact). |

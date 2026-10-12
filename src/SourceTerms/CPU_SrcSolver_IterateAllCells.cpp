@@ -115,20 +115,20 @@ void CPU_SrcSolver_IterateAllCells(
 //       (1) deleptonization
 #        if ( MODEL == HYDRO )
          if ( SrcTerms.Deleptonization )
-            SrcTerms.Dlep_FuncPtr( fluid, B, &SrcTerms, dt, dh, x, y, z, TimeNew, TimeOld, MinDens, MinPres, MinEint, PassiveFloor, &EoS,
+            CALL_SRC_Deleptonization( fluid, B, &SrcTerms, dt, dh, x, y, z, TimeNew, TimeOld, MinDens, MinPres, MinEint, PassiveFloor, &EoS,
                                    SrcTerms.Dlep_AuxArrayDevPtr_Flt, SrcTerms.Dlep_AuxArrayDevPtr_Int );
 #        endif
 
 #        ifdef EXACT_COOLING
 //       (2) exact cooling
          if ( SrcTerms.ExactCooling )
-            SrcTerms.EC_FuncPtr( fluid, B, &SrcTerms, dt, dh, x, y, z, TimeNew, TimeOld, MinDens, MinPres, MinEint, PassiveFloor, &EoS,
+            CALL_SRC_ExactCooling( fluid, B, &SrcTerms, dt, dh, x, y, z, TimeNew, TimeOld, MinDens, MinPres, MinEint, PassiveFloor, &EoS,
                                  SrcTerms.EC_AuxArrayDevPtr_Flt, SrcTerms.EC_AuxArrayDevPtr_Int );
 #        endif
 
 //       (3) user-defined
          if ( SrcTerms.User )
-            SrcTerms.User_FuncPtr( fluid, B, &SrcTerms, dt, dh, x, y, z, TimeNew, TimeOld, MinDens, MinPres, MinEint, PassiveFloor, &EoS,
+            CALL_SRC_User( fluid, B, &SrcTerms, dt, dh, x, y, z, TimeNew, TimeOld, MinDens, MinPres, MinEint, PassiveFloor, &EoS,
                                    SrcTerms.User_AuxArrayDevPtr_Flt, SrcTerms.User_AuxArrayDevPtr_Int );
 
 //       store the updated results
