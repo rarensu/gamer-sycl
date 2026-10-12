@@ -455,7 +455,7 @@ endif
 INCLUDE := -I../include
 
 ifeq "$(filter -DMODEL=HYDRO, $(SIMU_OPTION))" "-DMODEL=HYDRO"
-INCLUDE += -IModel_Hydro/GPU_Hydro
+INCLUDE += -IModel_Hydro/GPU_Hydro -IModel_Hydro/CPU_Hydro
 endif
 
 ifeq "$(filter -DSERIAL, $(SIMU_OPTION))" ""
