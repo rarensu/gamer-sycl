@@ -87,11 +87,11 @@ class LB_GlobalTree;
 // Hydrodynamics
 void CPU_FluidSolver( real h_Flu_Array_In[][FLU_NIN][ CUBE(FLU_NXT) ],
                       real h_Flu_Array_Out[][FLU_NOUT][ CUBE(PS2) ],
-                      real h_Mag_Array_In[][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-                      real h_Mag_Array_Out[][NCOMP_MAG][ PS2P1*SQR(PS2) ],
+                      real h_Mag_Array_In[][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
+                      real h_Mag_Array_Out[][MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2) ],
                       char h_DE_Array_Out[][ CUBE(PS2) ],
                       real h_Flux_Array[][9][NFLUX_TOTAL][ SQR(PS2) ],
-                      real h_Ele_Array[][9][NCOMP_ELE][ PS2P1*PS2 ],
+                      real h_Ele_Array[][9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ],
                       const double h_Corner_Array[][3],
                       const real h_Pot_Array_USG[][ CUBE(USG_NXT_F) ],
                       const bool h_IsCompletelyRefined[],
@@ -170,17 +170,17 @@ int Flu_AdvanceDt( const int lv, const double TimeNew, const double TimeOld, con
 void Flu_AllocateFluxArray( const int lv );
 void Flu_Close( const int lv, const int SaveSg_Flu, const int SaveSg_Mag,
                 real h_Flux_Array[][9][NFLUX_TOTAL][ SQR(PS2) ],
-                real h_Ele_Array[][9][NCOMP_ELE][ PS2P1*PS2 ],
+                real h_Ele_Array[][9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ],
                 real h_Flu_Array_F_Out[][FLU_NOUT][ CUBE(PS2) ],
-                real h_Mag_Array_F_Out[][NCOMP_MAG][ PS2P1*SQR(PS2) ],
+                real h_Mag_Array_F_Out[][MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2) ],
                 char h_DE_Array_F_Out[][ CUBE(PS2) ],
                 const int NPG, const int *PID0_List,
                 const real h_Flu_Array_F_In[][FLU_NIN][ CUBE(FLU_NXT) ],
-                const real h_Mag_Array_In[][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
+                const real h_Mag_Array_In[][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
                 const double dt );
 void Flu_Prepare( const int lv, const double PrepTime,
                   real h_Flu_Array_F_In[][FLU_NIN][ CUBE(FLU_NXT) ],
-                  real h_Mag_Array_F_In[][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
+                  real h_Mag_Array_F_In[][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
                   real h_Pot_Array_USG_F[][ CUBE(USG_NXT_F) ],
                   double h_Corner_Array_F[][3],
                   bool h_IsCompletelyRefined[],
@@ -282,7 +282,7 @@ void Interpolate( real CData[], const int CSize[3], const int CStart[3], const i
                   const int NComp, const IntScheme_t IntScheme, const bool UnwrapPhase,
                   const bool Monotonic[], const bool OppSign0thOrder, const bool AllCons,
                   const IntPrim_t IntPrim, const ReduceOrFixMonoCoeff_t ReduceMonoCoeff,
-                  const real CMag_IntIter[], const real FMag_IntIter[][NCOMP_MAG] );
+                  const real CMag_IntIter[], const real FMag_IntIter[][MAX(1,NCOMP_MAG)] );
 void Int_Table( const IntScheme_t IntScheme, int &NSide, int &NGhost );
 
 
@@ -324,14 +324,14 @@ int    Mis_Scale2Cell( const int Scale, const int lv );
 int    Mis_Cell2Scale( const int NCell, const int lv );
 double dt_InvokeSolver( const Solver_t TSolver, const int lv );
 void   dt_Prepare_Flu( const int lv, real h_Flu_Array_T[][FLU_NIN_T][ CUBE(PS1) ],
-                       real h_Mag_Array_T[][NCOMP_MAG][ PS1P1*SQR(PS1) ], const int NPG, const int *PID0_List );
+                       real h_Mag_Array_T[][MAX(1,NCOMP_MAG)][ PS1P1*SQR(PS1) ], const int NPG, const int *PID0_List );
 #ifdef GRAVITY
 void   dt_Prepare_Pot( const int lv, real h_Pot_Array_T[][ CUBE(GRA_NXT) ], const int NPG, const int *PID0_List,
                        const double PrepTime );
 #endif
 void   dt_Close( const real h_dt_Array_T[], const int NPG );
 void   CPU_dtSolver( const Solver_t TSolver, real dt_Array[], const real Flu_Array[][FLU_NIN_T][ CUBE(PS1) ],
-                     const real Mag_Array[][NCOMP_MAG][ PS1P1*SQR(PS1) ], const real Pot_Array[][ CUBE(GRA_NXT) ],
+                     const real Mag_Array[][MAX(1,NCOMP_MAG)][ PS1P1*SQR(PS1) ], const real Pot_Array[][ CUBE(GRA_NXT) ],
                      const double Corner_Array[][3], const int NPatchGroup, const real dh, const real Safety,
                      const MicroPhy_t MicroPhy, const real MinPres, const long PassiveFloor, const bool P5_Gradient,
                      const bool UsePot, const OptExtAcc_t ExtAcc, const double TargetTime );
@@ -365,7 +365,7 @@ void Output_Patch( const int lv, const int PID, const int FluSg, const int MagSg
 void Output_PatchMap( const int lv, const int PID, const int TSg, const int Comp, const char *comment );
 void Output_PreparedPatch_Fluid( const int TLv, const int TPID,
                                  const real h_Flu_Array[][FLU_NIN][ CUBE(FLU_NXT) ],
-                                 const real h_Mag_Array[][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
+                                 const real h_Mag_Array[][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
                                  const int NPG, const int *PID0_List, const int CLv, const char *comment );
 #ifdef SUPPORT_FFTW
 void Output_BasePowerSpectrum( const char *FileName, const long TVar );
@@ -651,11 +651,11 @@ void   ELBDM_GramFE_ComputeTimeEvolutionMatrix( gramfe_matmul_float (*output)[ 2
 #ifdef GPU
 void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
                              real h_Flu_Array_Out[][FLU_NOUT][ CUBE(PS2) ],
-                             real h_Mag_Array_In[][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-                             real h_Mag_Array_Out[][NCOMP_MAG][ PS2P1*SQR(PS2) ],
+                             real h_Mag_Array_In[][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
+                             real h_Mag_Array_Out[][MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2) ],
                              char h_DE_Array_Out[][ CUBE(PS2) ],
                              real h_Flux_Array[][9][NFLUX_TOTAL][ SQR(PS2) ],
-                             real h_Ele_Array[][9][NCOMP_ELE][ PS2P1*PS2 ],
+                             real h_Ele_Array[][9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ],
                              const double h_Corner_Array[][3],
                              real h_Pot_Array_USG[][ CUBE(USG_NXT_F) ],
                              const bool h_IsCompletelyRefined[],
@@ -673,14 +673,14 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
                              const bool JeansMinPres, const real JeansMinPres_Coeff,
                              const int GPU_NStream, const bool UseWaveFlag );
 void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_Flu_Array[][FLU_NIN_T][ CUBE(PS1) ],
-                          const real h_Mag_Array[][NCOMP_MAG][ PS1P1*SQR(PS1) ], const real h_Pot_Array[][ CUBE(GRA_NXT) ],
+                          const real h_Mag_Array[][MAX(1,NCOMP_MAG)][ PS1P1*SQR(PS1) ], const real h_Pot_Array[][ CUBE(GRA_NXT) ],
                           const double h_Corner_Array[][3], const int NPatchGroup, const real dh, const real Safety,
                           const MicroPhy_t MicroPhy, const real MinPres, const long PassiveFloor,
                           const bool P5_Gradient, const bool UsePot,
                           const OptExtAcc_t ExtAcc, const double TargetTime, const int GPU_NStream );
 void GPU_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)           ],
                                  real h_Flu_Array_Out[][FLU_NOUT_S][ CUBE(PS1)               ],
-                           const real h_Mag_Array_In [][NCOMP_MAG ][ SRC_NXT_P1*SQR(SRC_NXT) ],
+                           const real h_Mag_Array_In [][MAX(1,NCOMP_MAG)][ SRC_NXT_P1*SQR(SRC_NXT) ],
                            const double h_Corner_Array[][3],
                            const SrcTerms_t SrcTerms, const int NPatchGroup, const real dt, const real dh,
                            const double TimeNew, const double TimeOld,
@@ -826,7 +826,7 @@ void Src_AdvanceDt( const int lv, const double TimeNew, const double TimeOld, co
                     const int SaveSg_Flu, const int SaveSg_Mag, const bool OverlapMPI, const bool Overlap_Sync );
 void Src_Prepare( const int lv, const double PrepTime,
                   real h_Flu_Array_S_In[][FLU_NIN_S][ CUBE(SRC_NXT)           ],
-                  real h_Mag_Array_S_In[][NCOMP_MAG][ SRC_NXT_P1*SQR(SRC_NXT) ],
+                  real h_Mag_Array_S_In[][MAX(1,NCOMP_MAG)][ SRC_NXT_P1*SQR(SRC_NXT) ],
                   double h_Corner_Array_S[][3],
                   const int NPG, const int *PID0_List );
 void Src_Close( const int lv, const int SaveSg_Flu, const real h_Flu_Array_S_Out[][FLU_NOUT_S][ CUBE(PS1) ],
@@ -834,7 +834,7 @@ void Src_Close( const int lv, const int SaveSg_Flu, const real h_Flu_Array_S_Out
 void Src_WorkBeforeMajorFunc( const int lv, const double TimeNew, const double TimeOld, const double dt );
 void CPU_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)           ],
                           real h_Flu_Array_Out[][FLU_NOUT_S][ CUBE(PS1)               ],
-                    const real h_Mag_Array_In [][NCOMP_MAG ][ SRC_NXT_P1*SQR(SRC_NXT) ],
+                    const real h_Mag_Array_In [][MAX(1,NCOMP_MAG)][ SRC_NXT_P1*SQR(SRC_NXT) ],
                     const double h_Corner_Array[][3],
                     const SrcTerms_t SrcTerms, const int NPatchGroup, const real dt, const real dh,
                     const double TimeNew, const double TimeOld,

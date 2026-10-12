@@ -347,7 +347,7 @@ void Flag_Real( const int lv, const UseLBFunc_t UseLBFunc )
 //          3-1. evaluate cell-centered B field
             if ( OPT__FLAG_CURRENT || NeedPres )
             {
-               real MagCC_1Cell[NCOMP_MAG];
+               real MagCC_1Cell[MAX(1,NCOMP_MAG)];
 
                for (int k=0; k<PS1; k++)
                for (int j=0; j<PS1; j++)

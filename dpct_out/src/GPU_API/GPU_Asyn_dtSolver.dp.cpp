@@ -17,7 +17,7 @@ void GPU_dtSolver_HydroCFL(
     /*
     DPCT1102:39: Zero-length arrays are not permitted in SYCL device code.
     */
-    const real g_Mag_Array[][NCOMP_MAG][PS1P1 * SQR(PS1)], const real dh,
+    const real g_Mag_Array[][MAX(1,NCOMP_MAG)][PS1P1 * SQR(PS1)], const real dh,
     const real Safety, const real MinPres, const long PassiveFloor,
     const EoS_t EoS, const MicroPhy_t MicroPhy, real *shared);
 #ifdef GRAVITY
@@ -44,12 +44,12 @@ extern double (*d_Corner_Array_PGT)[3];
 #endif
 #if ( MODEL == HYDRO )
 #ifdef MHD
-extern real (*d_Mag_Array_T)[NCOMP_MAG][ PS1P1*SQR(PS1) ];
+extern real (*d_Mag_Array_T)[MAX(1,NCOMP_MAG)][ PS1P1*SQR(PS1) ];
 #else
 /*
 DPCT1102:40: Zero-length arrays are not permitted in SYCL device code.
 */
-static real (*d_Mag_Array_T)[NCOMP_MAG][PS1P1 * SQR(PS1)] = NULL;
+static real (*d_Mag_Array_T)[MAX(1,NCOMP_MAG)][PS1P1 * SQR(PS1)] = NULL;
 #endif
 #endif // HYDRO
 
@@ -92,7 +92,7 @@ extern dpct::queue_ptr *Stream;
 // Return      :  h_dt_Array
 //-------------------------------------------------------------------------------------------------------
 void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_Flu_Array[][FLU_NIN_T][ CUBE(PS1) ],
-                          const real h_Mag_Array[][NCOMP_MAG][ PS1P1*SQR(PS1) ], const real h_Pot_Array[][ CUBE(GRA_NXT) ],
+                          const real h_Mag_Array[][MAX(1,NCOMP_MAG)][ PS1P1*SQR(PS1) ], const real h_Pot_Array[][ CUBE(GRA_NXT) ],
                           const double h_Corner_Array[][3], const int NPatchGroup, const real dh, const real Safety,
                           const MicroPhy_t MicroPhy, const real MinPres, const long PassiveFloor,
                           const bool P5_Gradient, const bool UsePot,

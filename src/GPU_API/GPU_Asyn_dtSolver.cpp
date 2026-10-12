@@ -16,14 +16,14 @@
 #ifdef SYCL_LANGUAGE_VERSION
 SYCL_EXTERNAL
 void GPU_dtSolver_HydroCFL( real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_T][ CUBE(PS1) ],
-                            const real g_Mag_Array[][NCOMP_MAG][ PS1P1*SQR(PS1) ],
+                            const real g_Mag_Array[][MAX(1,NCOMP_MAG)][ PS1P1*SQR(PS1) ],
                             const real dh, const real Safety, const real MinPres,
                             const long PassiveFloor, const EoS_t EoS, const MicroPhy_t MicroPhy,
                             real *shared );
 #else
 __global__
 void GPU_dtSolver_HydroCFL( real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_T][ CUBE(PS1) ],
-                            const real g_Mag_Array[][NCOMP_MAG][ PS1P1*SQR(PS1) ],
+                            const real g_Mag_Array[][MAX(1,NCOMP_MAG)][ PS1P1*SQR(PS1) ],
                             const real dh, const real Safety, const real MinPres,
                             const long PassiveFloor, const EoS_t EoS, const MicroPhy_t MicroPhy );
 #endif
@@ -60,9 +60,9 @@ extern double (*d_Corner_Array_PGT)[3];
 #endif
 #if ( MODEL == HYDRO )
 #ifdef MHD
-extern real (*d_Mag_Array_T)[NCOMP_MAG][ PS1P1*SQR(PS1) ];
+extern real (*d_Mag_Array_T)[MAX(1,NCOMP_MAG)][ PS1P1*SQR(PS1) ];
 #else
-static real (*d_Mag_Array_T)[NCOMP_MAG][ PS1P1*SQR(PS1) ] = NULL;
+static real (*d_Mag_Array_T)[MAX(1,NCOMP_MAG)][ PS1P1*SQR(PS1) ] = NULL;
 #endif
 #endif // HYDRO
 
@@ -108,7 +108,7 @@ extern dpct::queue_ptr *Stream;
 // Return      :  h_dt_Array
 //-------------------------------------------------------------------------------------------------------
 void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_Flu_Array[][FLU_NIN_T][ CUBE(PS1) ],
-                          const real h_Mag_Array[][NCOMP_MAG][ PS1P1*SQR(PS1) ], const real h_Pot_Array[][ CUBE(GRA_NXT) ],
+                          const real h_Mag_Array[][MAX(1,NCOMP_MAG)][ PS1P1*SQR(PS1) ], const real h_Pot_Array[][ CUBE(GRA_NXT) ],
                           const double h_Corner_Array[][3], const int NPatchGroup, const real dh, const real Safety,
                           const MicroPhy_t MicroPhy, const real MinPres, const long PassiveFloor,
                           const bool P5_Gradient, const bool UsePot,

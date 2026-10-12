@@ -95,7 +95,7 @@ void LB_GetBufferData( const int lv, const int FluSg, const int MagSg, const int
 #  ifdef MHD
 // TMagVarIdxList: target B field indices ( = [0 ... NCOMP_MAG-1] )
    int NVarFC_Mag, *TMagVarIdxList;
-   TMagVarIdxList = new int [NCOMP_MAG];
+   TMagVarIdxList = new int [MAX(1,NCOMP_MAG)];
    NVarFC_Mag = 0;
 
    for (int v=0; v<NCOMP_MAG; v++)

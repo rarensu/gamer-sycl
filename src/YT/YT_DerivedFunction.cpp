@@ -228,8 +228,8 @@ void Temperature_DerivedFunc( const int list_len, const long *list_gid, const ch
       real Passive[NCOMP_PASSIVE];
       real Emag;
 #     ifdef MHD
-      yt_data   MagDataRaw[NCOMP_MAG];
-      real     *MagData[NCOMP_MAG];
+      yt_data   MagDataRaw[MAX(1,NCOMP_MAG)];
+      real     *MagData[MAX(1,NCOMP_MAG)];
       for (int v=0; v<NCOMP_MAG; v++)
       {
          yt_getGridInfo_FieldData( list_gid[lid], CCMagLabel[v], &(MagDataRaw[v]));

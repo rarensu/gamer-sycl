@@ -21,14 +21,14 @@ static void CorrectUnphysical( const int lv, const int NPG, const int *PID0_List
                                real h_Flu_Array_F_Out[][FLU_NOUT][ CUBE(PS2) ],
                                char h_DE_Array_F_Out[][ CUBE(PS2) ],
                                real h_Flux_Array[][9][NFLUX_TOTAL][ SQR(PS2) ],
-                               const real h_Mag_Array_F_In[][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-                               const real h_Mag_Array_F_Out[][NCOMP_MAG][ PS2P1*SQR(PS2) ],
+                               const real h_Mag_Array_F_In[][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
+                               const real h_Mag_Array_F_Out[][MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2) ],
                                const real dt );
 #endif
 #ifdef MHD
-void StoreElectric( const int lv, const real h_Ele_Array[][9][NCOMP_ELE][ PS2P1*PS2 ],
+void StoreElectric( const int lv, const real h_Ele_Array[][9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ],
                     const int NPG, const int *PID0_List, const real dt );
-void CorrectElectric( const int SonLv, const real h_Ele_Array[][9][NCOMP_ELE][ PS2P1*PS2 ],
+void CorrectElectric( const int SonLv, const real h_Ele_Array[][9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ],
                       const int NPG, const int *PID0_List, const real dt );
 void ResetLongB( real L[], real R[], const real FC_B, const int d );
 #endif
@@ -82,13 +82,13 @@ extern void Hydro_RiemannSolver_HLLD( const int XYZ, real Flux_Out[], const real
 //-------------------------------------------------------------------------------------------------------
 void Flu_Close( const int lv, const int SaveSg_Flu, const int SaveSg_Mag,
                 real h_Flux_Array[][9][NFLUX_TOTAL][ SQR(PS2) ],
-                real h_Ele_Array[][9][NCOMP_ELE][ PS2P1*PS2 ],
+                real h_Ele_Array[][9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ],
                 real h_Flu_Array_F_Out[][FLU_NOUT][ CUBE(PS2) ],
-                real h_Mag_Array_F_Out[][NCOMP_MAG][ PS2P1*SQR(PS2) ],
+                real h_Mag_Array_F_Out[][MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2) ],
                 char h_DE_Array_F_Out[][ CUBE(PS2) ],
                 const int NPG, const int *PID0_List,
                 const real h_Flu_Array_F_In[][FLU_NIN][ CUBE(FLU_NXT) ],
-                const real h_Mag_Array_F_In[][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
+                const real h_Mag_Array_F_In[][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
                 const double dt )
 {
 
@@ -550,8 +550,8 @@ void CorrectUnphysical( const int lv, const int NPG, const int *PID0_List,
                         real h_Flu_Array_F_Out[][FLU_NOUT][ CUBE(PS2) ],
                         char h_DE_Array_F_Out[][ CUBE(PS2) ],
                         real h_Flux_Array[][9][NFLUX_TOTAL][ SQR(PS2) ],
-                        const real h_Mag_Array_F_In[][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-                        const real h_Mag_Array_F_Out[][NCOMP_MAG][ PS2P1*SQR(PS2) ],
+                        const real h_Mag_Array_F_In[][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
+                        const real h_Mag_Array_F_Out[][MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2) ],
                         const real dt )
 {
 
@@ -1317,7 +1317,7 @@ void CorrectUnphysical( const int lv, const int NPG, const int *PID0_List,
 //                PID0_List   : List recording the patch indices with LocalID==0 to be udpated
 //                dt          : Evolution time-step
 //-------------------------------------------------------------------------------------------------------
-void StoreElectric( const int lv, const real h_Ele_Array[][9][NCOMP_ELE][ PS2P1*PS2 ],
+void StoreElectric( const int lv, const real h_Ele_Array[][9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ],
                     const int NPG, const int *PID0_List, const real dt )
 {
 
@@ -1485,7 +1485,7 @@ void StoreElectric( const int lv, const real h_Ele_Array[][9][NCOMP_ELE][ PS2P1*
 //                PID0_List   : List recording the patch indices with LocalID==0 to be udpated
 //                dt          : Evolution time-step
 //-------------------------------------------------------------------------------------------------------
-void CorrectElectric( const int SonLv, const real h_Ele_Array[][9][NCOMP_ELE][ PS2P1*PS2 ],
+void CorrectElectric( const int SonLv, const real h_Ele_Array[][9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ],
                       const int NPG, const int *PID0_List, const real dt )
 {
 

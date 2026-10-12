@@ -157,7 +157,7 @@ void Flu_DerivedField_Mach( real Out[], const real FluIn[], const real MagIn[], 
 
    real fluid[NCOMP_TOTAL], _Dens, Vx, Vy, Vz, V2, Emag, Pres, Cs2, Mach;
 #  ifdef MHD
-   real B[NCOMP_MAG];
+   real B[MAX(1,NCOMP_MAG)];
 #  endif
 
    for (int ko=0; ko<NCellOutZ; ko++)  {  const int ki = ko + NGhost;

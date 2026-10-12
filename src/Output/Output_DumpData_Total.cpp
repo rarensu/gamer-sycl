@@ -781,7 +781,7 @@ void Output_DumpData_Total( const char *FileName )
 #  endif // #ifdef PARTICLE
 
 #  ifdef MHD
-   real (*CCMag)[ CUBE(PS1) ] = ( OPT__OUTPUT_CC_MAG ) ? new real [NCOMP_MAG][ CUBE(PS1) ] : NULL;
+   real (*CCMag)[ CUBE(PS1) ] = ( OPT__OUTPUT_CC_MAG ) ? new real [MAX(1,NCOMP_MAG)][ CUBE(PS1) ] : NULL;
 #  endif
 
 
@@ -830,7 +830,7 @@ void Output_DumpData_Total( const char *FileName )
 #              ifdef MHD
                if ( OPT__OUTPUT_CC_MAG  &&  amr->patch[0][lv][PID]->son == -1 )
                {
-                  real CCMag_1Cell[NCOMP_MAG];
+                  real CCMag_1Cell[MAX(1,NCOMP_MAG)];
                   int  idx=0;
 
                   for (int k=0; k<PS1; k++)

@@ -27,19 +27,19 @@ __global__
 void GPU_FluidSolver_MHM(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
          real   g_Flu_Array_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
-   const real   g_Mag_Array_In [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-         real   g_Mag_Array_Out[][NCOMP_MAG][ PS2P1*SQR(PS2) ],
+   const real   g_Mag_Array_In [][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
+         real   g_Mag_Array_Out[][MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2) ],
          char   g_DE_Array_Out [][ CUBE(PS2) ],
          real   g_Flux_Array   [][9][NCOMP_TOTAL][ SQR(PS2) ],
-         real   g_Ele_Array    [][9][NCOMP_ELE][ PS2P1*PS2 ],
+         real   g_Ele_Array    [][9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ],
    const double g_Corner_Array [][3],
    const real   g_Pot_Array_USG[][ CUBE(USG_NXT_F) ],
          real   g_PriVar       []   [NCOMP_LR            ][ CUBE(FLU_NXT) ],
          real   g_Slope_PPM    [][3][NCOMP_LR            ][ CUBE(N_SLOPE_PPM) ],
          real   g_FC_Var       [][6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR) ],
          real   g_FC_Flux      [][3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX) ],
-         real   g_FC_Mag_Half  [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-         real   g_EC_Ele       [][NCOMP_MAG][ CUBE(N_EC_ELE) ],
+         real   g_FC_Mag_Half  [][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
+         real   g_EC_Ele       [][MAX(1,NCOMP_MAG)][MAX(1,CUBE(N_EC_ELE))],
    const real dt, const real dh,
    const bool StoreFlux, const bool StoreElectric,
    const LR_Limiter_t LR_Limiter, const real MinMod_Coeff, const int MinMod_MaxIter, const double Time,
@@ -59,14 +59,14 @@ void GPU_FluidSolver_CTU(
     /*
     DPCT1102:70: Zero-length arrays are not permitted in SYCL device code.
     */
-    const real g_Mag_Array_In[][NCOMP_MAG][FLU_NXT_P1 * SQR(FLU_NXT)],
+    const real g_Mag_Array_In[][MAX(1,NCOMP_MAG)][FLU_NXT_P1 * SQR(FLU_NXT)],
     /*
     DPCT1102:71: Zero-length arrays are not permitted in SYCL device code.
     */
-    real g_Mag_Array_Out[][NCOMP_MAG][PS2P1 * SQR(PS2)],
+    real g_Mag_Array_Out[][MAX(1,NCOMP_MAG)][PS2P1 * SQR(PS2)],
     char g_DE_Array_Out[][CUBE(PS2)],
     real g_Flux_Array[][9][NCOMP_TOTAL][SQR(PS2)],
-    real g_Ele_Array[][9][NCOMP_ELE][PS2P1 * PS2],
+    real g_Ele_Array[][9][MAX(1,NCOMP_ELE)][PS2P1 * PS2],
     const double g_Corner_Array[][3],
     const real g_Pot_Array_USG[][CUBE(USG_NXT_F)],
     real g_PriVar[][NCOMP_LR][CUBE(FLU_NXT)],
@@ -76,11 +76,11 @@ void GPU_FluidSolver_CTU(
     /*
     DPCT1102:72: Zero-length arrays are not permitted in SYCL device code.
     */
-    real g_FC_Mag_Half[][NCOMP_MAG][FLU_NXT_P1 * SQR(FLU_NXT)],
+    real g_FC_Mag_Half[][MAX(1,NCOMP_MAG)][FLU_NXT_P1 * SQR(FLU_NXT)],
     /*
     DPCT1102:73: Zero-length arrays are not permitted in SYCL device code.
     */
-    real g_EC_Ele[][NCOMP_MAG][CUBE(N_EC_ELE)], const real dt, const real dh,
+    real g_EC_Ele[][MAX(1,NCOMP_MAG)][MAX(1,CUBE(N_EC_ELE))], const real dt, const real dh,
     const bool StoreFlux, const bool StoreElectric,
     const LR_Limiter_t LR_Limiter, const real MinMod_Coeff, const double Time,
     const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,
@@ -95,7 +95,7 @@ SYCL_EXTERNAL void GPU_dtSolver_HydroCFL(
     /*
     DPCT1102:74: Zero-length arrays are not permitted in SYCL device code.
     */
-    const real g_Mag_Array[][NCOMP_MAG][PS1P1 * SQR(PS1)], const real dh,
+    const real g_Mag_Array[][MAX(1,NCOMP_MAG)][PS1P1 * SQR(PS1)], const real dh,
     const real Safety, const real MinPres, const long PassiveFloor,
     const EoS_t EoS, const MicroPhy_t MicroPhy, real *shared);
 #ifdef GRAVITY
@@ -211,7 +211,7 @@ void GPU_SrcSolver_IterateAllCells(
     /*
     DPCT1102:75: Zero-length arrays are not permitted in SYCL device code.
     */
-    const real g_Mag_Array_In[][NCOMP_MAG][SRC_NXT_P1 * SQR(SRC_NXT)],
+    const real g_Mag_Array_In[][MAX(1,NCOMP_MAG)][SRC_NXT_P1 * SQR(SRC_NXT)],
     const double g_Corner_Array[][3], const SrcTerms_t SrcTerms,
     const int NPatchGroup, const real dt, const real dh, const double TimeNew,
     const double TimeOld, const real MinDens, const real MinPres,

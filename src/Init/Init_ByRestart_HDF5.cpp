@@ -686,9 +686,9 @@ void Init_ByRestart_HDF5( const char *FileName )
    hid_t   H5_SetID_Field[NCompStore], H5_MemID_Field, H5_SpaceID_Field, H5_GroupID_GridData;
 
 #  ifdef MHD
-   char (*FCMagName)[MAX_STRING] = new char [NCOMP_MAG][MAX_STRING];
+   char (*FCMagName)[MAX_STRING] = new char [MAX(1,NCOMP_MAG)][MAX_STRING];
    hsize_t H5_SetDims_FCMag[4], H5_MemDims_FCMag[4];
-   hid_t   H5_SetID_FCMag[NCOMP_MAG], H5_MemID_FCMag[NCOMP_MAG], H5_SpaceID_FCMag[NCOMP_MAG];
+   hid_t   H5_SetID_FCMag[MAX(1,NCOMP_MAG)], H5_MemID_FCMag[MAX(1,NCOMP_MAG)], H5_SpaceID_FCMag[MAX(1,NCOMP_MAG)];
 #  else
    hid_t *H5_SetID_FCMag   = NULL;
    hid_t *H5_MemID_FCMag   = NULL;

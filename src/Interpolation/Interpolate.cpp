@@ -10,7 +10,7 @@ static void Interpolate_Iterate( real CData[], const int CSize[3], const int CSt
                                  const int NComp, const IntScheme_t IntScheme, const bool UnwrapPhase,
                                  const bool Monotonic[], const bool OppSign0thOrder,
                                  const IntPrim_t IntPrim, const ReduceOrFixMonoCoeff_t ReduceMonoCoeff,
-                                 const real CMag[], const real FMag[][NCOMP_MAG] );
+                                 const real CMag[], const real FMag[][MAX(1,NCOMP_MAG)] );
 #endif
 
 void Int_MinMod1D  ( real CData[], const int CSize[3], const int CStart[3], const int CRange[3],
@@ -92,7 +92,7 @@ void Interpolate( real CData[], const int CSize[3], const int CStart[3], const i
                   const int NComp, const IntScheme_t IntScheme, const bool UnwrapPhase,
                   const bool Monotonic[], const bool OppSign0thOrder, const bool AllCons,
                   const IntPrim_t IntPrim, const ReduceOrFixMonoCoeff_t ReduceMonoCoeff,
-                  const real CMag_IntIter[], const real FMag_IntIter[][NCOMP_MAG] )
+                  const real CMag_IntIter[], const real FMag_IntIter[][MAX(1,NCOMP_MAG)] )
 {
 
 // check
@@ -210,7 +210,7 @@ void Interpolate_Iterate( real CData[], const int CSize[3], const int CStart[3],
                           const int NComp, const IntScheme_t IntScheme, const bool UnwrapPhase,
                           const bool Monotonic[], const bool OppSign0thOrder,
                           const IntPrim_t IntPrim, const ReduceOrFixMonoCoeff_t ReduceMonoCoeff,
-                          const real CMag[], const real FMag[][NCOMP_MAG] )
+                          const real CMag[], const real FMag[][MAX(1,NCOMP_MAG)] )
 {
 
 //###REVISE: support FStart[*] != 0

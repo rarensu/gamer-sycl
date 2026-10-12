@@ -163,6 +163,9 @@
 #  define NCOMP_MAG           0
 #  define NCOMP_ELE           0
 # endif
+// When MHD is off, NCOMP_MAG / NCOMP_ELE are 0.  Array dimensions that use
+// these must be wrapped in MAX(1, ...) to avoid zero-length arrays in SYCL
+// device code (see the MAX macro comment above).
 
 // for ELBDM, we only need the density flux
 #elif ( MODEL == ELBDM )
@@ -1242,6 +1245,12 @@
 
 
 // max/min functions
+//
+// MAX(1, x) is the idiomatic way to guard array dimensions that collapse to 0
+// when MHD is disabled (e.g. NCOMP_MAG, NCOMP_ELE, CUBE(N_EC_ELE)).
+// SYCL device code forbids zero-length arrays, whereas host code permits them
+// as a GNU extension.  MAX(1, x) yields x when x > 0 (the normal MHD case) and
+// 1 otherwise, so it is a compile-time no-op with MHD enabled.
 #define MAX( a, b )     (  ( (a) > (b) ) ? (a) : (b)  )
 #define MIN( a, b )     (  ( (a) < (b) ) ? (a) : (b)  )
 

@@ -22,7 +22,7 @@
 //-------------------------------------------------------------------------------------------------------
 void Flu_Prepare( const int lv, const double PrepTime,
                   real h_Flu_Array_F_In[][FLU_NIN][ CUBE(FLU_NXT) ],
-                  real h_Mag_Array_F_In[][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
+                  real h_Mag_Array_F_In[][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
                   real h_Pot_Array_USG_F[][ CUBE(USG_NXT_F) ],
                   double h_Corner_Array_F[][3],
                   bool h_IsCompletelyRefined[],

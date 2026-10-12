@@ -54,6 +54,12 @@ extern long       FixUpVar_Flux, FixUpVar_Restrict, PassiveFloorMask;
 // NCOMP_PASSIVE may be zero in some configurations, but zero-length arrays are
 // not permitted in SYCL device code. Keep these declarations guarded locally
 // so we do not need to change the macro definition site.
+//
+// For MHD-related constants (NCOMP_MAG, NCOMP_ELE, N_EC_ELE) that also collapse
+// to 0 when MHD is off, a different approach is used: array dimensions are
+// wrapped in MAX(1, ...) at every declaration site.  This keeps the function
+// signatures uniform (no conditional parameter omission needed) and is a
+// compile-time no-op when MHD is enabled (MAX(1, 3) = 3).
 #if ( NCOMP_PASSIVE > 0 ) || !defined(SYCL_LANGUAGE_VERSION)
 extern int        PassiveNorm_NVar, PassiveNorm_VarIdx[NCOMP_PASSIVE];
 extern int        PassiveIntFrac_NVar, PassiveIntFrac_VarIdx[NCOMP_PASSIVE];
@@ -441,9 +447,9 @@ extern double     (*h_Corner_Array_F [2])[3];
 extern char       (*h_DE_Array_F_Out [2])[ CUBE(PS2) ];
 #endif
 #ifdef MHD
-extern real       (*h_Mag_Array_F_In [2])[NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ];
-extern real       (*h_Mag_Array_F_Out[2])[NCOMP_MAG][ PS2P1*SQR(PS2)          ];
-extern real       (*h_Ele_Array      [2])[9][NCOMP_ELE][ PS2P1*PS2 ];
+extern real       (*h_Mag_Array_F_In [2])[MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ];
+extern real       (*h_Mag_Array_F_Out[2])[MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2)          ];
+extern real       (*h_Ele_Array      [2])[9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ];
 #endif
 #if ( MODEL == ELBDM )
 extern bool       (*h_IsCompletelyRefined[2]);
@@ -492,7 +498,7 @@ extern real       (*h_Flu_Array_T[2])[FLU_NIN_T][ CUBE(PS1) ];
 extern real       (*h_Pot_Array_T[2])[ CUBE(GRA_NXT) ];
 #endif
 #ifdef MHD
-extern real       (*h_Mag_Array_T[2])[NCOMP_MAG][ PS1P1*SQR(PS1) ];
+extern real       (*h_Mag_Array_T[2])[MAX(1,NCOMP_MAG)][ PS1P1*SQR(PS1) ];
 #endif
 
 #if ( MODEL == HYDRO )
@@ -502,7 +508,7 @@ extern real        *h_EoS_Table[EOS_NTABLE_MAX];
 extern real       (*h_Flu_Array_S_In [2])[FLU_NIN_S ][ CUBE(SRC_NXT)           ];
 extern real       (*h_Flu_Array_S_Out[2])[FLU_NOUT_S][ CUBE(PS1)               ];
 #ifdef MHD
-extern real       (*h_Mag_Array_S_In [2])[NCOMP_MAG ][ SRC_NXT_P1*SQR(SRC_NXT) ];
+extern real       (*h_Mag_Array_S_In [2])[MAX(1,NCOMP_MAG)][ SRC_NXT_P1*SQR(SRC_NXT) ];
 #endif
 extern double     (*h_Corner_Array_S[2])[3];
 #if ( MODEL == HYDRO )

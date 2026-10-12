@@ -5,7 +5,7 @@ static void WriteFile( FILE *File, const int lv, const int PID, const int i, con
 static void GetDerivedField( real (*Der_FluIn)[NCOMP_TOTAL][ CUBE(DER_NXT)            ],
                              real (*Der_Out  )             [ CUBE(PS1)                ],
                              real (*Der_Out_1PG)           [ CUBE(PS2)                ],
-                             real (*Der_MagFC)[NCOMP_MAG  ][ (DER_NXT+1)*SQR(DER_NXT) ],
+                             real (*Der_MagFC)[MAX(1,NCOMP_MAG)][ (DER_NXT+1)*SQR(DER_NXT) ],
                              real (*Der_MagCC)             [ CUBE(DER_NXT)            ],
                              const int lv, const int PID, const bool PrepFluIn, const bool PrepOutPG );
 
@@ -118,10 +118,10 @@ void Output_DumpData_Part( const OptOutputPart_t Part, const bool BaseOnly, cons
 real (*Der_Out)               [ CUBE(PS1)                ] = new real         [DER_NOUT_MAX][ CUBE(PS1)                ];
    real (*Der_Out_1PG)           [ CUBE(PS2)                ] = new real         [DER_NOUT_MAX][ CUBE(PS2)                ];
 #  ifdef MHD
-   real (*Der_MagFC)[NCOMP_MAG  ][ (DER_NXT+1)*SQR(DER_NXT) ] = new real [Der_NP][NCOMP_MAG   ][ (DER_NXT+1)*SQR(DER_NXT) ];
-   real (*Der_MagCC)             [ CUBE(DER_NXT)            ] = new real         [NCOMP_MAG   ][ CUBE(DER_NXT)            ];
+   real (*Der_MagFC)[MAX(1,NCOMP_MAG)][ (DER_NXT+1)*SQR(DER_NXT) ] = new real [Der_NP][MAX(1,NCOMP_MAG)][ (DER_NXT+1)*SQR(DER_NXT) ];
+   real (*Der_MagCC)             [ CUBE(DER_NXT)            ] = new real         [MAX(1,NCOMP_MAG)][ CUBE(DER_NXT)            ];
 #  else
-   real (*Der_MagFC)[NCOMP_MAG  ][ (DER_NXT+1)*SQR(DER_NXT) ] = NULL;
+   real (*Der_MagFC)[MAX(1,NCOMP_MAG)][ (DER_NXT+1)*SQR(DER_NXT) ] = NULL;
    real (*Der_MagCC)             [ CUBE(DER_NXT)            ] = NULL;
 #  endif
 
@@ -489,7 +489,7 @@ void WriteFile( FILE *File, const int lv, const int PID, const int i, const int 
 void GetDerivedField( real (*FluIn)[NCOMP_TOTAL][ CUBE(DER_NXT)            ],
                       real (*Out  )             [ CUBE(PS1)                ],
                       real (*Out_1PG)           [ CUBE(PS2)                ],
-                      real (*MagFC)[NCOMP_MAG  ][ (DER_NXT+1)*SQR(DER_NXT) ],
+                      real (*MagFC)[MAX(1,NCOMP_MAG)][ (DER_NXT+1)*SQR(DER_NXT) ],
                       real (*MagCC)             [ CUBE(DER_NXT)            ],
                       const int lv, const int PID, const bool PrepFluIn, const bool PrepOutPG )
 {
@@ -527,7 +527,7 @@ void GetDerivedField( real (*FluIn)[NCOMP_TOTAL][ CUBE(DER_NXT)            ],
    for (int i=0; i<DER_NXT; i++)
    {
       const int IdxCC = IDX321( i, j, k, DER_NXT, DER_NXT );
-      real B_CC[NCOMP_MAG];
+      real B_CC[MAX(1,NCOMP_MAG)];
 
       MHD_GetCellCenteredBField( B_CC, MagFC[LocalID][MAGX], MagFC[LocalID][MAGY], MagFC[LocalID][MAGZ],
                                  DER_NXT, DER_NXT, DER_NXT, i, j, k );

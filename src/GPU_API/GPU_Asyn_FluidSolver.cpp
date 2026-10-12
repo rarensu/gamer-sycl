@@ -36,19 +36,19 @@ SYCL_EXTERNAL
 void GPU_FluidSolver_MHM(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
          real   g_Flu_Array_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
-   const real   g_Mag_Array_In [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-         real   g_Mag_Array_Out[][NCOMP_MAG][ PS2P1*SQR(PS2) ],
+   const real   g_Mag_Array_In [][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
+         real   g_Mag_Array_Out[][MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2) ],
          char   g_DE_Array_Out [][ CUBE(PS2) ],
          real   g_Flux_Array   [][9][NCOMP_TOTAL][ SQR(PS2) ],
-         real   g_Ele_Array    [][9][NCOMP_ELE][ PS2P1*PS2 ],
+         real   g_Ele_Array    [][9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ],
    const double g_Corner_Array [][3],
    const real   g_Pot_Array_USG[][ CUBE(USG_NXT_F) ],
          real   g_PriVar       []   [NCOMP_LR            ][ CUBE(FLU_NXT) ],
          real   g_Slope_PPM    [][3][NCOMP_LR            ][ CUBE(N_SLOPE_PPM) ],
          real   g_FC_Var       [][6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR) ],
          real   g_FC_Flux      [][3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX) ],
-         real   g_FC_Mag_Half  [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-         real   g_EC_Ele       [][NCOMP_MAG][ CUBE(N_EC_ELE) ],
+         real   g_FC_Mag_Half  [][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
+         real   g_EC_Ele       [][MAX(1,NCOMP_MAG)][MAX(1,CUBE(N_EC_ELE))],
    const real dt, const real dh,
    const bool StoreFlux, const bool StoreElectric,
    const LR_Limiter_t LR_Limiter, const real MinMod_Coeff, const int MinMod_MaxIter, const double Time,
@@ -65,19 +65,19 @@ __global__
 void GPU_FluidSolver_MHM(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
          real   g_Flu_Array_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
-   const real   g_Mag_Array_In [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-         real   g_Mag_Array_Out[][NCOMP_MAG][ PS2P1*SQR(PS2) ],
+   const real   g_Mag_Array_In [][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
+         real   g_Mag_Array_Out[][MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2) ],
          char   g_DE_Array_Out [][ CUBE(PS2) ],
          real   g_Flux_Array   [][9][NCOMP_TOTAL][ SQR(PS2) ],
-         real   g_Ele_Array    [][9][NCOMP_ELE][ PS2P1*PS2 ],
+         real   g_Ele_Array    [][9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ],
    const double g_Corner_Array [][3],
    const real   g_Pot_Array_USG[][ CUBE(USG_NXT_F) ],
          real   g_PriVar       []   [NCOMP_LR            ][ CUBE(FLU_NXT) ],
          real   g_Slope_PPM    [][3][NCOMP_LR            ][ CUBE(N_SLOPE_PPM) ],
          real   g_FC_Var       [][6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR) ],
          real   g_FC_Flux      [][3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX) ],
-         real   g_FC_Mag_Half  [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-         real   g_EC_Ele       [][NCOMP_MAG][ CUBE(N_EC_ELE) ],
+         real   g_FC_Mag_Half  [][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
+         real   g_EC_Ele       [][MAX(1,NCOMP_MAG)][MAX(1,CUBE(N_EC_ELE))],
    const real dt, const real dh,
    const bool StoreFlux, const bool StoreElectric,
    const LR_Limiter_t LR_Limiter, const real MinMod_Coeff, const int MinMod_MaxIter, const double Time,
@@ -96,19 +96,19 @@ SYCL_EXTERNAL
 void GPU_FluidSolver_CTU(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
          real   g_Flu_Array_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
-   const real   g_Mag_Array_In [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-         real   g_Mag_Array_Out[][NCOMP_MAG][ PS2P1*SQR(PS2) ],
+   const real   g_Mag_Array_In [][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
+         real   g_Mag_Array_Out[][MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2) ],
          char   g_DE_Array_Out [][ CUBE(PS2) ],
          real   g_Flux_Array   [][9][NCOMP_TOTAL][ SQR(PS2) ],
-         real   g_Ele_Array    [][9][NCOMP_ELE][ PS2P1*PS2 ],
+         real   g_Ele_Array    [][9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ],
    const double g_Corner_Array [][3],
    const real   g_Pot_Array_USG[][ CUBE(USG_NXT_F) ],
          real   g_PriVar       []   [NCOMP_LR            ][ CUBE(FLU_NXT) ],
          real   g_Slope_PPM    [][3][NCOMP_LR            ][ CUBE(N_SLOPE_PPM) ],
          real   g_FC_Var       [][6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR) ],
          real   g_FC_Flux      [][3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX) ],
-         real   g_FC_Mag_Half  [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-         real   g_EC_Ele       [][NCOMP_MAG][ CUBE(N_EC_ELE) ],
+         real   g_FC_Mag_Half  [][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
+         real   g_EC_Ele       [][MAX(1,NCOMP_MAG)][MAX(1,CUBE(N_EC_ELE))],
    const real dt, const real dh,
    const bool StoreFlux, const bool StoreElectric,
    const LR_Limiter_t LR_Limiter, const real MinMod_Coeff, const double Time,
@@ -125,19 +125,19 @@ __global__
 void GPU_FluidSolver_CTU(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
          real   g_Flu_Array_Out[][NCOMP_TOTAL][ CUBE(PS2) ],
-   const real   g_Mag_Array_In [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-         real   g_Mag_Array_Out[][NCOMP_MAG][ PS2P1*SQR(PS2) ],
+   const real   g_Mag_Array_In [][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
+         real   g_Mag_Array_Out[][MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2) ],
          char   g_DE_Array_Out [][ CUBE(PS2) ],
          real   g_Flux_Array   [][9][NCOMP_TOTAL][ SQR(PS2) ],
-         real   g_Ele_Array    [][9][NCOMP_ELE][ PS2P1*PS2 ],
+         real   g_Ele_Array    [][9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ],
    const double g_Corner_Array [][3],
    const real   g_Pot_Array_USG[][ CUBE(USG_NXT_F) ],
          real   g_PriVar       []   [NCOMP_LR            ][ CUBE(FLU_NXT) ],
          real   g_Slope_PPM    [][3][NCOMP_LR            ][ CUBE(N_SLOPE_PPM) ],
          real   g_FC_Var       [][6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR) ],
          real   g_FC_Flux      [][3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX) ],
-         real   g_FC_Mag_Half  [][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-         real   g_EC_Ele       [][NCOMP_MAG][ CUBE(N_EC_ELE) ],
+         real   g_FC_Mag_Half  [][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
+         real   g_EC_Ele       [][MAX(1,NCOMP_MAG)][MAX(1,CUBE(N_EC_ELE))],
    const real dt, const real dh,
    const bool StoreFlux, const bool StoreElectric,
    const LR_Limiter_t LR_Limiter, const real MinMod_Coeff, const double Time,
@@ -266,13 +266,13 @@ extern char (*d_DE_Array_F_Out)[ CUBE(PS2) ];
 static char (*d_DE_Array_F_Out)[ CUBE(PS2) ] = NULL;
 #endif
 #ifdef MHD
-extern real (*d_Mag_Array_F_In )[NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ];
-extern real (*d_Mag_Array_F_Out)[NCOMP_MAG][ PS2P1*SQR(PS2)         ];
-extern real (*d_Ele_Array      )[9][NCOMP_ELE][ PS2P1*PS2 ];
+extern real (*d_Mag_Array_F_In )[MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ];
+extern real (*d_Mag_Array_F_Out)[MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2)         ];
+extern real (*d_Ele_Array      )[9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ];
 #else
-static real (*d_Mag_Array_F_In )[NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ] = NULL;
-static real (*d_Mag_Array_F_Out)[NCOMP_MAG][ PS2P1*SQR(PS2)          ] = NULL;
-static real (*d_Ele_Array      )[9][NCOMP_ELE][ PS2P1*PS2 ]            = NULL;
+static real (*d_Mag_Array_F_In )[MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ] = NULL;
+static real (*d_Mag_Array_F_Out)[MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2)          ] = NULL;
+static real (*d_Ele_Array      )[9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ]            = NULL;
 #endif
 #if ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP  ||  FLU_SCHEME == CTU )
 extern real (*d_PriVar)      [NCOMP_LR            ][ CUBE(FLU_NXT)     ];
@@ -280,11 +280,11 @@ extern real (*d_Slope_PPM)[3][NCOMP_LR            ][ CUBE(N_SLOPE_PPM) ];
 extern real (*d_FC_Var)   [6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR)    ];
 extern real (*d_FC_Flux)  [3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX)   ];
 #ifdef MHD
-extern real (*d_FC_Mag_Half)[NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ];
-extern real (*d_EC_Ele     )[NCOMP_MAG][ CUBE(N_EC_ELE)          ];
+extern real (*d_FC_Mag_Half)[MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ];
+extern real (*d_EC_Ele     )[MAX(1,NCOMP_MAG)][MAX(1,CUBE(N_EC_ELE))];
 #else
-static real (*d_FC_Mag_Half)[NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ] = NULL;
-static real (*d_EC_Ele     )[NCOMP_MAG][ CUBE(N_EC_ELE)          ] = NULL;
+static real (*d_FC_Mag_Half)[MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ] = NULL;
+static real (*d_EC_Ele     )[MAX(1,NCOMP_MAG)][MAX(1,CUBE(N_EC_ELE))] = NULL;
 #endif // MHD
 #endif // FLU_SCHEME
 #endif // #if ( MODEL == HYDRO )
@@ -386,11 +386,11 @@ extern dpct::queue_ptr *Stream;
 //-------------------------------------------------------------------------------------------------------
 void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
                              real h_Flu_Array_Out[][FLU_NOUT][ CUBE(PS2) ],
-                             real h_Mag_Array_In[][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
-                             real h_Mag_Array_Out[][NCOMP_MAG][ PS2P1*SQR(PS2) ],
+                             real h_Mag_Array_In[][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
+                             real h_Mag_Array_Out[][MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2) ],
                              char h_DE_Array_Out[][ CUBE(PS2) ],
                              real h_Flux_Array[][9][NFLUX_TOTAL][ SQR(PS2) ],
-                             real h_Ele_Array[][9][NCOMP_ELE][ PS2P1*PS2 ],
+                             real h_Ele_Array[][9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ],
                              const double h_Corner_Array[][3],
                              real h_Pot_Array_USG[][ CUBE(USG_NXT_F) ],
                              const bool h_IsCompletelyRefined[],

@@ -30,7 +30,7 @@
 //-------------------------------------------------------------------------------------------------------
 void Src_Prepare( const int lv, const double PrepTime,
                   real h_Flu_Array_S_In[][FLU_NIN_S][ CUBE(SRC_NXT)           ],
-                  real h_Mag_Array_S_In[][NCOMP_MAG][ SRC_NXT_P1*SQR(SRC_NXT) ],
+                  real h_Mag_Array_S_In[][MAX(1,NCOMP_MAG)][ SRC_NXT_P1*SQR(SRC_NXT) ],
                   double h_Corner_Array_S[][3],
                   const int NPG, const int *PID0_List )
 {

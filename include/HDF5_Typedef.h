@@ -653,7 +653,7 @@ struct InputPara_t
    int    IntFracPassive_VarIdx[NCOMP_PASSIVE];
    char  *FieldLabel[NFIELD_STORED_MAX];
 #  ifdef MHD
-   char  *MagLabel[NCOMP_MAG];
+   char  *MagLabel[MAX(1,NCOMP_MAG)];
 #  endif
    int    Opt__OverlapMPI;
    int    Opt__ResetFluid;

@@ -191,7 +191,7 @@ void Flu_BoundaryCondition_User( real *Array, const int NVar_Flu, const int Ghos
 //    add the magnetic energy for MHD
 #     if ( MODEL == HYDRO )
 #     ifdef MHD
-      real Emag, BxL, BxR, Bx, ByL, ByR, By, BzL, BzR, Bz, B3v[NCOMP_MAG];
+      real Emag, BxL, BxR, Bx, ByL, ByR, By, BzL, BzR, Bz, B3v[MAX(1,NCOMP_MAG)];
 
       BC_BField_User_Ptr( B3v, x-dh_2, y,      z,      Time, lv, NULL );   BxL = B3v[MAGX];
       BC_BField_User_Ptr( B3v, x+dh_2, y,      z,      Time, lv, NULL );   BxR = B3v[MAGX];

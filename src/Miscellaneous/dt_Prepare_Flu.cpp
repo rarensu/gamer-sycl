@@ -21,7 +21,7 @@
 //                PID0_List     : List recording the target patch indices with LocalID==0
 //-------------------------------------------------------------------------------------------------------
 void dt_Prepare_Flu( const int lv, real h_Flu_Array_T[][FLU_NIN_T][ CUBE(PS1) ],
-                     real h_Mag_Array_T[][NCOMP_MAG][ PS1P1*SQR(PS1) ], const int NPG, const int *PID0_List )
+                     real h_Mag_Array_T[][MAX(1,NCOMP_MAG)][ PS1P1*SQR(PS1) ], const int NPG, const int *PID0_List )
 {
 
 #  pragma omp parallel for schedule( static )

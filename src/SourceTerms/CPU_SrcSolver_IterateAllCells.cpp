@@ -48,7 +48,7 @@ SYCL_EXTERNAL
 void GPU_SrcSolver_IterateAllCells(
    const real g_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)           ],
          real g_Flu_Array_Out[][FLU_NOUT_S][ CUBE(PS1)               ],
-   const real g_Mag_Array_In [][NCOMP_MAG ][ SRC_NXT_P1*SQR(SRC_NXT) ],
+   const real g_Mag_Array_In [][MAX(1,NCOMP_MAG)][ SRC_NXT_P1*SQR(SRC_NXT) ],
    const double g_Corner_Array[][3],
    const SrcTerms_t SrcTerms, const int NPatchGroup, const real dt, const real dh,
    const double TimeNew, const double TimeOld,
@@ -57,7 +57,7 @@ void GPU_SrcSolver_IterateAllCells(
 void CPU_SrcSolver_IterateAllCells(
    const real g_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)           ],
          real g_Flu_Array_Out[][FLU_NOUT_S][ CUBE(PS1)               ],
-   const real g_Mag_Array_In [][NCOMP_MAG ][ SRC_NXT_P1*SQR(SRC_NXT) ],
+   const real g_Mag_Array_In [][MAX(1,NCOMP_MAG)][ SRC_NXT_P1*SQR(SRC_NXT) ],
    const double g_Corner_Array[][3],
    const SrcTerms_t SrcTerms, const int NPatchGroup, const real dt, const real dh,
    const double TimeNew, const double TimeOld,
@@ -103,7 +103,7 @@ void CPU_SrcSolver_IterateAllCells(
          for (int v=0; v<FLU_NIN_S; v++)  fluid[v] = g_Flu_Array_In[p][v][idx_in];
 
 #        ifdef MHD
-         real B[NCOMP_MAG];
+         real B[MAX(1,NCOMP_MAG)];
          MHD_GetCellCenteredBField( B, g_Mag_Array_In[p][MAGX], g_Mag_Array_In[p][MAGY], g_Mag_Array_In[p][MAGZ],
                                     SRC_NXT, SRC_NXT, SRC_NXT, i_in, j_in, k_in );
 #        else

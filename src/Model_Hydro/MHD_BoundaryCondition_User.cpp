@@ -148,7 +148,7 @@ void BC_User_xm( real **Array, const int NVar, const int TVarIdxList[], const in
                                Corner[1] + (double)Idx_Start[1]*dh,
                                Corner[2] + (double)Idx_Start[2]*dh };
    double xyz0_FC[3], x, y, z;
-   real   BMag[NCOMP_MAG];
+   real   BMag[MAX(1,NCOMP_MAG)];
    int    i, j, k;
 
    for (int v=0; v<NVar; v++)
@@ -244,7 +244,7 @@ void BC_User_xp( real **Array, const int NVar, const int TVarIdxList[], const in
                                Corner[1] + (double)Idx_Start[1]*dh,
                                Corner[2] + (double)Idx_Start[2]*dh };
    double xyz0_FC[3], x, y, z;
-   real   BMag[NCOMP_MAG];
+   real   BMag[MAX(1,NCOMP_MAG)];
    int    i, j, k;
 
    for (int v=0; v<NVar; v++)
@@ -340,7 +340,7 @@ void BC_User_ym( real **Array, const int NVar, const int TVarIdxList[], const in
                                Corner[1] + (double)Idx_Start[1]*dh,
                                Corner[2] + (double)Idx_Start[2]*dh };
    double xyz0_FC[3], x, y, z;
-   real   BMag[NCOMP_MAG];
+   real   BMag[MAX(1,NCOMP_MAG)];
    int    i, j, k;
 
    for (int v=0; v<NVar; v++)
@@ -436,7 +436,7 @@ void BC_User_yp( real **Array, const int NVar, const int TVarIdxList[], const in
                                Corner[1] + (double)Idx_Start[1]*dh,
                                Corner[2] + (double)Idx_Start[2]*dh };
    double xyz0_FC[3], x, y, z;
-   real   BMag[NCOMP_MAG];
+   real   BMag[MAX(1,NCOMP_MAG)];
    int    i, j, k;
 
    for (int v=0; v<NVar; v++)
@@ -532,7 +532,7 @@ void BC_User_zm( real **Array, const int NVar, const int TVarIdxList[], const in
                                Corner[1] + (double)Idx_Start[1]*dh,
                                Corner[2] + (double)Idx_Start[2]*dh };
    double xyz0_FC[3], x, y, z;
-   real   BMag[NCOMP_MAG];
+   real   BMag[MAX(1,NCOMP_MAG)];
    int    i, j, k;
 
    for (int v=0; v<NVar; v++)
@@ -628,7 +628,7 @@ void BC_User_zp( real **Array, const int NVar, const int TVarIdxList[], const in
                                Corner[1] + (double)Idx_Start[1]*dh,
                                Corner[2] + (double)Idx_Start[2]*dh };
    double xyz0_FC[3], x, y, z;
-   real   BMag[NCOMP_MAG];
+   real   BMag[MAX(1,NCOMP_MAG)];
    int    i, j, k;
 
    for (int v=0; v<NVar; v++)

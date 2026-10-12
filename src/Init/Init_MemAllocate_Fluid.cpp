@@ -10,8 +10,8 @@ extern real (*h_Slope_PPM)[3][NCOMP_LR            ][ CUBE(N_SLOPE_PPM) ];
 extern real (*h_FC_Var)   [6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR)    ];
 extern real (*h_FC_Flux)  [3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX)   ];
 #ifdef MHD
-extern real (*h_FC_Mag_Half)[NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ];
-extern real (*h_EC_Ele     )[NCOMP_MAG][ CUBE(N_EC_ELE)          ];
+extern real (*h_FC_Mag_Half)[MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ];
+extern real (*h_EC_Ele     )[MAX(1,NCOMP_MAG)][MAX(1,CUBE(N_EC_ELE))];
 #endif
 #endif // FLU_SCHEME
 
@@ -59,20 +59,20 @@ void Init_MemAllocate_Fluid( const int Flu_NPatchGroup, const int Pot_NPatchGrou
 #     endif
 
 #     ifdef MHD
-      h_Mag_Array_F_In     [t] = new real [Flu_NPatchGroup][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ];
-      h_Mag_Array_F_Out    [t] = new real [Flu_NPatchGroup][NCOMP_MAG][ PS2P1*SQR(PS2) ];
+      h_Mag_Array_F_In     [t] = new real [Flu_NPatchGroup][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ];
+      h_Mag_Array_F_Out    [t] = new real [Flu_NPatchGroup][MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2) ];
 
       if ( amr->WithElectric )
-      h_Ele_Array          [t] = new real [Flu_NPatchGroup][9][NCOMP_ELE][ PS2P1*PS2 ];
+      h_Ele_Array          [t] = new real [Flu_NPatchGroup][9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ];
 
-      h_Mag_Array_T        [t] = new real [Flu_NPatch][NCOMP_MAG][ PS1P1*SQR(PS1) ];
+      h_Mag_Array_T        [t] = new real [Flu_NPatch][MAX(1,NCOMP_MAG)][ PS1P1*SQR(PS1) ];
 #     endif
 
       if ( SrcTerms.Any ) {
       h_Flu_Array_S_In     [t] = new real [Src_NPatch][FLU_NIN_S ][ CUBE(SRC_NXT)           ];
       h_Flu_Array_S_Out    [t] = new real [Src_NPatch][FLU_NOUT_S][ CUBE(PS1)               ];
 #     ifdef MHD
-      h_Mag_Array_S_In     [t] = new real [Src_NPatch][NCOMP_MAG ][ SRC_NXT_P1*SQR(SRC_NXT) ];
+      h_Mag_Array_S_In     [t] = new real [Src_NPatch][MAX(1,NCOMP_MAG)][ SRC_NXT_P1*SQR(SRC_NXT) ];
 #     endif
       h_Corner_Array_S     [t] = new double [Src_NPatch][3];
       }
@@ -95,8 +95,8 @@ void Init_MemAllocate_Fluid( const int Flu_NPatchGroup, const int Pot_NPatchGrou
    h_Slope_PPM      = new real [Flu_NPatchGroup][3][NCOMP_LR            ][ CUBE(N_SLOPE_PPM) ];
 #  endif
 #  ifdef MHD
-   h_FC_Mag_Half    = new real [Flu_NPatchGroup][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ];
-   h_EC_Ele         = new real [Flu_NPatchGroup][NCOMP_MAG][ CUBE(N_EC_ELE)          ];
+   h_FC_Mag_Half    = new real [Flu_NPatchGroup][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ];
+   h_EC_Ele         = new real [Flu_NPatchGroup][MAX(1,NCOMP_MAG)][MAX(1,CUBE(N_EC_ELE))];
 #  endif
 #  endif // FLU_SCHEME
 #  if ( GRAMFE_SCHEME == GRAMFE_MATMUL )

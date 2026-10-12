@@ -136,6 +136,9 @@
 #   define N_EC_ELE              0
 #   define N_HF_ELE              0
 #  endif
+// When MHD is off, N_EC_ELE / N_HF_ELE are 0.  Array dimensions that use
+// CUBE(N_EC_ELE) must be wrapped in MAX(1, ...) to avoid zero-length arrays
+// in SYCL device code (see the MAX macro comment in Macro.h).
 
 #endif // #if ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP  ||  FLU_SCHEME == CTU )
 

@@ -408,9 +408,9 @@ double (*h_Corner_Array_F[2])[3]                                     = { NULL, N
 char (*h_DE_Array_F_Out[2])[ CUBE(PS2) ]                             = { NULL, NULL };
 #endif
 #ifdef MHD
-real (*h_Mag_Array_F_In [2])[NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ]   = { NULL, NULL };
-real (*h_Mag_Array_F_Out[2])[NCOMP_MAG][ PS2P1*SQR(PS2)          ]   = { NULL, NULL };
-real (*h_Ele_Array      [2])[9][NCOMP_ELE][ PS2P1*PS2 ]              = { NULL, NULL };
+real (*h_Mag_Array_F_In [2])[MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ]   = { NULL, NULL };
+real (*h_Mag_Array_F_Out[2])[MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2)          ]   = { NULL, NULL };
+real (*h_Ele_Array      [2])[9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ]              = { NULL, NULL };
 #endif
 #if ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP  ||  FLU_SCHEME == CTU )
 real (*h_PriVar)      [NCOMP_LR            ][ CUBE(FLU_NXT)     ]    = NULL;
@@ -418,8 +418,8 @@ real (*h_Slope_PPM)[3][NCOMP_LR            ][ CUBE(N_SLOPE_PPM) ]    = NULL;
 real (*h_FC_Var)   [6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR)    ]    = NULL;
 real (*h_FC_Flux)  [3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX)   ]    = NULL;
 #ifdef MHD
-real (*h_FC_Mag_Half)[NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ]          = NULL;
-real (*h_EC_Ele     )[NCOMP_MAG][ CUBE(N_EC_ELE)          ]          = NULL;
+real (*h_FC_Mag_Half)[MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ]          = NULL;
+real (*h_EC_Ele     )[MAX(1,NCOMP_MAG)][MAX(1,CUBE(N_EC_ELE))]          = NULL;
 #endif
 #endif // FLU_SCHEME
 #if ( MODEL == ELBDM )
@@ -470,7 +470,7 @@ real (*h_Flu_Array_T[2])[FLU_NIN_T][ CUBE(PS1) ]                     = { NULL, N
 real (*h_Pot_Array_T[2])[ CUBE(GRA_NXT) ]                            = { NULL, NULL };
 #endif
 #ifdef MHD
-real (*h_Mag_Array_T[2])[NCOMP_MAG][ PS1P1*SQR(PS1) ]                = { NULL, NULL };
+real (*h_Mag_Array_T[2])[MAX(1,NCOMP_MAG)][ PS1P1*SQR(PS1) ]                = { NULL, NULL };
 #endif
 
 // (3-6) EoS tables
@@ -482,7 +482,7 @@ real *h_EoS_Table[EOS_NTABLE_MAX];
 real   (*h_Flu_Array_S_In [2])[FLU_NIN_S ][ CUBE(SRC_NXT)  ]         = { NULL, NULL };
 real   (*h_Flu_Array_S_Out[2])[FLU_NOUT_S][ CUBE(PS1)      ]         = { NULL, NULL };
 #ifdef MHD
-real   (*h_Mag_Array_S_In [2])[NCOMP_MAG][ SRC_NXT_P1*SQR(SRC_NXT) ] = { NULL, NULL };
+real   (*h_Mag_Array_S_In [2])[MAX(1,NCOMP_MAG)][ SRC_NXT_P1*SQR(SRC_NXT) ] = { NULL, NULL };
 #endif
 double (*h_Corner_Array_S[2])[3]                                     = { NULL, NULL };
 #if ( MODEL == HYDRO )
@@ -509,9 +509,9 @@ double (*d_Corner_Array_F)[3]                                        = NULL;
 char (*d_DE_Array_F_Out)[ CUBE(PS2) ]                                = NULL;
 #endif
 #ifdef MHD
-real (*d_Mag_Array_F_In )[NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ]      = NULL;
-real (*d_Mag_Array_F_Out)[NCOMP_MAG][ PS2P1*SQR(PS2)          ]      = NULL;
-real (*d_Ele_Array      )[9][NCOMP_ELE][ PS2P1*PS2 ]                 = NULL;
+real (*d_Mag_Array_F_In )[MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ]      = NULL;
+real (*d_Mag_Array_F_Out)[MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2)          ]      = NULL;
+real (*d_Ele_Array      )[9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ]                 = NULL;
 #endif
 #if ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP  ||  FLU_SCHEME == CTU )
 real (*d_PriVar)      [NCOMP_LR            ][ CUBE(FLU_NXT)     ]    = NULL;
@@ -519,8 +519,8 @@ real (*d_Slope_PPM)[3][NCOMP_LR            ][ CUBE(N_SLOPE_PPM) ]    = NULL;
 real (*d_FC_Var)   [6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR)    ]    = NULL;
 real (*d_FC_Flux)  [3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX)   ]    = NULL;
 #ifdef MHD
-real (*d_FC_Mag_Half)[NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ]          = NULL;
-real (*d_EC_Ele     )[NCOMP_MAG][ CUBE(N_EC_ELE)          ]          = NULL;
+real (*d_FC_Mag_Half)[MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ]          = NULL;
+real (*d_EC_Ele     )[MAX(1,NCOMP_MAG)][MAX(1,CUBE(N_EC_ELE))]          = NULL;
 #endif
 #endif // FLU_SCHEME
 #if ( MODEL == ELBDM )
@@ -566,7 +566,7 @@ real (*d_Flu_Array_T)[FLU_NIN_T][ CUBE(PS1) ]                        = NULL;
 real (*d_Pot_Array_T)[ CUBE(GRA_NXT) ]                               = NULL;
 #endif
 #ifdef MHD
-real (*d_Mag_Array_T)[NCOMP_MAG][ PS1P1*SQR(PS1) ]                   = NULL;
+real (*d_Mag_Array_T)[MAX(1,NCOMP_MAG)][ PS1P1*SQR(PS1) ]                   = NULL;
 #endif
 
 // (4-6) EoS tables
@@ -578,7 +578,7 @@ real *d_EoS_Table[EOS_NTABLE_MAX];
 real   (*d_Flu_Array_S_In )[FLU_NIN_S ][ CUBE(SRC_NXT)  ]            = NULL;
 real   (*d_Flu_Array_S_Out)[FLU_NOUT_S][ CUBE(PS1)      ]            = NULL;
 #ifdef MHD
-real   (*d_Mag_Array_S_In)[NCOMP_MAG  ][ SRC_NXT_P1*SQR(SRC_NXT) ]   = NULL;
+real   (*d_Mag_Array_S_In)[MAX(1,NCOMP_MAG)][ SRC_NXT_P1*SQR(SRC_NXT) ]   = NULL;
 #endif
 double (*d_Corner_Array_S)[3]                                        = NULL;
 #if ( MODEL == HYDRO )

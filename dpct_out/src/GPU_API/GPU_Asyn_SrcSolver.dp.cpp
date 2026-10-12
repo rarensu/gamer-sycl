@@ -12,7 +12,7 @@ void GPU_SrcSolver_IterateAllCells(
     /*
     DPCT1102:33: Zero-length arrays are not permitted in SYCL device code.
     */
-    const real g_Mag_Array_In[][NCOMP_MAG][SRC_NXT_P1 * SQR(SRC_NXT)],
+    const real g_Mag_Array_In[][MAX(1,NCOMP_MAG)][SRC_NXT_P1 * SQR(SRC_NXT)],
     const double g_Corner_Array[][3], const SrcTerms_t SrcTerms,
     const int NPatchGroup, const real dt, const real dh, const double TimeNew,
     const double TimeOld, const real MinDens, const real MinPres,
@@ -22,12 +22,12 @@ void GPU_SrcSolver_IterateAllCells(
 extern real (*d_Flu_Array_S_In )[FLU_NIN_S ][ CUBE(SRC_NXT)           ];
 extern real (*d_Flu_Array_S_Out)[FLU_NOUT_S][ CUBE(PS1)               ];
 #ifdef MHD
-extern real (*d_Mag_Array_S_In)[NCOMP_MAG  ][ SRC_NXT_P1*SQR(SRC_NXT) ];
+extern real (*d_Mag_Array_S_In)[MAX(1,NCOMP_MAG)][ SRC_NXT_P1*SQR(SRC_NXT) ];
 #else
 /*
 DPCT1102:34: Zero-length arrays are not permitted in SYCL device code.
 */
-static real (*d_Mag_Array_S_In)[NCOMP_MAG][SRC_NXT_P1 * SQR(SRC_NXT)] = NULL;
+static real (*d_Mag_Array_S_In)[MAX(1,NCOMP_MAG)][SRC_NXT_P1 * SQR(SRC_NXT)] = NULL;
 #endif
 extern double (*d_Corner_Array_S)[3];
 
@@ -66,7 +66,7 @@ extern dpct::queue_ptr *Stream;
 //-------------------------------------------------------------------------------------------------------
 void GPU_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)           ],
                                  real h_Flu_Array_Out[][FLU_NOUT_S][ CUBE(PS1)               ],
-                           const real h_Mag_Array_In [][NCOMP_MAG ][ SRC_NXT_P1*SQR(SRC_NXT) ],
+                           const real h_Mag_Array_In [][MAX(1,NCOMP_MAG)][ SRC_NXT_P1*SQR(SRC_NXT) ],
                            const double h_Corner_Array[][3],
                            const SrcTerms_t SrcTerms, const int NPatchGroup, const real dt, const real dh,
                            const double TimeNew, const double TimeOld,

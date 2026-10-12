@@ -78,7 +78,7 @@ void Flu_DerivedField_User_Template( real Out[], const real FluIn[], const real 
    /*
    real fluid[NCOMP_TOTAL];
 #  ifdef MHD
-   real B[NCOMP_MAG];
+   real B[MAX(1,NCOMP_MAG)];
 #  endif
 
    for (int ko=0; ko<NCellOutZ; ko++)  {  const int ki = ko + NGhost;

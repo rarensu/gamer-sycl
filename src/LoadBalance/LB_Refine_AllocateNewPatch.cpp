@@ -861,10 +861,10 @@ int AllocateSonPatch( const int FaLv, const int *Cr, const int PScale, const int
    real *const CData_MagZ = CData_Next + MAGZ*CSize_Mag_N*SQR( CSize_Mag_T );
    CData_Next = CData;  // reset CData_Next for the fluid data
 
-   real (*FData_Mag)[ PS2P1*SQR(PS2) ] = new real [NCOMP_MAG][ PS2P1*SQR(PS2) ];
+   real (*FData_Mag)[ PS2P1*SQR(PS2) ] = new real [MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2) ];
 
-   const real *CData_Mag3v[NCOMP_MAG] = { CData_MagX, CData_MagY, CData_MagZ };
-         real *FData_Mag3v[NCOMP_MAG] = { FData_Mag[MAGX], FData_Mag[MAGY], FData_Mag[MAGZ] };
+   const real *CData_Mag3v[MAX(1,NCOMP_MAG)] = { CData_MagX, CData_MagY, CData_MagZ };
+         real *FData_Mag3v[MAX(1,NCOMP_MAG)] = { FData_Mag[MAGX], FData_Mag[MAGY], FData_Mag[MAGZ] };
 
 // set the B field on the coarse-fine interfaces
    const real *Mag_FInterface_Ptr[6] = { NULL, NULL, NULL, NULL, NULL, NULL };
@@ -995,7 +995,7 @@ int AllocateSonPatch( const int FaLv, const int *Cr, const int PScale, const int
 
 // prepare the fine-grid, cell-centered B field for INT_REDUCE_MONO_COEFF
 #  ifdef MHD
-   real (*FData_Mag_CC_IntIter)[NCOMP_MAG] = new real [ CUBE(FSize_CC) ][NCOMP_MAG];
+   real (*FData_Mag_CC_IntIter)[MAX(1,NCOMP_MAG)] = new real [ CUBE(FSize_CC) ][MAX(1,NCOMP_MAG)];
 
    for (int k=0; k<FSize_CC; k++)
    for (int j=0; j<FSize_CC; j++)
@@ -1007,7 +1007,7 @@ int AllocateSonPatch( const int FaLv, const int *Cr, const int PScale, const int
                                  FSize_CC, FSize_CC, FSize_CC, i, j, k );
    }
 #  else
-   const real (*FData_Mag_CC_IntIter)[NCOMP_MAG] = NULL;
+   const real (*FData_Mag_CC_IntIter)[MAX(1,NCOMP_MAG)] = NULL;
 #  endif // MHD
 
 // adopt INT_PRIM_NO to ensure conservation

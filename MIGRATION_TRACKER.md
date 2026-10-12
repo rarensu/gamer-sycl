@@ -60,6 +60,7 @@ is preserved verbatim.
 | `cleanup` | cleaned up CUDA references in comments |
 | `gm-guard` | wrapped `dpct::global_memory` declarations in `#ifdef SYCL_LANGUAGE_VERSION` with plain `static` function pointer fallback for CPU-only builds |
 | `umul` | restored `__umul24`/`__mul24` via DPCT compat guard |
+| `zero-len` | wrapped zero-risk array dimensions (`NCOMP_MAG`, `NCOMP_ELE`, `CUBE(N_EC_ELE)`) in `MAX(1, x)` to avoid zero-length-array errors in SYCL device code; compile-time no-op when constant > 0 |
 | `eos-dispatch` | replaced runtime EoS function-pointer indirection with compile-time dispatch via `EoS_Dispatch.h`; `static`→`EoSExternDecl` (`SYCL_EXTERNAL`) on concrete EoS functions; stubbed DPCT `memcpy`/queue in `EoS_SetGPUFunc_*` (direct assignment) |
 
 ## Tracker entries
@@ -174,4 +175,5 @@ shorthand in the legend above.
 | DONE | `src/Model_Hydro/GPU_Hydro/GPU_FluidSolver_RTVD.cpp` | — (update to existing entry) | `eos-dispatch`: 2 struct-member `EoS->DensPres2CSqr_FuncPtr(...)` calls replaced with direct `GPU_EoS_DensPres2CSqr(...)` (SYCL-only file, no guards needed). |
 | DONE | `src/Model_Hydro/CPU_Hydro/CPU_dtSolver_HydroCFL.cpp` | — (update to existing entry) | `eos-dispatch`: 2 struct-member `EoS.DensPres2CSqr_FuncPtr(...)` calls replaced with `#ifdef SYCL_LANGUAGE_VERSION` guards. |
 | DONE | `src/Model_Hydro/CPU_Hydro/CPU_CosmicRay.cpp` | None (new file entry) | `eos-dispatch`: 2 struct-member `EoS->CREint2CRPres_FuncPtr(...)` calls replaced with `#ifdef SYCL_LANGUAGE_VERSION` guards calling `GPU_EoS_CREint2CRPres(...)`. |
+| DONE | (cross-cutting) | — | `zero-len`: applied `MAX(1, x)` to all `[NCOMP_MAG]`, `[NCOMP_ELE]`, `[CUBE(N_EC_ELE)]` array dimensions across src/ and include/ (290 replacement sites in ~40 files, including `CPU_FluidSolver_CTU.cpp`, `CPU_FluidSolver_MHM.cpp`, `CPU_Shared_DataReconstruction.cpp`, `GPU_Asyn_FluidSolver.cpp`, `GPU_MemAllocate_Fluid.cpp`, `CPU_FluidSolver.cpp`, `CPU_dtSolver_HydroCFL.cpp`, `Global.h`, `FLU.h`, `Macro.h`, `Prototype.h`). Fixes "zero-length arrays are not permitted in SYCL device code" when `MHD` is disabled. |
 

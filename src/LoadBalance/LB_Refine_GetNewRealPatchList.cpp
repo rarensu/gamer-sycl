@@ -908,7 +908,7 @@ void PrepareCData( const int FaLv, const int FaPID, real *const FaData,
             }
 
             BC_Sibling = SIB_OFFSET_NONPERIODIC - SibPID;
-            real *FaData_Mag3v[NCOMP_MAG] = { FaData_MagX, FaData_MagY, FaData_MagZ };
+            real *FaData_Mag3v[MAX(1,NCOMP_MAG)] = { FaData_MagX, FaData_MagY, FaData_MagZ };
 
             switch ( OPT__BC_FLU[ BC_Face[BC_Sibling] ] )
             {

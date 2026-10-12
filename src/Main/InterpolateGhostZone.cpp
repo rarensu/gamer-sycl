@@ -613,7 +613,7 @@ void InterpolateGhostZone( const int lv, const int PID, real IntData_CC[], real 
                                           Idx = IDX321( Disp2[0], j2, k2, CSize_CC[0], CSize_CC[1] );
       for (i1=Disp1[0]; i1<Disp1[0]+Loop1[0]; i1++)   {
 
-         real B_CC[NCOMP_MAG];
+         real B_CC[MAX(1,NCOMP_MAG)];
          int  OffsetB = 0;
 
          MHD_GetCellCenteredBFieldInPatch( B_CC, lv, PID, i1, j1, k1, MagSg );
@@ -1066,7 +1066,7 @@ void InterpolateGhostZone( const int lv, const int PID, real IntData_CC[], real 
                                                 Idx = IDX321( Disp3[0], j1, k1, CSize_CC[0], CSize_CC[1] );
             for (i2=Disp4[0]; i2<Disp4[0]+Loop2[0]; i2++)   {
 
-               real B_CC[NCOMP_MAG];
+               real B_CC[MAX(1,NCOMP_MAG)];
                int  OffsetB = 0;
 
                MHD_GetCellCenteredBFieldInPatch( B_CC, lv, SibPID, i2, j2, k2, MagSg );
@@ -1341,7 +1341,7 @@ void InterpolateGhostZone( const int lv, const int PID, real IntData_CC[], real 
                }
             }
 
-            real *MagDataPtr[NCOMP_MAG] = { NULL, NULL, NULL };
+            real *MagDataPtr[MAX(1,NCOMP_MAG)] = { NULL, NULL, NULL };
             MagDataPtr[TVarFCIdx] = CData_FC[v];
 
             switch ( FluBC[ BC_Face[BC_Sibling] ] )
@@ -1774,7 +1774,7 @@ void InterpolateGhostZone( const int lv, const int PID, real IntData_CC[], real 
    {
 //    c3-1. prepare the fine-grid, cell-centered B field for IntIter
       real *CMag_CC_IntIter              = NULL;
-      real (*FMag_CC_IntIter)[NCOMP_MAG] = NULL;
+      real (*FMag_CC_IntIter)[MAX(1,NCOMP_MAG)] = NULL;
 
 #     ifdef MHD
       if ( IntIter )
@@ -1785,7 +1785,7 @@ void InterpolateGhostZone( const int lv, const int PID, real IntData_CC[], real 
                                      IntData_FC + FSize3D_FC[0],
                                      IntData_FC + FSize3D_FC[0] + FSize3D_FC[1] };
 
-         FMag_CC_IntIter = new real [FSize3D_CC][NCOMP_MAG];
+         FMag_CC_IntIter = new real [FSize3D_CC][MAX(1,NCOMP_MAG)];
 
          for (int k=0; k<FSize_CC[2]; k++)
          for (int j=0; j<FSize_CC[1]; j++)

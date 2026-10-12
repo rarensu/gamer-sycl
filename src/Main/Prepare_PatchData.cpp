@@ -471,7 +471,7 @@ void Prepare_PatchData( const int lv, const double PrepTime, real *OutputCC, rea
 
 #  ifdef MHD
    const bool PrepMagFC = ( TVarFC & _MAG ) ? true : false;
-   int TVarFCIdxList[NCOMP_MAG];
+   int TVarFCIdxList[MAX(1,NCOMP_MAG)];
 
    for (int v=0; v<NCOMP_MAG; v++)
       if ( TVarFC & (1L<<v) )    TVarFCIdxList[ NVarFC_Tot++ ] = v;
@@ -936,7 +936,7 @@ void Prepare_PatchData( const int lv, const double PrepTime, real *OutputCC, rea
                                              Idx1 = IDX321( Disp_i, J, K, PGSize1D_CC, PGSize1D_CC );
                for (int i=0; i<PS1; i++)  {
 
-                  real B_CC[NCOMP_MAG];
+                  real B_CC[MAX(1,NCOMP_MAG)];
                   int  OffsetB = 0;
 
                   MHD_GetCellCenteredBFieldInPatch( B_CC, lv, PID, i, j, k, MagSg );
@@ -1388,7 +1388,7 @@ void Prepare_PatchData( const int lv, const double PrepTime, real *OutputCC, rea
                                                       Idx1 = IDX321( disp[0], J, K, PGSize1D_CC, PGSize1D_CC );
                      for (I2=disp2[0]; I2<disp2[0]+loop[0]; I2++) {
 
-                        real B_CC[NCOMP_MAG];
+                        real B_CC[MAX(1,NCOMP_MAG)];
                         int  OffsetB = 0;
 
                         MHD_GetCellCenteredBFieldInPatch( B_CC, lv, SibPID, I2, J2, K2, MagSg );
@@ -1809,7 +1809,7 @@ void Prepare_PatchData( const int lv, const double PrepTime, real *OutputCC, rea
 #              ifdef MHD
                if ( NVarFC_Tot > 0 )
                {
-                  real *MagDataPtr[NCOMP_MAG] = { NULL, NULL, NULL };
+                  real *MagDataPtr[MAX(1,NCOMP_MAG)] = { NULL, NULL, NULL };
                   for (int v=0; v<NVarFC_Tot; v++)
                   {
                      MagDataPtr[ TVarFCIdxList[v] ] = Data1PG_FC_Ptr;

@@ -732,7 +732,7 @@ struct patch_t
 
       if ( magnetic == NULL )
       {
-         magnetic = new real [NCOMP_MAG][ PS1P1*SQR(PS1) ];
+         magnetic = new real [MAX(1,NCOMP_MAG)][ PS1P1*SQR(PS1) ];
          magnetic[0][0] = (real)-1.0;  // arbitrarily initialized
       }
 

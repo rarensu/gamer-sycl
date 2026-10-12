@@ -139,7 +139,7 @@ void Refine( const int lv, const UseLBFunc_t UseLBFunc )
    for (int PID=0; PID<amr->num[lv]; PID++)  JustRefined[PID] = false;
 
 // fine-grid, cell-centered B field for INT_REDUCE_MONO_COEFF
-   real (*Mag_FDataCC_IntIter)[NCOMP_MAG] = new real [ CUBE(FSize_CC) ][NCOMP_MAG];
+   real (*Mag_FDataCC_IntIter)[MAX(1,NCOMP_MAG)] = new real [ CUBE(FSize_CC) ][MAX(1,NCOMP_MAG)];
 #  endif // #ifdef MHD
 
 
@@ -592,7 +592,7 @@ void Refine( const int lv, const UseLBFunc_t UseLBFunc )
                   }
 
                   BC_Sibling = SIB_OFFSET_NONPERIODIC - SibPID;
-                  real *Mag_CDataPtr[NCOMP_MAG] = { Mag_CData[0], Mag_CData[1], Mag_CData[2] };
+                  real *Mag_CDataPtr[MAX(1,NCOMP_MAG)] = { Mag_CData[0], Mag_CData[1], Mag_CData[2] };
 
                   switch ( OPT__BC_FLU[ BC_Face[BC_Sibling] ] )
                   {
@@ -730,8 +730,8 @@ void Refine( const int lv, const UseLBFunc_t UseLBFunc )
 //       (c1.3.4.2-1) magnetic field
 //                    --> do it first since we need the cell-centered B field for INT_REDUCE_MONO_COEFF
 #        ifdef MHD
-         const real *Mag_CData_Ptr[NCOMP_MAG] = { Mag_CData[MAGX], Mag_CData[MAGY], Mag_CData[MAGZ] };
-               real *Mag_FData_Ptr[NCOMP_MAG] = { Mag_FData[MAGX], Mag_FData[MAGY], Mag_FData[MAGZ] };
+         const real *Mag_CData_Ptr[MAX(1,NCOMP_MAG)] = { Mag_CData[MAGX], Mag_CData[MAGY], Mag_CData[MAGZ] };
+               real *Mag_FData_Ptr[MAX(1,NCOMP_MAG)] = { Mag_FData[MAGX], Mag_FData[MAGY], Mag_FData[MAGZ] };
 
          MHD_InterpolateBField( Mag_CData_Ptr, CSize_Mag, CStart_Mag, CRange_Mag,
                                 Mag_FData_Ptr, FSize_Mag, FStart_Mag, (const real**)Mag_FInterface_Ptr,
@@ -839,7 +839,7 @@ void Refine( const int lv, const UseLBFunc_t UseLBFunc )
                                        FSize_CC, FSize_CC, FSize_CC, i, j, k );
          }
 #        else
-         const real (*Mag_FDataCC_IntIter)[NCOMP_MAG] = NULL;
+         const real (*Mag_FDataCC_IntIter)[MAX(1,NCOMP_MAG)] = NULL;
 #        endif // MHD
 
 //       adopt INT_PRIM_NO to ensure conservation

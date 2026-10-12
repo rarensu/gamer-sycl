@@ -218,7 +218,7 @@ void Hydro_Init_ByFunction_AssignData( const int lv )
 
       if ( !OPT__INIT_BFIELD_BYVECPOT )
       {
-         real magnetic_1v, magnetic_sub[NCOMP_MAG];
+         real magnetic_1v, magnetic_sub[MAX(1,NCOMP_MAG)];
 
    //    1-2. loop over B_X/Y/Z to set one component at a time
    //    --> because different components are defined at different cell faces

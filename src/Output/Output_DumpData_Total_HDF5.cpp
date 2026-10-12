@@ -486,7 +486,7 @@ void Output_DumpData_Total_HDF5( const char *FileName )
 #  endif
 #  ifdef MHD
    hsize_t H5_SetDims_FCMag[4], H5_MemDims_FCMag[4], H5_Count_FCMag[4], H5_Offset_FCMag[4];
-   hid_t   H5_MemID_FCMag, H5_SetID_FCMag, H5_SpaceID_FCMag[NCOMP_MAG];
+   hid_t   H5_MemID_FCMag, H5_SetID_FCMag, H5_SpaceID_FCMag[MAX(1,NCOMP_MAG)];
 #  endif
 
 // 2-1. do NOT write fill values to any dataset for higher I/O performance
@@ -817,10 +817,10 @@ void Output_DumpData_Total_HDF5( const char *FileName )
    real (*Der_Out)               [ CUBE(PS1)                ] = new real         [DER_NOUT_MAX][ CUBE(PS1)                ];
    real (*Der_Out_1PG)           [ CUBE(PS2)                ] = new real         [DER_NOUT_MAX][ CUBE(PS2)                ];
 #  ifdef MHD
-   real (*Der_MagFC)[NCOMP_MAG  ][ (DER_NXT+1)*SQR(DER_NXT) ] = new real [Der_NP][NCOMP_MAG   ][ (DER_NXT+1)*SQR(DER_NXT) ];
-   real (*Der_MagCC)             [ CUBE(DER_NXT)            ] = new real         [NCOMP_MAG   ][ CUBE(DER_NXT)            ];
+   real (*Der_MagFC)[MAX(1,NCOMP_MAG)][ (DER_NXT+1)*SQR(DER_NXT) ] = new real [Der_NP][MAX(1,NCOMP_MAG)][ (DER_NXT+1)*SQR(DER_NXT) ];
+   real (*Der_MagCC)             [ CUBE(DER_NXT)            ] = new real         [MAX(1,NCOMP_MAG)][ CUBE(DER_NXT)            ];
 #  else
-   real (*Der_MagFC)[NCOMP_MAG  ][ (DER_NXT+1)*SQR(DER_NXT) ] = NULL;
+   real (*Der_MagFC)[MAX(1,NCOMP_MAG)][ (DER_NXT+1)*SQR(DER_NXT) ] = NULL;
    real (*Der_MagCC)             [ CUBE(DER_NXT)            ] = NULL;
 #  endif
 // allocate the maximum required memory (i.e., with NCOMP_TOTAL fields) for the temporary array Der_FluInTmp[]
@@ -920,7 +920,7 @@ void Output_DumpData_Total_HDF5( const char *FileName )
                else if ( v >= CCMagDumpIdx0  &&  v < CCMagDumpIdx0+NCOMP_MAG )
                {
                   const int Bv = v - CCMagDumpIdx0;
-                  real CCMag_1Cell[NCOMP_MAG];
+                  real CCMag_1Cell[MAX(1,NCOMP_MAG)];
 
                   for (int PID=0; PID<amr->NPatchComma[lv][1]; PID++)
                   for (int k=0; k<PS1; k++)
@@ -1092,7 +1092,7 @@ void Output_DumpData_Total_HDF5( const char *FileName )
                         for (int i=0; i<DER_NXT; i++)
                         {
                            const int IdxCC = IDX321( i, j, k, DER_NXT, DER_NXT );
-                           real B_CC[NCOMP_MAG];
+                           real B_CC[MAX(1,NCOMP_MAG)];
 
                            MHD_GetCellCenteredBField( B_CC, Der_MagFC[LocalID][MAGX], Der_MagFC[LocalID][MAGY],
                                                       Der_MagFC[LocalID][MAGZ], DER_NXT, DER_NXT, DER_NXT, i, j, k );
@@ -1273,7 +1273,7 @@ void Output_DumpData_Total_HDF5( const char *FileName )
                         for (int i=0; i<DER_NXT; i++)
                         {
                            const int IdxCC = IDX321( i, j, k, DER_NXT, DER_NXT );
-                           real B_CC[NCOMP_MAG];
+                           real B_CC[MAX(1,NCOMP_MAG)];
 
                            MHD_GetCellCenteredBField( B_CC, Der_MagFC[LocalID][MAGX], Der_MagFC[LocalID][MAGY],
                                                       Der_MagFC[LocalID][MAGZ], DER_NXT, DER_NXT, DER_NXT, i, j, k );

@@ -30,7 +30,7 @@
 //-------------------------------------------------------------------------------------------------------
 void Output_PreparedPatch_Fluid( const int TLv, const int TPID,
                                  const real h_Flu_Array[][FLU_NIN][ CUBE(FLU_NXT) ],
-                                 const real h_Mag_Array[][NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ],
+                                 const real h_Mag_Array[][MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ],
                                  const int NPG, const int *PID0_List, const int CLv, const char *comment )
 {
 

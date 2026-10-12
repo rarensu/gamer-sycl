@@ -24,11 +24,11 @@ extern double (*d_Corner_Array_F)[3];
 extern char (*d_DE_Array_F_Out)[ CUBE(PS2) ];
 #endif
 #ifdef MHD
-extern real (*d_Mag_Array_F_In )[NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ];
-extern real (*d_Mag_Array_F_Out)[NCOMP_MAG][ PS2P1*SQR(PS2)          ];
-extern real (*d_Ele_Array      )[9][NCOMP_ELE][ PS2P1*PS2 ];
-extern real (*d_Mag_Array_T)[NCOMP_MAG][ PS1P1*SQR(PS1) ];
-extern real (*d_Mag_Array_S_In)[NCOMP_MAG][ SRC_NXT_P1*SQR(SRC_NXT) ];
+extern real (*d_Mag_Array_F_In )[MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ];
+extern real (*d_Mag_Array_F_Out)[MAX(1,NCOMP_MAG)][ PS2P1*SQR(PS2)          ];
+extern real (*d_Ele_Array      )[9][MAX(1,NCOMP_ELE)][ PS2P1*PS2 ];
+extern real (*d_Mag_Array_T)[MAX(1,NCOMP_MAG)][ PS1P1*SQR(PS1) ];
+extern real (*d_Mag_Array_S_In)[MAX(1,NCOMP_MAG)][ SRC_NXT_P1*SQR(SRC_NXT) ];
 #endif
 extern real *d_dt_Array_T;
 extern real (*d_Flu_Array_T)[FLU_NIN_T][ CUBE(PS1) ];
@@ -41,8 +41,8 @@ extern real (*d_Slope_PPM)[3][NCOMP_LR            ][ CUBE(N_SLOPE_PPM) ];
 extern real (*d_FC_Var)   [6][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_VAR)    ];
 extern real (*d_FC_Flux)  [3][NCOMP_TOTAL_PLUS_MAG][ CUBE(N_FC_FLUX)   ];
 #ifdef MHD
-extern real (*d_FC_Mag_Half)[NCOMP_MAG][ FLU_NXT_P1*SQR(FLU_NXT) ];
-extern real (*d_EC_Ele     )[NCOMP_MAG][ CUBE(N_EC_ELE)          ];
+extern real (*d_FC_Mag_Half)[MAX(1,NCOMP_MAG)][ FLU_NXT_P1*SQR(FLU_NXT) ];
+extern real (*d_EC_Ele     )[MAX(1,NCOMP_MAG)][MAX(1,CUBE(N_EC_ELE))];
 #endif
 #endif // FLU_SCHEME
 
