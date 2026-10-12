@@ -612,15 +612,22 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
          needed.
          */
       {
-         extern dpct::constant_memory<int *, 0> c_NormIdx;
-         extern dpct::constant_memory<int *, 0> c_FracIdx;
+#if ( NCOMP_PASSIVE > 0 )
+         extern dpct::constant_memory<int, 1> c_NormIdx;
+         extern dpct::constant_memory<int, 1> c_FracIdx;
 
          c_NormIdx.init(*Stream[s]);
          c_FracIdx.init(*Stream[s]);
+#endif
 
          Stream[s]->submit([&](sycl::handler &cgh) {
+#if ( NCOMP_PASSIVE > 0 )
             auto c_NormIdx_ptr_ct1 = c_NormIdx.get_ptr();
             auto c_FracIdx_ptr_ct1 = c_FracIdx.get_ptr();
+#else
+            int *const c_NormIdx_ptr_ct1 = NULL;
+            int *const c_FracIdx_ptr_ct1 = NULL;
+#endif
 
             const float (*)[5][10648] d_Flu_Array_F_In_UsedPatch_s_ct0 =
                 d_Flu_Array_F_In + UsedPatch[s];
@@ -669,7 +676,7 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
                        ExtAcc, GPUExtAcc_Ptr_ct24, MinDens, MinPres, MinEint,
                        DualEnergySwitch, PassiveFloor, NormPassive, NNorm,
                        FracPassive, NFrac, JeansMinPres, JeansMinPres_Coeff,
-                       EoS, *c_NormIdx_ptr_ct1, *c_FracIdx_ptr_ct1);
+                       EoS, c_NormIdx_ptr_ct1, c_FracIdx_ptr_ct1);
                 });
          });
       }

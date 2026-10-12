@@ -187,7 +187,7 @@ void GPU_FluidSolver_CTU(
    const bool NormPassive, const int NNorm,
    const bool FracPassive, const int NFrac,
    const bool JeansMinPres, const real JeansMinPres_Coeff,
-   const EoS_t EoS )
+       const EoS_t EoS, int *const c_NormIdx, int *const c_FracIdx )
 #else
 void CPU_FluidSolver_CTU(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],

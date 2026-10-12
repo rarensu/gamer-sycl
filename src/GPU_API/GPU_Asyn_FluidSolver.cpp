@@ -691,15 +691,22 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 #        elif ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP )
 
          {
-            extern dpct::constant_memory<int *, 0> c_NormIdx;
-            extern dpct::constant_memory<int *, 0> c_FracIdx;
+#if ( NCOMP_PASSIVE > 0 )
+            extern dpct::constant_memory<int, 1> c_NormIdx;
+            extern dpct::constant_memory<int, 1> c_FracIdx;
 
             c_NormIdx.init(*Stream[s]);
             c_FracIdx.init(*Stream[s]);
+#endif
 
             Stream[s]->submit([&](sycl::handler &cgh) {
+#if ( NCOMP_PASSIVE > 0 )
                auto c_NormIdx_ptr = c_NormIdx.get_ptr();
                auto c_FracIdx_ptr = c_FracIdx.get_ptr();
+#else
+               int *const c_NormIdx_ptr = NULL;
+               int *const c_FracIdx_ptr = NULL;
+#endif
 
                auto d_Flu_Array_F_In_ptr = d_Flu_Array_F_In + UsedPatch[s];
                auto d_Flu_Array_F_Out_ptr = d_Flu_Array_F_Out + UsedPatch[s];
@@ -749,15 +756,22 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 #        elif ( FLU_SCHEME == CTU )
 
          {
-            extern dpct::constant_memory<int *, 0> c_NormIdx;
-            extern dpct::constant_memory<int *, 0> c_FracIdx;
+#if ( NCOMP_PASSIVE > 0 )
+            extern dpct::constant_memory<int, 1> c_NormIdx;
+            extern dpct::constant_memory<int, 1> c_FracIdx;
 
             c_NormIdx.init(*Stream[s]);
             c_FracIdx.init(*Stream[s]);
+#endif
 
             Stream[s]->submit([&](sycl::handler &cgh) {
+#if ( NCOMP_PASSIVE > 0 )
                auto c_NormIdx_ptr = c_NormIdx.get_ptr();
                auto c_FracIdx_ptr = c_FracIdx.get_ptr();
+#else
+               int *const c_NormIdx_ptr = NULL;
+               int *const c_FracIdx_ptr = NULL;
+#endif
 
                auto d_Flu_Array_F_In_ptr = d_Flu_Array_F_In + UsedPatch[s];
                auto d_Flu_Array_F_Out_ptr = d_Flu_Array_F_Out + UsedPatch[s];
