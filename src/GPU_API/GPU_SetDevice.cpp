@@ -21,7 +21,7 @@ extern "C" { int GetFreeGpuDevID( int, int ); }
 // Description :  Set the active device
 //
 // Parameter   :  Mode :    -3 --> set by the gpudevmgr library on the NAOC Laohu cluster
-//                          -2 --> set automatically by CUDA (must work with the "compute-exclusive mode")
+//                          -2 --> set automatically (must work with the "compute-exclusive mode")
 //                          -1 --> set by MPI ranks : SetDeviceID = MPI_Rank % DeviceCount
 //                       >=  0 --> set to "Mode"
 //-------------------------------------------------------------------------------------------------------
@@ -46,12 +46,12 @@ void GPU_SetDevice( const int Mode )
    gethostname( Host, 1024 );
 
 
-// verify that there are GPU supporting CUDA
+// verify that there are GPU supporting SYCL
    int DeviceCount;
    DEVICE_CHECK_ERROR( DeviceCount = dpct::device_count()  );
 
    if ( DeviceCount == 0 )
-      Aux_Error( ERROR_INFO, "no devices support CUDA at MPI_Rank %2d (host = %8s) !!\n", MPI_Rank, Host );
+      Aux_Error( ERROR_INFO, "no devices support SYCL at MPI_Rank %2d (host = %8s) !!\n", MPI_Rank, Host );
 
 
 // set the device ID
@@ -126,7 +126,7 @@ void GPU_SetDevice( const int Mode )
 
 
 // check
-// (0) load the device properties and the versions of CUDA and driver
+// (0) load the device properties and the versions of runtime and driver
    int DriverVersion = 0, RuntimeVersion = 0;
    DEVICE_CHECK_ERROR( GetDeviceID = dpct::get_current_device_id()  );
    DEVICE_CHECK_ERROR( dpct::get_device( GetDeviceID ).get_device_info( DeviceProp )  );
@@ -174,7 +174,7 @@ void GPU_SetDevice( const int Mode )
 #  if (  defined FLOAT8  &&  CHECK_INTERMEDIATE == EXACT  && \
          ( FLU_SCHEME == MHM || FLU_SCHEME == MHM_RP || FLU_SCHEME == CTU )  )
       if ( RuntimeVersion < 3020 )
-         Aux_Error( ERROR_INFO, "CHECK_INTERMEDIATE == EXACT + FLOAT8 is not supported in CUDA < 3.2 !!" );
+         Aux_Error( ERROR_INFO, "CHECK_INTERMEDIATE == EXACT + FLOAT8 is not supported in SYCL < 3.2 !!" );
 #  endif
 #  endif // #if ( MODEL == HYDRO )
 
