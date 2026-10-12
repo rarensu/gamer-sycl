@@ -28,7 +28,7 @@ void GPU_DiagnoseDevice()
 
 // get the number of devices
    int DeviceCount;
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(DeviceCount = dpct::device_count()));
+   DEVICE_CHECK_ERROR(DeviceCount = dpct::device_count());
 
    if ( DeviceCount == 0 )
       Aux_Error( ERROR_INFO, "no devices supporting CUDA at MPI_Rank %2d (host = %8s) !!\n", MPI_Rank, Host );
@@ -36,13 +36,12 @@ void GPU_DiagnoseDevice()
 
 // get the device ID
    int GetDeviceID = 999;
-   DEVICE_CHECK_ERROR(
-       DPCT_CHECK_ERROR(GetDeviceID = dpct::get_current_device_id()));
+   DEVICE_CHECK_ERROR(GetDeviceID = dpct::get_current_device_id());
 
 // load the device properties
    dpct::device_info DeviceProp;
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_device(GetDeviceID).get_device_info(DeviceProp)));
+   DEVICE_CHECK_ERROR(
+       dpct::get_device(GetDeviceID).get_device_info(DeviceProp));
 
 // get the number of cores per multiprocessor
    int NCorePerMP;
@@ -144,16 +143,16 @@ void GPU_DiagnoseDevice()
          DPCT1043:57: The version-related API is different in SYCL. An initial
          code was generated, but you need to adjust it.
          */
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+         DEVICE_CHECK_ERROR(
              DriverVersion =
-                 dpct::get_major_version(dpct::get_current_device())));
+                 dpct::get_major_version(dpct::get_current_device()));
          /*
          DPCT1043:58: The version-related API is different in SYCL. An initial
          code was generated, but you need to adjust it.
          */
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+         DEVICE_CHECK_ERROR(
              RuntimeVersion =
-                 dpct::get_major_version(dpct::get_current_device())));
+                 dpct::get_major_version(dpct::get_current_device()));
 
          FILE *Note = fopen( FileName, "a" );
          if ( MPI_Rank != 0 )   fprintf( Note, "\n\n" );
@@ -164,9 +163,9 @@ void GPU_DiagnoseDevice()
          Aux_GetCPUInfo( FileName );
 
          int clockRate; // in unit of kHz
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+         DEVICE_CHECK_ERROR(
              clockRate =
-                 dpct::get_device(GetDeviceID).get_max_clock_frequency()));
+                 dpct::get_device(GetDeviceID).get_max_clock_frequency());
 
          fprintf( Note, "\n" );
          fprintf( Note, "GPU Info :\n" );

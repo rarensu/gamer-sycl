@@ -618,41 +618,41 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 #     if ( ELBDM_SCHEME == ELBDM_HYBRID )
       if ( UseWaveFlag ) {
 #     endif
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Flu_Array_F_In + UsedPatch[s], h_Flu_Array_In + UsedPatch[s],
-                         Flu_MemSize_In[s] )  ));
+      DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_Flu_Array_F_In + UsedPatch[s], h_Flu_Array_In + UsedPatch[s],
+                         Flu_MemSize_In[s] )  );
 #     if ( ELBDM_SCHEME == ELBDM_HYBRID )
       } else {
       real (*smaller_d_Flu_Array_F_In)[FLU_NIN][CUBE(HYB_NXT)] = (real (*)[FLU_NIN][CUBE(HYB_NXT)]) d_Flu_Array_F_In;
       real (*smaller_h_Flu_Array_In  )[FLU_NIN][CUBE(HYB_NXT)] = (real (*)[FLU_NIN][CUBE(HYB_NXT)]) h_Flu_Array_In  ;
 
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( smaller_d_Flu_Array_F_In + UsedPatch[s], smaller_h_Flu_Array_In + UsedPatch[s],
-                         Flu_MemSize_In[s] )  ));
+      DEVICE_CHECK_ERROR(  Stream[s]->memcpy( smaller_d_Flu_Array_F_In + UsedPatch[s], smaller_h_Flu_Array_In + UsedPatch[s],
+                         Flu_MemSize_In[s] )  );
       }
 #     endif
 #     ifdef MHD
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Mag_Array_F_In  + UsedPatch[s], h_Mag_Array_In  + UsedPatch[s],
-                         Mag_MemSize_In[s] )  ));
+      DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_Mag_Array_F_In  + UsedPatch[s], h_Mag_Array_In  + UsedPatch[s],
+                         Mag_MemSize_In[s] )  );
 #     endif
 
 #     ifdef UNSPLIT_GRAVITY
       if ( UsePot )
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Pot_Array_USG_F + UsedPatch[s], h_Pot_Array_USG + UsedPatch[s],
-                         USG_MemSize   [s] )  ));
+      DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_Pot_Array_USG_F + UsedPatch[s], h_Pot_Array_USG + UsedPatch[s],
+                         USG_MemSize   [s] )  );
 
       if ( ExtAcc )
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Corner_Array_F  + UsedPatch[s], h_Corner_Array  + UsedPatch[s],
-                         Corner_MemSize[s] )  ));
+      DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_Corner_Array_F  + UsedPatch[s], h_Corner_Array  + UsedPatch[s],
+                         Corner_MemSize[s] )  );
 #     endif
 
 
 #     if ( MODEL == ELBDM )
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_IsCompletelyRefined + UsedPatch[s], h_IsCompletelyRefined + UsedPatch[s],
-                         Flu_MemSize_IsCompletelyRefined[s] )  ));
+      DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_IsCompletelyRefined + UsedPatch[s], h_IsCompletelyRefined + UsedPatch[s],
+                         Flu_MemSize_IsCompletelyRefined[s] )  );
 #     endif
 #     if ( ELBDM_SCHEME == ELBDM_HYBRID )
       if ( !UseWaveFlag )
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_HasWaveCounterpart  + UsedPatch[s], h_HasWaveCounterpart  + UsedPatch[s],
-                         Flu_MemSize_HasWaveCounterpart[s] )  ));
+      DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_HasWaveCounterpart  + UsedPatch[s], h_HasWaveCounterpart  + UsedPatch[s],
+                         Flu_MemSize_HasWaveCounterpart[s] )  );
 #     endif
    } // for (int s=0; s<GPU_NStream; s++)
 
@@ -958,33 +958,33 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 #     if ( ELBDM_SCHEME == ELBDM_HYBRID  &&  !defined(GAMER_DEBUG) )
       if ( UseWaveFlag ) {
 #     endif
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( h_Flu_Array_Out + UsedPatch[s], d_Flu_Array_F_Out + UsedPatch[s],
-                         Flu_MemSize_Out[s] )  ));
+      DEVICE_CHECK_ERROR(  Stream[s]->memcpy( h_Flu_Array_Out + UsedPatch[s], d_Flu_Array_F_Out + UsedPatch[s],
+                         Flu_MemSize_Out[s] )  );
 #     if ( ELBDM_SCHEME == ELBDM_HYBRID  &&  !defined(GAMER_DEBUG) )
       } else {
       real (*smaller_h_Flu_Array_Out  )[FLU_NIN][CUBE(PS2)] = (real (*)[FLU_NIN][CUBE(PS2)]) h_Flu_Array_Out;
       real (*smaller_d_Flu_Array_F_Out)[FLU_NIN][CUBE(PS2)] = (real (*)[FLU_NIN][CUBE(PS2)]) d_Flu_Array_F_Out;
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( smaller_h_Flu_Array_Out + UsedPatch[s], smaller_d_Flu_Array_F_Out + UsedPatch[s],
-                         Flu_MemSize_Out[s] )  ));
+      DEVICE_CHECK_ERROR(  Stream[s]->memcpy( smaller_h_Flu_Array_Out + UsedPatch[s], smaller_d_Flu_Array_F_Out + UsedPatch[s],
+                         Flu_MemSize_Out[s] )  );
       }
 #     endif
 
       if ( StoreFlux )
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( h_Flux_Array    + UsedPatch[s], d_Flux_Array      + UsedPatch[s],
-                         Flux_MemSize[s] )  ));
+      DEVICE_CHECK_ERROR(  Stream[s]->memcpy( h_Flux_Array    + UsedPatch[s], d_Flux_Array      + UsedPatch[s],
+                         Flux_MemSize[s] )  );
 
 #     ifdef MHD
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( h_Mag_Array_Out + UsedPatch[s], d_Mag_Array_F_Out + UsedPatch[s],
-                         Mag_MemSize_Out[s] )  ));
+      DEVICE_CHECK_ERROR(  Stream[s]->memcpy( h_Mag_Array_Out + UsedPatch[s], d_Mag_Array_F_Out + UsedPatch[s],
+                         Mag_MemSize_Out[s] )  );
 
       if ( StoreElectric )
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( h_Ele_Array     + UsedPatch[s], d_Ele_Array       + UsedPatch[s],
-                         Ele_MemSize[s] )  ));
+      DEVICE_CHECK_ERROR(  Stream[s]->memcpy( h_Ele_Array     + UsedPatch[s], d_Ele_Array       + UsedPatch[s],
+                         Ele_MemSize[s] )  );
 #     endif
 
 #     ifdef DUAL_ENERGY
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( h_DE_Array_Out  + UsedPatch[s], d_DE_Array_F_Out  + UsedPatch[s],
-                         DE_MemSize_Out[s] )  ));
+      DEVICE_CHECK_ERROR(  Stream[s]->memcpy( h_DE_Array_Out  + UsedPatch[s], d_DE_Array_F_Out  + UsedPatch[s],
+                         DE_MemSize_Out[s] )  );
 #     endif
    } // for (int s=0; s<GPU_NStream; s++)
 

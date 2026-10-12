@@ -145,9 +145,9 @@ void GPU_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)
       memory, so you may need to call wait() on event return by memcpy API to
       ensure synchronization behavior.
       */
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+      DEVICE_CHECK_ERROR(
           Stream[s]->memcpy(d_Flu_Array_S_In + UsedPatch[s],
-                            h_Flu_Array_In + UsedPatch[s], Flu_MemSize_In[s])));
+                            h_Flu_Array_In + UsedPatch[s], Flu_MemSize_In[s]));
 
 #     ifdef MHD
       DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Mag_Array_S_In + UsedPatch[s], h_Mag_Array_In + UsedPatch[s],
@@ -160,9 +160,9 @@ void GPU_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)
       memory, so you may need to call wait() on event return by memcpy API to
       ensure synchronization behavior.
       */
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+      DEVICE_CHECK_ERROR(
           Stream[s]->memcpy(d_Corner_Array_S + UsedPatch[s],
-                            h_Corner_Array + UsedPatch[s], Corner_MemSize[s])));
+                            h_Corner_Array + UsedPatch[s], Corner_MemSize[s]));
    } // for (int s=0; s<GPU_NStream; s++)
 
 
@@ -228,9 +228,9 @@ void GPU_Asyn_SrcSolver( const real h_Flu_Array_In [][FLU_NIN_S ][ CUBE(SRC_NXT)
       memory, so you may need to call wait() on event return by memcpy API to
       ensure synchronization behavior.
       */
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(Stream[s]->memcpy(
+      DEVICE_CHECK_ERROR(Stream[s]->memcpy(
           h_Flu_Array_Out + UsedPatch[s], d_Flu_Array_S_Out + UsedPatch[s],
-          Flu_MemSize_Out[s])));
+          Flu_MemSize_Out[s]));
    } // for (int s=0; s<GPU_NStream; s++)
 
 

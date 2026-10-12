@@ -31,10 +31,10 @@ void GPU_SendExtPotTable2GPU( const real *h_Table )
    const long MemSize = (long)sizeof(real)*EXT_POT_TABLE_NPOINT[0]*EXT_POT_TABLE_NPOINT[1]*EXT_POT_TABLE_NPOINT[2];
 
 // use synchronous transfer
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(d_ExtPotTable, h_Table, MemSize)
-           .wait()));
+           .wait());
 
 } // FUNCTION : GPU_SendExtPotTable2GPU
 

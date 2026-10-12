@@ -139,7 +139,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/Gamma/CPU_EoS_Gamma.cpp'
     Offset:          16609
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -166,7 +166,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/Gamma/CPU_EoS_Gamma.cpp'
     Offset:          16728
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -193,7 +193,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/Gamma/CPU_EoS_Gamma.cpp'
     Offset:          16847
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -220,7 +220,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/Gamma/CPU_EoS_Gamma.cpp'
     Offset:          16966
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -247,7 +247,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/Gamma/CPU_EoS_Gamma.cpp'
     Offset:          17085
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -274,7 +274,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/Gamma/CPU_EoS_Gamma.cpp'
     Offset:          17204
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -301,7 +301,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/Gamma/CPU_EoS_Gamma.cpp'
     Offset:          17323
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -499,7 +499,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/Isothermal/CPU_EoS_Isothermal.cpp'
     Offset:          15479
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -526,7 +526,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/Isothermal/CPU_EoS_Isothermal.cpp'
     Offset:          15598
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -553,7 +553,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/Isothermal/CPU_EoS_Isothermal.cpp'
     Offset:          15717
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -580,7 +580,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/Isothermal/CPU_EoS_Isothermal.cpp'
     Offset:          15836
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -607,7 +607,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/Isothermal/CPU_EoS_Isothermal.cpp'
     Offset:          15955
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -634,7 +634,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/Isothermal/CPU_EoS_Isothermal.cpp'
     Offset:          16074
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -661,7 +661,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/Isothermal/CPU_EoS_Isothermal.cpp'
     Offset:          16193
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -859,7 +859,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/User_Template/CPU_EoS_User_Template.cpp'
     Offset:          19922
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -886,7 +886,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/User_Template/CPU_EoS_User_Template.cpp'
     Offset:          20041
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -913,7 +913,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/User_Template/CPU_EoS_User_Template.cpp'
     Offset:          20160
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -940,7 +940,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/User_Template/CPU_EoS_User_Template.cpp'
     Offset:          20279
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -967,7 +967,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/User_Template/CPU_EoS_User_Template.cpp'
     Offset:          20398
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -994,7 +994,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/User_Template/CPU_EoS_User_Template.cpp'
     Offset:          20517
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -1021,7 +1021,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/EoS/User_Template/CPU_EoS_User_Template.cpp'
     Offset:          20636
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -1183,7 +1183,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          25353
     Length:          15
-    ReplacementText: 'DPCT_CHECK_ERROR(Stream[s]->memcpy'
+    ReplacementText: 'Stream[s]->memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -1273,7 +1273,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          33941
     Length:          15
-    ReplacementText: 'DPCT_CHECK_ERROR(Stream[s]->memcpy'
+    ReplacementText: 'Stream[s]->memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -1318,7 +1318,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_FluidSolver.cu'
     Offset:          34693
     Length:          15
-    ReplacementText: 'DPCT_CHECK_ERROR(Stream[s]->memcpy'
+    ReplacementText: 'Stream[s]->memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -1417,7 +1417,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          6042
     Length:          15
-    ReplacementText: 'DPCT_CHECK_ERROR(Stream[s]->memcpy'
+    ReplacementText: 'Stream[s]->memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -1462,7 +1462,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          6452
     Length:          15
-    ReplacementText: 'DPCT_CHECK_ERROR(Stream[s]->memcpy'
+    ReplacementText: 'Stream[s]->memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -1552,7 +1552,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_SrcSolver.cu'
     Offset:          7786
     Length:          15
-    ReplacementText: 'DPCT_CHECK_ERROR(Stream[s]->memcpy'
+    ReplacementText: 'Stream[s]->memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -1660,7 +1660,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          8226
     Length:          15
-    ReplacementText: 'DPCT_CHECK_ERROR(Stream[s]->memcpy'
+    ReplacementText: 'Stream[s]->memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -1750,7 +1750,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Asyn_dtSolver.cu'
     Offset:          11172
     Length:          15
-    ReplacementText: 'DPCT_CHECK_ERROR(Stream[s]->memcpy'
+    ReplacementText: 'Stream[s]->memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -1795,7 +1795,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          684
     Length:          34
-    ReplacementText: 'DPCT_CHECK_ERROR(DeviceCount = dpct::device_count())'
+    ReplacementText: 'DeviceCount = dpct::device_count())'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -1804,7 +1804,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          933
     Length:          29
-    ReplacementText: 'DPCT_CHECK_ERROR(GetDeviceID = dpct::get_current_device_id())'
+    ReplacementText: 'GetDeviceID = dpct::get_current_device_id())'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -1822,7 +1822,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          1051
     Length:          51
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_device(GetDeviceID).get_device_info(DeviceProp))'
+    ReplacementText: 'dpct::get_device(GetDeviceID).get_device_info(DeviceProp))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2146,7 +2146,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          2916
     Length:          38
-    ReplacementText: 'DPCT_CHECK_ERROR(DriverVersion = dpct::get_major_version(dpct::get_current_device()))'
+    ReplacementText: 'DriverVersion = dpct::get_major_version(dpct::get_current_device()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2164,7 +2164,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          2987
     Length:          40
-    ReplacementText: 'DPCT_CHECK_ERROR(RuntimeVersion = dpct::get_major_version(dpct::get_current_device()))'
+    ReplacementText: 'RuntimeVersion = dpct::get_major_version(dpct::get_current_device()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2173,7 +2173,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_DiagnoseDevice.cu'
     Offset:          3409
     Length:          69
-    ReplacementText: 'DPCT_CHECK_ERROR(clockRate = dpct::get_device(GetDeviceID).get_max_clock_frequency())'
+    ReplacementText: 'clockRate = dpct::get_device(GetDeviceID).get_max_clock_frequency())'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2614,7 +2614,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemAllocate_Fluid.cu'
     Offset:          13983
     Length:          30
-    ReplacementText: 'DPCT_CHECK_ERROR(Stream[s] = dpct::get_current_device().create_queue())'
+    ReplacementText: 'Stream[s] = dpct::get_current_device().create_queue())'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2641,7 +2641,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          2569
     Length:          33
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_Flu_Array_F_In, dpct::get_in_order_queue()))'
+    ReplacementText: 'dpct::dpct_free(d_Flu_Array_F_In, dpct::get_in_order_queue()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2650,7 +2650,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          2702
     Length:          33
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_Flu_Array_F_Out, dpct::get_in_order_queue()))'
+    ReplacementText: 'dpct::dpct_free(d_Flu_Array_F_Out, dpct::get_in_order_queue()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2659,7 +2659,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          2835
     Length:          33
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_Flux_Array, dpct::get_in_order_queue()))'
+    ReplacementText: 'dpct::dpct_free(d_Flux_Array, dpct::get_in_order_queue()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2668,7 +2668,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          4118
     Length:          33
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_dt_Array_T, dpct::get_in_order_queue()))'
+    ReplacementText: 'dpct::dpct_free(d_dt_Array_T, dpct::get_in_order_queue()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2677,7 +2677,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          4251
     Length:          33
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_Flu_Array_T, dpct::get_in_order_queue()))'
+    ReplacementText: 'dpct::dpct_free(d_Flu_Array_T, dpct::get_in_order_queue()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2686,7 +2686,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          4384
     Length:          33
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_Flu_Array_S_In, dpct::get_in_order_queue()))'
+    ReplacementText: 'dpct::dpct_free(d_Flu_Array_S_In, dpct::get_in_order_queue()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2695,7 +2695,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          4517
     Length:          33
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_Flu_Array_S_Out, dpct::get_in_order_queue()))'
+    ReplacementText: 'dpct::dpct_free(d_Flu_Array_S_Out, dpct::get_in_order_queue()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2704,7 +2704,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          4650
     Length:          33
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_Corner_Array_S, dpct::get_in_order_queue()))'
+    ReplacementText: 'dpct::dpct_free(d_Corner_Array_S, dpct::get_in_order_queue()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2713,7 +2713,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          4860
     Length:          33
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_PriVar, dpct::get_in_order_queue()))'
+    ReplacementText: 'dpct::dpct_free(d_PriVar, dpct::get_in_order_queue()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2722,7 +2722,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          4993
     Length:          33
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_Slope_PPM, dpct::get_in_order_queue()))'
+    ReplacementText: 'dpct::dpct_free(d_Slope_PPM, dpct::get_in_order_queue()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2731,7 +2731,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          5126
     Length:          33
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_FC_Var, dpct::get_in_order_queue()))'
+    ReplacementText: 'dpct::dpct_free(d_FC_Var, dpct::get_in_order_queue()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2740,7 +2740,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          5259
     Length:          33
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_FC_Flux, dpct::get_in_order_queue()))'
+    ReplacementText: 'dpct::dpct_free(d_FC_Flux, dpct::get_in_order_queue()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2749,7 +2749,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          6444
     Length:          40
-    ReplacementText: 'DPCT_CHECK_ERROR(sycl::free(h_Flu_Array_F_In     [t], dpct::get_in_order_queue())'
+    ReplacementText: 'sycl::free(h_Flu_Array_F_In     [t], dpct::get_in_order_queue())'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2767,7 +2767,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          6593
     Length:          40
-    ReplacementText: 'DPCT_CHECK_ERROR(sycl::free(h_Flu_Array_F_Out    [t], dpct::get_in_order_queue())'
+    ReplacementText: 'sycl::free(h_Flu_Array_F_Out    [t], dpct::get_in_order_queue())'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2785,7 +2785,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          6742
     Length:          40
-    ReplacementText: 'DPCT_CHECK_ERROR(sycl::free(h_Flux_Array         [t], dpct::get_in_order_queue())'
+    ReplacementText: 'sycl::free(h_Flux_Array         [t], dpct::get_in_order_queue())'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2803,7 +2803,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          8187
     Length:          40
-    ReplacementText: 'DPCT_CHECK_ERROR(sycl::free(h_dt_Array_T         [t], dpct::get_in_order_queue())'
+    ReplacementText: 'sycl::free(h_dt_Array_T         [t], dpct::get_in_order_queue())'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2821,7 +2821,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          8336
     Length:          40
-    ReplacementText: 'DPCT_CHECK_ERROR(sycl::free(h_Flu_Array_T        [t], dpct::get_in_order_queue())'
+    ReplacementText: 'sycl::free(h_Flu_Array_T        [t], dpct::get_in_order_queue())'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2839,7 +2839,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          8485
     Length:          40
-    ReplacementText: 'DPCT_CHECK_ERROR(sycl::free(h_Flu_Array_S_In     [t], dpct::get_in_order_queue())'
+    ReplacementText: 'sycl::free(h_Flu_Array_S_In     [t], dpct::get_in_order_queue())'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2857,7 +2857,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          8634
     Length:          40
-    ReplacementText: 'DPCT_CHECK_ERROR(sycl::free(h_Flu_Array_S_Out    [t], dpct::get_in_order_queue())'
+    ReplacementText: 'sycl::free(h_Flu_Array_S_Out    [t], dpct::get_in_order_queue())'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2875,7 +2875,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          8783
     Length:          40
-    ReplacementText: 'DPCT_CHECK_ERROR(sycl::free(h_Corner_Array_S     [t], dpct::get_in_order_queue())'
+    ReplacementText: 'sycl::free(h_Corner_Array_S     [t], dpct::get_in_order_queue())'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -2893,7 +2893,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_MemFree_Fluid.cu'
     Offset:          9575
     Length:          30
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_current_device().destroy_queue(Stream[s]))'
+    ReplacementText: 'dpct::get_current_device().destroy_queue(Stream[s]))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3082,7 +3082,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          841
     Length:          18
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3109,7 +3109,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          957
     Length:          18
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3136,7 +3136,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          1073
     Length:          18
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3163,7 +3163,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          1229
     Length:          76
-    ReplacementText: 'DPCT_CHECK_ERROR(*((void **)&EoS.AuxArrayDevPtr_Flt) = c_EoS_AuxArray_Flt.get_ptr()'
+    ReplacementText: '*((void **)&EoS.AuxArrayDevPtr_Flt) = c_EoS_AuxArray_Flt.get_ptr()'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3181,7 +3181,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          1333
     Length:          76
-    ReplacementText: 'DPCT_CHECK_ERROR(*((void **)&EoS.AuxArrayDevPtr_Int) = c_EoS_AuxArray_Int.get_ptr()'
+    ReplacementText: '*((void **)&EoS.AuxArrayDevPtr_Int) = c_EoS_AuxArray_Int.get_ptr()'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3199,7 +3199,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetConstMemory_EoS.cu'
     Offset:          1437
     Length:          76
-    ReplacementText: 'DPCT_CHECK_ERROR(*((void **)&EoS.Table) = c_EoS_Table.get_ptr()'
+    ReplacementText: '*((void **)&EoS.Table) = c_EoS_Table.get_ptr()'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3226,7 +3226,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          1465
     Length:          34
-    ReplacementText: 'DPCT_CHECK_ERROR(DeviceCount = dpct::device_count())'
+    ReplacementText: 'DeviceCount = dpct::device_count())'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3244,7 +3244,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          2274
     Length:          46
-    ReplacementText: 'DPCT_CHECK_ERROR(d_TempPtr = (void **)sycl::malloc_device(sizeof(int), dpct::get_in_order_queue()))'
+    ReplacementText: 'd_TempPtr = (void **)sycl::malloc_device(sizeof(int), dpct::get_in_order_queue()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3253,7 +3253,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          2375
     Length:          21
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_TempPtr, dpct::get_in_order_queue()))'
+    ReplacementText: 'dpct::dpct_free(d_TempPtr, dpct::get_in_order_queue()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3262,7 +3262,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          2494
     Length:          29
-    ReplacementText: 'DPCT_CHECK_ERROR(GetDeviceID = dpct::get_current_device_id())'
+    ReplacementText: 'GetDeviceID = dpct::get_current_device_id())'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3280,7 +3280,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          2556
     Length:          73
-    ReplacementText: 'DPCT_CHECK_ERROR(computeMode = 1)'
+    ReplacementText: 'computeMode = 1)'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3316,7 +3316,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          3057
     Length:          13
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::select_device'
+    ReplacementText: 'dpct::select_device'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3343,7 +3343,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          3494
     Length:          13
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::select_device'
+    ReplacementText: 'dpct::select_device'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3361,7 +3361,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          4175
     Length:          29
-    ReplacementText: 'DPCT_CHECK_ERROR(GetDeviceID = dpct::get_current_device_id())'
+    ReplacementText: 'GetDeviceID = dpct::get_current_device_id())'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3370,7 +3370,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          4231
     Length:          51
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_device(GetDeviceID).get_device_info(DeviceProp))'
+    ReplacementText: 'dpct::get_device(GetDeviceID).get_device_info(DeviceProp))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3388,7 +3388,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          4309
     Length:          38
-    ReplacementText: 'DPCT_CHECK_ERROR(DriverVersion = dpct::get_major_version(dpct::get_current_device()))'
+    ReplacementText: 'DriverVersion = dpct::get_major_version(dpct::get_current_device()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3406,7 +3406,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          4374
     Length:          40
-    ReplacementText: 'DPCT_CHECK_ERROR(RuntimeVersion = dpct::get_major_version(dpct::get_current_device()))'
+    ReplacementText: 'RuntimeVersion = dpct::get_major_version(dpct::get_current_device()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3433,7 +3433,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          4962
     Length:          46
-    ReplacementText: 'DPCT_CHECK_ERROR(d_TempPtr = (void **)sycl::malloc_device(sizeof(int), dpct::get_in_order_queue()))'
+    ReplacementText: 'd_TempPtr = (void **)sycl::malloc_device(sizeof(int), dpct::get_in_order_queue()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3442,7 +3442,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetDevice.cu'
     Offset:          5038
     Length:          21
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::dpct_free(d_TempPtr, dpct::get_in_order_queue()))'
+    ReplacementText: 'dpct::dpct_free(d_TempPtr, dpct::get_in_order_queue()))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3541,7 +3541,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetMemSize.cu'
     Offset:          1263
     Length:          29
-    ReplacementText: 'DPCT_CHECK_ERROR(GetDeviceID = dpct::get_current_device_id())'
+    ReplacementText: 'GetDeviceID = dpct::get_current_device_id())'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3559,7 +3559,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_SetMemSize.cu'
     Offset:          1381
     Length:          51
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_device(GetDeviceID).get_device_info(DeviceProp))'
+    ReplacementText: 'dpct::get_device(GetDeviceID).get_device_info(DeviceProp))'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -3595,7 +3595,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/GPU_API/GPU_Synchronize.cu'
     Offset:          513
     Length:          23
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_current_device().queues_wait_and_throw())'
+    ReplacementText: 'dpct::get_current_device().queues_wait_and_throw())'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -4225,7 +4225,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/SourceTerms/Deleptonization/CPU_Src_Deleptonization.cpp'
     Offset:          10172
     Length:          93
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy(d_SrcDlepProf_Data, h_SrcDlepProf_Data, Size_Data).wait())'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy(d_SrcDlepProf_Data, h_SrcDlepProf_Data, Size_Data).wait())'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -4234,7 +4234,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/SourceTerms/Deleptonization/CPU_Src_Deleptonization.cpp'
     Offset:          10292
     Length:          93
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy(d_SrcDlepProf_Radius, h_SrcDlepProf_Radius, Size_Radius).wait())'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy(d_SrcDlepProf_Radius, h_SrcDlepProf_Radius, Size_Radius).wait())'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -4288,7 +4288,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/SourceTerms/Deleptonization/CPU_Src_Deleptonization.cpp'
     Offset:          11400
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -4324,7 +4324,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/SourceTerms/Deleptonization/CPU_Src_Deleptonization.cpp'
     Offset:          12743
     Length:          18
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -4351,7 +4351,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/SourceTerms/Deleptonization/CPU_Src_Deleptonization.cpp'
     Offset:          12859
     Length:          18
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -4378,7 +4378,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/SourceTerms/Deleptonization/CPU_Src_Deleptonization.cpp'
     Offset:          13015
     Length:          69
-    ReplacementText: 'DPCT_CHECK_ERROR(*((void **)&DevPtr_Flt) = c_Src_Dlep_AuxArray_Flt.get_ptr()'
+    ReplacementText: '*((void **)&DevPtr_Flt) = c_Src_Dlep_AuxArray_Flt.get_ptr()'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -4396,7 +4396,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/SourceTerms/Deleptonization/CPU_Src_Deleptonization.cpp'
     Offset:          13111
     Length:          69
-    ReplacementText: 'DPCT_CHECK_ERROR(*((void **)&DevPtr_Int) = c_Src_Dlep_AuxArray_Int.get_ptr()'
+    ReplacementText: '*((void **)&DevPtr_Int) = c_Src_Dlep_AuxArray_Int.get_ptr()'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -4531,7 +4531,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/SourceTerms/User_Template/CPU_Src_User_Template.cpp'
     Offset:          9054
     Length:          20
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -4567,7 +4567,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/SourceTerms/User_Template/CPU_Src_User_Template.cpp'
     Offset:          10387
     Length:          18
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -4594,7 +4594,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/SourceTerms/User_Template/CPU_Src_User_Template.cpp'
     Offset:          10503
     Length:          18
-    ReplacementText: 'DPCT_CHECK_ERROR(dpct::get_in_order_queue().memcpy'
+    ReplacementText: 'dpct::get_in_order_queue().memcpy'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -4621,7 +4621,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/SourceTerms/User_Template/CPU_Src_User_Template.cpp'
     Offset:          10659
     Length:          68
-    ReplacementText: 'DPCT_CHECK_ERROR(*((void **)&DevPtr_Flt) = c_Src_User_AuxArray_Flt.get_ptr()'
+    ReplacementText: '*((void **)&DevPtr_Flt) = c_Src_User_AuxArray_Flt.get_ptr()'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''
@@ -4639,7 +4639,7 @@ Replacements:
   - FilePath:        '/scratch/helpdesk/RL-138/gamer/src/SourceTerms/User_Template/CPU_Src_User_Template.cpp'
     Offset:          10753
     Length:          68
-    ReplacementText: 'DPCT_CHECK_ERROR(*((void **)&DevPtr_Int) = c_Src_User_AuxArray_Int.get_ptr()'
+    ReplacementText: '*((void **)&DevPtr_Int) = c_Src_User_AuxArray_Int.get_ptr()'
     ConstantFlag:    ''
     ConstantOffset:  0
     InitStr:         ''

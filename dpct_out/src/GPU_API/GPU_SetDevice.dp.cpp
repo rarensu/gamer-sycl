@@ -46,7 +46,7 @@ void GPU_SetDevice( const int Mode )
 
 // verify that there are GPU supporting CUDA
    int DeviceCount;
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(DeviceCount = dpct::device_count()));
+   DEVICE_CHECK_ERROR(DeviceCount = dpct::device_count());
 
    if ( DeviceCount == 0 )
       Aux_Error( ERROR_INFO, "no devices support CUDA at MPI_Rank %2d (host = %8s) !!\n", MPI_Rank, Host );
@@ -75,21 +75,20 @@ void GPU_SetDevice( const int Mode )
 
 
       case -2:
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+         DEVICE_CHECK_ERROR(
              d_TempPtr = (void **)sycl::malloc_device(
                  sizeof(int),
-                 dpct::get_in_order_queue()))); // to set the GPU ID
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-             dpct::dpct_free(d_TempPtr, dpct::get_in_order_queue())));
+                 dpct::get_in_order_queue())); // to set the GPU ID
+         DEVICE_CHECK_ERROR(
+             dpct::dpct_free(d_TempPtr, dpct::get_in_order_queue()));
 
 //       make sure that the "exclusive" compute mode is adopted
-         DEVICE_CHECK_ERROR(
-             DPCT_CHECK_ERROR(GetDeviceID = dpct::get_current_device_id()));
+         DEVICE_CHECK_ERROR(GetDeviceID = dpct::get_current_device_id());
          /*
          DPCT1035:79: All SYCL devices can be used by the host to submit tasks.
          You may need to adjust this code.
          */
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(computeMode = 1));
+         DEVICE_CHECK_ERROR(computeMode = 1);
 
          /*
          DPCT1035:80: All SYCL devices can be used by the host to submit tasks.
@@ -110,7 +109,7 @@ void GPU_SetDevice( const int Mode )
          DPCT1093:81: The "SetDeviceID" device may be not the one intended for
          use. Adjust the selected device if needed.
          */
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(dpct::select_device(SetDeviceID)));
+         DEVICE_CHECK_ERROR(dpct::select_device(SetDeviceID));
 
          if ( MPI_NRank > 1  &&  MPI_Rank == 0 )
          {
@@ -128,7 +127,7 @@ void GPU_SetDevice( const int Mode )
             DPCT1093:82: The "SetDeviceID" device may be not the one intended
             for use. Adjust the selected device if needed.
             */
-            DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(dpct::select_device(SetDeviceID)));
+            DEVICE_CHECK_ERROR(dpct::select_device(SetDeviceID));
 
          else
             Aux_Error( ERROR_INFO, "SetDeviceID (%d) >= DeviceCount (%d) at MPI_Rank %2d (host = %8s) !!\n",
@@ -146,22 +145,21 @@ void GPU_SetDevice( const int Mode )
 // check
 // (0) load the device properties and the versions of CUDA and driver
    int DriverVersion = 0, RuntimeVersion = 0;
+   DEVICE_CHECK_ERROR(GetDeviceID = dpct::get_current_device_id());
    DEVICE_CHECK_ERROR(
-       DPCT_CHECK_ERROR(GetDeviceID = dpct::get_current_device_id()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       dpct::get_device(GetDeviceID).get_device_info(DeviceProp)));
+       dpct::get_device(GetDeviceID).get_device_info(DeviceProp));
    /*
    DPCT1043:83: The version-related API is different in SYCL. An initial code
    was generated, but you need to adjust it.
    */
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       DriverVersion = dpct::get_major_version(dpct::get_current_device())));
+   DEVICE_CHECK_ERROR(
+       DriverVersion = dpct::get_major_version(dpct::get_current_device()));
    /*
    DPCT1043:84: The version-related API is different in SYCL. An initial code
    was generated, but you need to adjust it.
    */
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-       RuntimeVersion = dpct::get_major_version(dpct::get_current_device())));
+   DEVICE_CHECK_ERROR(
+       RuntimeVersion = dpct::get_major_version(dpct::get_current_device()));
 
 // (1) verify the device version
    /*
@@ -179,11 +177,10 @@ void GPU_SetDevice( const int Mode )
                     GetDeviceID, SetDeviceID, MPI_Rank, Host );
 
 //    (3) verify that the adopted ID is accessible
+      DEVICE_CHECK_ERROR(d_TempPtr = (void **)sycl::malloc_device(
+                               sizeof(int), dpct::get_in_order_queue()));
       DEVICE_CHECK_ERROR(
-          DPCT_CHECK_ERROR(d_TempPtr = (void **)sycl::malloc_device(
-                               sizeof(int), dpct::get_in_order_queue())));
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-          dpct::dpct_free(d_TempPtr, dpct::get_in_order_queue())));
+          dpct::dpct_free(d_TempPtr, dpct::get_in_order_queue()));
    }
 
 

@@ -29,10 +29,10 @@ void GPU_SendGramFEMatrix2GPU( gramfe_matmul_float (*h_GramFE_TimeEvo)[ 2*FLU_NX
 
    size_t h_FluTimeEvo_MemSize = 2*FLU_NXT*PS2*sizeof(gramfe_matmul_float);
 
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(d_Flu_TimeEvo, h_GramFE_TimeEvo, h_FluTimeEvo_MemSize)
-           .wait()));
+           .wait());
 
 } // FUNCTION : GPU_SendGramFEMatrix2GPU
 

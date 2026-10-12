@@ -375,8 +375,7 @@ int GPU_MemAllocate_Fluid( const int Flu_NPG, const int Pot_NPG, const int Src_N
 
 // create streams
    Stream = new dpct::queue_ptr[GPU_NStream];
-   for (int s = 0; s < GPU_NStream; s++) DEVICE_CHECK_ERROR(
-       DPCT_CHECK_ERROR(Stream[s] = dpct::get_current_device().create_queue()));
+   for (int s = 0; s < GPU_NStream; s++) DEVICE_CHECK_ERROR(Stream[s] = dpct::get_current_device().create_queue());
 
    return GAMER_SUCCESS;
 

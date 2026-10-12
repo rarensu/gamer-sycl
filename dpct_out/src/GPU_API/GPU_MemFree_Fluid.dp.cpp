@@ -69,18 +69,18 @@ void GPU_MemFree_Fluid( const int GPU_NStream )
 
 // free the device memory
    if (d_Flu_Array_F_In != NULL) {
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-          dpct::dpct_free(d_Flu_Array_F_In, dpct::get_in_order_queue())));
+      DEVICE_CHECK_ERROR(
+          dpct::dpct_free(d_Flu_Array_F_In, dpct::get_in_order_queue()));
       d_Flu_Array_F_In = NULL;
    }
    if (d_Flu_Array_F_Out != NULL) {
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-          dpct::dpct_free(d_Flu_Array_F_Out, dpct::get_in_order_queue())));
+      DEVICE_CHECK_ERROR(
+          dpct::dpct_free(d_Flu_Array_F_Out, dpct::get_in_order_queue()));
       d_Flu_Array_F_Out = NULL;
    }
    if (d_Flux_Array != NULL) {
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-          dpct::dpct_free(d_Flux_Array, dpct::get_in_order_queue())));
+      DEVICE_CHECK_ERROR(
+          dpct::dpct_free(d_Flux_Array, dpct::get_in_order_queue()));
       d_Flux_Array = NULL;
    }
 #  ifdef UNSPLIT_GRAVITY
@@ -98,49 +98,49 @@ void GPU_MemFree_Fluid( const int GPU_NStream )
    if ( d_Mag_Array_S_In      != NULL ) {  DEVICE_CHECK_ERROR(  cudaFree( d_Mag_Array_S_In      )  );  d_Mag_Array_S_In      = NULL; }
 #  endif
    if (d_dt_Array_T != NULL) {
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-          dpct::dpct_free(d_dt_Array_T, dpct::get_in_order_queue())));
+      DEVICE_CHECK_ERROR(
+          dpct::dpct_free(d_dt_Array_T, dpct::get_in_order_queue()));
       d_dt_Array_T = NULL;
    }
    if (d_Flu_Array_T != NULL) {
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-          dpct::dpct_free(d_Flu_Array_T, dpct::get_in_order_queue())));
+      DEVICE_CHECK_ERROR(
+          dpct::dpct_free(d_Flu_Array_T, dpct::get_in_order_queue()));
       d_Flu_Array_T = NULL;
    }
    if (d_Flu_Array_S_In != NULL) {
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-          dpct::dpct_free(d_Flu_Array_S_In, dpct::get_in_order_queue())));
+      DEVICE_CHECK_ERROR(
+          dpct::dpct_free(d_Flu_Array_S_In, dpct::get_in_order_queue()));
       d_Flu_Array_S_In = NULL;
    }
    if (d_Flu_Array_S_Out != NULL) {
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-          dpct::dpct_free(d_Flu_Array_S_Out, dpct::get_in_order_queue())));
+      DEVICE_CHECK_ERROR(
+          dpct::dpct_free(d_Flu_Array_S_Out, dpct::get_in_order_queue()));
       d_Flu_Array_S_Out = NULL;
    }
    if (d_Corner_Array_S != NULL) {
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-          dpct::dpct_free(d_Corner_Array_S, dpct::get_in_order_queue())));
+      DEVICE_CHECK_ERROR(
+          dpct::dpct_free(d_Corner_Array_S, dpct::get_in_order_queue()));
       d_Corner_Array_S = NULL;
    }
 #  if ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP  ||  FLU_SCHEME == CTU )
    if (d_PriVar != NULL) {
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-          dpct::dpct_free(d_PriVar, dpct::get_in_order_queue())));
+      DEVICE_CHECK_ERROR(
+          dpct::dpct_free(d_PriVar, dpct::get_in_order_queue()));
       d_PriVar = NULL;
    }
    if (d_Slope_PPM != NULL) {
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-          dpct::dpct_free(d_Slope_PPM, dpct::get_in_order_queue())));
+      DEVICE_CHECK_ERROR(
+          dpct::dpct_free(d_Slope_PPM, dpct::get_in_order_queue()));
       d_Slope_PPM = NULL;
    }
    if (d_FC_Var != NULL) {
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-          dpct::dpct_free(d_FC_Var, dpct::get_in_order_queue())));
+      DEVICE_CHECK_ERROR(
+          dpct::dpct_free(d_FC_Var, dpct::get_in_order_queue()));
       d_FC_Var = NULL;
    }
    if (d_FC_Flux != NULL) {
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-          dpct::dpct_free(d_FC_Flux, dpct::get_in_order_queue())));
+      DEVICE_CHECK_ERROR(
+          dpct::dpct_free(d_FC_Flux, dpct::get_in_order_queue()));
       d_FC_Flux = NULL;
    }
 #  ifdef MHD
@@ -170,18 +170,18 @@ void GPU_MemFree_Fluid( const int GPU_NStream )
    for (int t=0; t<2; t++)
    {
       if (h_Flu_Array_F_In[t] != NULL) {
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-             sycl::free(h_Flu_Array_F_In[t], dpct::get_in_order_queue())));
+         DEVICE_CHECK_ERROR(
+             sycl::free(h_Flu_Array_F_In[t], dpct::get_in_order_queue()));
          h_Flu_Array_F_In[t] = NULL;
       }
       if (h_Flu_Array_F_Out[t] != NULL) {
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-             sycl::free(h_Flu_Array_F_Out[t], dpct::get_in_order_queue())));
+         DEVICE_CHECK_ERROR(
+             sycl::free(h_Flu_Array_F_Out[t], dpct::get_in_order_queue()));
          h_Flu_Array_F_Out[t] = NULL;
       }
       if (h_Flux_Array[t] != NULL) {
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-             sycl::free(h_Flux_Array[t], dpct::get_in_order_queue())));
+         DEVICE_CHECK_ERROR(
+             sycl::free(h_Flux_Array[t], dpct::get_in_order_queue()));
          h_Flux_Array[t] = NULL;
       }
 #     ifdef UNSPLIT_GRAVITY
@@ -199,28 +199,28 @@ void GPU_MemFree_Fluid( const int GPU_NStream )
       if ( h_Mag_Array_S_In     [t] != NULL ) {  DEVICE_CHECK_ERROR(  cudaFreeHost( h_Mag_Array_S_In     [t] )  );  h_Mag_Array_S_In     [t] = NULL; }
 #     endif
       if (h_dt_Array_T[t] != NULL) {
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-             sycl::free(h_dt_Array_T[t], dpct::get_in_order_queue())));
+         DEVICE_CHECK_ERROR(
+             sycl::free(h_dt_Array_T[t], dpct::get_in_order_queue()));
          h_dt_Array_T[t] = NULL;
       }
       if (h_Flu_Array_T[t] != NULL) {
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-             sycl::free(h_Flu_Array_T[t], dpct::get_in_order_queue())));
+         DEVICE_CHECK_ERROR(
+             sycl::free(h_Flu_Array_T[t], dpct::get_in_order_queue()));
          h_Flu_Array_T[t] = NULL;
       }
       if (h_Flu_Array_S_In[t] != NULL) {
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-             sycl::free(h_Flu_Array_S_In[t], dpct::get_in_order_queue())));
+         DEVICE_CHECK_ERROR(
+             sycl::free(h_Flu_Array_S_In[t], dpct::get_in_order_queue()));
          h_Flu_Array_S_In[t] = NULL;
       }
       if (h_Flu_Array_S_Out[t] != NULL) {
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-             sycl::free(h_Flu_Array_S_Out[t], dpct::get_in_order_queue())));
+         DEVICE_CHECK_ERROR(
+             sycl::free(h_Flu_Array_S_Out[t], dpct::get_in_order_queue()));
          h_Flu_Array_S_Out[t] = NULL;
       }
       if (h_Corner_Array_S[t] != NULL) {
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-             sycl::free(h_Corner_Array_S[t], dpct::get_in_order_queue())));
+         DEVICE_CHECK_ERROR(
+             sycl::free(h_Corner_Array_S[t], dpct::get_in_order_queue()));
          h_Corner_Array_S[t] = NULL;
       }
 
@@ -240,8 +240,8 @@ void GPU_MemFree_Fluid( const int GPU_NStream )
 // destroy streams
    if ( Stream != NULL )
    {
-      for (int s = 0; s < GPU_NStream; s++) DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
-          dpct::get_current_device().destroy_queue(Stream[s])));
+      for (int s = 0; s < GPU_NStream; s++) DEVICE_CHECK_ERROR(
+          dpct::get_current_device().destroy_queue(Stream[s]));
 
       delete [] Stream;
       Stream = NULL;

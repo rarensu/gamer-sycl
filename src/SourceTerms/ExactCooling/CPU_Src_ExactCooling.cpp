@@ -265,15 +265,15 @@ void Src_PassData2GPU_ExactCooling()
 {
    const long EC_TEF_MemSize = sizeof(double)*SrcTerms.EC_TEF_N;
 
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(
        d_SrcEC_TEF_lambda =
-           (double *)dpct::dpct_malloc(EC_TEF_MemSize)));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+           (double *)dpct::dpct_malloc(EC_TEF_MemSize));
+   DEVICE_CHECK_ERROR(
        d_SrcEC_TEF_alpha =
-           (double *)dpct::dpct_malloc(EC_TEF_MemSize)));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+           (double *)dpct::dpct_malloc(EC_TEF_MemSize));
+   DEVICE_CHECK_ERROR(
        d_SrcEC_TEFc =
-           (double *)dpct::dpct_malloc(EC_TEF_MemSize)));
+           (double *)dpct::dpct_malloc(EC_TEF_MemSize));
 
 // store the device pointers in SrcTerms when using GPU
    SrcTerms.EC_TEF_lambda_DevPtr = d_SrcEC_TEF_lambda;
@@ -281,18 +281,18 @@ void Src_PassData2GPU_ExactCooling()
    SrcTerms.EC_TEFc_DevPtr       = d_SrcEC_TEFc;
 
 // use synchronous transfer
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(d_SrcEC_TEF_lambda, h_SrcEC_TEF_lambda, EC_TEF_MemSize)
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+           .wait());
+   DEVICE_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(d_SrcEC_TEF_alpha, h_SrcEC_TEF_alpha, EC_TEF_MemSize)
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+           .wait());
+   DEVICE_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(d_SrcEC_TEFc, h_SrcEC_TEFc, EC_TEF_MemSize)
-           .wait()));
+           .wait());
 
 } // FUNCTION : Src_PassData2GPU_ExactCooling
 #endif // #ifdef SYCL_LANGUAGE_VERSION
@@ -356,22 +356,21 @@ void Src_SetConstMemory_ExactCooling( const double AuxArray_Flt[], const int Aux
 {
 
 // copy data to constant memory
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(c_Src_EC_AuxArray_Flt.get_ptr(), AuxArray_Flt,
                    SRC_NAUX_EC * sizeof(double))
-           .wait()));
-   DEVICE_CHECK_ERROR(
-       DPCT_CHECK_ERROR(dpct::get_in_order_queue()
+           .wait());
+   DEVICE_CHECK_ERROR(dpct::get_in_order_queue()
                             .memcpy(c_Src_EC_AuxArray_Int.get_ptr(),
                                     AuxArray_Int, SRC_NAUX_EC * sizeof(int))
-                            .wait()));
+                            .wait());
 
 // obtain the constant-memory pointers
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&DevPtr_Flt) =
-                                         c_Src_EC_AuxArray_Flt.get_ptr()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&DevPtr_Int) =
-                                         c_Src_EC_AuxArray_Int.get_ptr()));
+   DEVICE_CHECK_ERROR(*((void **)&DevPtr_Flt) =
+                                         c_Src_EC_AuxArray_Flt.get_ptr());
+   DEVICE_CHECK_ERROR(*((void **)&DevPtr_Int) =
+                                         c_Src_EC_AuxArray_Int.get_ptr());
 
 } // FUNCTION : Src_SetConstMemory_ExactCooling
 #endif // #ifdef SYCL_LANGUAGE_VERSION
@@ -504,9 +503,9 @@ void Src_End_ExactCooling()
 void GPU_MemFree_ExactCooling()
 {
 
-   if ( d_SrcEC_TEF_lambda != NULL ) {  DEVICE_CHECK_ERROR(  DPCT_CHECK_ERROR(dpct::dpct_free( d_SrcEC_TEF_lambda ))  );  d_SrcEC_TEF_lambda = NULL; }
-   if ( d_SrcEC_TEF_alpha  != NULL ) {  DEVICE_CHECK_ERROR(  DPCT_CHECK_ERROR(dpct::dpct_free( d_SrcEC_TEF_alpha  ))  );  d_SrcEC_TEF_alpha  = NULL; }
-   if ( d_SrcEC_TEFc       != NULL ) {  DEVICE_CHECK_ERROR(  DPCT_CHECK_ERROR(dpct::dpct_free( d_SrcEC_TEFc       ))  );  d_SrcEC_TEFc       = NULL; }
+   if ( d_SrcEC_TEF_lambda != NULL ) {  DEVICE_CHECK_ERROR(dpct::dpct_free( d_SrcEC_TEF_lambda )  );  d_SrcEC_TEF_lambda = NULL; }
+   if ( d_SrcEC_TEF_alpha  != NULL ) {  DEVICE_CHECK_ERROR(dpct::dpct_free( d_SrcEC_TEF_alpha  )  );  d_SrcEC_TEF_alpha  = NULL; }
+   if ( d_SrcEC_TEFc       != NULL ) {  DEVICE_CHECK_ERROR(dpct::dpct_free( d_SrcEC_TEFc       )  );  d_SrcEC_TEFc       = NULL; }
 
    SrcTerms.EC_TEF_lambda_DevPtr = NULL;
    SrcTerms.EC_TEF_alpha_DevPtr  = NULL;

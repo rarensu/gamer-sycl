@@ -43,16 +43,16 @@ void GPU_SetConstMemory()
 
 // copy data to constant memory
 #  if ( NCOMP_PASSIVE > 0 )
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(c_NormIdx.get_ptr(), PassiveNorm_VarIdx,
                    NCOMP_PASSIVE * sizeof(int))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+           .wait());
+   DEVICE_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(c_FracIdx.get_ptr(), PassiveIntFrac_VarIdx,
                    NCOMP_PASSIVE * sizeof(int))
-           .wait()));
+           .wait());
 #  endif
 
 #  ifdef GRAVITY
@@ -61,14 +61,14 @@ void GPU_SetConstMemory()
    const real h_Mp[3] = { -3.0/32.0, +30.0/32.0, +5.0/32.0 };
    const real h_Mm[3] = { +5.0/32.0, +30.0/32.0, -3.0/32.0 };
 
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(c_Mp.get_ptr(), h_Mp, 3 * sizeof(real))
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+           .wait());
+   DEVICE_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(c_Mm.get_ptr(), h_Mm, 3 * sizeof(real))
-           .wait()));
+           .wait());
 #  endif // #ifdef GRAVITY
 
 

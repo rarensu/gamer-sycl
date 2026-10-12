@@ -254,14 +254,14 @@ void Src_PassData2GPU_Deleptonization()
    const long Size_Radius = sizeof(real)*                   SRC_DLEP_PROF_NBINMAX;
 
 // use synchronous transfer
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(d_SrcDlepProf_Data, h_SrcDlepProf_Data, Size_Data)
-           .wait()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+           .wait());
+   DEVICE_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(d_SrcDlepProf_Radius, h_SrcDlepProf_Radius, Size_Radius)
-           .wait()));
+           .wait());
 
 } // FUNCTION : Src_PassData2GPU_Deleptonization
 #endif // #ifdef SYCL_LANGUAGE_VERSION
@@ -324,22 +324,21 @@ void Src_SetConstMemory_Deleptonization( const double AuxArray_Flt[], const int 
 {
 
 // copy data to constant memory
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(c_Src_Dlep_AuxArray_Flt.get_ptr(), AuxArray_Flt,
                    SRC_NAUX_DLEP * sizeof(double))
-           .wait()));
-   DEVICE_CHECK_ERROR(
-       DPCT_CHECK_ERROR(dpct::get_in_order_queue()
+           .wait());
+   DEVICE_CHECK_ERROR(dpct::get_in_order_queue()
                             .memcpy(c_Src_Dlep_AuxArray_Int.get_ptr(),
                                     AuxArray_Int, SRC_NAUX_DLEP * sizeof(int))
-                            .wait()));
+                            .wait());
 
 // obtain the constant-memory pointers
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&DevPtr_Flt) =
-                                         c_Src_Dlep_AuxArray_Flt.get_ptr()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&DevPtr_Int) =
-                                         c_Src_Dlep_AuxArray_Int.get_ptr()));
+   DEVICE_CHECK_ERROR(*((void **)&DevPtr_Flt) =
+                                         c_Src_Dlep_AuxArray_Flt.get_ptr());
+   DEVICE_CHECK_ERROR(*((void **)&DevPtr_Int) =
+                                         c_Src_Dlep_AuxArray_Int.get_ptr());
 
 } // FUNCTION : Src_SetConstMemory_Deleptonization
 #endif // #ifdef SYCL_LANGUAGE_VERSION

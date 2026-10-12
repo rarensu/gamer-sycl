@@ -240,19 +240,19 @@ void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_
       switch ( TSolver )
       {
          case DT_FLU_SOLVER:
-            DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Flu_Array_T      + UsedPatch[s], h_Flu_Array    + UsedPatch[s], Flu_MemSize[s] )  ));
+            DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_Flu_Array_T      + UsedPatch[s], h_Flu_Array    + UsedPatch[s], Flu_MemSize[s] )  );
 #           ifdef MHD
-            DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Mag_Array_T      + UsedPatch[s], h_Mag_Array    + UsedPatch[s], Mag_MemSize[s] )  ));
+            DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_Mag_Array_T      + UsedPatch[s], h_Mag_Array    + UsedPatch[s], Mag_MemSize[s] )  );
 #           endif
          break;
 
 #        ifdef GRAVITY
          case DT_GRA_SOLVER:
             if ( UsePot )
-            DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Pot_Array_T      + UsedPatch[s], h_Pot_Array    + UsedPatch[s], Pot_MemSize[s] )  ));
+            DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_Pot_Array_T      + UsedPatch[s], h_Pot_Array    + UsedPatch[s], Pot_MemSize[s] )  );
 
             if ( ExtAcc )
-            DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array + UsedPatch[s], Corner_MemSize[s] )  ));
+            DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array + UsedPatch[s], Corner_MemSize[s] )  );
          break;
 #        endif
 
@@ -337,7 +337,7 @@ void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_
    {
       if ( NPatch_per_Stream[s] == 0 )    continue;
 
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( h_dt_Array + UsedPatch[s], d_dt_Array_T + UsedPatch[s], dt_MemSize[s] )  ));
+      DEVICE_CHECK_ERROR(  Stream[s]->memcpy( h_dt_Array + UsedPatch[s], d_dt_Array_T + UsedPatch[s], dt_MemSize[s] )  );
    } // for (int s=0; s<GPU_NStream; s++)
 
 

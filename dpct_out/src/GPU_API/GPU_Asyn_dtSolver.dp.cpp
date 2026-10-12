@@ -230,9 +230,9 @@ void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_
             operand memory, so you may need to call wait() on event return by
             memcpy API to ensure synchronization behavior.
             */
-            DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+            DEVICE_CHECK_ERROR(
                 Stream[s]->memcpy(d_Flu_Array_T + UsedPatch[s],
-                                  h_Flu_Array + UsedPatch[s], Flu_MemSize[s])));
+                                  h_Flu_Array + UsedPatch[s], Flu_MemSize[s]));
 #           ifdef MHD
             DEVICE_CHECK_ERROR(  cudaMemcpyAsync( d_Mag_Array_T      + UsedPatch[s], h_Mag_Array    + UsedPatch[s],
                                Mag_MemSize[s],    cudaMemcpyHostToDevice, Stream[s] )  );
@@ -347,9 +347,9 @@ void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_
       memory, so you may need to call wait() on event return by memcpy API to
       ensure synchronization behavior.
       */
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+      DEVICE_CHECK_ERROR(
           Stream[s]->memcpy(h_dt_Array + UsedPatch[s],
-                            d_dt_Array_T + UsedPatch[s], dt_MemSize[s])));
+                            d_dt_Array_T + UsedPatch[s], dt_MemSize[s]));
    } // for (int s=0; s<GPU_NStream; s++)
 
 

@@ -29,7 +29,7 @@ void GPU_DiagnoseDevice()
 
 // get the number of devices
    int DeviceCount;
-   DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( DeviceCount = dpct::device_count() ) );
+   DEVICE_CHECK_ERROR( DeviceCount = dpct::device_count()  );
 
    if ( DeviceCount == 0 )
       Aux_Error( ERROR_INFO, "no devices supporting SYCL/CUDA at MPI_Rank %2d (host = %8s) !!\n", MPI_Rank, Host );
@@ -37,12 +37,12 @@ void GPU_DiagnoseDevice()
 
 // get the device ID
    int GetDeviceID = 999;
-   DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( GetDeviceID = dpct::get_current_device_id() ) );
+   DEVICE_CHECK_ERROR( GetDeviceID = dpct::get_current_device_id()  );
 
 
 // load the device properties
    dpct::device_info DeviceProp;
-   DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( dpct::get_device( GetDeviceID ).get_device_info( DeviceProp ) ) );
+   DEVICE_CHECK_ERROR( dpct::get_device( GetDeviceID ).get_device_info( DeviceProp )  );
 
 
 // get the number of cores per multiprocessor
@@ -80,8 +80,8 @@ void GPU_DiagnoseDevice()
       if ( MPI_Rank == YourTurn )
       {
          int DriverVersion = 0, RuntimeVersion = 0;
-         DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( DriverVersion = dpct::get_major_version( dpct::get_current_device() ) ) );
-         DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( RuntimeVersion = dpct::get_major_version( dpct::get_current_device() ) ) );
+         DEVICE_CHECK_ERROR( DriverVersion = dpct::get_major_version( dpct::get_current_device() )  );
+         DEVICE_CHECK_ERROR( RuntimeVersion = dpct::get_major_version( dpct::get_current_device() )  );
 
          FILE *Note = fopen( FileName, "a" );
          if ( MPI_Rank != 0 )   fprintf( Note, "\n\n" );
@@ -92,7 +92,7 @@ void GPU_DiagnoseDevice()
          Aux_GetCPUInfo( FileName );
 
          int clockRate = 0; // in unit of kHz
-         DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( clockRate = dpct::get_device( GetDeviceID ).get_max_clock_frequency() ) );
+         DEVICE_CHECK_ERROR( clockRate = dpct::get_device( GetDeviceID ).get_max_clock_frequency()  );
 
          fprintf( Note, "\n" );
          fprintf( Note, "GPU Info :\n" );

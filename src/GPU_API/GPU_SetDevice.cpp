@@ -48,7 +48,7 @@ void GPU_SetDevice( const int Mode )
 
 // verify that there are GPU supporting CUDA
    int DeviceCount;
-   DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( DeviceCount = dpct::device_count() ) );
+   DEVICE_CHECK_ERROR( DeviceCount = dpct::device_count()  );
 
    if ( DeviceCount == 0 )
       Aux_Error( ERROR_INFO, "no devices support CUDA at MPI_Rank %2d (host = %8s) !!\n", MPI_Rank, Host );
@@ -67,7 +67,7 @@ void GPU_SetDevice( const int Mode )
          SetDeviceID = GetFreeGpuDevID( DeviceCount, MPI_Rank );
 
          if ( SetDeviceID < DeviceCount )
-            DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( dpct::select_device( SetDeviceID ) ) );
+            DEVICE_CHECK_ERROR( dpct::select_device( SetDeviceID )  );
 
          else
             Aux_Error( ERROR_INFO, "SetDeviceID (%d) >= DeviceCount (%d) at MPI_Rank %2d (host = %8s) !!\n",
@@ -77,10 +77,10 @@ void GPU_SetDevice( const int Mode )
 
 
       case -2:
-         DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( d_TempPtr = (void**) sycl::malloc_device( sizeof(int), dpct::get_in_order_queue() ) ) );  // to set the GPU ID
-         DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( dpct::dpct_free( d_TempPtr, dpct::get_in_order_queue() ) ) );
+         DEVICE_CHECK_ERROR( d_TempPtr = (void**) sycl::malloc_device( sizeof(int), dpct::get_in_order_queue() )  );  // to set the GPU ID
+         DEVICE_CHECK_ERROR( dpct::dpct_free( d_TempPtr, dpct::get_in_order_queue() )  );
 
-         DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( GetDeviceID = dpct::get_current_device_id() ) );
+         DEVICE_CHECK_ERROR( GetDeviceID = dpct::get_current_device_id()  );
          // All SYCL devices are assumed to be running in shared (accessible by all) mode.
          // TODO: Replace this constant with an attribute check.
          computeMode = 0; 
@@ -96,7 +96,7 @@ void GPU_SetDevice( const int Mode )
 
       case -1:
          SetDeviceID = MPI_Rank % DeviceCount;
-         DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( dpct::select_device( SetDeviceID ) ) );
+         DEVICE_CHECK_ERROR( dpct::select_device( SetDeviceID )  );
 
          if ( MPI_NRank > 1  &&  MPI_Rank == 0 )
          {
@@ -110,7 +110,7 @@ void GPU_SetDevice( const int Mode )
          SetDeviceID = Mode;
 
          if ( SetDeviceID < DeviceCount )
-            DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( dpct::select_device( SetDeviceID ) ) );
+            DEVICE_CHECK_ERROR( dpct::select_device( SetDeviceID )  );
 
          else
             Aux_Error( ERROR_INFO, "SetDeviceID (%d) >= DeviceCount (%d) at MPI_Rank %2d (host = %8s) !!\n",
@@ -128,10 +128,10 @@ void GPU_SetDevice( const int Mode )
 // check
 // (0) load the device properties and the versions of CUDA and driver
    int DriverVersion = 0, RuntimeVersion = 0;
-   DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( GetDeviceID = dpct::get_current_device_id() ) );
-   DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( dpct::get_device( GetDeviceID ).get_device_info( DeviceProp ) ) );
-   DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( DriverVersion = dpct::get_major_version( dpct::get_current_device() ) ) );
-   DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( RuntimeVersion = dpct::get_major_version( dpct::get_current_device() ) ) );
+   DEVICE_CHECK_ERROR( GetDeviceID = dpct::get_current_device_id()  );
+   DEVICE_CHECK_ERROR( dpct::get_device( GetDeviceID ).get_device_info( DeviceProp )  );
+   DEVICE_CHECK_ERROR( DriverVersion = dpct::get_major_version( dpct::get_current_device() )  );
+   DEVICE_CHECK_ERROR( RuntimeVersion = dpct::get_major_version( dpct::get_current_device() )  );
 
 
 // (1) verify the device version
@@ -146,8 +146,8 @@ void GPU_SetDevice( const int Mode )
                     GetDeviceID, SetDeviceID, MPI_Rank, Host );
 
 //    (3) verify that the adopted ID is accessible
-      DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( d_TempPtr = (void**) sycl::malloc_device( sizeof(int), dpct::get_in_order_queue() ) ) );
-      DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( dpct::dpct_free( d_TempPtr, dpct::get_in_order_queue() ) ) );
+      DEVICE_CHECK_ERROR( d_TempPtr = (void**) sycl::malloc_device( sizeof(int), dpct::get_in_order_queue() )  );
+      DEVICE_CHECK_ERROR( dpct::dpct_free( d_TempPtr, dpct::get_in_order_queue() )  );
    }
 
 

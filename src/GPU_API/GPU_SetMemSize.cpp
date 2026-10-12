@@ -29,12 +29,12 @@ void GPU_SetMemSize( int &GPU_NStream, int &Flu_GPU_NPGroup, int &Pot_GPU_NPGrou
 
 // get the device ID
    int GetDeviceID = 999;
-   DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( GetDeviceID = dpct::get_current_device_id() ) );
+   DEVICE_CHECK_ERROR( GetDeviceID = dpct::get_current_device_id()  );
 
 
 // load the device properties
    dpct::device_info DeviceProp;
-   DEVICE_CHECK_ERROR( DPCT_CHECK_ERROR( dpct::get_device( GetDeviceID ).get_device_info( DeviceProp ) ) );
+   DEVICE_CHECK_ERROR( dpct::get_device( GetDeviceID ).get_device_info( DeviceProp )  );
 
 
 // (1) GPU_NSTREAM

@@ -522,9 +522,9 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
       memory, so you may need to call wait() on event return by memcpy API to
       ensure synchronization behavior.
       */
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+      DEVICE_CHECK_ERROR(
           Stream[s]->memcpy(d_Flu_Array_F_In + UsedPatch[s],
-                            h_Flu_Array_In + UsedPatch[s], Flu_MemSize_In[s])));
+                            h_Flu_Array_In + UsedPatch[s], Flu_MemSize_In[s]));
 #     if ( ELBDM_SCHEME == ELBDM_HYBRID )
       } else {
       real (*smaller_d_Flu_Array_F_In)[FLU_NIN][CUBE(HYB_NXT)] = (real (*)[FLU_NIN][CUBE(HYB_NXT)]) d_Flu_Array_F_In;
@@ -784,9 +784,9 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
       memory, so you may need to call wait() on event return by memcpy API to
       ensure synchronization behavior.
       */
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(Stream[s]->memcpy(
+      DEVICE_CHECK_ERROR(Stream[s]->memcpy(
           h_Flu_Array_Out + UsedPatch[s], d_Flu_Array_F_Out + UsedPatch[s],
-          Flu_MemSize_Out[s])));
+          Flu_MemSize_Out[s]));
 #     if ( ELBDM_SCHEME == ELBDM_HYBRID  &&  !defined(GAMER_DEBUG) )
       } else {
       real (*smaller_h_Flu_Array_Out  )[FLU_NIN][CUBE(PS2)] = (real (*)[FLU_NIN][CUBE(PS2)]) h_Flu_Array_Out;
@@ -803,9 +803,9 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
       memory, so you may need to call wait() on event return by memcpy API to
       ensure synchronization behavior.
       */
-      DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+      DEVICE_CHECK_ERROR(
           Stream[s]->memcpy(h_Flux_Array + UsedPatch[s],
-                            d_Flux_Array + UsedPatch[s], Flux_MemSize[s])));
+                            d_Flux_Array + UsedPatch[s], Flux_MemSize[s]));
 
 #     ifdef MHD
       DEVICE_CHECK_ERROR(  cudaMemcpyAsync( h_Mag_Array_Out + UsedPatch[s], d_Mag_Array_F_Out + UsedPatch[s],

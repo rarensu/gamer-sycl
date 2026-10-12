@@ -259,22 +259,21 @@ void Src_SetConstMemory_User_Template( const double AuxArray_Flt[], const int Au
 {
 
 // copy data to constant memory
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(
+   DEVICE_CHECK_ERROR(
        dpct::get_in_order_queue()
            .memcpy(c_Src_User_AuxArray_Flt.get_ptr(), AuxArray_Flt,
                    SRC_NAUX_USER * sizeof(double))
-           .wait()));
-   DEVICE_CHECK_ERROR(
-       DPCT_CHECK_ERROR(dpct::get_in_order_queue()
+           .wait());
+   DEVICE_CHECK_ERROR(dpct::get_in_order_queue()
                             .memcpy(c_Src_User_AuxArray_Int.get_ptr(),
                                     AuxArray_Int, SRC_NAUX_USER * sizeof(int))
-                            .wait()));
+                            .wait());
 
 // obtain the constant-memory pointers
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&DevPtr_Flt) =
-                                         c_Src_User_AuxArray_Flt.get_ptr()));
-   DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(*((void **)&DevPtr_Int) =
-                                         c_Src_User_AuxArray_Int.get_ptr()));
+   DEVICE_CHECK_ERROR(*((void **)&DevPtr_Flt) =
+                                         c_Src_User_AuxArray_Flt.get_ptr());
+   DEVICE_CHECK_ERROR(*((void **)&DevPtr_Int) =
+                                         c_Src_User_AuxArray_Int.get_ptr());
 
 } // FUNCTION : Src_SetConstMemory_User_Template
 #endif // #ifdef SYCL_LANGUAGE_VERSION

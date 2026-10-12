@@ -383,14 +383,14 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
       {
          if ( SelfGravity )
          {
-            DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Rho_Array_P      + UsedPatch[s], h_Rho_Array    + UsedPatch[s], Rho_MemSize[s] )  ));
+            DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_Rho_Array_P      + UsedPatch[s], h_Rho_Array    + UsedPatch[s], Rho_MemSize[s] )  );
 
-            DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Pot_Array_P_In   + UsedPatch[s], h_Pot_Array_In + UsedPatch[s], Pot_MemSize_In[s] )  ));
+            DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_Pot_Array_P_In   + UsedPatch[s], h_Pot_Array_In + UsedPatch[s], Pot_MemSize_In[s] )  );
          }
 
          if ( ExtPot )
          {
-            DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array + UsedPatch[s], Corner_MemSize[s] )  ));
+            DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array + UsedPatch[s], Corner_MemSize[s] )  );
          }
       } // if ( Poisson )
 
@@ -399,25 +399,25 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
 //       no need to transfer potential if we are also invoking the Poisson solver, for which
 //       potential data will already be in GPU
          if (  ( SelfGravity || ExtPot )  &&  !Poisson  )
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Pot_Array_P_Out  + UsedPatch[s], h_Pot_Array_Out + UsedPatch[s], Pot_MemSize_Out[s] )  ));
+         DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_Pot_Array_P_Out  + UsedPatch[s], h_Pot_Array_Out + UsedPatch[s], Pot_MemSize_Out[s] )  );
 
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Flu_Array_G      + UsedPatch[s], h_Flu_Array     + UsedPatch[s], Flu_MemSize[s] )  ));
+         DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_Flu_Array_G      + UsedPatch[s], h_Flu_Array     + UsedPatch[s], Flu_MemSize[s] )  );
 
          if ( ExtAcc )
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array  + UsedPatch[s], Corner_MemSize[s] )  ));
+         DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_Corner_Array_PGT + UsedPatch[s], h_Corner_Array  + UsedPatch[s], Corner_MemSize[s] )  );
 #        ifdef UNSPLIT_GRAVITY
          if ( SelfGravity  ||  ExtPot )
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Pot_Array_USG_G  + UsedPatch[s], h_Pot_Array_USG + UsedPatch[s], Pot_USG_MemSize[s] )  ));
+         DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_Pot_Array_USG_G  + UsedPatch[s], h_Pot_Array_USG + UsedPatch[s], Pot_USG_MemSize[s] )  );
 
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Flu_Array_USG_G  + UsedPatch[s], h_Flu_Array_USG + UsedPatch[s], Flu_USG_MemSize[s] )  ));
+         DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_Flu_Array_USG_G  + UsedPatch[s], h_Flu_Array_USG + UsedPatch[s], Flu_USG_MemSize[s] )  );
 #        endif
 
 #        ifdef DUAL_ENERGY
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_DE_Array_G      + UsedPatch[s], h_DE_Array      + UsedPatch[s], DE_MemSize[s] )  ));
+         DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_DE_Array_G      + UsedPatch[s], h_DE_Array      + UsedPatch[s], DE_MemSize[s] )  );
 #        endif
 
 #        ifdef MHD
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( d_Emag_Array_G    + UsedPatch[s], h_Emag_Array    + UsedPatch[s], Emag_MemSize[s] )  ));
+         DEVICE_CHECK_ERROR(  Stream[s]->memcpy( d_Emag_Array_G    + UsedPatch[s], h_Emag_Array    + UsedPatch[s], Emag_MemSize[s] )  );
 #        endif
       } // if ( GraAcc )
    } // for (int s=0; s<GPU_NStream; s++)
@@ -594,14 +594,14 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
       if ( NPatch_per_Stream[s] == 0 )    continue;
 
       if ( Poisson  &&  ( SelfGravity || ExtPot )  )
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( h_Pot_Array_Out + UsedPatch[s], d_Pot_Array_P_Out + UsedPatch[s], Pot_MemSize_Out[s] )  ));
+         DEVICE_CHECK_ERROR(  Stream[s]->memcpy( h_Pot_Array_Out + UsedPatch[s], d_Pot_Array_P_Out + UsedPatch[s], Pot_MemSize_Out[s] )  );
 
       if ( GraAcc )
       {
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( h_Flu_Array     + UsedPatch[s], d_Flu_Array_G     + UsedPatch[s], Flu_MemSize[s] )  ));
+         DEVICE_CHECK_ERROR(  Stream[s]->memcpy( h_Flu_Array     + UsedPatch[s], d_Flu_Array_G     + UsedPatch[s], Flu_MemSize[s] )  );
 
 #        ifdef DUAL_ENERGY
-         DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(  Stream[s]->memcpy( h_DE_Array      + UsedPatch[s], d_DE_Array_G      + UsedPatch[s], DE_MemSize[s] )  ));
+         DEVICE_CHECK_ERROR(  Stream[s]->memcpy( h_DE_Array      + UsedPatch[s], d_DE_Array_G      + UsedPatch[s], DE_MemSize[s] )  );
 #        endif
       }
    } // for (int s=0; s<GPU_NStream; s++)

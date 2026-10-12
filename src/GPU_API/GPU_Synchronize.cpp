@@ -13,8 +13,7 @@
 //-------------------------------------------------------------------------------------------------------
 void GPU_Synchronize()
 {
-   DEVICE_CHECK_ERROR(
-       DPCT_CHECK_ERROR(dpct::get_current_device().queues_wait_and_throw()));
+   DEVICE_CHECK_ERROR(dpct::get_current_device().queues_wait_and_throw());
 }
 
 #endif // #ifdef GPU

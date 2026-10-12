@@ -12,29 +12,31 @@ void Aux_Error( const char *File, const int Line, const char *Func, const char *
 #include <dpct/dpct.hpp>
 
 
-// CUDA error check
-#define DEVICE_CHECK_ERROR( Call )   DEVICE_Check_Error( Call, __FILE__, __LINE__, __FUNCTION__ )
+// SYCL error check — catches sycl::exception directly and reports the real
+// error message (e.what()) through GAMER's Aux_Error, which prints a
+// structured error banner and calls MPI_Exit() for proper MPI shutdown.
+// This replaces the previous DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(expr))
+// double-wrap, which caught the exception (discarding e.what()), converted
+// it to a dpct::err0 code, then checked that code with a dummy string
+// lookup via dpct::get_error_string_dummy().
+#define DEVICE_CHECK_ERROR( Call ) \
+  try { \
+    Call; \
+  } catch ( const sycl::exception &e ) { \
+    Aux_Error( ERROR_INFO, "SYCL ERROR : %s !!\n", e.what() ); \
+  }
 
-inline void DEVICE_Check_Error( dpct::err0 Return, const char *File, const int Line, const char *Func )
-{
-   if ( Return != 0 )
-      Aux_Error( File, Line, Func, "CUDA ERROR : %s !!\n", dpct::get_error_string_dummy(Return) );
-}
-
-
-
-// in DEVICE_CHECK_MALLOC(), we must use "Call; cudaError_t Return = cudaGetLastError();" instead of "cudaError_t Return = Call;"
-// since cudaGetLastError() will reset the last error to cudaSuccess
-// --> otherwise DEVICE_CHECK_ERROR( cudaGetLastError() ) in, for example, GPU_Asyn_FluidSolver(),
-//     will fail since the last error has not been reset!
-#define DEVICE_CHECK_MALLOC( Call )                                                                        \
-{                                                                                                        \
-   Call;                                                                                                 \
-   const dpct::err0 Return = 0;                                                                          \
-   if      ( Return == 2 )                                                                               \
-      return GAMER_FAILED;                                                                               \
-   else if ( Return != 0 )                                                                               \
-      Aux_Error( ERROR_INFO, "CUDA ERROR in memory allocation : %s !!\n", dpct::get_error_string_dummy(Return) );  \
+// SYCL memory allocation error check
+// Catches sycl::exception from sycl::malloc_device / sycl::malloc_host /
+// dpct::dpct_malloc and reports the real error message via Aux_Error.
+#define DEVICE_CHECK_MALLOC( Call ) \
+{ \
+  try { \
+    Call; \
+  } catch ( const sycl::exception &e ) { \
+    Aux_Error( ERROR_INFO, "SYCL ERROR in memory allocation : %s !!\n", e.what() ); \
+    return GAMER_FAILED; \
+  } \
 }
 
 #endif // SYCL_LANGUAGE_VERSION
