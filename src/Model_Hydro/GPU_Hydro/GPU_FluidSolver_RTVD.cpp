@@ -68,6 +68,10 @@ static __device__ void GPU_Advance( real g_Fluid_In [][5][ CUBE(FLU_NXT) ],
 //                MinEint      : Internal energy floor
 //                PassiveFloor : Bitwise flag to specify the passive scalars to be floored
 //                EoS          : EoS object
+//                s_cu         : Shared-memory array for the upwind flux (SYCL only; allocated by caller)
+//                s_cw         : Shared-memory array for the auxiliary flux (SYCL only; allocated by caller)
+//                s_flux       : Shared-memory array for the final flux (SYCL only; allocated by caller)
+//                s_RLflux     : Shared-memory array for the left/right-moving flux (SYCL only; allocated by caller)
 //-------------------------------------------------------------------------------------------------------
 #ifdef SYCL_LANGUAGE_VERSION
 SYCL_EXTERNAL void GPU_FluidSolver_RTVD(
@@ -81,36 +85,55 @@ __global__ void GPU_FluidSolver_RTVD(
    const real g_Pot_USG[][ CUBE(USG_NXT_F) ],
    const real dt, const real _dh, const bool StoreFlux,
    const bool XYZ, const real MinDens, const real MinPres, const real MinEint, const long PassiveFloor,
+#ifdef SYCL_LANGUAGE_VERSION
+   const EoS_t EoS,
+   real *const s_cu, real *const s_cw, real *const s_flux, real *const s_RLflux )
+#else
    const EoS_t EoS )
+#endif
 {
 
-   CGPU_SHARED real s_cu    [FLU_BLOCK_SIZE_Y][5][FLU_NXT];
-   CGPU_SHARED real s_cw    [FLU_BLOCK_SIZE_Y][5][FLU_NXT];
-   CGPU_SHARED real s_flux  [FLU_BLOCK_SIZE_Y][5][FLU_NXT];
-   CGPU_SHARED real s_RLflux[FLU_BLOCK_SIZE_Y][5][FLU_NXT];
+#ifdef SYCL_LANGUAGE_VERSION
+// shared-memory arrays are allocated by the caller (kernel launcher) via
+// sycl::local_accessor and passed as flat pointers; cast to 3-D array
+// pointer type compatible with GPU_Advance()
+   real (* const s_cu_p    )[5][FLU_NXT] = (real(*)[5][FLU_NXT])s_cu;
+   real (* const s_cw_p    )[5][FLU_NXT] = (real(*)[5][FLU_NXT])s_cw;
+   real (* const s_flux_p  )[5][FLU_NXT] = (real(*)[5][FLU_NXT])s_flux;
+   real (* const s_RLflux_p)[5][FLU_NXT] = (real(*)[5][FLU_NXT])s_RLflux;
+#else
+   real s_cu    [FLU_BLOCK_SIZE_Y][5][FLU_NXT];
+   real s_cw    [FLU_BLOCK_SIZE_Y][5][FLU_NXT];
+   real s_flux  [FLU_BLOCK_SIZE_Y][5][FLU_NXT];
+   real s_RLflux[FLU_BLOCK_SIZE_Y][5][FLU_NXT];
+   real (* const s_cu_p    )[5][FLU_NXT] = s_cu;
+   real (* const s_cw_p    )[5][FLU_NXT] = s_cw;
+   real (* const s_flux_p  )[5][FLU_NXT] = s_flux;
+   real (* const s_RLflux_p)[5][FLU_NXT] = s_RLflux;
+#endif
 
    if ( XYZ )
    {
       GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, StoreFlux,              0,              0,
-                     s_cu, s_cw, s_flux, s_RLflux, false, 0, MinDens, MinPres, MinEint, PassiveFloor, &EoS );
+                     s_cu_p, s_cw_p, s_flux_p, s_RLflux_p, false, 0, MinDens, MinPres, MinEint, PassiveFloor, &EoS );
 
       GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, StoreFlux, FLU_GHOST_SIZE,              0,
-                     s_cu, s_cw, s_flux, s_RLflux, false, 3, MinDens, MinPres, MinEint, PassiveFloor, &EoS );
+                     s_cu_p, s_cw_p, s_flux_p, s_RLflux_p, false, 3, MinDens, MinPres, MinEint, PassiveFloor, &EoS );
 
       GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, StoreFlux, FLU_GHOST_SIZE, FLU_GHOST_SIZE,
-                     s_cu, s_cw, s_flux, s_RLflux,  true, 6, MinDens, MinPres, MinEint, PassiveFloor, &EoS );
+                     s_cu_p, s_cw_p, s_flux_p, s_RLflux_p,  true, 6, MinDens, MinPres, MinEint, PassiveFloor, &EoS );
    }
 
    else
    {
       GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, StoreFlux,              0,              0,
-                     s_cu, s_cw, s_flux, s_RLflux, false, 6, MinDens, MinPres, MinEint, PassiveFloor, &EoS );
+                     s_cu_p, s_cw_p, s_flux_p, s_RLflux_p, false, 6, MinDens, MinPres, MinEint, PassiveFloor, &EoS );
 
       GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, StoreFlux,              0, FLU_GHOST_SIZE,
-                     s_cu, s_cw, s_flux, s_RLflux, false, 3, MinDens, MinPres, MinEint, PassiveFloor, &EoS );
+                     s_cu_p, s_cw_p, s_flux_p, s_RLflux_p, false, 3, MinDens, MinPres, MinEint, PassiveFloor, &EoS );
 
       GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, StoreFlux, FLU_GHOST_SIZE, FLU_GHOST_SIZE,
-                     s_cu, s_cw, s_flux, s_RLflux,  true, 0, MinDens, MinPres, MinEint, PassiveFloor, &EoS );
+                     s_cu_p, s_cw_p, s_flux_p, s_RLflux_p,  true, 0, MinDens, MinPres, MinEint, PassiveFloor, &EoS );
    }
 
 } // FUNCTION : GPU_FluidSolver_RTVD

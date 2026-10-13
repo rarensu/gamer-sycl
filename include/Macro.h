@@ -1368,7 +1368,6 @@
 // passed as a kernel parameter.  This macro should be removed once all remaining users
 // have been migrated to that pattern.  Currently still used by:
 //   src/SelfGravity/GPU_Poisson/GPU_PoissonSolver_MG.cpp
-//   src/Model_Hydro/GPU_Hydro/GPU_FluidSolver_RTVD.cpp
 //   src/Model_ELBDM/CPU_ELBDM/CPU_ELBDMSolver_HJ.cpp
 //   src/Model_ELBDM/GPU_ELBDM/GPU_ELBDMSolver_FD.cpp
 // Fixed pattern (reference): src/Model_Hydro/CPU_Hydro/CPU_FluidSolver_MHM.cpp and

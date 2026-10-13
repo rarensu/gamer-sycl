@@ -24,7 +24,12 @@ void GPU_FluidSolver_RTVD(
    const real g_Pot_USG[][ CUBE(USG_NXT_F) ],
    const real dt, const real _dh, const bool StoreFlux,
    const bool XYZ, const real MinDens, const real MinPres, const real MinEint, const long PassiveFloor,
+#ifdef SYCL_LANGUAGE_VERSION
+   const EoS_t EoS,
+   real *const s_cu, real *const s_cw, real *const s_flux, real *const s_RLflux );
+#else
    const EoS_t EoS );
+#endif
 #elif ( FLU_SCHEME == MHM  ||  FLU_SCHEME == MHM_RP )
 #ifdef SYCL_LANGUAGE_VERSION
 SYCL_EXTERNAL

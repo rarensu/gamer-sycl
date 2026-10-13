@@ -18,7 +18,8 @@ SYCL_EXTERNAL void GPU_FluidSolver_RTVD(
    const real g_Pot_USG[][ CUBE(USG_NXT_F) ],
    const real dt, const real _dh, const bool StoreFlux,
    const bool XYZ, const real MinDens, const real MinPres, const real MinEint, const long PassiveFloor,
-   const EoS_t EoS );
+   const EoS_t EoS,
+   real *const s_cu, real *const s_cw, real *const s_flux, real *const s_RLflux );
 #else
 __global__ void GPU_FluidSolver_RTVD(
    real g_Fluid_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
@@ -675,6 +676,11 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
             auto d_Corner_Array_F_ptr = d_Corner_Array_F + UsedPatch[s];
             auto d_Pot_Array_USG_F_ptr = d_Pot_Array_USG_F + UsedPatch[s];
 
+            sycl::local_accessor<real, 1> s_cu_acc(sycl::range<1>(FLU_BLOCK_SIZE_Y * 5 * FLU_NXT), cgh);
+            sycl::local_accessor<real, 1> s_cw_acc(sycl::range<1>(FLU_BLOCK_SIZE_Y * 5 * FLU_NXT), cgh);
+            sycl::local_accessor<real, 1> s_flux_acc(sycl::range<1>(FLU_BLOCK_SIZE_Y * 5 * FLU_NXT), cgh);
+            sycl::local_accessor<real, 1> s_RLflux_acc(sycl::range<1>(FLU_BLOCK_SIZE_Y * 5 * FLU_NXT), cgh);
+
             cgh.parallel_for(
                 sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * BlockDim_FluidSolver,
                                   BlockDim_FluidSolver),
@@ -685,7 +691,11 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
                        d_Flux_Array_ptr,
                        d_Corner_Array_F_ptr,
                        d_Pot_Array_USG_F_ptr,
-                       dt, 1.0/dh, StoreFlux, XYZ, MinDens, MinPres, MinEint, PassiveFloor, EoS_ct );
+                       dt, 1.0/dh, StoreFlux, XYZ, MinDens, MinPres, MinEint, PassiveFloor, EoS_ct,
+                       s_cu_acc.get_multi_ptr<sycl::access::decorated::no>().get(),
+                       s_cw_acc.get_multi_ptr<sycl::access::decorated::no>().get(),
+                       s_flux_acc.get_multi_ptr<sycl::access::decorated::no>().get(),
+                       s_RLflux_acc.get_multi_ptr<sycl::access::decorated::no>().get() );
                 });
          });
 
