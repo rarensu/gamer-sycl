@@ -59,7 +59,7 @@ void GPU_FluidSolver_MHM(
    const bool NormPassive, const int NNorm,
    const bool FracPassive, const int NFrac,
    const bool JeansMinPres, const real JeansMinPres_Coeff,
-   const EoS_t EoS, const MicroPhy_t MicroPhy, int *const c_NormIdx, int *const c_FracIdx );
+   const EoS_t EoS, const MicroPhy_t MicroPhy, int *const c_NormIdx, int *const c_FracIdx, int *const s_FullStepFailure );
 #else
 __global__
 void GPU_FluidSolver_MHM(
@@ -702,6 +702,7 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
 
             Stream[s]->submit([&](sycl::handler &cgh) {
                const EoS_t EoS_ct = EoS;
+               sycl::local_accessor<int, 1> s_FullStepFailure_acc(sycl::range<1>(1), cgh);
 #if ( NCOMP_PASSIVE > 0 )
                auto c_NormIdx_ptr = c_NormIdx.get_ptr();
                auto c_FracIdx_ptr = c_FracIdx.get_ptr();
@@ -750,7 +751,8 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
                           dt, dh, StoreFlux, StoreElectric, LR_Limiter, MinMod_Coeff, MinMod_MaxIter,
                           Time, UsePot, ExtAcc, GPUExtAcc_Ptr_ct, MinDens, MinPres, MinEint,
                           DualEnergySwitch, PassiveFloor, NormPassive, NNorm, FracPassive, NFrac,
-                          JeansMinPres, JeansMinPres_Coeff, EoS_ct, MicroPhy, c_NormIdx_ptr, c_FracIdx_ptr );
+                          JeansMinPres, JeansMinPres_Coeff, EoS_ct, MicroPhy, c_NormIdx_ptr, c_FracIdx_ptr,
+                           s_FullStepFailure_acc.get_multi_ptr<sycl::access::decorated::no>().get() );
                    });
             });
          }

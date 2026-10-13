@@ -82,7 +82,7 @@ void GPU_FluidSolver_CTU(
     const real DualEnergySwitch, const long PassiveFloor,
     const bool NormPassive, const int NNorm, const bool FracPassive,
     const int NFrac, const bool JeansMinPres, const real JeansMinPres_Coeff,
-    const EoS_t EoS, int *const c_NormIdx, int *const c_FracIdx);
+    const EoS_t EoS, int *const c_NormIdx, int *const c_FracIdx, int *const s_FullStepFailure);
 #endif // FLU_SCHEME
 
 #elif ( MODEL == ELBDM )
@@ -676,7 +676,8 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
                        ExtAcc, GPUExtAcc_Ptr_ct24, MinDens, MinPres, MinEint,
                        DualEnergySwitch, PassiveFloor, NormPassive, NNorm,
                        FracPassive, NFrac, JeansMinPres, JeansMinPres_Coeff,
-                       EoS, c_NormIdx_ptr_ct1, c_FracIdx_ptr_ct1);
+                       EoS, c_NormIdx_ptr_ct1, c_FracIdx_ptr_ct1,
+                       s_FullStepFailure_ptr_ct1);  // dpct: via local_accessor
                 });
          });
       }

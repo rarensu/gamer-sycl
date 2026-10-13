@@ -291,7 +291,7 @@ void GPU_FluidSolver_MHM(
    const bool NormPassive, const int NNorm,
    const bool FracPassive, const int NFrac,
    const bool JeansMinPres, const real JeansMinPres_Coeff,
-       const EoS_t EoS, const MicroPhy_t MicroPhy, int *const c_NormIdx, int *const c_FracIdx )
+       const EoS_t EoS, const MicroPhy_t MicroPhy, int *const c_NormIdx, int *const c_FracIdx, int *const s_FullStepFailure )
 #else
 void CPU_FluidSolver_MHM(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
@@ -345,15 +345,20 @@ void CPU_FluidSolver_MHM(
 
     int Iteration;
 #  ifdef SYCL_LANGUAGE_VERSION
-    // Work-group (local) shared memory for the full-step failure flag.
-    // Replaces the original CUDA "__shared__ int s_FullStepFailure;".
-    // All work-group threads share this variable: a thread that detects an
-    // unphysical cell in Hydro_FullStepUpdate() atomically sets it to 1 via
-    // sycl::atomic_ref (work_group scope), and the do...while loop in all
-    // threads reads the shared value to decide whether to retry.
-    sycl::local int s_FullStepFailure;
+    // s_FullStepFailure is passed as a parameter (int *const) pointing to
+    // work-group local memory allocated via sycl::local_accessor in the
+    // kernel launcher (replaces the original CUDA "__shared__ int" and the
+    // non-working "sycl::local int" which is not a valid storage qualifier
+    // in this DPC++ version).  All work-group threads share this variable:
+    // a thread that detects an unphysical cell in Hydro_FullStepUpdate()
+    // atomically sets it to 1 via sycl::atomic_ref (work_group scope), and
+    // the do...while loop in all threads reads the shared value.
+    // S_FAIL macro unifies access: (*s_FullStepFailure) in SYCL, s_FullStepFailure in CPU.
+    // &S_FAIL expands to the pointer in SYCL, &local var in CPU.
+    #define S_FAIL (*s_FullStepFailure)
 #  else
     int s_FullStepFailure;
+    #define S_FAIL s_FullStepFailure
 #  endif
 
 
@@ -479,7 +484,7 @@ void CPU_FluidSolver_MHM(
 #           ifdef SYCL_LANGUAGE_VERSION
             sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #           endif
-            s_FullStepFailure = 0;
+            S_FAIL = 0;
 #           ifdef SYCL_LANGUAGE_VERSION
             sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #           endif
@@ -508,7 +513,7 @@ void CPU_FluidSolver_MHM(
 #           ifdef SYCL_LANGUAGE_VERSION
             sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #           endif
-            s_FullStepFailure = 0;
+            S_FAIL = 0;
 #           ifdef SYCL_LANGUAGE_VERSION
             sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier();
 #           endif
@@ -579,19 +584,21 @@ void CPU_FluidSolver_MHM(
             Hydro_FullStepUpdate( g_Flu_Array_In[P], g_Flu_Array_Out[P], g_DE_Array_Out[P], g_Mag_Array_Out[P],
                                   g_FC_Flux_1PG, g_PriVar_Half_1PG, g_FC_Var_1PG,
                                   dt, dh, MinDens, MinEint, DualEnergySwitch,
-                                  PassiveFloor, NormPassive, NNorm, c_NormIdx, &EoS, &s_FullStepFailure,
+                                  PassiveFloor, NormPassive, NNorm, c_NormIdx, &EoS, &S_FAIL,
                                   Iteration, MinMod_MaxIter );
 
 
 //          5. counter increment
             Iteration++;
 
-         } while ( s_FullStepFailure  &&  Iteration <= MinMod_MaxIter );
+         } while ( S_FAIL  &&  Iteration <= MinMod_MaxIter );
 
       } // loop over all patch groups
    } // OpenMP parallel region
 
 } // FUNCTION : CPU_FluidSolver_MHM
+// undo S_FAIL macro
+#undef S_FAIL
 
 
 

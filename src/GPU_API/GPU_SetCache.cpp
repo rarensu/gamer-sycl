@@ -57,7 +57,7 @@ void GPU_FluidSolver_MHM(
    const bool NormPassive, const int NNorm,
    const bool FracPassive, const int NFrac,
    #ifdef SYCL_LANGUAGE_VERSION
-   const EoS_t EoS, const MicroPhy_t MicroPhy, int *const c_NormIdx, int *const c_FracIdx );
+   const EoS_t EoS, const MicroPhy_t MicroPhy, int *const c_NormIdx, int *const c_FracIdx, int *const s_FullStepFailure );
 #else
    const EoS_t EoS, const MicroPhy_t MicroPhy );
 #endif

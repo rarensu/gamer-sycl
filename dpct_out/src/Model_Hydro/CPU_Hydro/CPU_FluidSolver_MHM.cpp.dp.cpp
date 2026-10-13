@@ -290,7 +290,7 @@ void GPU_FluidSolver_MHM(
    const bool NormPassive, const int NNorm,
    const bool FracPassive, const int NFrac,
    const bool JeansMinPres, const real JeansMinPres_Coeff,
-   const EoS_t EoS, const MicroPhy_t MicroPhy )
+   const EoS_t EoS, const MicroPhy_t MicroPhy, int *const c_NormIdx, int *const c_FracIdx, int *const s_FullStepFailure )
 #else
 void CPU_FluidSolver_MHM(
    const real   g_Flu_Array_In [][NCOMP_TOTAL][ CUBE(FLU_NXT) ],
@@ -344,7 +344,8 @@ void CPU_FluidSolver_MHM(
 
    int Iteration;
 #  ifdef SYCL_LANGUAGE_VERSION
-   int s_FullStepFailure;
+   // NOTE: s_FullStepFailure passed as parameter (int *const) from kernel
+   // launcher via sycl::local_accessor, replacing unsupported sycl::local qualifier.
 #  else
    int s_FullStepFailure;
 #  endif

@@ -88,7 +88,7 @@ void GPU_FluidSolver_CTU(
     const real DualEnergySwitch, const long PassiveFloor,
     const bool NormPassive, const int NNorm, const bool FracPassive,
     const int NFrac, const bool JeansMinPres, const real JeansMinPres_Coeff,
-    const EoS_t EoS, int *const c_NormIdx, int *const c_FracIdx);
+    const EoS_t EoS, int *const c_NormIdx, int *const c_FracIdx, int *const s_FullStepFailure);
 #endif // FLU_SCHEME
 SYCL_EXTERNAL void GPU_dtSolver_HydroCFL(
     real g_dt_Array[], const real g_Flu_Array[][FLU_NIN_T][CUBE(PS1)],
