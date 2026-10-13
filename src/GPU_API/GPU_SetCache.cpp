@@ -143,7 +143,8 @@ void GPU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                       real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
                                       real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                       const real dt, const real _dh, const real Eta, const bool StoreFlux,
-                                      const real Taylor3_Coeff, const bool XYZ, const real MinDens );
+                                      const real Taylor3_Coeff, const bool XYZ, const real MinDens,
+                                      real *const s_In, real *const s_Half, real *const s_Flux );
 #else
 __global__ void GPU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                       real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
@@ -211,7 +212,8 @@ void GPU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT)
                                                   const bool g_IsCompletelyRefined[],
                                                                                                     const bool g_HasWaveCounterpart[][ CUBE(HYB_NXT) ],
                                                   const real dt, const real _dh, const real Eta, const bool StoreFlux,
-                                                  const bool XYZ, const real MinDens );
+                                                  const bool XYZ, const real MinDens,
+                                                  real *const s_In, int *const s_HasWaveCounterpart, real *const s_Flux );
 #else
 __global__ void GPU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
                                                   #ifdef GAMER_DEBUG

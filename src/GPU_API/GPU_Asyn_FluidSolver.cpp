@@ -161,7 +161,8 @@ SYCL_EXTERNAL void GPU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NX
                                       real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
                                       real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                       const real dt, const real _dh, const real Eta, const bool StoreFlux,
-                                      const real Taylor3_Coeff, const bool XYZ, const real MinDens );
+                                      const real Taylor3_Coeff, const bool XYZ, const real MinDens,
+                                      real *const s_In, real *const s_Half, real *const s_Flux );
 #else
 __global__ void GPU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                       real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
@@ -230,7 +231,8 @@ SYCL_EXTERNAL void GPU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][
                                                   const bool h_IsCompletelyRefined[],
                                                   const bool h_HasWaveCounterpart[][ CUBE(HYB_NXT) ],
                                                   const real dt, const real _dh, const real Eta, const bool StoreFlux,
-                                                  const bool XYZ, const real MinDens );
+                                                  const bool XYZ, const real MinDens,
+                                                  real *const s_In, int *const s_HasWaveCounterpart, real *const s_Flux );
 #else
 __global__ void GPU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
 #                                                 ifdef GAMER_DEBUG
@@ -851,6 +853,11 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
             auto d_Flu_Array_F_In_ptr = d_Flu_Array_F_In + UsedPatch[s];
             auto d_Flu_Array_F_Out_ptr = d_Flu_Array_F_Out + UsedPatch[s];
             auto d_Flux_Array_ptr = d_Flux_Array + UsedPatch[s];
+            sycl::local_accessor<real, 1> s_In_acc(sycl::range<1>(FLU_NIN * FLU_BLOCK_SIZE_Y * FLU_NXT), cgh);
+#  ifdef CONSERVE_MASS
+            sycl::local_accessor<real, 1> s_Half_acc(sycl::range<1>(FLU_NIN * FLU_BLOCK_SIZE_Y * FLU_NXT), cgh);
+            sycl::local_accessor<real, 1> s_Flux_acc(sycl::range<1>(FLU_BLOCK_SIZE_Y * (PS2+1)), cgh);
+#  endif
 
             cgh.parallel_for(
                 sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * BlockDim_FluidSolver,
@@ -860,7 +867,15 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
                        d_Flu_Array_F_In_ptr,
                        d_Flu_Array_F_Out_ptr,
                        d_Flux_Array_ptr,
-                       dt, 1.0/dh, ELBDM_Eta, StoreFlux, ELBDM_Taylor3_Coeff, XYZ, MinDens );
+                       dt, 1.0/dh, ELBDM_Eta, StoreFlux, ELBDM_Taylor3_Coeff, XYZ, MinDens,
+                       s_In_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+#  ifdef CONSERVE_MASS
+                       , s_Half_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+                       , s_Flux_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+#  else
+                       , (real *)0, (real *)0
+#  endif
+                       );
                 });
          });
 
@@ -933,6 +948,11 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
             auto d_Flux_Array_ptr = d_Flux_Array + UsedPatch[s];
             auto d_IsCompletelyRefined_ptr = d_IsCompletelyRefined + UsedPatch[s];
             auto d_HasWaveCounterpart_ptr = d_HasWaveCounterpart + UsedPatch[s];
+            sycl::local_accessor<real, 1> s_In_acc(sycl::range<1>(FLU_HJ_BLOCK_SIZE_Y * (ELBDM_HJ_RK_ORDER+1) * FLU_NIN * HYB_NXT), cgh);
+#  ifdef CONSERVE_MASS
+            sycl::local_accessor<real, 1> s_Flux_acc(sycl::range<1>(FLU_HJ_BLOCK_SIZE_Y * HYB_NXT), cgh);
+#  endif
+            sycl::local_accessor<int, 1> s_HasWaveCounterpart_acc(sycl::range<1>(FLU_HJ_BLOCK_SIZE_Y * HYB_NXT), cgh);
 
             cgh.parallel_for(
                 sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * BlockDim_FluidSolver_HJ,
@@ -944,7 +964,15 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
                        d_Flux_Array_ptr,
                        d_IsCompletelyRefined_ptr,
                        d_HasWaveCounterpart_ptr,
-                       dt, 1.0/dh, ELBDM_Eta, StoreFlux, XYZ, MinDens );
+                       dt, 1.0/dh, ELBDM_Eta, StoreFlux, XYZ, MinDens,
+                       s_In_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+                       , s_HasWaveCounterpart_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+#  ifdef CONSERVE_MASS
+                       , s_Flux_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+#  else
+                       , (real *)0
+#  endif
+                       );
                 });
          });
 

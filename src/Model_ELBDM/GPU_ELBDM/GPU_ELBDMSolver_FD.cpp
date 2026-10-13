@@ -97,7 +97,8 @@ SYCL_EXTERNAL void GPU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NX
                                       real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
                                       real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                       const real dt, const real _dh, const real Eta, const bool StoreFlux,
-                                      const real Taylor3_Coeff, const bool XYZ, const real MinDens )
+                                      const real Taylor3_Coeff, const bool XYZ, const real MinDens,
+                                      real *const s_In, real *const s_Half, real *const s_Flux )
 #else
 __global__ void GPU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                       real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
@@ -107,33 +108,54 @@ __global__ void GPU_ELBDMSolver_FD( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) 
 #endif
 {
 
-       CGPU_SHARED real s_In  [FLU_NIN][FLU_BLOCK_SIZE_Y][FLU_NXT];
+#  ifdef SYCL_LANGUAGE_VERSION
+   // shared-memory arrays are allocated via sycl::local_accessor in the launcher
+   // (GPU_Asyn_FluidSolver.cpp) and passed in here as flat real* kernel parameters
+   real (* const s_In_p)[FLU_BLOCK_SIZE_Y][FLU_NXT] = (real (*)[FLU_BLOCK_SIZE_Y][FLU_NXT])s_In;
 #  ifdef CONSERVE_MASS
-    CGPU_SHARED real s_Half[FLU_NIN][FLU_BLOCK_SIZE_Y][FLU_NXT];
-    CGPU_SHARED real s_Flux[FLU_BLOCK_SIZE_Y][PS2+1];
+   real (* const s_Half_p)[FLU_BLOCK_SIZE_Y][FLU_NXT] = (real (*)[FLU_BLOCK_SIZE_Y][FLU_NXT])s_Half;
+   real (* const s_Flux_p)[PS2+1] = (real (*)[PS2+1])s_Flux;
 #  else
-    real (*s_Half)[FLU_BLOCK_SIZE_Y][FLU_NXT] = NULL;  // useless if CONSERVE_MASS is off
-    real (*s_Flux)[PS2+1]                     = NULL;  // useless if CONSERVE_MASS is off
+   // CONSERVE_MASS is off: s_Half/s_Flux params are unused (launcher passes NULL)
+   real (* const s_Half_p)[FLU_BLOCK_SIZE_Y][FLU_NXT] = NULL;
+   real (* const s_Flux_p)[PS2+1] = NULL;
 #  endif
+#  else
+   // CPU-only fallback (non-SYCL): plain stack-local variables
+   real s_In [FLU_NIN][FLU_BLOCK_SIZE_Y][FLU_NXT];
+#  ifdef CONSERVE_MASS
+   real s_Half[FLU_NIN][FLU_BLOCK_SIZE_Y][FLU_NXT];
+   real s_Flux[FLU_BLOCK_SIZE_Y][PS2+1];
+#  endif
+   real (* const s_In_p)[FLU_BLOCK_SIZE_Y][FLU_NXT] = s_In;
+#  ifdef CONSERVE_MASS
+   real (* const s_Half_p)[FLU_BLOCK_SIZE_Y][FLU_NXT] = s_Half;
+   real (* const s_Flux_p)[PS2+1] = s_Flux;
+#  else
+   real (* const s_Half_p)[FLU_BLOCK_SIZE_Y][FLU_NXT] = NULL;
+   real (* const s_Flux_p)[PS2+1] = NULL;
+#  endif
+#  endif
+
 
    if ( XYZ )
    {
       GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, Eta, StoreFlux, Taylor3_Coeff,
-                                  0,              0, s_In, s_Half, s_Flux, false, 0, MinDens );
+                                  0,              0, s_In_p, s_Half_p, s_Flux_p, false, 0, MinDens );
       GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, Eta, StoreFlux, Taylor3_Coeff,
-                     FLU_GHOST_SIZE,              0, s_In, s_Half, s_Flux, false, 3, MinDens );
+                     FLU_GHOST_SIZE,              0, s_In_p, s_Half_p, s_Flux_p, false, 3, MinDens );
       GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, Eta, StoreFlux, Taylor3_Coeff,
-                     FLU_GHOST_SIZE, FLU_GHOST_SIZE, s_In, s_Half, s_Flux,  true, 6, MinDens );
+                     FLU_GHOST_SIZE, FLU_GHOST_SIZE, s_In_p, s_Half_p, s_Flux_p,  true, 6, MinDens );
    }
 
    else
    {
       GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, Eta, StoreFlux, Taylor3_Coeff,
-                                  0,              0, s_In, s_Half, s_Flux, false, 6, MinDens );
+                                  0,              0, s_In_p, s_Half_p, s_Flux_p, false, 6, MinDens );
       GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, Eta, StoreFlux, Taylor3_Coeff,
-                                  0, FLU_GHOST_SIZE, s_In, s_Half, s_Flux, false, 3, MinDens );
+                                  0, FLU_GHOST_SIZE, s_In_p, s_Half_p, s_Flux_p, false, 3, MinDens );
       GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, dt, _dh, Eta, StoreFlux, Taylor3_Coeff,
-                     FLU_GHOST_SIZE, FLU_GHOST_SIZE, s_In, s_Half, s_Flux,  true, 0, MinDens );
+                     FLU_GHOST_SIZE, FLU_GHOST_SIZE, s_In_p, s_Half_p, s_Flux_p,  true, 0, MinDens );
    }
 
 } // FUNCTION : GPU_ELBDMSolver_FD

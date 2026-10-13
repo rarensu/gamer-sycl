@@ -545,6 +545,7 @@
 #     else
 #        define FLU_HJ_BLOCK_SIZE_Y    ( FLU_BLOCK_SIZE_Y/2 )  // not optimized yet
 #     endif
+#     define ELBDM_HJ_RK_ORDER 3   // hoisted from CPU_ELBDMSolver_HJ.cpp; needed by the HJ launcher for local_accessor sizing
 #  endif // #if ( ELBDM_SCHEME == ELBDM_HYBRID )
 
 

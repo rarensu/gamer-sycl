@@ -128,7 +128,6 @@ static uint get1D2(uint k, uint j, uint i, int XYZ) {
 //     and <= 0.05 for second-order methods according to empirical tests)
 // --> using double precision for the following three constant coefficients improves the mass conservation errors
 //     from ~1e-5 to ~1e-8 but deteriorates the performance by ~10%
-#define ELBDM_HJ_RK_ORDER 3
 GPU_DEVICE_VARIABLE
 const static double TIME_COEFFS[ELBDM_HJ_RK_ORDER]                    = {1.0, 1.0/4.0, 2.0/3.0};
 
@@ -159,7 +158,8 @@ static void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT) ],
                            int NPatchGroup,
                            const real dt, const real _dh, const real Eta, const bool StoreFlux,
                            const uint j_gap, const uint k_gap,
-                           const bool FinalOut, const int XYZ, const real MinDens );
+                           const bool FinalOut, const int XYZ, const real MinDens,
+                           real s_In[][ELBDM_HJ_RK_ORDER+1][FLU_NIN][HYB_NXT], int s_HasWaveCounterpart[][HYB_NXT], real s_Flux[][HYB_NXT] );
 
 
 
@@ -204,7 +204,8 @@ void GPU_ELBDMSolver_HamiltonJacobi( real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT)
                                        const bool g_IsCompletelyRefined[],
                                        const bool g_HasWaveCounterpart[][ CUBE(HYB_NXT) ],
                                        const real dt, const real _dh, const real Eta, const bool StoreFlux,
-                                       const bool XYZ, const real MinDens )
+                                       const bool XYZ, const real MinDens,
+                                       real *const s_In, int *const s_HasWaveCounterpart, real *const s_Flux )
 #else
 void CPU_ELBDMSolver_HamiltonJacobi(   real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NXT)],
 #                                      ifdef GAMER_DEBUG
@@ -228,23 +229,51 @@ void CPU_ELBDMSolver_HamiltonJacobi(   real g_Fluid_In [][FLU_NIN ][ CUBE(HYB_NX
    const real _dh = real(1.0)/dh;
 #  endif
 
+#  ifdef SYCL_LANGUAGE_VERSION
+   // shared-memory arrays are allocated via sycl::local_accessor in the launcher
+   // (GPU_Asyn_FluidSolver.cpp) and passed in here as flat real*/int* kernel parameters
+   real (* const s_In_p)[ELBDM_HJ_RK_ORDER+1][FLU_NIN][HYB_NXT] = (real (*)[ELBDM_HJ_RK_ORDER+1][FLU_NIN][HYB_NXT])s_In;
+   int (* const s_HasWaveCounterpart_p)[HYB_NXT] = (int (*)[HYB_NXT])s_HasWaveCounterpart;
+#  ifdef CONSERVE_MASS
+   real (* const s_Flux_p)[HYB_NXT] = (real (*)[HYB_NXT])s_Flux;
+#  else
+   // CONSERVE_MASS is off: s_Flux param is unused (launcher passes NULL)
+   real (* const s_Flux_p)[HYB_NXT] = NULL;
+#  endif
+#  else
+   // CPU-only fallback (non-SYCL): plain stack-local variables
+   real s_In [CGPU_FLU_BLOCK_SIZE_Y][ELBDM_HJ_RK_ORDER+1][FLU_NIN][HYB_NXT];
+   int s_HasWaveCounterpart[CGPU_FLU_BLOCK_SIZE_Y][HYB_NXT];
+#  ifdef CONSERVE_MASS
+   real s_Flux[CGPU_FLU_BLOCK_SIZE_Y][HYB_NXT];
+#  endif
+   real (* const s_In_p)[ELBDM_HJ_RK_ORDER+1][FLU_NIN][HYB_NXT] = s_In;
+   int (* const s_HasWaveCounterpart_p)[HYB_NXT] = s_HasWaveCounterpart;
+#  ifdef CONSERVE_MASS
+   real (* const s_Flux_p)[HYB_NXT] = s_Flux;
+#  else
+   real (* const s_Flux_p)[HYB_NXT] = NULL;
+#  endif
+#  endif
+
+
    if ( XYZ )
    {
       GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, g_IsCompletelyRefined, g_HasWaveCounterpart, NPatchGroup, dt, _dh, Eta, StoreFlux,
-                                  0,              0, false, 0, MinDens );
+                                  0,              0, false, 0, MinDens, s_In_p, s_HasWaveCounterpart_p, s_Flux_p );
       GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, g_IsCompletelyRefined, g_HasWaveCounterpart, NPatchGroup, dt, _dh, Eta, StoreFlux,
-                     HYB_GHOST_SIZE,              0, false, 3, MinDens );
+                     HYB_GHOST_SIZE,              0, false, 3, MinDens, s_In_p, s_HasWaveCounterpart_p, s_Flux_p );
       GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, g_IsCompletelyRefined, g_HasWaveCounterpart, NPatchGroup, dt, _dh, Eta, StoreFlux,
-                     HYB_GHOST_SIZE, HYB_GHOST_SIZE,  true, 6, MinDens );
+                     HYB_GHOST_SIZE, HYB_GHOST_SIZE,  true, 6, MinDens, s_In_p, s_HasWaveCounterpart_p, s_Flux_p );
    }
    else
    {
       GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, g_IsCompletelyRefined, g_HasWaveCounterpart, NPatchGroup, dt, _dh, Eta, StoreFlux,
-                                  0,              0, false, 6, MinDens );
+                                  0,              0, false, 6, MinDens, s_In_p, s_HasWaveCounterpart_p, s_Flux_p );
       GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, g_IsCompletelyRefined, g_HasWaveCounterpart, NPatchGroup, dt, _dh, Eta, StoreFlux,
-                                  0, HYB_GHOST_SIZE, false, 3, MinDens );
+                                  0, HYB_GHOST_SIZE, false, 3, MinDens, s_In_p, s_HasWaveCounterpart_p, s_Flux_p );
       GPU_Advance( g_Fluid_In, g_Fluid_Out, g_Flux, g_IsCompletelyRefined, g_HasWaveCounterpart, NPatchGroup, dt, _dh, Eta, StoreFlux,
-                     HYB_GHOST_SIZE, HYB_GHOST_SIZE,  true, 0, MinDens );
+                     HYB_GHOST_SIZE, HYB_GHOST_SIZE,  true, 0, MinDens, s_In_p, s_HasWaveCounterpart_p, s_Flux_p );
    }
 
 } // FUNCTION : GPU_ELBDMSolver_HamiltonJacobi
@@ -296,7 +325,8 @@ void GPU_Advance(  real g_Fluid_In [][FLU_NIN  ][ CUBE(HYB_NXT) ],
                      const real dt, const real _dh, const real Eta, const bool StoreFlux,
                      const uint j_gap, const uint k_gap,
                      const bool FinalOut,
-                     const int XYZ, const real MinDens )
+                     const int XYZ, const real MinDens,
+                     real s_In[][ELBDM_HJ_RK_ORDER+1][FLU_NIN][HYB_NXT], int s_HasWaveCounterpart[][HYB_NXT], real s_Flux[][HYB_NXT] )
 {
 
    const real dh           = real(1.0)/_dh;                   // grid spacing
@@ -316,12 +346,7 @@ void GPU_Advance(  real g_Fluid_In [][FLU_NIN  ][ CUBE(HYB_NXT) ],
    {
 //###OPTIMIZATION: change the order of different dimensions to [N_TIME_LEVELS + 1][FLU_NIN][CGPU_FLU_BLOCK_SIZE_Y][HYB_NXT]
 //    create memories for columns of various intermediate fields on stack or shared GPU memory
-      CGPU_SHARED real s_In                [CGPU_FLU_BLOCK_SIZE_Y][ELBDM_HJ_RK_ORDER+1][FLU_NIN][HYB_NXT];
-      CGPU_SHARED int  s_HasWaveCounterpart[CGPU_FLU_BLOCK_SIZE_Y]                              [HYB_NXT];  // booleans indicating where to switch to first-order
-
-#     ifdef CONSERVE_MASS
-      CGPU_SHARED real s_Flux              [CGPU_FLU_BLOCK_SIZE_Y]                              [HYB_NXT];  // the average density fluxes
-#     endif
+   // shared-memory arrays s_In, s_HasWaveCounterpart and s_Flux are function parameters now
 
 #     ifdef SYCL_LANGUAGE_VERSION
 //    use two-dimensional thread blocks in GPU mode
