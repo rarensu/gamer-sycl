@@ -240,7 +240,19 @@ const real g_Rho_Array    [][ CUBE(RHO_NXT) ],
                                          const real g_Pot_Array_In [][ CUBE(POT_NXT) ],
                                                real g_Pot_Array_Out[][ CUBE(GRA_NXT) ],
                                          const int Min_Iter, const int Max_Iter, const real Omega_6,
-                                         const real Const, const IntScheme_t IntScheme );
+                                          const real Const, const IntScheme_t IntScheme
+#ifdef SYCL_LANGUAGE_VERSION
+                                          , real *s_Residual_Total,
+                                          real *s_FPot
+#  ifdef SOR_CPOT_SHARED
+                                          , real *s_CPot
+#  endif
+#  ifdef SOR_RHO_SHARED
+                                          , real *s_Rho_Array
+#  endif
+                                          , real *s_Reduction_Buf
+#endif
+                                          );
 #elif ( POT_SCHEME == MG )
 #ifdef SYCL_LANGUAGE_VERSION
 SYCL_EXTERNAL void GPU_PoissonSolver_MG(

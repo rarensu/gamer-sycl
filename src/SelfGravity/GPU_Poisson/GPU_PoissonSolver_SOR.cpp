@@ -111,7 +111,16 @@ SYCL_EXTERNAL void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*
                                          const real g_Pot_Array_In [][ POT_NXT*POT_NXT*POT_NXT ],
                                                real g_Pot_Array_Out[][ GRA_NXT*GRA_NXT*GRA_NXT ],
                                          const int Min_Iter, const int Max_Iter, const real Omega_6,
-                                         const real Const, const IntScheme_t IntScheme )
+                                          const real Const, const IntScheme_t IntScheme,
+                                          real *s_Residual_Total,
+                                          real *s_FPot
+                                          #  ifdef SOR_CPOT_SHARED
+                                          , real *s_CPot
+                                          #  endif
+                                          #  ifdef SOR_RHO_SHARED
+                                          , real *s_Rho_Array
+                                          #  endif
+                                          , real *s_Reduction_Buf )
 #else
 __global__ void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO_NXT*RHO_NXT ],
                                          const real g_Pot_Array_In [][ POT_NXT*POT_NXT*POT_NXT ],
@@ -168,24 +177,29 @@ __global__ void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO
    uint PotID, RhoID, DispPotID, DispRhoID, Disp;
    real Residual, Residual_Total_Old, Residual_ThreadSum;
 
-   CGPU_SHARED real s_Residual_Total;
+   #ifdef SYCL_LANGUAGE_VERSION
+    // shared-memory variables are passed as kernel parameters (allocated via local_accessor in launcher)
+#  else
+    // CPU-only fallback (non-SYCL): plain stack-local variables
+    real s_Residual_Total;
 
 #  ifdef SOR_USE_PADDING
-   CGPU_SHARED real s_FPot[ POT_NXT_F*POT_NXT_F*POT_NXT_F + POT_PAD*4*POT_NXT_F ];
+    real s_FPot[ POT_NXT_F*POT_NXT_F*POT_NXT_F + POT_PAD*4*POT_NXT_F ];
 #  else
-   CGPU_SHARED real s_FPot[ POT_NXT_F*POT_NXT_F*POT_NXT_F ];
+    real s_FPot[ POT_NXT_F*POT_NXT_F*POT_NXT_F ];
 #  endif
 
 #  ifdef SOR_CPOT_SHARED
-   CGPU_SHARED real s_CPot[ POT_NXT  *POT_NXT  *POT_NXT   ];
+    real s_CPot[ POT_NXT  *POT_NXT  *POT_NXT   ];
 #  endif
 
 #  ifdef SOR_RHO_SHARED
-   CGPU_SHARED real s_Rho_Array[ RHO_NXT*RHO_NXT*RHO_NXT ];
+    real s_Rho_Array[ RHO_NXT*RHO_NXT*RHO_NXT ];
 #  endif
 
-   // shared-memory buffer for the BlockReduction_* helper functions (SYCL path passes this explicitly)
-   CGPU_SHARED real s_Reduction_Buf[RED_NTHREAD];
+    // buffer for the BlockReduction_* helper functions
+    real s_Reduction_Buf[RED_NTHREAD];
+#  endif
 
 
 // a1. load the fine-grid density into the shared memory
@@ -452,7 +466,11 @@ __global__ void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO
 #        endif
 
 //       broadcast to all threads
-         if ( ID == 0 )    s_Residual_Total = Residual_ThreadSum;
+#ifdef SYCL_LANGUAGE_VERSION
+          if ( ID == 0 )    *s_Residual_Total = Residual_ThreadSum;
+#else
+          if ( ID == 0 )    s_Residual_Total = Residual_ThreadSum;
+#endif
 #ifdef SYCL_LANGUAGE_VERSION
          sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
 #endif
@@ -460,9 +478,13 @@ __global__ void GPU_PoissonSolver_SOR( const real g_Rho_Array    [][ RHO_NXT*RHO
 
 //       (c3). termination criterion
 //       ==============================================================================
-         if ( s_Residual_Total > Residual_Total_Old )    break;
-
-         Residual_Total_Old = s_Residual_Total;
+#ifdef SYCL_LANGUAGE_VERSION
+          if ( *s_Residual_Total > Residual_Total_Old )    break;
+          Residual_Total_Old = *s_Residual_Total;
+#else
+          if ( s_Residual_Total > Residual_Total_Old )    break;
+          Residual_Total_Old = s_Residual_Total;
+#endif
 
       } // if ( Iter+1 >= Min_Iter  &&  Iter % SOR_MOD_REDUCTION == 0 )
 #ifdef SYCL_LANGUAGE_VERSION

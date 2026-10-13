@@ -20,7 +20,19 @@ const real g_Rho_Array    [][ RHO_NXT*RHO_NXT*RHO_NXT ],
                                          const real g_Pot_Array_In [][ POT_NXT*POT_NXT*POT_NXT ],
                                                real g_Pot_Array_Out[][ GRA_NXT*GRA_NXT*GRA_NXT ],
                                          const int Min_Iter, const int Max_Iter, const real Omega_6,
-                                         const real Const, const IntScheme_t IntScheme );
+                                          const real Const, const IntScheme_t IntScheme
+#ifdef SYCL_LANGUAGE_VERSION
+                                          , real *s_Residual_Total,
+                                          real *s_FPot
+#  ifdef SOR_CPOT_SHARED
+                                          , real *s_CPot
+#  endif
+#  ifdef SOR_RHO_SHARED
+                                          , real *s_Rho_Array
+#  endif
+                                          , real *s_Reduction_Buf
+#endif
+                                          );
 
 #elif ( POT_SCHEME == MG  )
 #ifdef SYCL_LANGUAGE_VERSION
@@ -437,21 +449,51 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
          {
 #           if ( POT_SCHEME == SOR )
 
+             // SOR shared-memory size macros (matching GPU_PoissonSolver_SOR.cpp definitions)
+#            define POT_NXT_F_SOR    ( PATCH_SIZE + 2*POT_GHOST_SIZE )
+#            ifdef SOR_USE_PADDING
+#              define POT_PAD_SOR    ( WARP_SIZE/2 - (POT_NXT_F_SOR*2%WARP_SIZE) )
+#            endif
+#            define POT_NTHREAD_SOR  ( RHO_NXT*RHO_NXT*POT_BLOCK_SIZE_Z/2 )
+
             Stream[s]->submit([&](sycl::handler &cgh) {
                 auto d_Rho_Array_P_ptr     = d_Rho_Array_P     + UsedPatch[s];
                 auto d_Pot_Array_P_In_ptr  = d_Pot_Array_P_In  + UsedPatch[s];
                 auto d_Pot_Array_P_Out_ptr = d_Pot_Array_P_Out + UsedPatch[s];
+                // shared-memory accessors (passed as raw pointers to GPU_PoissonSolver_SOR)
+                sycl::local_accessor<real, 1> s_Residual_Total_acc(sycl::range<1>( 1 ), cgh);
+#            ifdef SOR_USE_PADDING
+                sycl::local_accessor<real, 1> s_FPot_acc(sycl::range<1>( POT_NXT_F_SOR*POT_NXT_F_SOR*POT_NXT_F_SOR + POT_PAD_SOR*4*POT_NXT_F_SOR ), cgh);
+#            else
+                sycl::local_accessor<real, 1> s_FPot_acc(sycl::range<1>( POT_NXT_F_SOR*POT_NXT_F_SOR*POT_NXT_F_SOR ), cgh);
+#            endif
+#            ifdef SOR_CPOT_SHARED
+                sycl::local_accessor<real, 1> s_CPot_acc(sycl::range<1>( POT_NXT*POT_NXT*POT_NXT ), cgh);
+#            endif
+#            ifdef SOR_RHO_SHARED
+                sycl::local_accessor<real, 1> s_Rho_Array_acc(sycl::range<1>( RHO_NXT*RHO_NXT*RHO_NXT ), cgh);
+#            endif
+                sycl::local_accessor<real, 1> s_Reduction_Buf_acc(sycl::range<1>( POT_NTHREAD_SOR ), cgh);
                cgh.parallel_for(
-                   sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) *
-                                         Poi_Block_Dim,
-                                     Poi_Block_Dim),
-                   [=](sycl::nd_item<3> item_ct1) [[sycl::reqd_sub_group_size(32)]] {
-                      GPU_PoissonSolver_SOR(
-                          d_Rho_Array_P_ptr,
-                          d_Pot_Array_P_In_ptr,
-                          d_Pot_Array_P_Out_ptr,
-                          SOR_Min_Iter, SOR_Max_Iter, SOR_Omega_6, Poi_Const, IntScheme );
-                   });
+                    sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) *
+                                          Poi_Block_Dim,
+                                      Poi_Block_Dim),
+                    [=](sycl::nd_item<3> item_ct1) [[sycl::reqd_sub_group_size(32)]] {
+                       GPU_PoissonSolver_SOR(
+                           d_Rho_Array_P_ptr,
+                           d_Pot_Array_P_In_ptr,
+                           d_Pot_Array_P_Out_ptr,
+                           SOR_Min_Iter, SOR_Max_Iter, SOR_Omega_6, Poi_Const, IntScheme,
+                           s_Residual_Total_acc.get_multi_ptr<sycl::access::decorated::no>().get(),
+                           s_FPot_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+#            ifdef SOR_CPOT_SHARED
+                           , s_CPot_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+#            endif
+#            ifdef SOR_RHO_SHARED
+                           , s_Rho_Array_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+#            endif
+                           , s_Reduction_Buf_acc.get_multi_ptr<sycl::access::decorated::no>().get() );
+                    });
             });
 
 #           elif ( POT_SCHEME == MG  )
