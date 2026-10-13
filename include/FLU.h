@@ -21,16 +21,15 @@
 # include "GAMER.h"
 #endif
 
-// EoS compile-time dispatch (included for both SYCL and non-SYCL paths so that
-// CALL_EoS_* macros and EoSExternDecl are available everywhere)
-#include "EoS_Dispatch.h"
-#include "Src_Dispatch.h"
-
-
 // allow GPU to output messages in the debug mode
 #ifdef GAMER_DEBUG
 #  include "stdio.h"
 #endif
+
+// EoS compile-time dispatch (included for both SYCL and non-SYCL paths so that
+// CALL_EoS_* macros and EoSExternDecl are available everywhere)
+#include "EoS_Dispatch.h"
+#include "Src_Dispatch.h"
 
 
 // include SYCL-native block FFT library if GPU kinetic ELBDM Gram-Fourier extension solver is enabled

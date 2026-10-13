@@ -37,6 +37,7 @@
 // SYCL-only: extern declarations for concrete EoS functions + dispatch wrappers
 // ==========================================================================
 #ifdef SYCL_LANGUAGE_VERSION
+#include <cmath>  // for NAN
 
 
 // ---------- Extern declarations for concrete EoS functions ----------
@@ -160,6 +161,17 @@ EoSExternDecl void EoS_General_User_Template( const int Mode, real Out[], const 
 
 // ---------- Inline dispatch wrappers ----------
 // Each wrapper selects the concrete EoS function at compile time.
+//
+// Fallback for unimplemented EoS functions:
+// Some EoS types (notably EOS_TAUBMATHEWS) do not implement all standard
+// conversion functions. Under the original CUDA runtime-dispatch model, these
+// function pointers were simply never set and never called in the SRHD path.
+// SYCL cannot call through function pointers in kernels, so these wrappers
+// provide compile-time dispatch. When an EoS type omits a particular function,
+// the fallback returns NAN at runtime instead of using #error — this mirrors
+// the original CUDA behavior where calling an unset pointer would be a runtime
+// error (segfault), not a compile error. NAN propagation triggers GAMER's
+// auto-correction (OPT__1ST_FLUX_CORR / AUTO_REDUCE_DT).
 
 static inline real GPU_EoS_DensEint2Pres( const real Dens, const real Eint, const real Passive[],
     const double AuxArray_Flt[], const int AuxArray_Int[],
@@ -173,7 +185,10 @@ static inline real GPU_EoS_DensEint2Pres( const real Dens, const real Eint, cons
 #  elif ( EOS == EOS_USER )
     return EoS_DensEint2Pres_User_Template( Dens, Eint, Passive, AuxArray_Flt, AuxArray_Int, Table );
 #  else
-#    error : EoS_Dispatch.h: GPU_EoS_DensEint2Pres not supported for this EOS
+#    ifdef GAMER_DEBUG
+   printf( "ERROR : GPU_EoS_DensEint2Pres not supported for this EoS.\n" );
+#    endif
+   return NAN;
 #  endif
 }
 
@@ -189,7 +204,10 @@ static inline real GPU_EoS_DensPres2Eint( const real Dens, const real Pres, cons
 #  elif ( EOS == EOS_USER )
     return EoS_DensPres2Eint_User_Template( Dens, Pres, Passive, AuxArray_Flt, AuxArray_Int, Table );
 #  else
-#    error : EoS_Dispatch.h: GPU_EoS_DensPres2Eint not supported for this EOS
+#    ifdef GAMER_DEBUG
+   printf( "ERROR : GPU_EoS_DensPres2Eint not supported for this EoS.\n" );
+#    endif
+   return NAN;
 #  endif
 }
 
@@ -207,7 +225,10 @@ static inline real GPU_EoS_DensPres2CSqr( const real Dens, const real Pres, cons
 #  elif ( EOS == EOS_USER )
     return EoS_DensPres2CSqr_User_Template( Dens, Pres, Passive, AuxArray_Flt, AuxArray_Int, Table );
 #  else
-#    error : EoS_Dispatch.h: GPU_EoS_DensPres2CSqr not supported for this EOS
+#    ifdef GAMER_DEBUG
+   printf( "ERROR : GPU_EoS_DensPres2CSqr not supported for this EoS.\n" );
+#    endif
+   return NAN;
 #  endif
 }
 
@@ -223,7 +244,10 @@ static inline real GPU_EoS_DensEint2Temp( const real Dens, const real Eint, cons
 #  elif ( EOS == EOS_USER )
     return EoS_DensEint2Temp_User_Template( Dens, Eint, Passive, AuxArray_Flt, AuxArray_Int, Table );
 #  else
-#        error : EoS_Dispatch.h: GPU_EoS_DensEint2Temp not supported for this EOS
+#    ifdef GAMER_DEBUG
+   printf( "ERROR : GPU_EoS_DensEint2Temp not supported for this EoS.\n" );
+#    endif
+   return NAN;
 #  endif
 }
 
@@ -239,7 +263,10 @@ static inline real GPU_EoS_DensTemp2Pres( const real Dens, const real Temp, cons
 #  elif ( EOS == EOS_USER )
     return EoS_DensTemp2Pres_User_Template( Dens, Temp, Passive, AuxArray_Flt, AuxArray_Int, Table );
 #  else
-#    error : EoS_Dispatch.h: GPU_EoS_DensTemp2Pres not supported for this EOS
+#    ifdef GAMER_DEBUG
+   printf( "ERROR : GPU_EoS_DensTemp2Pres not supported for this EoS.\n" );
+#    endif
+   return NAN;
 #  endif
 }
 
@@ -255,7 +282,10 @@ static inline real GPU_EoS_DensEint2Entr( const real Dens, const real Eint, cons
 #  elif ( EOS == EOS_USER )
     return EoS_DensEint2Entr_User_Template( Dens, Eint, Passive, AuxArray_Flt, AuxArray_Int, Table );
 #  else
-#    error : EoS_Dispatch.h: GPU_EoS_DensEint2Entr not supported for this EOS
+#    ifdef GAMER_DEBUG
+   printf( "ERROR : GPU_EoS_DensEint2Entr not supported for this EoS.\n" );
+#    endif
+   return NAN;
 #  endif
 }
 
