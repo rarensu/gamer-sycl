@@ -162,7 +162,8 @@ void GPU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                               const real dt, const real _dh, const real Eta, const bool StoreFlux,
                                               const bool XYZ, const real MinDens,
                                               typename FFT::workspace_type workspace,
-                                              typename IFFT::workspace_type workspace_inverse );
+                                              typename IFFT::workspace_type workspace_inverse,
+                                   complex_type *const shared_mem );
 #else
 __launch_bounds__(FFT::max_threads_per_block)
 __global__
@@ -182,7 +183,8 @@ void GPU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) 
                                                  real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                                  gramfe_matmul_float g_Evolve[][ FLU_NXT*2 ],
                                                  const real dt, const real _dh, const real Eta, const bool StoreFlux,
-                                                 const bool XYZ, const real MinDens );
+                                                 const bool XYZ, const real MinDens,
+                                                 real *const s_In, real *const s_Out, gramfe_matmul_float *const s_TimeEvo );
 #else
 __global__
 void GPU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],

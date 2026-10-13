@@ -181,7 +181,8 @@ void GPU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                    const real dt, const real _dh, const real Eta, const bool StoreFlux,
                                    const bool XYZ, const real MinDens,
                                    typename FFT::workspace_type workspace,
-                                   typename IFFT::workspace_type workspace_inverse );
+                                   typename IFFT::workspace_type workspace_inverse,
+                                   complex_type *const shared_mem );
 #else
 __launch_bounds__(FFT::max_threads_per_block)
 __global__
@@ -202,7 +203,8 @@ void GPU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) 
                                       real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                       gramfe_matmul_float g_Evolve[][ FLU_NXT*2 ],
                                       const real dt, const real _dh, const real Eta, const bool StoreFlux,
-                                      const bool XYZ, const real MinDens );
+                                      const bool XYZ, const real MinDens,
+                                                 real *const s_In, real *const s_Out, gramfe_matmul_float *const s_TimeEvo );
 #else
 __global__
 void GPU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
@@ -892,6 +894,9 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
             auto d_Flu_Array_F_Out_ptr = d_Flu_Array_F_Out + UsedPatch[s];
             auto d_Flux_Array_ptr = d_Flux_Array + UsedPatch[s];
 
+            sycl::local_accessor<complex_type, 1> shared_mem_acc(
+                sycl::range<1>(FFT::ffts_per_block * (GRAMFE_FLU_NXT + 2 * GRAMFE_NDELTA)), cgh);
+
             cgh.parallel_for(
                 sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * FFT::block_dim,
                                   FFT::block_dim),
@@ -900,7 +905,8 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
                        d_Flu_Array_F_In_ptr,
                        d_Flu_Array_F_Out_ptr,
                        d_Flux_Array_ptr,
-                       dt, 1.0/dh, ELBDM_Eta, StoreFlux, XYZ, MinDens, workspace, workspace_inv );
+                       dt, 1.0/dh, ELBDM_Eta, StoreFlux, XYZ, MinDens, workspace, workspace_inv,
+                       shared_mem_acc.get_multi_ptr<sycl::access::decorated::no>().get() );
                 });
          });
 
@@ -912,6 +918,9 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
             auto d_Flux_Array_ptr = d_Flux_Array + UsedPatch[s];
             auto d_Flu_TimeEvo_ptr = d_Flu_TimeEvo;
 
+            sycl::local_accessor<real, 1>        s_In_acc(sycl::range<1>(FLU_BLOCK_SIZE_Y * FLU_NXT * 2), cgh);
+            sycl::local_accessor<real, 1>        s_Out_acc(sycl::range<1>(FLU_BLOCK_SIZE_Y * PS2 * 2), cgh);
+            sycl::local_accessor<gramfe_matmul_float, 1> s_TimeEvo_acc(sycl::range<1>(PS2 * FLU_NXT * 2), cgh);
             cgh.parallel_for(
                 sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * BlockDim_FluidSolver,
                                   BlockDim_FluidSolver),
@@ -921,7 +930,10 @@ void GPU_Asyn_FluidSolver( real h_Flu_Array_In[][FLU_NIN ][ CUBE(FLU_NXT) ],
                        d_Flu_Array_F_Out_ptr,
                        d_Flux_Array_ptr,
                        d_Flu_TimeEvo_ptr,
-                       dt, dh, ELBDM_Eta, StoreFlux, XYZ, MinDens );
+                       dt, dh, ELBDM_Eta, StoreFlux, XYZ, MinDens,
+                       s_In_acc.get_multi_ptr<sycl::access::decorated::no>().get(),
+                       s_Out_acc.get_multi_ptr<sycl::access::decorated::no>().get(),
+                       s_TimeEvo_acc.get_multi_ptr<sycl::access::decorated::no>().get() );
                 });
          });
 

@@ -262,7 +262,8 @@ void GPU_ELBDMSolver_GramFE_FFT( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                    const real dt, const real _dh, const real Eta, const bool StoreFlux,
                                    const bool XYZ, const real MinDens,
                                    typename FFT::workspace_type  Workspace,
-                                   typename IFFT::workspace_type WorkspaceInv )
+                                                                      typename IFFT::workspace_type WorkspaceInv,
+                                   complex_type *const shared_mem )
 #else
 void CPU_ELBDMSolver_GramFE_FFT(   real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                    real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
@@ -273,9 +274,10 @@ void CPU_ELBDMSolver_GramFE_FFT(   real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ]
 {
 
 #  ifdef SYCL_LANGUAGE_VERSION
+// shared memory is passed as a function parameter (allocated as sycl::local_accessor
+// in the launcher GPU_Asyn_FluidSolver.cpp)
 // shared memory must hold: s_In (ffts_per_block rows of GRAMFE_FLU_NXT),
 // s_Ae (ffts_per_block rows of GRAMFE_NDELTA), s_Ao (ffts_per_block rows of GRAMFE_NDELTA)
-   sycl::local complex_type shared_mem[FFT::ffts_per_block * (GRAMFE_FLU_NXT + 2 * GRAMFE_NDELTA)];
 
 // create memories for columns of various intermediate fields in shared GPU memory
    complex_type (*s_In)[GRAMFE_FLU_NXT]    = (complex_type (*)[GRAMFE_FLU_NXT]) (shared_mem);

@@ -158,7 +158,8 @@ void GPU_ELBDMSolver_GramFE_MATMUL( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) 
                                       real g_Flux     [][9][NFLUX_TOTAL][ SQR(PS2) ],
                                       gramfe_matmul_float g_TimeEvo[][ FLU_NXT*2 ],
                                       const real dt, const real dh, const real Eta, const bool StoreFlux,
-                                      const bool XYZ, const real MinDens )
+                                      const bool XYZ, const real MinDens,
+                                      real *const s_In, real *const s_Out, gramfe_matmul_float *const s_TimeEvo )
 #else
 void CPU_ELBDMSolver_GramFE_MATMUL(   real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
                                       real g_Fluid_Out[][FLU_NOUT][ CUBE(PS2) ],
@@ -170,9 +171,10 @@ void CPU_ELBDMSolver_GramFE_MATMUL(   real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT
 {
 
 #  ifdef SYCL_LANGUAGE_VERSION
-// create memories for columns of input field
-   sycl::local gramfe_input_complex_type s_In [FLU_BLOCK_SIZE_Y][FLU_NXT];
-   sycl::local gramfe_input_complex_type s_Out[FLU_BLOCK_SIZE_Y][PS2];
+// shared-memory arrays are passed as flat pointers via function parameters;
+// cast to expected typed pointers
+   gramfe_input_complex_type (* const s_In_p)[FLU_NXT] = (gramfe_input_complex_type (*)[FLU_NXT]) s_In;
+   gramfe_input_complex_type (* const s_Out_p)[PS2]    = (gramfe_input_complex_type (*)[PS2])    s_Out;
 
    const int NPatchGroup = NULL_INT;
 
@@ -181,16 +183,17 @@ void CPU_ELBDMSolver_GramFE_MATMUL(   real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT
 //###OPTIMIZATION: allocate memory only once right here
    gramfe_input_complex_type (*s_In) [FLU_NXT] = NULL;
    gramfe_input_complex_type (*s_Out)[PS2]     = NULL;
+   gramfe_input_complex_type (* const s_In_p)[FLU_NXT] = s_In;
+   gramfe_input_complex_type (* const s_Out_p)[PS2]    = s_Out;
 #  endif
 
 // time evolution matrix
 // GPU: transpose input evolution matrix from PS2 x FLU_NXT to FLU_NXT x PS2 for it to be in row-major order
 // CPU: no transposition since matrix already is in column-major order
 #  ifdef SYCL_LANGUAGE_VERSION
-   sycl::local gramfe_matmul_complex_type s_TimeEvo[PS2 * FLU_NXT];
-
-   gramfe_matmul_complex_type* s_LinEvolve = (gramfe_matmul_complex_type *) s_TimeEvo;
-   gramfe_matmul_complex_type* g_LinEvolve = (gramfe_matmul_complex_type *) g_TimeEvo;
+   // s_TimeEvo is passed as a function parameter (allocated as sycl::local_accessor in the launcher)
+   gramfe_matmul_complex_type* const s_TimeEvo_p   = (gramfe_matmul_complex_type *) s_TimeEvo;
+   gramfe_matmul_complex_type* const g_LinEvolve = (gramfe_matmul_complex_type *) g_TimeEvo;
    uint row, col;
 
    const uint tx      = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(2);
@@ -201,31 +204,32 @@ void CPU_ELBDMSolver_GramFE_MATMUL(   real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT
    for (uint i=tid; i<PS2*FLU_NXT; i+=NThread) {
       row = i / FLU_NXT;
       col = i % FLU_NXT;
-      s_LinEvolve[ col*PS2 + row ] = g_LinEvolve[i];
+      s_TimeEvo_p[ col*PS2 + row ] = g_LinEvolve[i];
    }
 
    sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
 
 #  else // #ifdef SYCL_LANGUAGE_VERSION
    gramfe_matmul_complex_type* s_TimeEvo = (gramfe_matmul_complex_type *) g_TimeEvo;
+   gramfe_matmul_complex_type* const s_TimeEvo_p = s_TimeEvo;
 #  endif // #ifdef SYCL_LANGUAGE_VERSION ... else ...
 
 
    if ( XYZ )
    {
       GPU_Advance( g_Fluid_In, g_Fluid_Out, NPatchGroup,
-                                  0,              0, s_In, s_Out, s_TimeEvo, false, 0, MinDens );
+                                  0,              0, s_In_p, s_Out_p, s_TimeEvo_p, false, 0, MinDens );
       GPU_Advance( g_Fluid_In, g_Fluid_Out, NPatchGroup,
-                     FLU_GHOST_SIZE,              0, s_In, s_Out, s_TimeEvo, false, 3, MinDens );
+                     FLU_GHOST_SIZE,              0, s_In_p, s_Out_p, s_TimeEvo_p, false, 3, MinDens );
       GPU_Advance( g_Fluid_In, g_Fluid_Out, NPatchGroup,
-                     FLU_GHOST_SIZE, FLU_GHOST_SIZE, s_In, s_Out, s_TimeEvo, true,  6, MinDens );
+                     FLU_GHOST_SIZE, FLU_GHOST_SIZE, s_In_p, s_Out_p, s_TimeEvo_p, true,  6, MinDens );
    } else {
       GPU_Advance( g_Fluid_In, g_Fluid_Out, NPatchGroup,
-                                  0,              0, s_In, s_Out, s_TimeEvo, false, 6, MinDens );
+                                  0,              0, s_In_p, s_Out_p, s_TimeEvo_p, false, 6, MinDens );
       GPU_Advance( g_Fluid_In, g_Fluid_Out, NPatchGroup,
-                                  0, FLU_GHOST_SIZE, s_In, s_Out, s_TimeEvo, false, 3, MinDens );
+                                  0, FLU_GHOST_SIZE, s_In_p, s_Out_p, s_TimeEvo_p, false, 3, MinDens );
       GPU_Advance( g_Fluid_In, g_Fluid_Out, NPatchGroup,
-                     FLU_GHOST_SIZE, FLU_GHOST_SIZE, s_In, s_Out, s_TimeEvo, true,  0, MinDens );
+                     FLU_GHOST_SIZE, FLU_GHOST_SIZE, s_In_p, s_Out_p, s_TimeEvo_p, true,  0, MinDens );
    }
 
 } // FUNCTION : GPU_ELBDMSolver_GramFE_MATMUL
