@@ -51,14 +51,11 @@ extern int        Flu_ParaBuf;                        // number of parallel buff
                                                       // variables for the fluid solver and fluid refinement
 
 extern long       FixUpVar_Flux, FixUpVar_Restrict, PassiveFloorMask;
-/*
-DPCT1102:17: Zero-length arrays are not permitted in SYCL device code.
-*/
-extern int PassiveNorm_NVar, PassiveNorm_VarIdx[NCOMP_PASSIVE];
-/*
-DPCT1102:18: Zero-length arrays are not permitted in SYCL device code.
-*/
-extern int PassiveIntFrac_NVar, PassiveIntFrac_VarIdx[NCOMP_PASSIVE];
+// NCOMP_PASSIVE may be zero in some configurations; array dimensions are
+// wrapped in MAX(1, ...) to avoid zero-length arrays (same approach as
+// NCOMP_MAG in HDF5_Typedef.h).
+extern int PassiveNorm_NVar, PassiveNorm_VarIdx[MAX(1,NCOMP_PASSIVE)];
+extern int PassiveIntFrac_NVar, PassiveIntFrac_VarIdx[MAX(1,NCOMP_PASSIVE)];
 
 extern int        StrLen_Flt;
 extern char       BlankPlusFormat_Flt[MAX_STRING+1];

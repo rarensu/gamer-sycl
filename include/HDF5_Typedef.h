@@ -647,10 +647,10 @@ struct InputPara_t
    long   PassiveFloor_Var;
    int    Opt__NormalizePassive;
    int    NormalizePassive_NVar;
-   int    NormalizePassive_VarIdx[NCOMP_PASSIVE];
+   int    NormalizePassive_VarIdx[MAX(1,NCOMP_PASSIVE)];
    int    Opt__IntFracPassive_LR;
    int    IntFracPassive_NVar;
-   int    IntFracPassive_VarIdx[NCOMP_PASSIVE];
+   int    IntFracPassive_VarIdx[MAX(1,NCOMP_PASSIVE)];
    char  *FieldLabel[NFIELD_STORED_MAX];
 #  ifdef MHD
    char  *MagLabel[MAX(1,NCOMP_MAG)];

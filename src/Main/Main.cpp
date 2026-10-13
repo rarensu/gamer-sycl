@@ -39,8 +39,8 @@ double              *DumpTable = NULL;
 int                  DumpTable_NDump;
 int                 *UM_IC_RefineRegion = NULL;
 long                 FixUpVar_Flux, FixUpVar_Restrict, PassiveFloorMask;
-int                  PassiveNorm_NVar, PassiveNorm_VarIdx[NCOMP_PASSIVE];
-int                  PassiveIntFrac_NVar, PassiveIntFrac_VarIdx[NCOMP_PASSIVE];
+int                  PassiveNorm_NVar, PassiveNorm_VarIdx[MAX(1,NCOMP_PASSIVE)];
+int                  PassiveIntFrac_NVar, PassiveIntFrac_VarIdx[MAX(1,NCOMP_PASSIVE)];
 int                  StrLen_Flt;
 char                 BlankPlusFormat_Flt[MAX_STRING+1];
 

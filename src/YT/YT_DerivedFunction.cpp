@@ -225,7 +225,7 @@ void Temperature_DerivedFunc( const int list_len, const long *list_gid, const ch
       }
 
 //    preparation for getting Passive and Emag
-      real Passive[NCOMP_PASSIVE];
+      real Passive[MAX(1,NCOMP_PASSIVE)];
       real Emag;
 #     ifdef MHD
       yt_data   MagDataRaw[MAX(1,NCOMP_MAG)];

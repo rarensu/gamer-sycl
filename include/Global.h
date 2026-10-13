@@ -52,20 +52,13 @@ extern int        Flu_ParaBuf;                        // number of parallel buff
 
 extern long       FixUpVar_Flux, FixUpVar_Restrict, PassiveFloorMask;
 // NCOMP_PASSIVE may be zero in some configurations, but zero-length arrays are
-// not permitted in SYCL device code. Keep these declarations guarded locally
-// so we do not need to change the macro definition site.
-//
-// For MHD-related constants (NCOMP_MAG, NCOMP_ELE, N_EC_ELE) that also collapse
-// to 0 when MHD is off, a different approach is used: array dimensions are
-// wrapped in MAX(1, ...) at every declaration site.  This keeps the function
+// not permitted in SYCL device code. Following the same approach used for
+// MHD-related constants (NCOMP_MAG, NCOMP_ELE, N_EC_ELE): array dimensions are
+// wrapped in MAX(1, ...) at every declaration site. This keeps function
 // signatures uniform (no conditional parameter omission needed) and is a
-// compile-time no-op when MHD is enabled (MAX(1, 3) = 3).
-#if ( NCOMP_PASSIVE > 0 ) || !defined(SYCL_LANGUAGE_VERSION)
-extern int        PassiveNorm_NVar, PassiveNorm_VarIdx[NCOMP_PASSIVE];
-extern int        PassiveIntFrac_NVar, PassiveIntFrac_VarIdx[NCOMP_PASSIVE];
-#elif defined(SYCL_LANGUAGE_VERSION)
-#error : ERROR : NCOMP_PASSIVE must be > 0 for SYCL builds !!
-#endif
+// compile-time no-op when passive scalars are enabled (MAX(1, 1) = 1).
+extern int        PassiveNorm_NVar, PassiveNorm_VarIdx[MAX(1,NCOMP_PASSIVE)];
+extern int        PassiveIntFrac_NVar, PassiveIntFrac_VarIdx[MAX(1,NCOMP_PASSIVE)];
 
 extern int        StrLen_Flt;
 extern char       BlankPlusFormat_Flt[MAX_STRING+1];
