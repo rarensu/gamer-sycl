@@ -106,16 +106,16 @@ SrcExternDecl void Src_User_Template( real fluid[], const real B[],
 
 #  if ( MODEL == HYDRO )
 #    define CALL_SRC_Deleptonization(fluid, B, pSrcTerms, ...) \
-           pSrcTerms->Dlep_FuncPtr(fluid, B, pSrcTerms, __VA_ARGS__)
+           (pSrcTerms)->Dlep_FuncPtr(fluid, B, pSrcTerms, __VA_ARGS__)
 #  endif
 
 #  ifdef EXACT_COOLING
 #    define CALL_SRC_ExactCooling(fluid, B, pSrcTerms, ...) \
-           pSrcTerms->EC_FuncPtr(fluid, B, pSrcTerms, __VA_ARGS__)
+           (pSrcTerms)->EC_FuncPtr(fluid, B, pSrcTerms, __VA_ARGS__)
 #  endif
 
 #    define CALL_SRC_User(fluid, B, pSrcTerms, ...) \
-           pSrcTerms->User_FuncPtr(fluid, B, pSrcTerms, __VA_ARGS__)
+           (pSrcTerms)->User_FuncPtr(fluid, B, pSrcTerms, __VA_ARGS__)
 
 #endif
 
