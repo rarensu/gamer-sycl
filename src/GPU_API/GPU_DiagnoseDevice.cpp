@@ -1,6 +1,7 @@
 #ifdef SYCL_LANGUAGE_VERSION
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
+#include <string>
 #endif
 #include "GPUAPI.h"
 
@@ -67,6 +68,15 @@ void GPU_DiagnoseDevice()
    char FileName[2*MAX_STRING];
    sprintf( FileName, "%s/Record__Note", OUTPUT_DIR );
 
+// compute supported sub-group sizes for diagnostics (e.g. {8, 16, 32, 64} on Intel CPU)
+   const auto SGSizes = dpct::get_device( GetDeviceID ).get_info<sycl::info::device::sub_group_sizes>();
+   std::string SGWarpStr = "{";
+   for (size_t i = 0; i < SGSizes.size(); ++i) {
+      if (i > 0) SGWarpStr += ", ";
+      SGWarpStr += std::to_string(SGSizes[i]);
+   }
+   SGWarpStr += "}";
+
    if ( MPI_Rank == 0 )
    {
        FILE *Note = fopen( FileName, "a" );
@@ -108,7 +118,7 @@ void GPU_DiagnoseDevice()
          fprintf( Note, "Constant Memory Size (mapped to global) : %ld KB\n" , (long)DeviceProp.get_global_mem_size()/1024 );
          fprintf( Note, "Shared Memory Size per Block            : %ld KB\n" , (long)DeviceProp.get_local_mem_size()/1024 );
          fprintf( Note, "Number of Registers per Block           : %d\n"     , DeviceProp.get_max_register_size_per_work_group() );
-         fprintf( Note, "Warp Size / Sub-group Size              : %d\n"     , DeviceProp.get_max_sub_group_size() );
+         fprintf( Note, "Warp Size / Sub-group Sizes             : %s\n"     , SGWarpStr.c_str() );
          fprintf( Note, "Number of Multiprocessors:              : %d\n"     , DeviceProp.get_max_compute_units() );
          fprintf( Note, "Number of FP32 Cores per Multiprocessor : %d\n"     , NCorePerMP );
          fprintf( Note, "Total Number of Cores:                  : %d\n"     , DeviceProp.get_max_compute_units()*NCorePerMP );

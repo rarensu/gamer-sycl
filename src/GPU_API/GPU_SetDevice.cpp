@@ -182,7 +182,9 @@ void GPU_SetDevice( const int Mode )
 // Check whether the device supports sub-group size equal to WARP_SIZE (32).
 // Some devices (e.g., Intel CPUs) report a max sub-group size of 64 but
 // still support 32-wide sub-groups via [[sycl::reqd_sub_group_size(32)]].
-const auto SubGroupSizes = DeviceProp.get_sub_group_sizes();
+// Query the list of supported sub-group sizes directly from the SYCL device
+// (dpct::device_info only stores the max, not the full supported set).
+const auto SubGroupSizes = dpct::get_current_device().get_info<sycl::info::device::sub_group_sizes>();
 const bool WarpSizeSupported = std::find( SubGroupSizes.begin(), SubGroupSizes.end(),
                                           static_cast<size_t>(WARP_SIZE) ) != SubGroupSizes.end();
 
@@ -210,8 +212,8 @@ const bool WarpSizeSupported = std::find( SubGroupSizes.begin(), SubGroupSizes.e
 
 // (7) warp size
    if ( !WarpSizeSupported )
-      Aux_Error( ERROR_INFO, "inconsistent warp size (warpSize %d, WARP_SIZE %d) !!\n",
-                 DeviceProp.get_max_sub_group_size(), WARP_SIZE );
+      Aux_Error( ERROR_INFO, "warp size %d is not supported by this device (max sub-group size %d) !!\n",
+                 WARP_SIZE, DeviceProp.get_max_sub_group_size() );
 
 
    if ( MPI_Rank == 0 )    Aux_Message( stdout, "%s ... done\n", __FUNCTION__ );
