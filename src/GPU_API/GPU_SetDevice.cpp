@@ -1,6 +1,7 @@
 #ifdef SYCL_LANGUAGE_VERSION
 #include <sycl/sycl.hpp>
 #include <dpct/dpct.hpp>
+#include <algorithm>
 #endif
 #include "GPUAPI.h"
 #include "FLU.h"
@@ -178,19 +179,28 @@ void GPU_SetDevice( const int Mode )
 #  endif
 #  endif // #if ( MODEL == HYDRO )
 
+// Check whether the device supports sub-group size equal to WARP_SIZE (32).
+// Some devices (e.g., Intel CPUs) report a max sub-group size of 64 but
+// still support 32-wide sub-groups via [[sycl::reqd_sub_group_size(32)]].
+const auto SubGroupSizes = DeviceProp.get_sub_group_sizes();
+const bool WarpSizeSupported = std::find( SubGroupSizes.begin(), SubGroupSizes.end(),
+                                          static_cast<size_t>(WARP_SIZE) ) != SubGroupSizes.end();
+
 // (6-2) SOR Poisson solver
 #  if ( POT_SCHEME == SOR )
 #     ifdef SOR_USE_SHUFFLE
-      if ( DeviceProp.get_max_sub_group_size() != 32 )
-         Aux_Error( ERROR_INFO, "warp size (%d) != 32 !!\n", DeviceProp.get_max_sub_group_size() );
+      if ( !WarpSizeSupported )
+         Aux_Error( ERROR_INFO, "SOR_USE_SHUFFLE requires warp size %d but it is not supported (max sub-group size %d) !!\n",
+                    WARP_SIZE, DeviceProp.get_max_sub_group_size() );
 
       if ( DeviceProp.get_max_work_group_size() > 1024 )
          Aux_Error( ERROR_INFO, "maximum number of threads per block (%d) > 1024 !!\n", DeviceProp.get_max_work_group_size() );
 #     endif
 
 #     ifdef SOR_USE_PADDING
-      if ( DeviceProp.get_max_sub_group_size() != 32 )
-         Aux_Error( ERROR_INFO, "warp size (%d) != 32 !!\n", DeviceProp.get_max_sub_group_size() );
+      if ( !WarpSizeSupported )
+         Aux_Error( ERROR_INFO, "SOR_USE_PADDING requires warp size %d but it is not supported (max sub-group size %d) !!\n",
+                    WARP_SIZE, DeviceProp.get_max_sub_group_size() );
 
       if ( POT_GHOST_SIZE != 5 )
          Aux_Error( ERROR_INFO, "POT_GHOST_SIZE (%d) != 5 !!\n", POT_GHOST_SIZE );
@@ -199,7 +209,7 @@ void GPU_SetDevice( const int Mode )
 
 
 // (7) warp size
-   if ( DeviceProp.get_max_sub_group_size() != WARP_SIZE )
+   if ( !WarpSizeSupported )
       Aux_Error( ERROR_INFO, "inconsistent warp size (warpSize %d, WARP_SIZE %d) !!\n",
                  DeviceProp.get_max_sub_group_size(), WARP_SIZE );
 

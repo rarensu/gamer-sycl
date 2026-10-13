@@ -67,6 +67,8 @@ is preserved verbatim.
 | `kern-glbl` | fixed "SYCL kernel cannot use a non-const global variable" by creating a local `const`/copy (e.g. `const EoS_t EoS_ct = EoS;`, `auto GPUExtAcc_Ptr_ct = GPUExtAcc_Ptr;`) inside the host-side `submit()` callback before `cgh.parallel_for()`, then referencing the local in the `[=]` kernel lambda; applied to all kernel launches in the file that capture non-const globals by value |
 | `err-unwrap` | removed redundant `DPCT_CHECK_ERROR(...)` wrapper from all `DEVICE_CHECK_ERROR(DPCT_CHECK_ERROR(expr))` call sites (now just `DEVICE_CHECK_ERROR(expr)`); `DEVICE_CHECK_ERROR` macro rewritten to catch `sycl::exception` directly and use `e.what()` as the error message instead of `dpct::get_error_string_dummy()` placeholder; `DEVICE_CHECK_MALLOC` rewritten to catch `sycl::exception` from `sycl::malloc_device`/`sycl::malloc_host` (previously broken with hardcoded `Return = 0`); `DEVICE_Check_Error` function removed |
 | `macro-guard` | wrapped `DEVICE_CHECK_ERROR` and `DEVICE_CHECK_MALLOC` macro bodies in `do { ... } while(0)` to make them safe in unbraced `if/else` chains (a bare `try{}catch{}` with trailing `;` introduced a null statement that broke if-else linkage, causing "expected expression" at `else`) |
+| `subgroup-sizes` | replaced `get_max_sub_group_size() != WARP_SIZE` equality checks with a membership test in `get_sub_group_sizes()` (via `std::find`), allowing CPU devices that support 32-wide sub-groups even though their maximum reported size is 64 |
+| `reqd-sg-32` | added `[[sycl::reqd_sub_group_size(32)]]` to `parallel_for` lambdas that use WARP_SIZE-dependent warp-shuffle / sub-group-barrier operations, ensuring 32-wide sub-groups on devices whose default is 64 (e.g. Intel CPUs) |
 
 ## Tracker entries
 
@@ -199,3 +201,26 @@ shorthand in the legend above.
 | DONE | `src/SourceTerms/Deleptonization/CPU_Src_Deleptonization.cpp` | — (update to existing entry) | `src-dispatch`: changed `static void Src_Deleptonization` to `SrcExternDecl void Src_Deleptonization`; removed `dpct::global_memory` device wrapper; `Src_SetGPUFunc_Deleptonization` now direct-assigns `SrcFunc_GPUPtr = Src_Deleptonization` (no memcpy/queue). |
 | DONE | `src/SourceTerms/ExactCooling/CPU_Src_ExactCooling.cpp` | — (update to existing entry) | `src-dispatch`: same pattern as Deleptonization. |
 | DONE | `src/SourceTerms/User_Template/CPU_Src_User_Template.cpp` | — (update to existing entry) | `src-dispatch`: same pattern; also removed unused `FUNC_SPACE` macro (DPCT artifact). |
+
+### CPU device sub-group size support (WARP_SIZE=32 enforcement)
+
+The original CUDA code assumes `WARP_SIZE=32` everywhere. On Intel CPUs the default
+sub-group size is 64, which caused runtime aborts before kernels could execute.
+The following changes allow CPU-device targeting for correctness verification:
+
+1. **Replaced** the `get_max_sub_group_size() != WARP_SIZE` equality check (which
+   rejects Intel CPUs because their *max* sub-group size is 64) with a membership
+   test — does `WARP_SIZE` (32) appear in `get_sub_group_sizes()`? Intel CPUs
+   report `{8, 16, 32, 64}`, so 32 is supported even though it is not the maximum.
+2. **Added** `[[sycl::reqd_sub_group_size(32)]]` to the SOR Poisson solver's
+   `parallel_for` lambda, forcing 32-wide sub-groups on all devices. The SOR
+   solver (and the `BlockReduction_Shuffle` / `BlockReduction_WarpSync` files it
+   includes) use `WARP_SIZE`-dependent shuffle and warp-synchronous-barrier
+   arithmetic; the attribute ensures these operations use 32-wide sub-groups
+   regardless of the device default. The dt-solver kernels already had this
+   attribute; the SOR solver was the only other kernel requiring it.
+
+| Status | Original file | DPCT suggestion file | Notes |
+| --- | --- | --- | --- |
+| DONE | `src/GPU_API/GPU_SetDevice.cpp` | — (update to existing entry) | `subgroup-sizes`: replaced three `get_max_sub_group_size() != 32`/`!= WARP_SIZE` equality checks with a single membership test in `DeviceProp.get_sub_group_sizes()` (via `std::find`); computes `WarpSizeSupported` once and reuses for SOR-use-shuffle, SOR-use-padding, and general warp-size checks. Added `#include <algorithm>`. Also fixed pre-existing bug: the `max_work_group_size() > 1024` error message now prints `get_max_work_group_size()` instead of `get_max_sub_group_size()`. `cleanup` — error messages updated to reference `sub_group_sizes` and `reqd_sub_group_size`. `update-gpu-asyn-poisson` — also added `reqd_sub_group_size(32)` to the SOR `parallel_for` (see `GPU_Asyn_PoissonGravitySolver.cpp` entry below). |
+| DONE | `src/GPU/API/GPU_Asyn_PoissonGravitySolver.cpp` | — (update to existing entry) | `reqd-sg-32`: added `[[sycl::reqd_sub_group_size(32)]]` to the SOR solver's `parallel_for` lambda (line 448), matching the pattern already used in `GPU_Asyn_dtSolver.cpp`. This ensures the SOR solver kernel — which includes `BlockReduction_Shuffle.cpp` or `BlockReduction_WarpSync.cpp`, both of which use `WARP_SIZE`-dependent sub-group shuffles and barriers — executes with 32-wide sub-groups on all devices including Intel CPUs (default 64). |

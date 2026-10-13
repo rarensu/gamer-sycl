@@ -445,7 +445,7 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
                    sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) *
                                          Poi_Block_Dim,
                                      Poi_Block_Dim),
-                   [=](sycl::nd_item<3> item_ct1) {
+                   [=](sycl::nd_item<3> item_ct1) [[sycl::reqd_sub_group_size(32)]] {
                       GPU_PoissonSolver_SOR(
                           d_Rho_Array_P_ptr,
                           d_Pot_Array_P_In_ptr,
