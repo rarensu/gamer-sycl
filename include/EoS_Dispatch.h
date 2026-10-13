@@ -17,13 +17,18 @@
 //               one TU (e.g., CPU_EoS_Gamma.cpp) can be linked from device
 //               code in another TU (e.g., the solver files that #include
 //               the shared sources).
-//   Under CPU:  empty (regular extern linkage is sufficient).
+//   Under CPU:  static (internal linkage). These "shared" EoS files are
+//               compiled twice — once as a GPU/SYCL TU and once as a CPU TU.
+//               Making CPU-side functions static (file-scoped) avoids
+//               multiple-definition linker errors while still allowing the
+//               static function-pointer initialization to take the function
+//               address (resolved from the local TU, not the GPU object).
 // ---------------------------------------------------------------------------
 #ifndef EoSExternDecl
 #  ifdef SYCL_LANGUAGE_VERSION
 #    define EoSExternDecl SYCL_EXTERNAL
 #  else
-#    define EoSExternDecl
+#    define EoSExternDecl static
 #  endif
 #endif
 

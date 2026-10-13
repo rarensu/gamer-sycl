@@ -21,12 +21,17 @@
 //   Under SYCL: expands to SYCL_EXTERNAL so that device functions defined in
 //               one TU (e.g., CPU_Src_Deleptonization.cpp) can be linked from
 //               device code in another TU (e.g., CPU_SrcSolver_IterateAllCells.cpp).
-//   Under CPU:  empty (regular extern linkage is sufficient).
+//   Under CPU:  static (internal linkage). These "shared" source-term files
+//               are compiled twice — once as a GPU/SYCL TU and once as a CPU TU.
+//               Making CPU-side functions static (file-scoped) avoids
+//               multiple-definition linker errors while still allowing the
+//               static function-pointer initialization to take the function
+//               address (resolved from the local TU, not the GPU object).
 // ---------------------------------------------------------------------------
 #ifdef SYCL_LANGUAGE_VERSION
 #  define SrcExternDecl SYCL_EXTERNAL
 #else
-#  define SrcExternDecl
+#  define SrcExternDecl static
 #endif
 
 
