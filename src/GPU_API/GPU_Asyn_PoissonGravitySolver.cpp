@@ -45,7 +45,24 @@ const real g_Rho_Array    [][ RHO_NXT*RHO_NXT*RHO_NXT ],
                                               real g_Pot_Array_Out[][ GRA_NXT*GRA_NXT*GRA_NXT ],
                                         const real dh_Min, const int Max_Iter, const int NPre_Smooth,
                                         const int NPost_Smooth, const real Tolerated_Error, const real Poi_Coeff,
-                                        const IntScheme_t IntScheme );
+                                        const IntScheme_t IntScheme
+
+#ifdef SYCL_LANGUAGE_VERSION
+                                        , real *s_Sol_Lv0,
+                                        real *s_RHS_Lv0,
+                                        real *s_SolSum,
+                                        real *s_Error
+#  ifdef REUSE_SHARED
+                                        , real *s_RHS_Lv1
+#  else
+                                        , real *s_Sol_Lv1, real *s_Sol_Lv2, real *s_RHS_Lv1, real *s_RHS_Lv2
+                                        , real *s_Def_Lv1, real *s_Def_Lv2
+#    if ( MAX_NLV == 4 )
+                                        , real *s_Sol_Lv3, real *s_RHS_Lv3, real *s_Def_Lv3
+#    endif
+#  endif
+#endif
+                                        );
 #endif // POT_SCHEME
 
 #ifdef SYCL_LANGUAGE_VERSION
@@ -502,17 +519,57 @@ void GPU_Asyn_PoissonGravitySolver( const real h_Rho_Array    [][RHO_NXT][RHO_NX
                 auto d_Rho_Array_P_ptr     = d_Rho_Array_P     + UsedPatch[s];
                 auto d_Pot_Array_P_In_ptr  = d_Pot_Array_P_In  + UsedPatch[s];
                 auto d_Pot_Array_P_Out_ptr = d_Pot_Array_P_Out + UsedPatch[s];
+                // shared-memory accessors (passed as raw pointers to GPU_PoissonSolver_MG)
+                sycl::local_accessor<real, 1> s_Sol_Lv0_acc(sycl::range<1>( NGRID_LV0*NGRID_LV0*NGRID_LV0 ), cgh);
+                sycl::local_accessor<real, 1> s_RHS_Lv0_acc(sycl::range<1>( NGRID_LV0*NGRID_LV0*NGRID_LV0 ), cgh);
+                sycl::local_accessor<real, 1> s_SolSum_acc(sycl::range<1>( POT_NTHREAD ), cgh);
+                sycl::local_accessor<real, 1> s_Error_acc(sycl::range<1>( POT_NTHREAD ), cgh);
+#  ifdef REUSE_SHARED
+                sycl::local_accessor<real, 1> s_RHS_Lv1_acc(sycl::range<1>( NGRID_LV1*NGRID_LV1*NGRID_LV1 ), cgh);
+#  else
+                sycl::local_accessor<real, 1> s_Sol_Lv1_acc(sycl::range<1>( NGRID_LV1*NGRID_LV1*NGRID_LV1 ), cgh);
+                sycl::local_accessor<real, 1> s_Sol_Lv2_acc(sycl::range<1>( NGRID_LV2*NGRID_Lv2*NGRID_Lv2 ), cgh);
+                sycl::local_accessor<real, 1> s_RHS_Lv1_acc(sycl::range<1>( NGRID_LV1*NGRID_LV1*NGRID_LV1 ), cgh);
+                sycl::local_accessor<real, 1> s_RHS_Lv2_acc(sycl::range<1>( NGRID_LV2*NGRID_Lv2*NGRID_Lv2 ), cgh);
+                sycl::local_accessor<real, 1> s_Def_Lv1_acc(sycl::range<1>( NGRID_LV1*NGRID_LV1*NGRID_LV1 ), cgh);
+                sycl::local_accessor<real, 1> s_Def_Lv2_acc(sycl::range<1>( NGRID_LV2*NGRID_Lv2*NGRID_Lv2 ), cgh);
+#    if ( MAX_NLV == 4 )
+                sycl::local_accessor<real, 1> s_Sol_Lv3_acc(sycl::range<1>( NGRID_LV3*NGRID_LV3*NGRID_LV3 ), cgh);
+                sycl::local_accessor<real, 1> s_RHS_Lv3_acc(sycl::range<1>( NGRID_LV3*NGRID_LV3*NGRID_LV3 ), cgh);
+                sycl::local_accessor<real, 1> s_Def_Lv3_acc(sycl::range<1>( NGRID_LV3*NGRID_LV3*NGRID_Lv3 ), cgh);
+#    endif
+#  endif
                cgh.parallel_for(
                    sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) *
-                                         Poi_Block_Dim,
-                                     Poi_Block_Dim),
+                                          Poi_Block_Dim,
+                                      Poi_Block_Dim),
                    [=](sycl::nd_item<3> item_ct1) {
                       GPU_PoissonSolver_MG(
                           d_Rho_Array_P_ptr,
                           d_Pot_Array_P_In_ptr,
                           d_Pot_Array_P_Out_ptr,
-                          dh, MG_Max_Iter, MG_NPre_Smooth, MG_NPost_Smooth, MG_Tolerated_Error,
-                          Poi_Coeff, IntScheme );
+                          dh, MG_Max_Iter, MG_NPre_Smooth, MG_NPost_Smooth, MG_Toleranced_Error,
+                          Poi_Coeff, IntScheme,
+                          s_Sol_Lv0_acc.get_multi_ptr<sycl::access::decorated::no>().get(),
+                          s_RHS_Lv0_acc.get_multi_ptr<sycl::access::decorated::no>().get(),
+                          s_SolSum_acc.get_multi_ptr<sycl::access::decorated::no>().get(),
+                          s_Error_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+#  ifdef REUSE_SHARED
+                          , s_RHS_Lv1_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+#  else
+                          , s_Sol_Lv1_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+                          , s_Sol_Lv2_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+                          , s_RHS_Lv1_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+                          , s_RHS_Lv2_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+                          , s_Def_Lv1_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+                          , s_Def_Lv2_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+#    if ( MAX_NLV == 4 )
+                          , s_Sol_Lv3_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+                          , s_RHS_Lv3_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+                          , s_Def_Lv3_acc.get_multi_ptr<sycl::access::decorated::no>().get()
+#    endif
+#  endif
+                          );
                    });
             });
 

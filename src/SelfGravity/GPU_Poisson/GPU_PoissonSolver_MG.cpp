@@ -10,53 +10,6 @@
 
 
 
-#define POT_NXT_F    ( PATCH_SIZE+2*POT_GHOST_SIZE )
-#define POT_NTHREAD  ( POT_BLOCK_SIZE_X            )
-#define POT_USELESS  ( POT_GHOST_SIZE%2            )
-
-#if   ( POT_NXT_F == 18 )
-
-//    for POT_NXT_F == 18, we reuse the same shared memory array due to the lack of shared memory
-#     define REUSE_SHARED
-
-#     define MAX_NLV             4U
-#     define NBOTTOM_SMOOTH      1U
-#     define NGRID_LV0          18U
-#     define NGRID_LV1           9U
-#     define NGRID_LV2           5U
-#     define NGRID_LV3           3U
-#elif ( POT_NXT_F == 16 )
-#     define MAX_NLV             3U
-#     define NBOTTOM_SMOOTH      7U
-#     define NGRID_LV0          16U
-#     define NGRID_LV1           8U
-#     define NGRID_LV2           4U
-#elif ( POT_NXT_F == 14 )
-#     define MAX_NLV             3U
-#     define NBOTTOM_SMOOTH      7U
-#     define NGRID_LV0          14U
-#     define NGRID_LV1           7U
-#     define NGRID_LV2           4U
-#elif ( POT_NXT_F == 12 )
-#     define MAX_NLV             3U
-#     define NBOTTOM_SMOOTH      1U
-#     define NGRID_LV0          12U
-#     define NGRID_LV1           6U
-#     define NGRID_LV2           3U
-#elif ( POT_NXT_F == 10 )
-#     define MAX_NLV             3U
-#     define NBOTTOM_SMOOTH      1U
-#     define NGRID_LV0          10U
-#     define NGRID_LV1           5U
-#     define NGRID_LV2           3U
-#else
-#error ERROR : not supported POT_NXT_F
-#endif
-
-#if ( MAX_NLV != 3  &&  MAX_NLV != 4 )
-#error ERROR : MAX_NLV != 3 or 4
-#endif
-
 // variables reside in constant memory
 #include "ConstMemory.h"
 
@@ -105,7 +58,21 @@ SYCL_EXTERNAL void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*R
                                                real g_Pot_Array_Out[][ GRA_NXT*GRA_NXT*GRA_NXT ],
                                          const real dh_Min, const int Max_Iter, const int NPre_Smooth,
                                          const int NPost_Smooth, const real Tolerated_Error, const real Poi_Coeff,
-                                         const IntScheme_t IntScheme )
+                                         const IntScheme_t IntScheme,
+                                         real *s_Sol_Lv0,
+                                         real *s_RHS_Lv0,
+                                         real *s_SolSum,
+                                         real *s_Error
+#  ifdef REUSE_SHARED
+                                         , real *s_RHS_Lv1
+#  else
+                                         , real *s_Sol_Lv1, real *s_Sol_Lv2, real *s_RHS_Lv1, real *s_RHS_Lv2
+                                         , real *s_Def_Lv1, real *s_Def_Lv2
+#    if ( MAX_NLV == 4 )
+                                         , real *s_Sol_Lv3, real *s_RHS_Lv3, real *s_Def_Lv3
+#    endif
+#  endif
+                                         )
 #else
 __global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_NXT*RHO_NXT ],
                                         const real g_Pot_Array_In [][ POT_NXT*POT_NXT*POT_NXT ],
@@ -144,88 +111,90 @@ __global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_
 
 
 // allocate shared memory
-   CGPU_SHARED real s_Sol_Lv0[ NGRID_LV0*NGRID_LV0*NGRID_LV0 ];
-#  ifndef FLOAT8
-   CGPU_SHARED real s_RHS_Lv0[ NGRID_LV0*NGRID_LV0*NGRID_LV0 ];
-   CGPU_SHARED real s_SolSum[POT_NTHREAD];
-   CGPU_SHARED real s_Error [POT_NTHREAD];
-#  else // shared memory is too small for double precision --> use global memory instead
-   CGPU_SHARED real *s_RHS_Lv0;
-   CGPU_SHARED real *s_SolSum;
-   CGPU_SHARED real *s_Error;
-   if ( tid == 0 )
-   {
-      s_RHS_Lv0 = (real*)malloc( sizeof(real*)*NGRID_LV0*NGRID_LV0*NGRID_LV0 );
-      s_SolSum  = (real*)malloc( sizeof(real*)*POT_NTHREAD );
-      s_Error   = (real*)malloc( sizeof(real*)*POT_NTHREAD );
-   }
 #ifdef SYCL_LANGUAGE_VERSION
-   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
-#endif
-#  ifdef GAMER_DEBUG
-   if ( tid == 0 )
-   {
-      if ( s_RHS_Lv0 == NULL )
-      {
-         printf( "ERROR : dynamic global memory allocation for \"%s\" failed at block %d in \"%s\" !!\n",
-                 "s_RHS_Lv0", bid, __FUNCTION__ );
-         return;
-      }
-      if ( s_SolSum == NULL )
-      {
-         printf( "ERROR : dynamic global memory allocation for \"%s\" failed at block %d in \"%s\" !!\n",
-                 "s_SolSum", bid, __FUNCTION__ );
-         return;
-      }
-      if ( s_Error == NULL )
-      {
-         printf( "ERROR : dynamic global memory allocation for \"%s\" failed at block %d in \"%s\" !!\n",
-                 "s_Error", bid, __FUNCTION__ );
-         return;
-      }
-   }
-#  endif
+    // shared-memory variables are passed as kernel parameters (allocated via local_accessor in launcher)
+#else
+    // CPU-only fallback (non-SYCL): plain stack-local variables
+    real s_Sol_Lv0[ NGRID_LV0*NGRID_LV0*NGRID_LV0 ];
+#  ifndef FLOAT8
+    real s_RHS_Lv0[ NGRID_LV0*NGRID_LV0*NGRID_LV0 ];
+    real s_SolSum[POT_NTHREAD];
+    real s_Error [POT_NTHREAD];
+#  else // stack may be too large for double precision --> use dynamic allocation instead
+    real *s_RHS_Lv0 = (real*)malloc( sizeof(real)*NGRID_LV0*NGRID_LV0*NGRID_LV0 );
+    real *s_SolSum  = (real*)malloc( sizeof(real)*POT_NTHREAD );
+    real *s_Error   = (real*)malloc( sizeof(real)*POT_NTHREAD );
+#    ifdef GAMER_DEBUG
+    if ( tid == 0 )
+    {
+       if ( s_RHS_Lv0 == NULL )
+       {
+          printf( "ERROR : dynamic global memory allocation for \"%s\" failed at block %d in \"%s\" !!\n",
+                  "s_RHS_Lv0", bid, __FUNCTION__ );
+          return;
+       }
+       if ( s_SolSum == NULL )
+       {
+          printf( "ERROR : dynamic global memory allocation for \"%s\" failed at block %d in \"%s\" !!\n",
+                  "s_SolSum", bid, __FUNCTION__ );
+          return;
+       }
+       if ( s_Error == NULL )
+       {
+          printf( "ERROR : dynamic global memory allocation for \"%s\" failed at block %d in \"%s\" !!\n",
+                  "s_Error", bid, __FUNCTION__ );
+          return;
+       }
+    }
+#    endif
 #  endif // #ifndef FLOAT8 ... else ...
-   real *s_Def_Lv0 = s_RHS_Lv0;  // s_Def_Lv0, s_CPot and RHS_Lv0 share the same shared-memory array
-   real *s_CPot    = s_RHS_Lv0;
+#endif // #ifdef SYCL_LANGUAGE_VERSION
+
+    real *s_Def_Lv0 = s_RHS_Lv0;  // s_Def_Lv0, s_CPot and RHS_Lv0 share the same memory array
+    real *s_CPot    = s_RHS_Lv0;
 
 #  ifdef REUSE_SHARED
 // reuse the shared-memory arrays due to the lack of shared memory
-   real *s_Sol_Lv1 = s_RHS_Lv0;
-   real *s_Sol_Lv2 = s_Sol_Lv1 + NGRID_LV1*NGRID_LV1*NGRID_LV1;
-   real *s_Sol_Lv3 = s_Sol_Lv2 + NGRID_LV2*NGRID_LV2*NGRID_LV2;
-   real *s_RHS_Lv2 = s_Sol_Lv3 + NGRID_LV3*NGRID_LV3*NGRID_LV3;
-   real *s_RHS_Lv3 = s_RHS_Lv2 + NGRID_LV2*NGRID_LV2*NGRID_LV2;
-   real *s_Def_Lv1 = s_RHS_Lv3 + NGRID_LV3*NGRID_LV3*NGRID_LV3;
-   real *s_Def_Lv2 = s_Def_Lv1 + NGRID_LV1*NGRID_LV1*NGRID_LV1;
-   real *s_Def_Lv3 = s_Def_Lv2 + NGRID_LV2*NGRID_LV2*NGRID_LV2;
+    real *s_Sol_Lv1 = s_RHS_Lv0;
+    real *s_Sol_Lv2 = s_Sol_Lv1 + NGRID_LV1*NGRID_LV1*NGRID_LV1;
+    real *s_Sol_Lv3 = s_Sol_Lv2 + NGRID_LV2*NGRID_LV2*NGRID_Lv2;
+    real *s_RHS_Lv2 = s_Sol_Lv3 + NGRID_LV3*NGRID_LV3*NGRID_LV3;
+    real *s_RHS_Lv3 = s_RHS_Lv2 + NGRID_LV2*NGRID_Lv2*NGRID_Lv2;
+    real *s_Def_Lv1 = s_RHS_Lv3 + NGRID_LV3*NGRID_LV3*NGRID_Lv3;
+    real *s_Def_Lv2 = s_Def_Lv1 + NGRID_LV1*NGRID_LV1*NGRID_LV1;
+    real *s_Def_Lv3 = s_Def_Lv2 + NGRID_LV2*NGRID_LV2*NGRID_Lv2;
 
 // use global memory for s_RHS_Lv1 because s_RHS_Lv1 and s_Def_Lv0 cannot share the same memory space
-   CGPU_SHARED real *s_RHS_Lv1;
-   if ( tid == 0 )   s_RHS_Lv1 = (real*) malloc( sizeof(real)*NGRID_LV1*NGRID_LV1*NGRID_LV1 );
 #ifdef SYCL_LANGUAGE_VERSION
-   sycl::ext::oneapi::this_work_item::get_nd_item<3>().barrier(sycl::access::fence_space::local_space);
-#endif
+    // s_RHS_Lv1 passed as kernel parameter (local_accessor in launcher)
+#else
+    real *s_RHS_Lv1 = (real*)malloc( sizeof(real)*NGRID_LV1*NGRID_LV1*NGRID_LV1 );
 #  ifdef GAMER_DEBUG
-   if ( tid == 0  &&  s_RHS_Lv1 == NULL )
-   {
-      printf( "ERROR : dynamic global memory allocation for \"%s\" failed at block %d in \"%s\" !!\n",
-              "s_RHS_Lv1", bid, __FUNCTION__ );
-      return;
-   }
+    if ( tid == 0  &&  s_RHS_Lv1 == NULL )
+    {
+       printf( "ERROR : dynamic global memory allocation for \"%s\" failed at block %d in \"%s\" !!\n",
+               "s_RHS_Lv1", bid, __FUNCTION__ );
+       return;
+    }
 #  endif
+#endif // SYCL_LANGUAGE_VERSION
 #  else // #ifdef REUSE_SHARED ... else ...
-   CGPU_SHARED real s_Sol_Lv1[ NGRID_LV1*NGRID_LV1*NGRID_LV1 ];
-   CGPU_SHARED real s_Sol_Lv2[ NGRID_LV2*NGRID_LV2*NGRID_LV2 ];
-   CGPU_SHARED real s_RHS_Lv1[ NGRID_LV1*NGRID_LV1*NGRID_LV1 ];
-   CGPU_SHARED real s_RHS_Lv2[ NGRID_LV2*NGRID_LV2*NGRID_LV2 ];
-   CGPU_SHARED real s_Def_Lv1[ NGRID_LV1*NGRID_LV1*NGRID_LV1 ];
-   CGPU_SHARED real s_Def_Lv2[ NGRID_LV2*NGRID_LV2*NGRID_LV2 ];
+#ifdef SYCL_LANGUAGE_VERSION
+    // s_Sol_Lv1, s_Sol_Lv2, s_RHS_Lv1, s_RHS_Lv2, s_Def_Lv1, s_Def_Lv2,
+    // [s_Sol_Lv3, s_RHS_Lv3, s_Def_Lv3] are passed as kernel parameters
+#else
+    real s_Sol_Lv1[ NGRID_LV1*NGRID_LV1*NGRID_LV1 ];
+    real s_Sol_Lv2[ NGRID_LV2*NGRID_LV2*NGRID_LV2 ];
+    real s_RHS_Lv1[ NGRID_LV1*NGRID_LV1*NGRID_LV1 ];
+    real s_RHS_Lv2[ NGRID_LV2*NGRID_LV2*NGRID_LV2 ];
+    real s_Def_Lv1[ NGRID_LV1*NGRID_LV1*NGRID_LV1 ];
+    real s_Def_Lv2[ NGRID_LV2*NGRID_LV2*NGRID_LV2 ];
 #  if ( MAX_NLV == 4 )
-   CGPU_SHARED real s_Sol_Lv3[ NGRID_LV3*NGRID_LV3*NGRID_LV3 ];
-   CGPU_SHARED real s_RHS_Lv3[ NGRID_LV3*NGRID_LV3*NGRID_LV3 ];
-   CGPU_SHARED real s_Def_Lv3[ NGRID_LV3*NGRID_LV3*NGRID_LV3 ];
+    real s_Sol_Lv3[ NGRID_LV3*NGRID_LV3*NGRID_LV3 ];
+    real s_RHS_Lv3[ NGRID_LV3*NGRID_LV3*NGRID_LV3 ];
+    real s_Def_Lv3[ NGRID_LV3*NGRID_LV3*NGRID_LV3 ];
 #  endif
+#endif // SYCL_LANGUAGE_VERSION
 #  endif // #ifdef REUSE_SHARED ... else ...
 
 #  if   ( MAX_NLV == 4 )
@@ -507,6 +476,7 @@ __global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_
    }
 
 // free memory
+#ifndef SYCL_LANGUAGE_VERSION
 #  ifdef REUSE_SHARED
    if ( tid == 0 )   free( s_RHS_Lv1 );
 #  endif
@@ -518,6 +488,7 @@ __global__ void GPU_PoissonSolver_MG( const real g_Rho_Array    [][ RHO_NXT*RHO_
       free( s_Error   );
    }
 #  endif
+#endif // #ifndef SYCL_LANGUAGE_VERSION
 
 } // FUNCTION : GPU_PoissonSolver_MG
 

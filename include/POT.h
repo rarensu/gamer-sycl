@@ -173,6 +173,52 @@
 #     define POT_BLOCK_SIZE_X      256
 #endif
 
+// shared-memory grid sizes for multigrid (also needed by the launcher
+// in GPU_Asyn_PoissonGravitySolver.cpp to size local_accessor objects)
+#define POT_NXT_F    ( PATCH_SIZE + 2*POT_GHOST_SIZE )
+#define POT_NTHREAD  ( POT_BLOCK_SIZE_X )
+#define POT_USELESS  ( POT_GHOST_SIZE%2 )
+
+#if   ( POT_NXT_F == 18 )
+#     define REUSE_SHARED
+#     define MAX_NLV             4U
+#     define NBOTTOM_SMOOTH      1U
+#     define NGRID_LV0          18U
+#     define NGRID_LV1           9U
+#     define NGRID_LV2           5U
+#     define NGRID_LV3           3U
+#elif ( POT_NXT_F == 16 )
+#     define MAX_NLV             3U
+#     define NBOTTOM_SMOOTH      7U
+#     define NGRID_LV0          16U
+#     define NGRID_LV1           8U
+#     define NGRID_LV2           4U
+#elif ( POT_NXT_F == 14 )
+#     define MAX_NLV             3U
+#     define NBOTTOM_SMOOTH      7U
+#     define NGRID_LV0          14U
+#     define NGRID_LV1           7U
+#     define NGRID_LV2           4U
+#elif ( POT_NXT_F == 12 )
+#     define MAX_NLV             3U
+#     define NBOTTOM_SMOOTH      1U
+#     define NGRID_LV0          12U
+#     define NGRID_LV1           6U
+#     define NGRID_LV2           3U
+#elif ( POT_NXT_F == 10 )
+#     define MAX_NLV             3U
+#     define NBOTTOM_SMOOTH      1U
+#     define NGRID_LV0          10U
+#     define NGRID_LV1           5U
+#     define NGRID_LV2           3U
+#else
+#   error : ERROR : not supported POT_NXT_F
+#endif
+
+#if ( MAX_NLV != 3  &&  MAX_NLV != 4 )
+#   error : ERROR : MAX_NLV != 3 or 4
+#endif
+
 #endif // POT_SCHEME
 
 

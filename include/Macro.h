@@ -1363,22 +1363,6 @@
 
 
 
-// TODO: CGPU_SHARED is broken in SYCL mode — "sycl::local" is not a valid storage-class
-// qualifier.  SYCL requires sycl::local_accessor allocated in a command-group handler and
-// passed as a kernel parameter.  This macro should be removed once all remaining users
-// have been migrated to that pattern.  Currently still used by:
-//   src/SelfGravity/GPU_Poisson/GPU_PoissonSolver_MG.cpp
-//   src/Model_ELBDM/CPU_ELBDM/CPU_ELBDMSolver_HJ.cpp
-//   src/Model_ELBDM/GPU_ELBDM/GPU_ELBDMSolver_FD.cpp
-// Fixed pattern (reference): src/Model_Hydro/CPU_Hydro/CPU_FluidSolver_MHM.cpp and
-// GPU_PoissonSolver_SOR.cpp — shared memory passed as real* parameters from local_accessor
-// in the launcher.
-#ifdef SYCL_LANGUAGE_VERSION
-#  define CGPU_SHARED sycl::local
-#else
-#  define CGPU_SHARED
-#endif
-
 // GPU device-function specifier
 #ifdef SYCL_LANGUAGE_VERSION
 #  define GPU_DEVICE          __dpct_inline__
