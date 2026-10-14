@@ -154,8 +154,11 @@ EoSExternDecl void EoS_General_User_Template( const int Mode, real Out[], const 
                                                const double AuxArray_Flt[], const int AuxArray_Int[],
                                                const real *const Table[EOS_NTABLE_MAX] );
 
+#elif !defined(EOS)
+// EOS is not defined - this is allowed for models like ELBDM that don't use
+// an equation of state. The dispatch wrappers below will return NAN if called.
 #else
-#  error : EoS_Dispatch.h: Unsupported EOS value
+#  error : EoS_Dispatch.h: Unsupported EOS value. Supported values are: EOS_GAMMA, EOS_ISOTHERMAL, EOS_NUCLEAR, EOS_TABULAR, EOS_COSMIC_RAY, EOS_TAUBMATHEWS, EOS_USER
 #endif
 
 
