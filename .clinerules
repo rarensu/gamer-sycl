@@ -2,40 +2,47 @@
 
 ## Project identity
 - This repository is **GAMER**, a GPU-accelerated adaptive mesh refinement code for astrophysical simulations.
-- The codebase started as **CUDA**-accelerated code and is being migrated to **SYCL**.
+- The codebase started as **CUDA**-accelerated code and has been migrated to **SYCL**.
 
 ## Current migration status
-- `dpct` has already been run and its output lives in `dpct_out/`.
-- `dpct_out/` is a **duplicate tree of the repository** containing the automatic migration output / suggestions.
-- The actual source tree outside `dpct_out/` is the one that must be edited.
-- The migration completion state must be tracked in `/home/rlawrence/Projects/gamer-sycl/MIGRATION_TRACKER.md`.
+- GAMER has been migrated from CUDA to **SYCL** as the sole GPU backend.
+- The migration is **complete**: no `.cu` files remain, all CUDA-specific
+  constructs have been replaced with SYCL equivalents.
+- `dpct_out/` has been removed from version control (was a temporary
+  DPCT auto-migration output tree).
+- `MIGRATION_TRACKER.md` has been removed from version control.
+- Historical migration knowledge is preserved in
+  `doc/SYCL-Migration-Notes.md`.
+- The `cuflu-cupot-notes.txt` file at the repository root is retained
+  as a cross-reference map between legacy CUDA solver filenames and
+  their SYCL-era equivalents.
 
 ## Key files to inspect first
-- `/home/rlawrence/Projects/gamer-sycl/dpct_out/report.txt` — overall API migration summary and remaining manual-work areas.
-- `/home/rlawrence/Projects/gamer-sycl/dpct_out/analysis.txt` — per-file migration analysis and effort estimates.
-- `/home/rlawrence/Projects/gamer-sycl/dpct_out/MainSourceFiles.yaml` — DPCT replacement details for main source files.
-- `/home/rlawrence/Projects/gamer-sycl/MIGRATION_TRACKER.md` — manual tracker for what has been applied back into the original codebase.
+- `/home/rlawrence/Projects/gamer-sycl/doc/SYCL-Migration-Notes.md` — migration philosophy, SYCL coding conventions, and cross-cutting architectural decisions.
+- `/home/rlawrence/Projects/gamer-sycl/doc/SyclFFT/DESIGN.md` — SYCL-native FFT replacement for cuFFTDx.
+- `/home/rlawrence/Projects/gamer-sycl/cuflu-cupot-notes.txt` — file-name cross-reference map (CUFLU_*/CUPOT_* → GPU_*).
 - `/home/rlawrence/Projects/gamer-sycl/README.md` — project overview and documentation entry point.
-- `/home/rlawrence/Projects/gamer-sycl/src/Makefile_base` — main build/source list; especially relevant for CUDA-to-SYCL build updates.
+- `/home/rlawrence/Projects/gamer-sycl/src/Makefile_base` — main build/source list.
 - `/home/rlawrence/Projects/gamer-sycl/src/configure.py` — build configuration generator.
 
 ## Important source areas
-- `/home/rlawrence/Projects/gamer-sycl/include/` — shared headers, including `CUDA_CheckError.h`, `CUDA_ConstMemory.h`, `CUFLU.h`, `Global.h`, and `Macro.h`.
+- `/home/rlawrence/Projects/gamer-sycl/include/` — shared headers, including `CheckError.h`, `ConstMemory.h`, `FLU.h`, `POT.h`, `Global.h`, `Macro.h`, `EoS_Dispatch.h`, and `Src_Dispatch.h`.
 - `/home/rlawrence/Projects/gamer-sycl/src/GPU_API/` — GPU API wrappers and device/memory setup code.
 - `/home/rlawrence/Projects/gamer-sycl/src/Model_Hydro/` — hydro solver implementation and shared routines.
 - `/home/rlawrence/Projects/gamer-sycl/src/SourceTerms/` — source-term solvers and templates.
 - `/home/rlawrence/Projects/gamer-sycl/src/SelfGravity/` — gravity/Poisson-related GPU and CPU code.
 
-## Working rules for future sessions
-- Prefer the DPCT outputs as the migration map before editing code.
-- Apply changes from the matching file under `dpct_out/` back into the original source tree.
-- Use `/home/rlawrence/Projects/gamer-sycl/MIGRATION_TRACKER.md` as the source of truth for what has already been applied.
-- Treat `dpct_out/report.txt` and `dpct_out/analysis.txt` as the source of truth for what still needs manual fixes or review.
-- If the suggested code still contains incomplete migration artifacts, such as legacy CUDA-specific naming, `CU*` symbols in identifiers or comments, or other backend-specific patterns that do not belong in the SYCL target, do not treat the DPCT output as finished.
-- In that case, either correct the code in the main tree or add a nearby `TODO` comment that clearly marks the remaining migration work.
-- Any file with unresolved `TODO` items must remain `IN PROGRESS` in `/home/rlawrence/Projects/gamer-sycl/MIGRATION_TRACKER.md` until the TODOs are resolved.
-- Applying the DPCT suggestions alone is not sufficient to mark a migration as `DONE`; the final code must be clean, consistent, and free of unresolved legacy CUDA-specific migration remnants.
-- When editing build logic, check `src/Makefile_base` and `src/configure.py` first.
+## Working rules
+- The codebase is SYCL-only. Do not introduce CUDA-specific constructs.
+- Follow the naming conventions documented in
+  `doc/SYCL-Migration-Notes.md` (section "SYCL coding conventions").
+- See `doc/SYCL-Migration-Notes.md` for the rationale behind
+  compile-time dispatch (`EoS_Dispatch.h`, `Src_Dispatch.h`),
+  the `EoSExternDecl`/`SrcExternDecl` linker fix, the
+  `MAX(1, NCOMP_PASSIVE)` zero-length-array pattern, and
+  the `WARP_SIZE=32` sub-group size enforcement.
+- When editing build logic, check `src/Makefile_base` and
+  `src/configure.py` first.
 - Use absolute paths when referring to files in guidance or summaries.
 
 ## Header naming for the SYCL-target migration
@@ -59,5 +66,8 @@
   - Aligns and creates clear, symmetric mappings with GAMER's fallback CPU solvers (e.g., `CPU_FluidSolver_RTVD`).
   - Distinguishes device-side solvers from host-side asynchronous scheduler wrappers, which use the prefix `GPU_Asyn_` (e.g., `GPU_Asyn_FluidSolver`).
   - Keeps the codebase backend-neutral and clean of legacy CUDA nomenclature.
-- **Scope**: Includes both active `src/` tree files and `dpct_out/` suggestion files to prevent accidental reversion to or reuse of outdated prefixes in future migrations. Since this is an architectural renaming and refactoring rather than a full SYCL file-by-file migration, no new file rows are added to the migration tracking table.
+- **Scope**: Applies to all solver files in the active `src/` tree.
+  The unified `GPU_` prefix creates clear symmetry with `CPU_` solvers
+  and distinguishes device-side solvers from host-side `GPU_Asyn_`
+  scheduler wrappers.
 

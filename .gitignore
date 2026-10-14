@@ -16,3 +16,8 @@ GAMER_ExtractProfile
 src/Makefile
 src/Makefile.log
 src/.local_settings
+
+# Post-migration: these were removed from version control but are
+# generated/reference artifacts that should not be re-added.
+dpct_out/
+MIGRATION_TRACKER.md
