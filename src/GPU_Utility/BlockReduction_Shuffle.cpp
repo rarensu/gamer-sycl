@@ -130,7 +130,7 @@ real BlockReduction_Shuffle( real val )
                                                 // final reduction only to the first warp)
 
 #ifndef SYCL_LANGUAGE_VERSION
-   static __shared__ real shared[MaxNWarp];     // maximum shared memory required for 32 partial sums (must be <= WARP_SIZE)
+   static real shared[MaxNWarp];     // maximum shared memory required for 32 partial sums (must be <= WARP_SIZE)
 #endif
 
 // perform reduction within each warp

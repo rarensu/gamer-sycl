@@ -78,7 +78,7 @@ real BlockReduction_WarpSync( real val )
    const uint Remain    = RED_NTHREAD - FloorPow2;
 
 #ifndef SYCL_LANGUAGE_VERSION
-   __shared__ real s_Reduction[RED_NTHREAD];
+   real s_Reduction[RED_NTHREAD];
 #endif
 
 
