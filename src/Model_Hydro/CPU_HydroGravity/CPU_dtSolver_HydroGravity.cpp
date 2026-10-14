@@ -66,7 +66,8 @@ void GPU_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ CUB
                                   const double g_Corner_Array[][3],
                                   const real dh, const real Safety, const bool P5_Gradient,
                                   const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,
-                                  const double ExtAcc_Time, real *shared );
+                                   const double ExtAcc_Time, real *shared,
+                                   real *s_Pot );
 #else
 void CPU_dtSolver_HydroGravity  ( real g_dt_Array[], const real g_Pot_Array[][ CUBE(GRA_NXT) ],
                                   const double g_Corner_Array[][3], const int NPatchGroup,
@@ -92,7 +93,7 @@ void CPU_dtSolver_HydroGravity  ( real g_dt_Array[], const real g_Pot_Array[][ C
 
 // load potential from global to shared memory to improve the GPU performance
 #  ifdef SYCL_LANGUAGE_VERSION
-   sycl::local real s_Pot[ CUBE(GRA_NXT) ];
+      // s_Pot passed as kernel parameter (sycl::local_accessor in launcher)
 
    if ( UsePot )
    {

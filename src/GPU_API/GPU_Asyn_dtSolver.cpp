@@ -34,7 +34,8 @@ void GPU_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ CUB
                                   const double g_Corner_Array[][3],
                                   const real dh, const real Safety, const bool P5_Gradient,
                                   const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,
-                                  const double ExtAcc_Time, real *shared );
+                                   const double ExtAcc_Time, real *shared,
+                                   real *s_Pot );
 #else
 __global__
 void GPU_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ CUBE(GRA_NXT) ],
@@ -301,7 +302,8 @@ void GPU_Asyn_dtSolver( const Solver_t TSolver, real h_dt_Array[], const real h_
                 sycl::local_accessor<real, 1> shared_acc_ct1(sycl::range<1>(32 /*MaxNWarp*/), cgh);
                auto d_dt_Array_T_UsedPatch_s_ct0 = d_dt_Array_T + UsedPatch[s];
                auto d_Pot_Array_T_UsedPatch_s_ct1 = d_Pot_Array_T + UsedPatch[s];
-               auto d_Corner_Array_PGT_UsedPatch_s_ct2 = d_Corner_Array_PGT + UsedPatch[s];
+                               auto d_Corner_Array_PGT_UsedPatch_s_ct2 = d_Corner_Array_PGT + UsedPatch[s];
+                sycl::local_accessor<real, 1> s_Pot_acc(sycl::range<1>( CUBE(GRA_NXT) ), cgh);
 
                cgh.parallel_for(
                    sycl::nd_range<3>(sycl::range<3>(1, 1, NPatch_per_Stream[s]) * BlockDim_dtSolver,

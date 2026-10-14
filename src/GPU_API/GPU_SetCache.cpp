@@ -124,7 +124,8 @@ void GPU_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ CUB
                                   const double g_Corner_Array[][3],
                                   const real dh, const real Safety, const bool P5_Gradient,
                                   const bool UsePot, const OptExtAcc_t ExtAcc, const ExtAcc_t ExtAcc_Func,
-                                  const double ExtAcc_Time, real *shared );
+                                                                     const double ExtAcc_Time, real *shared,
+                                   real *s_Pot );
 #else
 __global__
 void GPU_dtSolver_HydroGravity( real g_dt_Array[], const real g_Pot_Array[][ CUBE(GRA_NXT) ],
@@ -273,7 +274,24 @@ const real g_Rho_Array    [][ CUBE(RHO_NXT) ],
                                               real g_Pot_Array_Out[][ CUBE(GRA_NXT) ],
                                         const real dh_Min, const int Max_Iter, const int NPre_Smooth,
                                         const int NPost_Smooth, const real Tolerated_Error, const real Poi_Coeff,
-                                        const IntScheme_t IntScheme );
+                                        const IntScheme_t IntScheme
+
+#ifdef SYCL_LANGUAGE_VERSION
+                                        , real *s_Sol_Lv0,
+                                        real *s_RHS_Lv0,
+                                        real *s_SolSum,
+                                        real *s_Error
+#  ifdef REUSE_SHARED
+                                        , real *s_RHS_Lv1
+#  else
+                                        , real *s_Sol_Lv1, real *s_Sol_Lv2, real *s_RHS_Lv1, real *s_RHS_Lv2
+                                        , real *s_Def_Lv1, real *s_Def_Lv2
+#    if ( MAX_NLV == 4 )
+                                        , real *s_Sol_Lv3, real *s_RHS_Lv3, real *s_Def_Lv3
+#    endif
+#  endif
+#endif
+                                        );
 #endif // POT_SCHEME
 
 
