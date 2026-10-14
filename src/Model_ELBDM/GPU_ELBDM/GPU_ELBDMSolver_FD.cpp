@@ -225,7 +225,7 @@ __device__ void GPU_Advance( real g_Fluid_In [][FLU_NIN ][ CUBE(FLU_NXT) ],
 #ifdef SYCL_LANGUAGE_VERSION
    const uint bx           = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_group(2);
    const uint tx           = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(2);
-   const uint ty           = sycl::ext::oneapi::this_work_item::get_nd_item(3).get_local_id(1);
+   const uint ty           = sycl::ext::oneapi::this_work_item::get_nd_item<3>().get_local_id(1);
 #else
    const uint bx           = blockIdx.x;
    const uint tx           = threadIdx.x;
