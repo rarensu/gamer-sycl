@@ -840,7 +840,7 @@ def load_arguments( sys_setting : SystemSetting ):
 
     parser.add_argument( "--gpu", type=str2bool, metavar="BOOLEAN", gamer_name="GPU",
                          default=False,
-                         help="Enable GPU acceleration via SYCL. Must set <GPU_COMPUTE_CAPABILITY> in your machine *.config file as well. Use a SYCL-enabled compiler (e.g., icpx or dpcpp) and add -fsycl to CXXFLAG.\n"
+                         help="Enable GPU acceleration via SYCL. Must set <GPU_COMPUTE_CAPABILITY> in your machine *.config file as well. Use a SYCL-enabled compiler (e.g., icpx or dpcpp). The -fsycl flag is added automatically (via SYCLFLAG); extra SYCL options can be set with SYCLFLAG in your config file.\n"
                        )
 
 
@@ -867,7 +867,7 @@ def load_config( config ):
         raise FileNotFoundError("The config file <%s> does not exist."%(config))
 
     paths, compilers = {}, {"CXX":"", "CXX_MPI":""}
-    flags = {"CXXFLAG":"", "OPENMPFLAG":"", "LIBFLAG":""}
+    flags = {"CXXFLAG":"", "OPENMPFLAG":"", "LIBFLAG":"", "SYCLFLAG":""}
     gpus  = {"GPU_COMPUTE_CAPABILITY":""}
 
     with open( config, "r" ) as f:
@@ -947,7 +947,13 @@ def set_gpu( gpus, flags, args ):
     gpu_opts["GPU_COMPUTE_CAPABILITY"] = str(compute_capability)
 
     # 2. Set SYCL compile flag
-    gpu_opts["SYCLFLAG"] = "-fsycl"
+    #    -fsycl is always prepended; extra flags may be supplied via SYCLFLAG
+    #    in the machine config file (parsed by load_config).
+    extra_sycl_flags = flags.get("SYCLFLAG", "").strip()
+    if extra_sycl_flags:
+        gpu_opts["SYCLFLAG"] = "-fsycl " + extra_sycl_flags
+    else:
+        gpu_opts["SYCLFLAG"] = "-fsycl"
 
     return gpu_opts
 
@@ -985,9 +991,11 @@ def set_compile( paths, compilers, flags, kwargs ):
 
     # 3. Set GPU-specific compile flags
     #     (NVCC-specific flags removed; SYCLFLAG handled by set_gpu)
-
     # 4. Write flags to compile option dictionary.
+    #     (SYCLFLAG is handled by set_gpu, so skip it here)
     for key, val in flags.items():
+        if key == "SYCLFLAG":
+            continue  # SYCLFLAG is handled by set_gpu()
         com_opt[key] = val
 
     return com_opt
